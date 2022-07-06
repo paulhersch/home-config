@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+name=$(date +%m-%d-%H%M%S)
+maim -su /home/paul/Bilder/Screenshots/$name.png
+dunstify -i /home/paul/Bilder/Screenshots/$name.png "Screenshot $name aufgenommen" 
