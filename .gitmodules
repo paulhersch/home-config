@@ -1,0 +1,18 @@
+[submodule "awesome/plugins/bling"]
+	path = awesome/plugins/bling
+	url = https://github.com/BlingCorp/bling
+[submodule "awesome/plugins/rubato"]
+	path = awesome/plugins/rubato
+	url = https://github.com/andOrlando/rubato
+[submodule "awesome/plugins/uPower"]
+	path = awesome/plugins/uPower
+	url = https://github.com/Aire-One/awesome-battery_widget
+[submodule "zsh/zsh-autosuggestions"]
+	path = zsh/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "zsh/zsh-history-substring-search"]
+	path = zsh/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search
+[submodule "zsh/zsh-syntax-highlighting"]
+	path = zsh/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
