@@ -1,5 +1,4 @@
 -- awesome_mode: api-level=5:screen=on
-
 local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
@@ -22,9 +21,6 @@ end)
 
 beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
 require ("bar")
---require ("titlebar")
---local nice = require ("nice")
---nice()
 
 tag.connect_signal("request::default_layouts", function()
     awful.layout.append_default_layouts({

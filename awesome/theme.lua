@@ -32,12 +32,12 @@ end
 
 local dark_theme = is_dark(xres.background)
 
-theme.red		= xres.color1
-theme.green		= xres.color2
+theme.red			= xres.color1
+theme.green			= xres.color2
 theme.yellow		= xres.color3
-theme.blue		= xres.color4
+theme.blue			= xres.color4
 theme.magenta		= xres.color5
-theme.cyan		= xres.color6
+theme.cyan			= xres.color6
 theme.dark_red		= xres.color7
 theme.dark_green	= xres.color8
 theme.dark_yellow	= xres.color9

@@ -80,6 +80,17 @@ color.col_diff = function(f, s)
 	return sr-fr,sg-fg,sb-fb,so-fo
 end
 --}}}
+
+local function pointer_on_focus(widget)
+	widget:connect_signal("mouse::enter", function()
+    	mouse.current_wibox.cursor = "hand1"
+	end)
+	widget:connect_signal("mouse::leave", function()
+		mouse.current_wibox.cursor = "left_ptr"
+	end)
+end
+
 return {
-	color	= color
+	color = color,
+	pointer_on_focus = pointer_on_focus
 }

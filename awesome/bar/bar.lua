@@ -134,6 +134,7 @@ local function init (s)
 			open = not open
 		end
 	end)
+	helpers.pointer_on_focus(s.bar:get_children_by_id('center_trigger')[1])
 end
 
 local function hide(s)

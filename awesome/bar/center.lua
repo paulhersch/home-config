@@ -1,84 +1,24 @@
 local wibox = require "wibox"
 local dpi = require "beautiful.xresources".apply_dpi
-local awful = require "awful"
 local beautiful = require "beautiful"
-local playerctl = require "plugins.bling.signal.playerctl"
 local gears = require "gears"
 
-local iconsdir	= gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
+local playerwidget = require "bar.widgets.playerctl"
+local calendar = require "bar.widgets.calendar"
 
-local controller = playerctl.lib {}
-local playerwidget = wibox.widget {
-	widget = wibox.container.background,
-	forced_width = dpi(300),
-	bg = beautiful.bg_focus,
-	fg = beautiful.fg_normal,
-	shape = beautiful.rounded_rect,
-	{
-		widget = wibox.container.margin,
-		margins = dpi(5),
-		{
-			layout = wibox.layout.fixed.horizontal,
-			forced_height = dpi(50),
-			spacing = dpi(10),
-			{
-				widget = wibox.container.background,
-				shape = beautiful.rounded_rect,
-				bg = beautiful.green,
-				fg = beautiful.bg_normal,
-				forced_width = dpi(200),
-				{
-					widget = wibox.container.margin,
-					margins = dpi(5),
-					{
-						layout = wibox.layout.fixed.vertical,
-						{
-							id = 'title',
-							widget = wibox.widget.textbox,
-							font = beautiful.font_bold .. " 13",
-							align = 'left',
-							text = "nothing playing"
-						},
-						{
-							id = 'artist',
-							widget = wibox.widget.textbox,
-							font = beautiful.font_thin .. " 11",
-							align = 'left',
-							text = "nothing playing"
-						},
-					}
-				}
-			},
-			{
-				widget = wibox.container.place,
-				valign = 'center',
-				{
-					layout = wibox.layout.fixed.horizontal,
-					{
-						widget = wibox.widget.imagebox,
-						image = gears.color.recolor_image(iconsdir .. "previous.svg", beautiful.fg_normal),
-						forced_height = dpi(20)
-					},
-					{
-						id = 'play-pause',
-						widget = wibox.widget.imagebox,
-						image = gears.color.recolor_image(iconsdir .. "pause.svg", beautiful.fg_normal),
-						forced_height = dpi(20)
-					},
-					{
-						widget = wibox.widget.imagebox,
-						image = gears.color.recolor_image(iconsdir .. "next.svg", beautiful.fg_normal),
-						forced_height = dpi(20)
-					},
-				}
-			},
-		}
-	}
+local layout = wibox.widget {
+    layout        = wibox.layout.grid,
+    homogeneous   = true,
+    spacing       = dpi(5),
+	horizontal_expand = true,
+	vertical_expand = true,
+	forced_width = dpi(490),
+	forced_height = dpi(790),
 }
-controller:connect_signal("metadata", function (_, title, artist, _, _, _, _)
-	playerwidget:get_children_by_id('title')[1]:set_markup_silently(title)
-	playerwidget:get_children_by_id('artist')[1]:set_markup_silently(artist)
-end)
+
+layout:add_widget_at(calendar, 1, 7, 2, 4)
+layout:add_widget_at(wibox.widget.textbox("a"), 2, 1, 1, 6)
+layout:add_widget_at(wibox.widget.textbox("b"), 3, 1, 7, 10)
 
 local function init(s)
 	s.center = wibox {
@@ -96,13 +36,13 @@ local function init(s)
 		widget = wibox.widget {
 			widget = wibox.container.margin,
 			margins = dpi(5),
-			{
-				layout = wibox.layout.fixed.vertical,
-				playerwidget
-			}
+			layout
 		}
 	}
+	layout:add_widget_at(playerwidget.create(s.center), 1, 1, 1, 6)
 end
+
+
 local function hide(s)
 	s.center.visible = false
 end
