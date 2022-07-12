@@ -14,11 +14,13 @@ local layout = wibox.widget {
 	vertical_expand = true,
 	forced_width = dpi(490),
 	forced_height = dpi(790),
+	forced_num_cols = 5,
+	forced_num_rows = 10
 }
 
-layout:add_widget_at(calendar, 1, 7, 2, 4)
-layout:add_widget_at(wibox.widget.textbox("a"), 2, 1, 1, 6)
-layout:add_widget_at(wibox.widget.textbox("b"), 3, 1, 7, 10)
+layout:add_widget_at(calendar, 1, 4, 2, 2)
+layout:add_widget_at(wibox.widget.textbox("a"), 2, 1, 1, 3)
+layout:add_widget_at(wibox.widget.textbox("b"), 3, 1, 7, 5)
 
 local function init(s)
 	s.center = wibox {
@@ -39,7 +41,7 @@ local function init(s)
 			layout
 		}
 	}
-	layout:add_widget_at(playerwidget.create(s.center), 1, 1, 1, 6)
+	layout:add_widget_at(playerwidget.create(s.center), 1, 1, 1, 3)
 end
 
 
