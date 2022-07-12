@@ -56,6 +56,8 @@ bindkey "$terminfo[kcud1]" history-substring-search-down
 bindkey '^[[A' history-substring-search-up			
 bindkey '^[[B' history-substring-search-down
 bindkey '^H' backward-kill-word # CTRL+Backspace bind
+bindkey ';5D' backward-word
+bindkey ';5C' forward-word
 
 #
 #	ALIASES
@@ -63,14 +65,13 @@ bindkey '^H' backward-kill-word # CTRL+Backspace bind
 
 alias cl="clear"
 
-#the funny
+
 fortune -s | cowsay -f eyes
 
-#Prompt (fuck p10k)
 precmd() {
-	LAST_CMD=$(print -P "%(0?.%F{2}%K{8}%f.%F{1}%K{8}%f)") # green = last cmd exit 0
+	_LAST_CMD=$(print -P "%(0?.%F{2}%K{8}%f.%F{1}%K{8}%f)") # green = last cmd exit 0
 	vcs_info
-	GIT_STS=$( [ ! -z $vcs_info_msg_0_ ] && print -P "on  ${vcs_info_msg_0_}")
-	print -P "\n${LAST_CMD} %~ %F{4}${GIT_STS}%f%k%F{8}%f "
+	_GIT_STS=$( [ ! -z $vcs_info_msg_0_ ] && print " on  ${vcs_info_msg_0_}")
+	print -P "${_LAST_CMD} %~%F{4}${_GIT_STS} %f%k%F{8}%f"
 } #this prints stuff over the prompt
-PROMPT=$(print -P " %F{5}%f ")
+PROMPT=" %F{5}%f "
