@@ -100,5 +100,10 @@ awful.keyboard.append_global_keybindings({
 awful.keyboard.append_global_keybindings({
 	awful.key({},	"XF86MonBrightnessUp", function() awful.spawn.with_shell("brightnessctl s +5%") end),
 	awful.key({},	"XF86MonBrightnessDown", function() awful.spawn.with_shell("brightnessctl s 5%-") end),
+	awful.key({},	"XF86AudioMute", function() awful.spawn.with_shell("pamixer -t") end),
+	awful.key({},	"XF86AudioLowerVolume", function() awful.spawn.with_shell("pamixer -d 5") end),
+	awful.key({},	"XF86AudioRaiseVolume", function() awful.spawn.with_shell("pamixer -i 5") end),
+	awful.key({},	"XF86AudioPlay", function() awful.spawn.with_shell("playerctl -p spotify,ncspot play-pause") end),
+	awful.key({},	"XF86AudioPrev", function() awful.spawn.with_shell("playerctl -p spotify,ncspot previous") end),
+	awful.key({},	"XF86AudioNext", function() awful.spawn.with_shell("playerctl -p spotify,ncspot next") end),
 })
-

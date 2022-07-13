@@ -150,7 +150,7 @@ end)
 -- this basically changes the cursor when hovering over the buttons of the widget
 --local default_cursor = base_box.cursor
 for _,w in ipairs(playerwidget:get_children_by_id('bg')) do
-	require("helpers").pointer_on_focus(w)
+	require("helpers").pointer_on_focus(w, base_box)
 	w:connect_signal("mouse::enter", function (self)
 		self.bg = beautiful.bg_normal
     --	base_box.cursor = "hand1"

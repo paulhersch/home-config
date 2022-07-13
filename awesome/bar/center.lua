@@ -5,6 +5,10 @@ local gears = require "gears"
 
 local playerwidget = require "bar.widgets.playerctl"
 local calendar = require "bar.widgets.calendar"
+local weather = require "bar.widgets.weather"
+
+weather.update("0245e583e0cde5dff46cf1eb8874d2cd")
+--local audio = require "bar.widgets.audio".widget
 
 local layout = wibox.widget {
     layout        = wibox.layout.grid,
@@ -18,9 +22,10 @@ local layout = wibox.widget {
 	forced_num_rows = 10
 }
 
-layout:add_widget_at(calendar, 1, 4, 2, 2)
-layout:add_widget_at(wibox.widget.textbox("a"), 2, 1, 1, 3)
-layout:add_widget_at(wibox.widget.textbox("b"), 3, 1, 7, 5)
+layout:add_widget_at(calendar, 2, 3, 3, 3)
+layout:add_widget_at(weather.widget, 2, 1, 3, 2)
+--layout:add_widget_at(wibox.widget.textbox("a"), 2, 1, 1, 3)
+--layout:add_widget_at(wibox.widget.textbox("b"), 3, 1, 7, 5)
 
 local function init(s)
 	s.center = wibox {

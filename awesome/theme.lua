@@ -21,7 +21,7 @@ theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/leaves.jpg"
 theme.font			= "Inter Medium"
 theme.font_thin		= "Inter Regular"
 theme.font_bold		= "Inter Bold"
-
+theme.icon_font		= "Fira Code Nerd Font Mono"
 
 local xres = xresources.get_current_theme()
 
@@ -47,8 +47,8 @@ theme.dark_cyan		= xres.color12
 
 theme.bg_normal     = xres.background
 theme.bg_focus      = dark_theme
-			and col_shift(theme.bg_normal, 30)
-			or col_shift(theme.bg_normal, -30)
+			and col_shift(theme.bg_normal, 20)
+			or col_shift(theme.bg_normal, -20)
 theme.bg_urgent     = xres.color1
 theme.bg_minimize   = theme.bg_normal
 

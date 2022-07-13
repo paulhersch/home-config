@@ -16,3 +16,6 @@
 [submodule "zsh/zsh-syntax-highlighting"]
 	path = zsh/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule "awesome/plugins/json"]
+	path = awesome/plugins/json
+	url = https://github.com/rxi/json.lua

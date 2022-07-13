@@ -35,10 +35,14 @@ local cal = wibox.widget {
 					bg = flag == 'focus' and beautiful.bg_focus,
 					fg = flag == 'focus' and beautiful.fg_normal or beautiful.bg_normal,
 					{
-						widget = wibox.container.place,
-						halign = 'center',
-						valign = 'center',
-						widget
+						widget = wibox.container.margin,
+						margins = dpi(5),
+						{
+							widget = wibox.container.place,
+							halign = 'center',
+							valign = 'center',
+							widget
+						}
 					}
 				}
 			end

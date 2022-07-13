@@ -89,7 +89,7 @@ local function init (s)
 				{
 					id = 'center_trigger',
 					widget = wibox.widget.textbox,
-					text = "hier iss nischt"
+					text = "menu"
 				}
 			},
 			{
@@ -134,7 +134,7 @@ local function init (s)
 			open = not open
 		end
 	end)
-	helpers.pointer_on_focus(s.bar:get_children_by_id('center_trigger')[1])
+	helpers.pointer_on_focus(s.bar:get_children_by_id('center_trigger')[1], s.bar)
 end
 
 local function hide(s)

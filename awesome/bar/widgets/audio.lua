@@ -2,49 +2,58 @@ local wibox	= require "wibox"
 local gears	= require "gears"
 local awful	= require "awful"
 local beautiful	= require "beautiful"
-
+local dpi = beautiful.xresources.apply_dpi
 local rubato	= require "plugins.rubato"
 
 local iconsdir	= gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
 -- main widget declaration {{{
 local audiobox = wibox.widget {
---	{
+	widget = wibox.container.background,
+	shape = beautiful.theme_shape,
+--	bg = beautiful.bg_focus,
+	{
+		widget = wibox.container.margin,
+		margins = dpi(5),
 		{
-			id	= 'symbol',
-			widget	= wibox.widget.imagebox,
-			image	= gears.color.recolor_image(iconsdir .. "volume_up.svg", beautiful.fg_focus),
-			resize	= true,
-		},
-		widget	= wibox.container.margin,
-		margins = beautiful.menu_item_spacing/2,
-		valign	= 'center',
-		halign	= 'center',
---[[	},
-	id		= 'arc',
-	widget		= wibox.container.arcchart,
-	colors		= { beautiful.fg_primary },
-	min_value	= 0,
-	max_value	= 100,
-	thickness	= 3,
-	rounded_edge	= true,
-	value		= 100,
-	start_angle	= math.pi/2,]]
-}
---}}}
+			layout = wibox.layout.fixed.vertical,
+			spacing = dpi(10),
+			{
+				widget = wibox.container.rotate,
+				direction = 'east',
+				forced_height = dpi(180),
+				{
+					id = 'slider',
+					widget = wibox.widget.slider,
+					maximum = 100,
+					minimum = 0,
+					value = 50,
+					handle_shape = gears.shape.circle,
+					handle_width = dpi(15),
+					handle_border_width = dpi(5),
+					bar_shape = gears.shape.rounded_bar,
+					bar_height = dpi(5),
 
--- volume change animation {{{
---[[local anim_volchange = rubato.timed {
-	intro		= 0.04,
-	outro		= 0.06,
-	duration	= 0.1,
-	rate		= 60,
-	easing		= rubato.quadratic,
-	subscribed	= function(pos)
-		audiobox:get_children_by_id('arc')[1].value = pos
-	end
-}]]
---}}}
+					handle_border_color = beautiful.bg_normal,
+					bar_color = beautiful.bg_focus,
+					handle_color = beautiful.yellow,
+					bar_active_color = beautiful.yellow
+				}
+			},
+			{
+				widget = wibox.container.place,
+				halign = 'center',
+				{
+					widget = wibox.widget.imagebox,
+					resize = true,
+					forced_width = dpi(20),
+					forced_height = dpi(20),
+					image = gears.color.recolor_image(iconsdir .. "volume_up.svg", beautiful.fg_normal)
+				}
+			}
+		}
+	}
+}
 
 -- Update function for the widget {{{
 local function update_widget ()
@@ -70,18 +79,18 @@ end
 --}}}
 
 -- enable scroll to change volume {{{
-audiobox:connect_signal("button::press", function (w,lx,ly,button)
+--[[audiobox:connect_signal("button::press", function (w,lx,ly,button)
 	if button == 4 then awful.spawn("pamixer -i 5") 
 		else if button == 5 then awful.spawn("pamixer -d 5")
 			else if button == 3 then awful.spawn("pamixer -t") end
 		end
 	end
 	update_widget()
-end)
+end)]]
 --}}}
 
 --initial update
-update_widget()
+--update_widget()
 
 return {
 	widget	= audiobox,
