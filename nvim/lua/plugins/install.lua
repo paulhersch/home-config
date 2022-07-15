@@ -34,23 +34,7 @@ return require('packer').startup(function(use)
 	use {
   		'filipdutescu/renamer.nvim',
 		branch = 'master',
-		requires = { {'nvim-lua/plenary.nvim'} },
-		config = function ()
-			require('renamer').setup {
-				title = 'Rename',
-				padding = {
-					top = 5,
-					left = 5,
-					right = 5,
-					bottom = 5
-				},
-				border = true,
-    				-- Whether or not to highlight the current word references through LSP
-			    show_refs = true,
-					-- Whether or not to enter the new name through the UI or Neovim's `input` prompt
-				with_popup = true,
-			}
-		end
+		requires = 'nvim-lua/plenary.nvim'
 	}
 
 	--[[use { 'kkharji/lspsaga.nvim',
@@ -62,21 +46,26 @@ return require('packer').startup(function(use)
 			require("lsp_lines").register_lsp_virtual_lines()
 		end,
 	}]]
+	use { 'romgrk/barbar.nvim',
+		requires = 'kyazdani42/nvim-web-devicons',
+		config = function ()
+			require('bufferline').setup{
+			}
+		end
+	}
+
 	use { 'rmagatti/goto-preview',
 		config = function()
 			require('goto-preview').setup {}
 		end
 	}
+
 	use { 'nvim-telescope/telescope.nvim',
 		tag = '0.1.0',
 		requires = { {'nvim-lua/plenary.nvim'} }
 	}
-	use { 'voldikss/vim-floaterm',
-		config = function ()
-			vim.cmd "<cmd>FloatermNew<CR>"
-			vim.cmd "<cmd>FloatermHide<CR>"
-		end
-	}
+
+	use 'voldikss/vim-floaterm'
 
 	use { 'hrsh7th/nvim-cmp',
 		requires = {

@@ -17,6 +17,6 @@ map("n", "<leader><Esc>", "<cmd>FloatermHide<CR>", { silent = true})
 
 --map("n", "<leader>ca", "<cmd>Lspsaga code_action <CR>", { silent = true })
 map("n", "gr", "<cmd>lua require('renamer').rename()<cr>", {silent = true, noremap = true})
---map("n", "K",  "<cmd>Lspsaga hover_doc<cr>", {silent = true, noremap = true})
 map("n", "gd", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>", {silent = true, noremap = true})
-map("n", "gi", "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>", {silent = true, noremap = true})
+map("n", "gi", "<cmd>lua require('goto-preview').glsp_references(<CR>", {silent = true, noremap = true})
+map("n", "gt", "<cmd>lua require('telescope.builtin').lsp_references()<CR>", {silent = true, noremap = true})
