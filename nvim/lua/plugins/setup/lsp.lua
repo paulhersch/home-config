@@ -2,8 +2,9 @@ local cmp = require("cmp")
 local luasnip = require("luasnip")
 local lc = require("lspconfig")
 
-local lspsaga = require 'lspsaga'
-lspsaga.setup { -- defaults ...
+--local lspsaga = require 'lspsaga'
+
+--[[lspsaga.setup { -- defaults ...
 	debug = false,
 	use_saga_diagnostic_sign = true,
 	-- diagnostic sign
@@ -51,7 +52,7 @@ lspsaga.setup { -- defaults ...
 	diagnostic_prefix_format = "%d. ",
 	diagnostic_message_format = "%m %c",
 	highlight_prefix = false,
-}
+}]]
 
 cmp.setup({
 	snippet = {
@@ -124,3 +125,4 @@ lc.omnisharp.setup {
 }
 lc.pylsp.setup{}
 lc.hls.setup{}
+lc.texlab.setup{}

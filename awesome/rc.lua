@@ -148,5 +148,5 @@ awful.spawn("nm-applet")
 awful.spawn("blueman-applet")
 awful.spawn("xfce4-clipman")
 awful.spawn("redshift -O 4600K -P")
-awful.spawn("picom --config " .. os.getenv("HOME") .. "/.config/awesome/configs/picom.conf")
+awful.spawn("picom --config " .. os.getenv("HOME") .. "/.config/awesome/configs/picom.conf --experimental-backends")
 -- }}}

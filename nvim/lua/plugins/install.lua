@@ -31,16 +31,52 @@ return require('packer').startup(function(use)
 	use 'neovim/nvim-lspconfig'
 	use 'lewis6991/gitsigns.nvim'
 
-	use { 'kkharji/lspsaga.nvim',
-		requires = 'antoinemadec/FixCursorHold.nvim',
+	use {
+  		'filipdutescu/renamer.nvim',
+		branch = 'master',
+		requires = { {'nvim-lua/plenary.nvim'} },
+		config = function ()
+			require('renamer').setup {
+				title = 'Rename',
+				padding = {
+					top = 5,
+					left = 5,
+					right = 5,
+					bottom = 5
+				},
+				border = true,
+    				-- Whether or not to highlight the current word references through LSP
+			    show_refs = true,
+					-- Whether or not to enter the new name through the UI or Neovim's `input` prompt
+				with_popup = true,
+			}
+		end
 	}
-	use({
+
+	--[[use { 'kkharji/lspsaga.nvim',
+		requires = 'antoinemadec/FixCursorHold.nvim',
+	}]]
+	--[[use {
 		"https://git.sr.ht/~whynothugo/lsp_lines.nvim",
 		config = function()
 			require("lsp_lines").register_lsp_virtual_lines()
 		end,
-	})
-	use 'voldikss/vim-floaterm'
+	}]]
+	use { 'rmagatti/goto-preview',
+		config = function()
+			require('goto-preview').setup {}
+		end
+	}
+	use { 'nvim-telescope/telescope.nvim',
+		tag = '0.1.0',
+		requires = { {'nvim-lua/plenary.nvim'} }
+	}
+	use { 'voldikss/vim-floaterm',
+		config = function ()
+			vim.cmd "<cmd>FloatermNew<CR>"
+			vim.cmd "<cmd>FloatermHide<CR>"
+		end
+	}
 
 	use { 'hrsh7th/nvim-cmp',
 		requires = {
