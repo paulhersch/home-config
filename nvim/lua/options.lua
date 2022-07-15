@@ -1,7 +1,8 @@
-vim.cmd "colorscheme everblush"
+vim.cmd "colorscheme everforest"
 
 local o = vim.opt
 o.background = 'dark'
+vim.g.everforest_background = 'hard'
 o.clipboard = 'unnamedplus'
 o.mouse = 'a'
 o.cul = true
