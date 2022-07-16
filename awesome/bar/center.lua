@@ -4,6 +4,8 @@ local beautiful = require "beautiful"
 
 local playerwidget = require "bar.widgets.playerctl"
 local calendar = require "bar.widgets.calendar"
+local layouts = require "bar.widgets.layout"
+local powerbuttons = require"bar.widgets.powerbuttons"
 
 local layout = wibox.widget {
     layout        = wibox.layout.grid,
@@ -14,10 +16,12 @@ local layout = wibox.widget {
 	forced_width = dpi(490),
 	forced_height = dpi(790),
 	forced_num_cols = 5,
-	forced_num_rows = 10
+	forced_num_rows = 8
 }
 
 layout:add_widget_at(calendar, 2, 3, 3, 3)
+layout:add_widget_at(layouts, 2, 1, 2, 2)
+layout:add_widget_at(powerbuttons, 1, 4, 1, 2)
 
 local function init(s)
 	s.center = wibox {

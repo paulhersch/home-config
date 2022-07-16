@@ -22,6 +22,7 @@ return require('packer').startup(function(use)
 
     --colorschemes
     use 'sainnhe/everforest'
+    use 'sainnhe/sonokai'
     use 'decaycs/decay.nvim'
     use 'cocopon/iceberg.vim'
     use 'ozkanonur/nimda.vim'
