@@ -34,7 +34,7 @@ batterywidget:connect_signal("upower::update", function (_, device)
 			and device.percentage .. "%, noch " .. uPower.to_clock(device.time_to_empty)
 			or  device.percentage .. "%, noch " .. uPower.to_clock(device.time_to_full)
 		local icon = "battery_full.svg"
-		if device.state == 2 then
+        if device.state == 2 then
 			if	device.percentage >= 93
 				then icon = "battery_full.svg"
 			elseif	device.percentage < 93 and device.percentage >= 80
@@ -49,15 +49,15 @@ batterywidget:connect_signal("upower::update", function (_, device)
 				then icon = "battery2.svg"
 			elseif	device.percentage < 31 and device.percentage >= 18
 				then icon = "battery1.svg"
-			else	icon = "battery_alert.svg" end
+            else
+                icon = "battery_alert.svg"
+                naughty.notification({
+                    title	= "battery low",
+                    message	= "Your battery is at " .. device.percentage .. "%, you might want to grab a charger"
+                })
+            end
 		else
 			icon = "bolt.svg"
-		end
-		if device.percentage <= 20 then
-			naughty.notification({
-				title	= "battery low",
-				message	= "Your battery is at " .. device.percentage .. "%, you might want to grab a charger"
-			})
 		end
 		symbol:get_children_by_id('symbol')[1].image = gears.color.recolor_image(iconsdir .. icon, beautiful.fg_focus)
 	end

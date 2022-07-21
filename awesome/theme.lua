@@ -16,7 +16,7 @@ local homedir = os.getenv("HOME")
 
 local theme = {}
 
-theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/leaves.jpg"
+theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/fog-hill.jpg"
 
 theme.font          = "Inter Medium"
 theme.font_thin     = "Inter Regular"
@@ -46,6 +46,9 @@ theme.dark_magenta  = xres.color11
 theme.dark_cyan     = xres.color12
 
 theme.bg_normal     = xres.background
+theme.bg_focus_dark = dark_theme
+            and col_shift(theme.bg_normal, 10)
+            or col_shift (theme.bg_normal, -10)
 theme.bg_focus      = dark_theme
             and col_shift(theme.bg_normal, 20)
             or col_shift(theme.bg_normal, -20)
@@ -88,14 +91,12 @@ theme.menu_item_spacing = theme.wibar_height/5
 theme.menu_widget_base_unit  = dpi(50)
 
 -- You can use your own layout icons like this:
-theme.layout_fairh = themes_path.."zenburn/layouts/fairh.png"
-theme.layout_floating  = themes_path.."zenburn/layouts/floating.png"
-theme.layout_tile = themes_path.."zenburn/layouts/tile.png"
-theme.layout_tiletop = themes_path.."zenburn/layouts/tiletop.png"
-theme.layout_spiral  = themes_path.."zenburn/layouts/spiral.png"
-theme.layout_cornernw = themes_path.."zenburn/layouts/cornernw.png"
+theme.layout_floating  = themes_path.."default/layouts/floating.png"
+theme.layout_tile = themes_path.."default/layouts/tile.png"
+theme.layout_spiral  = themes_path.."default/layouts/spiral.png"
+theme.layout_cornernw = themes_path.."default/layouts/cornernw.png"
 
-theme.layoutlist_bg_selected = theme.bg_normal
+theme.layoutlist_bg_selected = theme.bg_focus
 theme.layoutlist_shape_selected = theme.theme_shape
 
 theme = beautiful.theme_assets.recolor_layout(theme, theme.fg_normal)

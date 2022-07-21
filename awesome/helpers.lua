@@ -98,6 +98,7 @@ local function pointer_on_focus(widget, wibox) --unstable-ish when the wibox has
             last_wibox.cursor = "left_ptr"
         end)
     end
+    return widget --so that i can use that function to return widgets
 end
 
 return {

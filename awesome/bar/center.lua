@@ -5,7 +5,8 @@ local beautiful = require "beautiful"
 local playerwidget = require "bar.widgets.playerctl"
 local calendar = require "bar.widgets.calendar"
 local layouts = require "bar.widgets.layout"
-local powerbuttons = require"bar.widgets.powerbuttons"
+local powerbuttons = require "bar.widgets.powerbuttons"
+local notifications = require "bar.widgets.not_center"
 
 local layout = wibox.widget {
     layout        = wibox.layout.grid,
@@ -20,8 +21,9 @@ local layout = wibox.widget {
 }
 
 layout:add_widget_at(calendar, 2, 3, 3, 3)
-layout:add_widget_at(layouts, 2, 1, 2, 2)
-layout:add_widget_at(powerbuttons, 1, 4, 1, 2)
+layout:add_widget_at(layouts, 2, 1, 1, 2)
+layout:add_widget_at(powerbuttons.widget, 1, 4, 1, 2)
+layout:add_widget_at(notifications, 5, 1, 5, 5)
 
 local function init(s)
 	s.center = wibox {
@@ -48,6 +50,7 @@ end
 
 local function hide(s)
 	s.center.visible = false
+    powerbuttons.hide()
 end
 local function show(s)
 	s.center.visible = true

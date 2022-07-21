@@ -1,42 +1,54 @@
 local awful = require "awful"
 local wibox = require "wibox"
 local beautiful = require "beautiful"
+local helpers   = require "helpers"
 local dpi = beautiful.xresources.apply_dpi
 
 local widget = awful.widget.layoutlist {
     base_layout = wibox.widget {
-        spacing         = dpi(5),
-        forced_num_cols = dpi(3),
+        forced_num_cols = 4,
         layout          = wibox.layout.grid.vertical,
+        expand = true,
+        homogeneus = true
     },
     widget_template = {
+        widget  = wibox.container.place,
+        halign = 'center',
+        valign = 'center',
         {
-            {
-                id            = 'icon_role',
-                widget        = wibox.widget.imagebox,
-            },
+            widget = wibox.container.margin,
             margins = dpi(5),
-            widget  = wibox.container.margin,
+            {
+                id              = 'background_role',
+                shape           = beautiful.theme_shape,
+                bg = beautiful.bg_focus,
+                widget          = wibox.container.background,
+                {
+                    widget = wibox.container.margin,
+                    margins = dpi(5),
+                    {
+                        id            = 'icon_role',
+                        widget        = wibox.widget.imagebox,
+                    }
+                }
+            }
         },
-        id              = 'background_role',
-        forced_width    = dpi(58),
-        forced_height   = dpi(58),
-        shape           = beautiful.theme_shape,
-        widget          = wibox.container.background,
         create_callback = function (self, _, _, _, _)
-            require("helpers").pointer_on_focus(self)
-        end
+            require("helpers").pointer_on_focus(self:get_children_by_id('background_role')[1])
+        end,
     }
 }
 
 return wibox.widget {
     widget = wibox.container.background,
     shape = beautiful.theme_shape,
-    bg = beautiful.bg_focus,
+    bg = beautiful.bg_focus_dark,
     {
         widget = wibox.container.place,
         valign = 'center',
         halign = 'center',
+        fill_vertical = true,
+        fill_horizontal = true,
         {
             widget = wibox.container.margin,
             margins = dpi(5),

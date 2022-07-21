@@ -3,7 +3,7 @@ local gears	= require ("gears")
 
 local configdir	= gears.filesystem.get_configuration_dir()
 local terminal = "kitty"
-local filemanager = "pcmanfm"
+local filemanager = "thunar"
 local modkey = "Mod1"
 
 require ("keybinds.clients").init(modkey)

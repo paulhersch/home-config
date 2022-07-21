@@ -14,7 +14,7 @@ local function create(base_box)
 local playerwidget = wibox.widget {
 	widget = wibox.container.background,
 	forced_width = dpi(300),
-	bg = beautiful.bg_focus,
+	bg = beautiful.bg_focus_dark,
 	fg = beautiful.fg_normal,
 	shape = beautiful.rounded_rect,
 	{
@@ -80,7 +80,7 @@ local playerwidget = wibox.widget {
 						id = 'bg',
 						widget = wibox.container.background,
 						shape = beautiful.theme_shape,
-						bg = beautiful.bg_focus,
+						bg = beautiful.bg_focus_dark,
 						{
 							widget = wibox.container.place,
 							halign = 'center',
@@ -97,7 +97,7 @@ local playerwidget = wibox.widget {
 						id = 'bg',
 						widget = wibox.container.background,
 						shape = beautiful.theme_shape,
-						bg = beautiful.bg_focus,
+						bg = beautiful.bg_focus_dark,
 						{
 							widget = wibox.container.place,
 							halign = 'center',
@@ -115,7 +115,7 @@ local playerwidget = wibox.widget {
 						id = 'bg',
 						widget = wibox.container.background,
 						shape = beautiful.theme_shape,
-						bg = beautiful.bg_focus,
+						bg = beautiful.bg_focus_dark,
 						{
 							widget = wibox.container.place,
 							halign = 'center',
@@ -152,11 +152,11 @@ end)
 for _,w in ipairs(playerwidget:get_children_by_id('bg')) do
 	require("helpers").pointer_on_focus(w, base_box)
 	w:connect_signal("mouse::enter", function (self)
-		self.bg = beautiful.bg_normal
+		self.bg = beautiful.bg_focus
     --	base_box.cursor = "hand1"
 	end)
 	w:connect_signal("mouse::leave", function (self)
-		self.bg = beautiful.bg_focus
+		self.bg = beautiful.bg_focus_dark
 	--	base_box.cursor = default_cursor
 	end)
 end

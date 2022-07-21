@@ -21,4 +21,4 @@ map("n", "gd", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>",
 map("n", "gi", "<cmd>lua require('goto-preview').glsp_references(<CR>", {silent = true, noremap = true})
 map("n", "gt", "<cmd>lua require('telescope.builtin').lsp_references()<CR>", {silent = true, noremap = true})
 -- telescope >>>>>>>>>>> nvim builtin search
-map("n", "/", "<cmd>lua require('telescope.builtin').live_grep()<CR>", {silent = true, noremap = true})
+map("n", "gf", "<cmd>lua require('telescope.builtin').live_grep()<CR>", {silent = true, noremap = true})

@@ -13,13 +13,6 @@ local battery   = require "bar.widgets.battery"
 local function init (s)
 	center.init(s)
 --	local menu_box = s == screen.primary and menu.init() or nil
-	local layoutbox = awful.widget.layoutbox {
-		screen = s,
-		buttons = {
-                       	awful.button({ }, 4, function () awful.layout.inc( 1) end),
-                       	awful.button({ }, 5, function () awful.layout.inc(-1) end)
-		}
-	}
 	local taglist = awful.widget.taglist {
 		screen		= s,
 		filter		= awful.widget.taglist.filter.all,
@@ -109,9 +102,8 @@ local function init (s)
 							font = beautiful.font,
 							format = '%H:%M',
 						},
-						layoutbox,
 						layout = wibox.layout.fixed.horizontal,
-						spacing = beautiful.useless_gap*2,
+						spacing = beautiful.useless_gap,
 					},
 					widget = wibox.container.margin,
 					margins = beautiful.useless_gap,

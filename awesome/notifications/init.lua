@@ -35,16 +35,14 @@ naughty.config.defaults.timeout = 3
 naughty.config.defaults.title = "System Notification"
 naughty.config.defaults.margin = dpi(16)
 naughty.config.defaults.border_width = 0
-naughty.config.defaults.position = "top_right"
-naughty.config.defaults.shape = function(cr, w, h)
-   gears.shape.rounded_rect(cr, w, h, dpi(6))
-end
+naughty.config.defaults.position = "bottom_right"
+naughty.config.defaults.shape = beautiful.theme_shape
 
 naughty.config.padding = dpi(7)
 naughty.config.spacing = dpi(7)
 naughty.config.icon_dirs = {
-   "/usr/share/icons/Tela-dark",
-   "/usr/share/pixmaps/"
+   "/run/current-system/sw/share/icons/Papirus-Dark",
+   "/run/current-system/sw/share/icons/hicolor/"
 }
 naughty.config.icon_formats = {"png", "svg"}
 
@@ -53,6 +51,7 @@ naughty.config.presets.low.timeout = 3
 naughty.config.presets.critical.timeout = 0
 
 naughty.config.presets.normal = {
+    shape = beautiful.theme_shape,
    font = beautiful.title_font,
    fg = beautiful.fg_normal,
    bg = beautiful.bg_normal,
