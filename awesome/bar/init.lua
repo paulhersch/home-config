@@ -1,5 +1,5 @@
 local bar	= require "bar.bar"
---local dock	= require "bar.dock"
+local dock	= require "bar.dock"
 --local sidebar   = require "bar.sidebar"
 
 local gears	= require "gears"
@@ -10,18 +10,24 @@ local awful	= require "awful"
 screen.connect_signal("request::desktop_decoration", function(s)
 	bar.init(s)
 --	sidebar.init(s)
---[[	dock.init({
+	dock.init({
 		screen	= s,
 		height	= dpi(60),
-		shape	= gears.shape.rounded_rect,
+		shape	= gears.theme_shape,
 		pinned_apps = {
 			{
 				start_cmd	= "librewolf -P YouTube --class youtube youtube.com",
 				class		= "youtube",
 				icon		= os.getenv("HOME") .. "/.local/share/applications/youtube.png"
 			}
-		}
-	})]]
+		},
+        colors = {
+            status = {
+                focus = beautiful.blue,
+                normal = beautiful.fg_normal
+            }
+        }
+	})
 end)
 
 

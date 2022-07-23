@@ -7,11 +7,13 @@ local dpi	= beautiful.xresources.apply_dpi
 
 --local menu	= require "bar.menu"
 local center 	= require "bar.center"
+local notifcenter = require "bar.notifcenter"
 local helpers	= require "helpers"
 local battery   = require "bar.widgets.battery"
 
 local function init (s)
 	center.init(s)
+    notifcenter.init(s)
 --	local menu_box = s == screen.primary and menu.init() or nil
 	local taglist = awful.widget.taglist {
 		screen		= s,
@@ -76,14 +78,17 @@ local function init (s)
 				taglist,
 			},
 			{
-				widget = wibox.container.place,
-				halign = 'center',
-				fill_horizontal = false,
-				{
-					id = 'center_trigger',
-					widget = wibox.widget.textbox,
-					text = "menu"
-				}
+                widget = wibox.container.place,
+                halign = 'center',
+                fill_horizontal = false,
+                {
+                    widget = wibox.widget.textclock,
+                    font = beautiful.font,
+                    format = '%H:%M',
+                    id = 'center_trigger',
+                    --widget = wibox.widget.textbox,
+                    --text = "menu"
+                }
 			},
 			{
 				widget = wibox.container.place,
@@ -97,11 +102,12 @@ local function init (s)
 							battery,
 						},
 						s.systray,
-						{
-							widget = wibox.widget.textclock,
-							font = beautiful.font,
-							format = '%H:%M',
-						},
+                        {
+                            widget = wibox.widget.imagebox,
+                            resize = true,
+                            image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "/assets/materialicons/comment.svg", beautiful.fg_normal),
+                            id = 'notifcenter_trigger'
+                        },
 						layout = wibox.layout.fixed.horizontal,
 						spacing = beautiful.useless_gap,
 					},
@@ -115,18 +121,30 @@ local function init (s)
 		top = 2*beautiful.useless_gap + beautiful.wibar_height
 	})
 
-	local open = true
+	local center_open = true
 	s.bar:get_children_by_id('center_trigger')[1]:connect_signal("button::press", function(_, _, _, button)
 		if button == 1 then
-			if open then
+			if center_open then
 				center.hide(s)
 			else
 				center.show(s)
 			end
-			open = not open
+			center_open = not center_open
 		end
 	end)
 	helpers.pointer_on_focus(s.bar:get_children_by_id('center_trigger')[1], s.bar)
+	local notifcenter_open = true
+	s.bar:get_children_by_id('notifcenter_trigger')[1]:connect_signal("button::press", function(_, _, _, button)
+		if button == 1 then
+			if notifcenter_open then
+				notifcenter.hide(s)
+			else
+				notifcenter.show(s)
+			end
+			notifcenter_open = not notifcenter_open
+		end
+	end)
+	helpers.pointer_on_focus(s.bar:get_children_by_id('notifcenter_trigger')[1], s.bar)
 end
 
 local function hide(s)

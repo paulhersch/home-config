@@ -110,7 +110,7 @@ local function init(args)
 			}
 	}
 	-- }}}
-	local sh_r, sh_g, sh_b,_ = chel.col_diff(beautiful.bg_focus, beautiful.fg_normal)
+	local sh_r, sh_g, sh_b,_ = chel.col_diff(colors.status.normal, colors.status.focus)
 	local n_sh_r, n_sh_g, n_sh_b = chel.col_diff(colors.bg.normal, colors.bg.hover)
 	-- tasklist creation {{{
 	local tasklist = awful.widget.tasklist {
@@ -122,15 +122,17 @@ local function init(args)
 			end
 			return ret
 		end, --sorts clients in order of their tags
-		filter	= function(c)
-			for _,p in ipairs(pinneds) do
-				if p.class == c.class then return false end
-			end
-			return c.screen == s
-		end, --filter pinned apps
-		forced_height	= h,
-		layout	= {
-			layout = wibox.layout.fixed.horizontal
+        filter	= function(c)
+            if pinneds then
+                for _,p in ipairs(pinneds) do
+                    if p.class == c.class then return false end
+                end
+            end
+            return c.screen == s
+        end, --filter pinned apps
+        forced_height	= h,
+        layout	= {
+            layout = wibox.layout.fixed.horizontal
 		},
 		widget_template =
 		{
@@ -336,55 +338,57 @@ local function init(args)
 		end
 	end
 	--this tries to find out if a client is to be represented by a pinned app
-	client.connect_signal("request::manage", function(c)
-		local pin_index
-		for i,p in ipairs(pinneds) do
-			if p.class == c.class then pin_index = i break end
-		end
-		if pin_index ~= nil then --pin_index+1 because pinned_apps[0] is the layout
-			local self = pinned_apps[pin_index+1] --doing this so i can copy from widget template
+    client.connect_signal("request::manage", function(c)
+        if pinneds then
+            local pin_index
+            for i,p in ipairs(pinneds) do
+                if p.class == c.class then pin_index = i break end
+            end
+            if pin_index ~= nil then --pin_index+1 because pinned_apps[0] is the layout
+                local self = pinned_apps[pin_index+1] --doing this so i can copy from widget template
 
-			local status_w = rubato.timed {
-				intro		= 0.02,
-				outro		= 0.02,
-				duration	= 0.1,
-				rate		= 30,
-				pos		= self:get_children_by_id('status')[1].forced_width,
-				subscribed	= function(pos)
-					self:get_children_by_id('status')[1].forced_width = pos
-				end
-			}
-			local status_c = rubato.timed {
-				intro		= 0.04,
-				outro		= 0.04,
-				duration	= 0.2,
-				rate		= 30,
-				pos		= 0,
-				subscribed	= function(pos)
-					self:get_children_by_id('status')[1].bg	= chel.col_shift(beautiful.bg_focus, math.floor(pos*(255*sh_r)), math.floor((sh_g*255)*pos), math.floor((sh_b*255)*pos))
-				end
-			}
-			self.client = c
-			status_w.target = h/3 --because its already there
-			c:connect_signal("focus", function()
-				status_c.target = 1
-				status_w.target = h/2
-			end)
-			c:connect_signal("unfocus", function()
-				status_c.target = 0
-				status_w.target = h/3
-			end)
-			c:connect_signal("property::minimized", function()
-				status_c.target = 0
-				status_w.target = h/10
-			end)
-			c:connect_signal("request::unmanage", function()
-				self.client = nil
-				status_w.target = 0
-				self:get_children_by_id('status')[1].bg = beautiful.bg_normal
-			end)
-		end
-	end)
+                local status_w = rubato.timed {
+                    intro		= 0.02,
+                    outro		= 0.02,
+                    duration	= 0.1,
+                    rate		= 30,
+                    pos		= self:get_children_by_id('status')[1].forced_width,
+                    subscribed	= function(pos)
+                        self:get_children_by_id('status')[1].forced_width = pos
+                    end
+                }
+                local status_c = rubato.timed {
+                    intro		= 0.04,
+                    outro		= 0.04,
+                    duration	= 0.2,
+                    rate		= 30,
+                    pos		= 0,
+                    subscribed	= function(pos)
+                        self:get_children_by_id('status')[1].bg	= chel.col_shift(colors.status.normal, math.floor(pos*(255*sh_r)), math.floor((sh_g*255)*pos), math.floor((sh_b*255)*pos))
+                    end
+                }
+                self.client = c
+                status_w.target = h/3 --because its already there
+                c:connect_signal("focus", function()
+                    status_c.target = 1
+                    status_w.target = h/2
+                end)
+                c:connect_signal("unfocus", function()
+                    status_c.target = 0
+                    status_w.target = h/3
+                end)
+                c:connect_signal("property::minimized", function()
+                    status_c.target = 0
+                    status_w.target = h/10
+                end)
+                c:connect_signal("request::unmanage", function()
+                    self.client = nil
+                    status_w.target = 0
+                    self:get_children_by_id('status')[1].bg = beautiful.bg_normal
+                end)
+            end
+        end
+    end)
 	-- }}}
 	local dock_box	= awful.popup {
 		ontop	= true,

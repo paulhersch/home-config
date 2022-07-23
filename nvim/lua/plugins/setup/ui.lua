@@ -62,10 +62,24 @@ require("nvim-tree").setup {
 }
 
 require("gitsigns").setup()
+
+local function short_cwd()
+    return vim.fn.fnamemodify(vim.fn.getcwd(), ':~')
+end
+
+local nvimtree_extension = {
+    filetypes = { 'NvimTree' },
+    sections = {
+        lualine_a = { short_cwd }
+    },
+    inactive_sections = {
+        lualine_b = { short_cwd }
+    }
+}
 require("lualine").setup {
     options = {
         icons_enabled = true,
-        theme = 'auto',
+        theme = 'everblush',
         component_separators = { left = '', right = ''},
         section_separators = { left = '', right = ''},
         disabled_filetypes = {},
@@ -89,5 +103,6 @@ require("lualine").setup {
         lualine_z = {}
     },
     tabline = { },
-    extensions = {}
+    extensions = { nvimtree_extension },
+    disabled_filetypes = { 'packer' }
 }
