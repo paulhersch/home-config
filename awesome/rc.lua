@@ -22,7 +22,6 @@ end)
 beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
 
 require ("ui")
-require ("notifications")
 
 tag.connect_signal("request::default_layouts", function()
     awful.layout.append_default_layouts({

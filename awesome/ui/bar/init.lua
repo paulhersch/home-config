@@ -25,6 +25,11 @@ screen.connect_signal("request::desktop_decoration", function(s)
             status = {
                 focus = beautiful.blue,
                 normal = beautiful.fg_normal
+            },
+            bg = {
+                normal = beautiful.bg_normal,
+                focus = beautiful.bg_focus,
+                hover = beautiful.bg_focus_dark,
             }
         }
 	})
