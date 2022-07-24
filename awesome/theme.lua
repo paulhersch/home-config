@@ -75,6 +75,14 @@ theme.border_color_marked = theme.bg_normal
 theme.tooltip_bg        = theme.bg_normal
 theme.tooltip_fg        = theme.fg_normal
 
+theme.layoutlist_bg_selected = theme.bg_focus
+theme.layoutlist_shape_selected = theme.theme_shape
+
+theme.menubar_bg_normal = theme.bg_normal
+theme.menubar_bg_focus = theme.bg_focus
+theme.menubar_fg_nromal = theme.fg_normal
+theme.menubar_fg_focus = theme.fg_focus
+
 theme.useless_gap = dpi(5)
 
 theme.rounded_rect = function(cr,w,h)
@@ -95,9 +103,6 @@ theme.layout_floating  = themes_path.."default/layouts/floating.png"
 theme.layout_tile = themes_path.."default/layouts/tile.png"
 theme.layout_spiral  = themes_path.."default/layouts/spiral.png"
 theme.layout_cornernw = themes_path.."default/layouts/cornernw.png"
-
-theme.layoutlist_bg_selected = theme.bg_focus
-theme.layoutlist_shape_selected = theme.theme_shape
 
 theme = beautiful.theme_assets.recolor_layout(theme, theme.fg_normal)
 -- Generate Awesome icon:

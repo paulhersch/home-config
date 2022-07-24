@@ -2,7 +2,7 @@ local wibox = require "wibox"
 local beautiful = require "beautiful"
 local dpi = beautiful.xresources.apply_dpi
 
-local widget = require "bar.widgets.not_center"
+local widget = require "ui.bar.widgets.not_center"
 
 local function init(s)
     local cent_width = dpi(400)

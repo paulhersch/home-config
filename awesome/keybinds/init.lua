@@ -6,6 +6,8 @@ local terminal = "kitty"
 local filemanager = "thunar"
 local modkey = "Mod1"
 
+local launcher = require ("ui.launcher")
+
 require ("keybinds.clients").init(modkey)
 -- General Awesome keys
 awful.keyboard.append_global_keybindings({
@@ -13,8 +15,11 @@ awful.keyboard.append_global_keybindings({
 		{description = "reload awesome", group = "awesome"}),
 	awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
 		{description = "open a terminal", group = "launcher"}),
-	awful.key({ modkey }, "d", function() awful.spawn("rofi -show combi -combi-modi drun,run") end,
+    awful.key({ modkey }, "d", function() launcher.open() end,
 		{description = "rofi", group = "launcher"}),
+
+	--awful.key({ modkey }, "d", function() awful.spawn("rofi -show combi -combi-modi drun,run") end,
+	--	{description = "rofi", group = "launcher"}),
 })
 
 -- Focus related keybindings

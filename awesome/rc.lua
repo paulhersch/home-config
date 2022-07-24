@@ -20,7 +20,8 @@ naughty.connect_signal("request::display_error", function(message, startup)
 end)
 
 beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
-require ("bar")
+
+require ("ui")
 require ("notifications")
 
 tag.connect_signal("request::default_layouts", function()

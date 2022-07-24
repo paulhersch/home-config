@@ -1,5 +1,5 @@
-local bar	= require "bar.bar"
-local dock	= require "bar.dock"
+local bar	= require "ui.bar.bar"
+local dock	= require "ui.bar.dock"
 --local sidebar   = require "bar.sidebar"
 
 local gears	= require "gears"

@@ -5,14 +5,14 @@ local beautiful = require "beautiful"
 local naughty	= require "naughty"
 local dpi	= beautiful.xresources.apply_dpi
 
---local menu	= require "bar.menu"
-local center 	= require "bar.center"
-local notifcenter = require "bar.notifcenter"
 local helpers	= require "helpers"
-local battery   = require "bar.widgets.battery"
+--local menu	= require "bar.menu"
+local battery   = require "ui.bar.widgets.battery"
+local menu 	= require "ui.bar.menu"
+local notifcenter = require "ui.bar.notifcenter"
 
 local function init (s)
-	center.init(s)
+	menu.init(s)
     notifcenter.init(s)
 --	local menu_box = s == screen.primary and menu.init() or nil
 	local taglist = awful.widget.taglist {
@@ -125,9 +125,9 @@ local function init (s)
 	s.bar:get_children_by_id('center_trigger')[1]:connect_signal("button::press", function(_, _, _, button)
 		if button == 1 then
 			if center_open then
-				center.hide(s)
+				menu.hide(s)
 			else
-				center.show(s)
+				menu.show(s)
 			end
 			center_open = not center_open
 		end
