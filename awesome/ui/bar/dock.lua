@@ -2,18 +2,39 @@ local wibox	= require "wibox"
 local beautiful	= require "beautiful"
 local awful	= require "awful"
 local gears	= require "gears"
-
-local chel	= require "helpers".color
-local rubato	= require "plugins.rubato"
-
 local dpi	= beautiful.xresources.apply_dpi
+
+--color helpers
+local function dec_hex(IN) --stole this from some lua forum
+    local B,K,OUT,I,D=16,"0123456789ABCDEF","",0,nil
+    while IN>0 do
+        I=I+1
+        IN,D=math.floor(IN/B),(IN%B)+1
+        OUT=string.sub(K,D,D)..OUT
+    end
+    return #OUT == 2 and OUT or "0" .. OUT
+end
+local chel	= {
+    col_diff = function(f, s)
+	    local fr, fg, fb, fo = gears.color.parse_color(f)
+	    local sr, sg, sb, so = gears.color.parse_color(s)
+	    return sr-fr,sg-fg,sb-fb,so-fo
+    end,
+    col_shift = function(c,sr,sg,sb)
+	    local r,g,b,o = gears.color.parse_color(c)
+	        return "#" .. dec_hex(r*255+sr)
+		        .. dec_hex(g*255+sg)
+		        .. dec_hex(b*255+sb)
+		        .. dec_hex(o*255)
+    end
+}
 
 local function init(args)
 --argparse (tables are difficult wow) {{{
-	local s		= args.screen or screen.primary
-	local h		= args.height or dpi(50)
-	local o		= args.offset or 5
-	local shapes	= args.shapes and {
+	local screen    = args.screen or screen.primary
+	local height    = args.height or dpi(50)
+	local offset    = args.offset or dpi(5)
+	local shapes    = args.shapes and {
 			dock	= args.shapes.dock or gears.shape.rectangle,
 			status	= args.shapes.status or gears.shape.rounded_rect,
 			bg	= args.shapes.bg or gears.shape.rounded_rect,
@@ -24,115 +45,153 @@ local function init(args)
 	}
 	local pinneds	= args.pinned_apps or nil
 	local colors	= args.colors and {
+            dock = args.colors.dock and {
+                bg = args.colors.dock or beautiful.bg_normal
+            } or {
+                bg = beautiful.bg_normal,
+            },
 			bg = args.colors.bg and {
 				normal	= args.colors.bg.normal or beautiful.bg_normal,
-				focus	= args.colors.bg.focus or beautiful.bg_normal,
+				focus	= args.colors.bg.focus or beautiful.bg_focus,
 				hover	= args.colors.bg.hover or beautiful.bg_focus,
-				minimized=args.colors.bg.minimized or beautiful.bg_normal,
 			} or {
 				normal	= beautiful.bg_normal,
-				focus	= beautiful.bg_normal,
+				focus	= beautiful.bg_focus,
 				hover	= beautiful.bg_focus,
-				minimized=beautiful.bg_normal,
 			},
 			status = args.colors.status and {
 				normal	= args.colors.status.normal or beautiful.bg_focus,
 				focus	= args.colors.status.focus or beautiful.fg_normal,
 				hover	= args.colors.status.hover or beautiful.bg_focus,
-				minimized=args.colors.status.minimized or beautiful.bg_focus,
 			} or {
 				normal	= beautiful.bg_focus,
 				focus	= beautiful.fg_normal,
 				hover	= beautiful.bg_focus,
-				minimized=beautiful.bg_focus,
 			}
 		} or {
 		status = {
 			normal	= beautiful.bg_focus,
 			focus	= beautiful.fg_normal,
 			hover	= beautiful.bg_focus,
-			minimized=beautiful.bg_focus,
 		},
 		bg = {
 			normal	= beautiful.bg_normal,
-			focus	= beautiful.bg_normal,
+			focus	= beautiful.bg_focus,
 			hover	= beautiful.bg_focus,
-			minimized=beautiful.bg_normal,
-		}
+		},
+        dock = {
+            bg = beautiful.bg_normal
+        }
 	}
 	local sizings	= args.sizings and {
 			margins	= args.sizings.margins and {
-				outer	= args.sizings.margins.outer or h/10,
+				outer	= args.sizings.margins.outer or height/10,
 				status	= args.sizings.margins.status or 0,
-				icon	= args.sizings.margins.icon or h/10
+				icon	= args.sizings.margins.icon or height/10
 			} or {
-				outer	= h/10,
+				outer	= height/10,
 				status	= 0,
-				icon	= h/10
+				icon	= height/10
 			},
 			widths	= args.sizings.widths and {
-				widget = args.sizings.widths.widget or h,
+				widget = args.sizings.widths.widget or height,
 				status = args.sizings.widths.status and {
-					focused = args.sizings.status_width.focused or h/2,
-					normal	= args.sizings.status_width.normal or h/3,
-					minimized=args.sizings.status_width.minimized or h/10
+					focused = args.sizings.status_width.focused or height/2,
+					normal	= args.sizings.status_width.normal or height/3,
+					minimized=args.sizings.status_width.minimized or height/10
 				} or {
-					focused = h/2,
-					normal	= h/3,
-					minimized=h/10
+					focused = height/2,
+					normal	= height/3,
+					minimized=height/10
 				},
-			},
-			heights		= args.sizings.heights and {
-				icon = args.sizings.heights.icon or nil,
-				status = args.sizings.heights.status or h/10,
 			} or {
-				icon = nil,
-				status = h/10
+                widget = height,
+				status = {
+					focused = height/2,
+					normal	= height/3,
+					minimized=height/10
+				},
+            },
+			heights		= args.sizings.heights and {
+				status = args.sizings.heights.status or height/10,
+			} or {
+				status = height/10
 			},
 
 		} or {
 			margins		= {
-				outer	= h/10,
+				outer	= height/10,
 				status	= 0,
-				icon	= h/10
+				icon	= height/10
 			},
 			widths	= {
-				widget = h,
+				widget = height,
 				status = {
-					focused = h/2,
-					normal	= h/3,
-					minimized=h/10
+					focused = height/2,
+					normal	= height/3,
+					minimized=height/10
 				},
 			},
 			heights		= {
 				icon = nil,
-				status = h/10,
+				status = height/10,
 			}
 	}
-    local anim_enabled = args.animations
+    local animations = args.animations and {
+        transitions = args.animations.transitions and
+            {
+                enabled = args.animations.transitions.enabled,
+                rate = args.animations.transitions.fps or 30
+            } or {
+                enabled = false
+        },
+        autohide = args.animations.autohide and
+            {
+                enabled = args.animations.autohide.enabled,
+                rate = args.animations.autohide.fps or 60
+            } or {
+                enabled = false
+        },
+        rubato = args.animations.rubato
+    }
+    or {
+        transitions = {
+            enabled = false
+        },
+        autohide = {
+            enabled = false
+        }
+    }
 	-- }}}
-	local sh_r, sh_g, sh_b,_ = chel.col_diff(colors.status.normal, colors.status.focus)
-	local n_sh_r, n_sh_g, n_sh_b = chel.col_diff(colors.bg.normal, colors.bg.hover)
-    local f_sh_r, f_sh_g, f_sh_b = chel.col_diff(colors.bg.normal, colors.bg.focus) --focus transition
+    --declaration for usage
+    local snf_sh_r, snf_sh_g, snf_sh_b
+    local bnh_sh_r, bnh_sh_g, bnh_sh_b
+    local bnf_sh_r, bnf_sh_g, bnf_sh_b
 
+    if animations.transitions.enabled then
+	    snf_sh_r, snf_sh_g, snf_sh_b = chel.col_diff(colors.status.normal, colors.status.focus) --status color transition normal -> focus
+	    bnh_sh_r, bnh_sh_g, bnh_sh_b = chel.col_diff(colors.bg.normal, colors.bg.hover) --background transitions normal -> hover
+        bnf_sh_r, bnf_sh_g, bnf_sh_b = chel.col_diff(colors.bg.normal, colors.bg.focus) --background transition normal -> focus
+    end
     local function add_entry_anims(self, c)
-        if anim_enabled then
-            self.on_hover = rubato.timed {
+        if animations.transitions.enabled then
+            self.on_hover = animations.rubato.timed {
                 intro		= 0.02,
                 outro		= 0.02,
                 duration	= 0.2,
                 rate		= 30,
                 pos		= 0,
                 subscribed	= function(pos)
+                    local start_col =  c.active and colors.bg.focus or (c.minimized and colors.bg.minimized or colors.bg.normal)
                     self:get_children_by_id('bg')[1].bg = chel.col_shift( --dont highlight if client is focused
-                        c.active and colors.bg.focus or colors.bg.normal,
-                        c.active and 0 or pos*(255*n_sh_r),
-                        c.active and 0 or pos*(255*n_sh_g),
-                        c.active and 0 or pos*(255*n_sh_b)
+                        start_col,
+                        c.active and 0 or pos*(255*bnh_sh_r),
+                        c.active and 0 or pos*(255*bnh_sh_g),
+                        c.active and 0 or pos*(255*bnh_sh_b)
                     )
                 end
             }
-            self.focus_bg = rubato.timed {
+            self.focus_bg = animations.rubato.timed {
                 intro		= 0.02,
                 outro		= 0.02,
                 duration	= 0.2,
@@ -141,13 +200,13 @@ local function init(args)
                 subscribed	= function(pos)
                     self:get_children_by_id('bg')[1].bg = chel.col_shift(
                         colors.bg.normal,
-                        pos*(255*f_sh_r),
-                        pos*(255*f_sh_g),
-                        pos*(255*f_sh_b)
+                        pos*(255*bnf_sh_r),
+                        pos*(255*bnf_sh_g),
+                        pos*(255*bnf_sh_b)
                     )
                 end
             }
-            self.status_w = rubato.timed {
+            self.status_w = animations.rubato.timed {
                 intro		= 0.02,
                 outro		= 0.02,
                 duration	= 0.1,
@@ -157,7 +216,7 @@ local function init(args)
                     self:get_children_by_id('status')[1].forced_width = pos
                 end
             }
-            self.status_c = rubato.timed {
+            self.status_c = animations.rubato.timed {
                 intro		= 0.04,
                 outro		= 0.04,
                 duration	= 0.2,
@@ -166,22 +225,22 @@ local function init(args)
                 subscribed	= function(pos)
                     self:get_children_by_id('status')[1].bg	= chel.col_shift(
                         colors.status.normal,
-                        math.floor((sh_r*255)*pos),
-                        math.floor((sh_g*255)*pos),
-                        math.floor((sh_b*255)*pos)
+                        math.floor((snf_sh_r*255)*pos),
+                        math.floor((snf_sh_g*255)*pos),
+                        math.floor((snf_sh_b*255)*pos)
                     )
                 end
             }
         end
         local function set_on_hover (_, _)
-            if anim_enabled then
+            if animations.transitions.enabled then
                 self.on_hover.target = 1
             else
                 self:get_children_by_id('bg')[1].bg = c.active and colors.bg.focus or colors.bg.hover
             end
         end
         local function unset_on_hover (_, _)
-            if anim_enabled then
+            if animations.transitions.enabled then
                 self.on_hover.target = 0
             else
                 self:get_children_by_id('bg')[1].bg = c.active and colors.bg.focus or colors.bg.normal
@@ -198,7 +257,7 @@ local function init(args)
         end)
 
         c:connect_signal("focus", function()
-            if anim_enabled then
+            if animations.transitions.enabled then
                 self.focus_bg.target = 1
                 self.status_c.target = 1
                 self.status_w.target = sizings.widths.status.focused
@@ -210,7 +269,7 @@ local function init(args)
         end)
 
         c:connect_signal("unfocus", function()
-            if anim_enabled then
+            if animations.transitions.enabled then
                 self.focus_bg.target = 0
                 self.status_c.target = 0
                 self.status_w.target = sizings.widths.status.normal
@@ -222,7 +281,7 @@ local function init(args)
         end)
 
         c:connect_signal("property::minimized", function()
-            if anim_enabled then
+            if animations.transitions.enabled then
                 self.status_c.target = c.minimized and 0 or 1
                 self.status_w.target = c.minimized and sizings.widths.status.minimized or self.status_w.target--signal also gets emitted when minimized turns false
             else
@@ -232,7 +291,7 @@ local function init(args)
         end)
 
         --initial update
-        if anim_enabled then
+        if animations.transitions.enabled then
             if c.active then
                 self.status_w.target	= sizings.widths.status.focused
                 self.status_c.target = 1
@@ -249,9 +308,11 @@ local function init(args)
                 self:get_children_by_id('status')[1].bg	= colors.status.focus
                 self:get_children_by_id('status')[1].forced_width = sizings.widths.status.focused
             elseif c.minimized then
-                self:get_children_by_id('status')[1].bg	= colors.status.minimized
+                self:get_children_by_id('bg')[1].bg = colors.bg.minimized
+                self:get_children_by_id('status')[1].bg	= colors.status.normal
                 self:get_children_by_id('status')[1].forced_width = sizings.widths.status.minimized
             else
+                self:get_children_by_id('bg')[1].bg = colors.bg.normal
                 self:get_children_by_id('status')[1].bg	= colors.status.normal
                 self:get_children_by_id('status')[1].forced_width = sizings.widths.status.normal
             end
@@ -275,12 +336,16 @@ local function init(args)
                     },
                     {
                         {
-                            wibox.widget.base.make_widget(),
-                            forced_height	= sizings.heights.status,
-                            forced_width	= sizings.widths.status.normal,
-                            id		= 'status',
-                            shape		= shapes.status,
-                            widget		= wibox.container.background,
+                            {
+                                wibox.widget.base.make_widget(),
+                                forced_height	= sizings.heights.status,
+                                forced_width	= sizings.widths.status.normal,
+                                id		= 'status',
+                                shape		= shapes.status,
+                                widget		= wibox.container.background,
+                            },
+                            widget = wibox.container.margin,
+                            margins = sizings.margins.status,
                         },
                         widget	= wibox.container.place, --so the bg widget doesnt get stretched
                         halign	= 'center',
@@ -294,18 +359,18 @@ local function init(args)
             },
             id = 'main',
             widget	= wibox.container.margin,
-            margins	= h/10,
-            forced_width = h,
-            forced_height = h,
+            margins	= sizings.margins.outer,
+            forced_width = sizings.widths.widget,
+            forced_height = height,
             create_callback = create_callback
         }
     end
 
     local tasklist = awful.widget.tasklist {
-        screen	= s,
+        screen	= screen,
         source	= function()
             local ret = {}
-            for _,t in ipairs(s.tags) do
+            for _,t in ipairs(screen.tags) do
                 gears.table.merge(ret, t:clients())
             end
             return ret
@@ -316,9 +381,9 @@ local function init(args)
                     if p.class == c.class then return false end
                 end
             end
-            return c.screen == s
+            return c.screen == screen
         end, --filter pinned apps
-        forced_height	= h,
+        forced_height	= height,
         layout	= {
             layout = wibox.layout.fixed.horizontal
         },
@@ -357,14 +422,14 @@ local function init(args)
                     },
                     nil
                 ))
-                self.hover = rubato.timed { --this exists for when there is no client
+                self.hover = animations.rubato.timed { --this exists for when there is no client
                     intro		= 0.02,
                     outro		= 0.02,
                     duration	= 0.2,
                     rate		= 30,
                     pos		= 0,
                     subscribed	= function(pos)
-                        self:get_children_by_id('bg')[1].bg = chel.col_shift(colors.bg.normal, pos*(255*n_sh_r), pos*(255*n_sh_g), pos*(255*n_sh_b))
+                        self:get_children_by_id('bg')[1].bg = chel.col_shift(colors.bg.normal, pos*(255*bnh_sh_r), pos*(255*bnh_sh_g), pos*(255*bnh_sh_b))
                     end
                 }
                 self:connect_signal("mouse::enter", function() --check if client exists first, else the hover from the client thing will be used
@@ -411,7 +476,7 @@ local function init(args)
 
                 c:connect_signal("request::unmanage", function()
                     self.client = nil
-                    if anim_enabled then
+                    if animations.transitions.enabled then
                         self.status_w.target = 0
                         --cleanup from add_entry_anims
                         self.status_w = nil
@@ -429,10 +494,11 @@ local function init(args)
         -- }}}
     local dock_box	= awful.popup {
         ontop	= true,
-        screen	= s,
-        x	= s.geometry.x + s.geometry.width/2,
-        y	= s.geometry.y + s.geometry.height - (h + o),
+        screen	= screen,
+        x	= screen.geometry.x + screen.geometry.width/2,
+        y	= screen.geometry.y + screen.geometry.height - (height + offset),
         shape	= shapes.dock,
+        bg = colors.dock.bg,
         widget	= {
             {
                 {
@@ -454,37 +520,38 @@ local function init(args)
     }
 
     dock_box:connect_signal("property::width", function() --for centered placement, wanted to keep the offset
-        dock_box.x	= s.geometry.x + s.geometry.width/2 - dock_box.width/2
+        dock_box.x	= screen.geometry.x + screen.geometry.width/2 - dock_box.width/2
     end)
 
-    local autohideanim = rubato.timed {
-        intro	= 0.3,
-        outro	= 0.1,
-        duration= 0.4,
-        pos	= 0,
-        rate	= 60,
-        easing	= rubato.quadratic,
-        subscribed = function(pos)
-            dock_box.y = s.geometry.y + s.geometry.height - ((pos*h) + o)
-            dock_box.opacity = pos
-        end
-    }
-    local autohidetimer = gears.timer {
-        timeout	= 1,
-        single_shot = true,
-        callback = function() autohideanim.target = 0 end
-    }
-    dock_box:connect_signal("mouse::leave", function()
-        autohidetimer:again()
-    end)
-    dock_box:connect_signal("mouse::enter", function()
-        autohideanim.target = 1
-        autohidetimer:stop()
-    end)
-
-    return dock_box
+    if animations.autohide.enabled then
+        local autohideanim = animations.rubato.timed {
+            intro	= 0.3,
+            outro	= 0.1,
+            duration= 0.4,
+            pos	= 0,
+            rate	= 60,
+            easing	= animations.rubato.quadratic,
+            subscribed = function(pos)
+                dock_box.y = screen.geometry.y + screen.geometry.height - ((pos*height) + offset)
+                dock_box.opacity = pos
+            end
+        }
+        local autohidetimer = gears.timer {
+            timeout	= 1,
+            single_shot = true,
+            callback = function() autohideanim.target = 0 end
+        }
+        dock_box:connect_signal("mouse::leave", function()
+            autohidetimer:again()
+        end)
+        dock_box:connect_signal("mouse::enter", function()
+            autohideanim.target = 1
+            autohidetimer:stop()
+        end)
+    else
+        dock_box.y = screen.y + screen.geometry.height - height - offset
+    end
 end
-
 
 return {
     init	= init

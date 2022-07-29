@@ -7,6 +7,7 @@ local calendar = require "ui.bar.widgets.calendar"
 local layouts = require "ui.bar.widgets.layout"
 local powerbuttons = require "ui.bar.widgets.powerbuttons"
 --ocal notifications = require "bar.widgets.not_center"
+local grindtimer = require "ui.bar.widgets.grinder"
 
 local layout = wibox.widget {
     layout        = wibox.layout.grid,
@@ -23,6 +24,7 @@ local layout = wibox.widget {
 layout:add_widget_at(calendar, 2, 3, 3, 3)
 layout:add_widget_at(layouts, 2, 1, 1, 2)
 layout:add_widget_at(powerbuttons.widget, 1, 4, 1, 2)
+layout:add_widget_at(grindtimer,3,1,2,2)
 --layout:add_widget_at(notifications, 5, 1, 5, 5)
 
 local function init(s)

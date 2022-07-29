@@ -39,7 +39,7 @@ local function overloaded()
 --}}}
 
 local function dec_hex(IN)
-    local B,K,OUT,I,D=16,"0123456789ABCDEF","",0
+    local B,K,OUT,I,D=16,"0123456789ABCDEF","",0,nil
     while IN>0 do
         I=I+1
         IN,D=math.floor(IN/B),(IN%B)+1

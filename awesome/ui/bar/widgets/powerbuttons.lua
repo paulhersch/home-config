@@ -6,11 +6,8 @@ local dpi = beautiful.xresources.apply_dpi
 local gears = require "gears"
 
 local iconsdir = require("gears.filesystem").get_configuration_dir() .. "/assets/materialicons/"
-local lock_cmd ="i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text=\"enter password\""
+local lock_cmd ="i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'"
 
---[[local menu = awful.menu {
-    items = { { "poweroff", "", gears.color.recolor_image(iconsdir .. "poweroff.svg", beautiful.fg_normal) } }
-}]]
 local menu
 
 local function create_menu_button (text, symbol, symbol_bg, callback)
@@ -37,7 +34,6 @@ local function create_menu_button (text, symbol, symbol_bg, callback)
                             image = symbol
                         }
                     }
- --                   image = gears.color.recolor_image(symbol, beautiful.fg_normal)
                 },
                 {
                     widget = wibox.widget.textbox,
@@ -81,8 +77,18 @@ menu = awful.popup {
                 beautiful.red,
                 function ()
                     menu.visible = false
-                    awful.spawn("systemctl poweroff")
-                end),
+                    awful.spawn("poweroff")
+                end
+            ),
+            create_menu_button(
+                "reboot",
+                gears.color.recolor_image(iconsdir .. "restart.svg", beautiful.bg_normal),
+                beautiful.magenta,
+                function ()
+                    menu.visible = false
+                    awful.spawn("pkill awesome")
+                end
+            ),
             create_menu_button(
                 "lock",
                 gears.color.recolor_image(iconsdir .. "lock.svg", beautiful.bg_normal),
@@ -90,31 +96,35 @@ menu = awful.popup {
                 function ()
                     menu.visible = false
                     awful.spawn(lock_cmd)
-                end),
+                end
+            ),
             create_menu_button(
                 "suspend",
                 gears.color.recolor_image(iconsdir .. "suspend.svg", beautiful.bg_normal),
                 beautiful.blue,
                 function ()
-                    menu.visible = false,
-                    awful.spawn("systemctl suspend")
-                end),
+                    menu.visible = false
+                    awful.spawn.with_shell(lock_cmd .. " && systemctl suspend")
+                end
+            ),
             create_menu_button(
                 "hibernate",
                 gears.color.recolor_image(iconsdir .. "hibernate.svg", beautiful.bg_normal),
                 beautiful.green,
                 function ()
-                    menu.visible = false,
-                    awful.spawn("systemctl hibernate")
-                end),
+                    menu.visible = false
+                    awful.spawn.with_shell(lock_cmd " && systemctl hibernate")
+                end
+            ),
             create_menu_button(
                 "logout",
                 gears.color.recolor_image(iconsdir .. "logout.svg", beautiful.bg_normal),
                 beautiful.cyan,
                 function ()
-                    menu.visible = false,
-                    awful.spawn("pkill awesome")
-                end)
+                    menu.visible = false
+                    awful.spawn("reboot")
+                end
+            )
         }
     }
 }

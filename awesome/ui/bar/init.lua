@@ -13,7 +13,19 @@ screen.connect_signal("request::desktop_decoration", function(s)
 	dock.init({
 		screen	= s,
 		height	= dpi(60),
-		shape	= gears.theme_shape,
+		shapes	= {
+            dock = beautiful.theme_shape,
+            status = beautiful.theme_shape,
+            bg = beautiful.theme_shape
+        },
+        sizings = {
+            margins = {
+                status = {
+                    bottom = dpi(4)
+                },
+                outer = dpi(3)
+            }
+        },
 		pinned_apps = {
 			{
 				start_cmd	= "librewolf -P YouTube --class youtube youtube.com",
@@ -31,6 +43,15 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 focus = beautiful.bg_focus,
                 hover = beautiful.bg_focus_dark,
             }
+        },
+        animations = {
+            transitions = {
+                enabled = true
+            },
+            autohide = {
+                enabled = true
+            },
+            rubato = require "plugins.rubato"
         }
 	})
 end)

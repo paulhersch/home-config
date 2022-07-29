@@ -116,8 +116,8 @@ ruled.client.connect_signal("request::rules", function()
 		},
 		properties = {
 			floating= true,
-			width	= 650,
-			height	= 480
+			width	= dpi(650),
+			height	= dpi(480)
 		},
 	}
 end)
@@ -131,7 +131,7 @@ ruled.notification.connect_signal('request::rules', function()
         rule       = { },
         properties = {
             screen           = awful.screen.preferred,
-            implicit_timeout = 5,
+            implicit_timeout = 10,
         }
     }
 end)

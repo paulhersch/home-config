@@ -19,3 +19,6 @@
 [submodule "awesome/plugins/bling"]
 	path = awesome/plugins/bling
 	url = https://github.com/BlingCorp/bling
+[submodule "awesome/plugins/awesome-widgets"]
+	path = awesome/plugins/awesome-widgets
+	url = https://github.com/andOrlando/awesome-widgets/
