@@ -55,6 +55,10 @@ return require('packer').startup(function(use)
         requires = { {'nvim-lua/plenary.nvim'} }
     }
 
+    use { 'weilbith/nvim-code-action-menu',
+        cmd = 'CodeActionMenu',
+    }
+
     use 'voldikss/vim-floaterm'
 
     use { 'hrsh7th/nvim-cmp',
@@ -63,7 +67,8 @@ return require('packer').startup(function(use)
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-buffer',
             'saadparwaiz1/cmp_luasnip',
-            'L3MON4D3/LuaSnip'
+            'L3MON4D3/LuaSnip',
+            'f3fora/cmp-spell'
         }
     }
 
