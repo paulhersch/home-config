@@ -47,17 +47,17 @@ theme.dark_cyan     = xres.color12
 
 theme.bg_normal     = xres.background
 theme.bg_focus_dark = dark_theme
-            and col_shift(theme.bg_normal, 10)
-            or col_shift (theme.bg_normal, -10)
+            and col_shift(theme.bg_normal, 15)
+            or col_shift (theme.bg_normal, -15)
 theme.bg_focus      = dark_theme
-            and col_shift(theme.bg_normal, 20)
-            or col_shift(theme.bg_normal, -20)
+            and col_shift(theme.bg_normal, 30)
+            or col_shift(theme.bg_normal, -30)
 theme.bg_urgent     = xres.color1
 theme.bg_minimize   = theme.bg_normal
 
 theme.fg_normal     = xres.foreground
 theme.fg_focus      = dark_theme
-            and col_shift(theme.fg_normal,20)
+            and col_shift(theme.fg_normal, 20)
             or col_shift(theme.fg_normal, -20)
 theme.fg_urgent     = theme.fg_normal
 theme.fg_minimize   = theme.fg_normal

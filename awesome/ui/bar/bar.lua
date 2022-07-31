@@ -15,13 +15,19 @@ local function init (s)
 	menu.init(s)
     notifcenter.init(s)
 --	local menu_box = s == screen.primary and menu.init() or nil
-	local taglist = awful.widget.taglist {
+	s.taglist = awful.widget.taglist {
 		screen		= s,
 		filter		= awful.widget.taglist.filter.all,
-		layout 		= wibox.layout.flex.horizontal,
+		layout 		= {
+            layout = wibox.layout.flex.horizontal,
+            spacing = dpi(5)
+        },
 		widget_template = {
 			widget = wibox.container.margin,
-			margins = dpi(5),
+			margins = {
+                top = dpi(5),
+                bottom = dpi(5)
+            },
 			{
 				widget = wibox.container.background,
 				shape = function(cr,w,h)
@@ -33,7 +39,7 @@ local function init (s)
 					{
 							{
 							widget = wibox.widget.textbox,
-							font = beautiful.font,
+							font = beautiful.font_bold,
 							id = 'text_role'
 						},
 						widget = wibox.container.place,
@@ -61,21 +67,22 @@ local function init (s)
 
 	s.bar = wibox {
 		ontop = true,
-		x = s.geometry.x + beautiful.useless_gap,
-		y = s.geometry.y + beautiful.useless_gap,
+		visible = true,
+		x = s.geometry.x,-- + beautiful.useless_gap,
+		y = s.geometry.y,-- + beautiful.useless_gap,
 		height = beautiful.wibar_height,
-		width = s.geometry.width - 2*beautiful.useless_gap - 2*beautiful.border_width,
+		width = s.geometry.width,-- - 2*beautiful.useless_gap - 2*beautiful.border_width,
 		screen = s,
-		shape = beautiful.rounded_rect,
-		border_width = beautiful.border_width,
-		border_color = beautiful.bg_focus,
-		widget = wibox.widget {
+		shape = gears.shape.rectangle,-- beautiful.theme_shape,
+--		border_width = beautiful.border_width,
+--		border_color = beautiful.bg_focus,
+        widget = wibox.widget {
 			layout = wibox.layout.flex.horizontal,
 			{
 				widget = wibox.container.place,
 				halign = 'left',
 				fill_horizontal = false,
-				taglist,
+				s.taglist,
 			},
 			{
                 widget = wibox.container.place,
@@ -83,7 +90,7 @@ local function init (s)
                 fill_horizontal = false,
                 {
                     widget = wibox.widget.textclock,
-                    font = beautiful.font,
+                    font = beautiful.font_bold,
                     format = '%H:%M',
                     id = 'center_trigger',
                     --widget = wibox.widget.textbox,
@@ -118,30 +125,30 @@ local function init (s)
 		}
 	}
 	s.bar:struts ({
-		top = 2*beautiful.useless_gap + beautiful.wibar_height
+		top = beautiful.wibar_height-- + 2*beautiful.useless_gap
 	})
 
-	local center_open = true
+	s.center_open = true
 	s.bar:get_children_by_id('center_trigger')[1]:connect_signal("button::press", function(_, _, _, button)
 		if button == 1 then
-			if center_open then
+			if s.center_open then
 				menu.hide(s)
 			else
 				menu.show(s)
 			end
-			center_open = not center_open
+			s.center_open = not s.center_open
 		end
 	end)
 	helpers.pointer_on_focus(s.bar:get_children_by_id('center_trigger')[1], s.bar)
-	local notifcenter_open = true
+	s.notifcenter_open = true
 	s.bar:get_children_by_id('notifcenter_trigger')[1]:connect_signal("button::press", function(_, _, _, button)
 		if button == 1 then
-			if notifcenter_open then
+			if s.notifcenter_open then
 				notifcenter.hide(s)
 			else
 				notifcenter.show(s)
 			end
-			notifcenter_open = not notifcenter_open
+			s.notifcenter_open = not s.notifcenter_open
 		end
 	end)
 	helpers.pointer_on_focus(s.bar:get_children_by_id('notifcenter_trigger')[1], s.bar)
@@ -149,11 +156,11 @@ end
 
 local function hide(s)
 	s.bar.visible = false
-	if s.bar.menu_box then s.bar.menu_box:hide() end
+	menu.hide(s)
 end
 local function show(s)
-	if s.bar.menu_box then s.bar.menu_box:show() end
 	s.bar.visible = true
+    if s.center_open then menu.show(s) end
 end
 
 return {
