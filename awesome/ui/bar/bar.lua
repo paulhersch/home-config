@@ -8,8 +8,8 @@ local dpi	= beautiful.xresources.apply_dpi
 local helpers	= require "helpers"
 --local menu	= require "bar.menu"
 local battery   = require "ui.bar.widgets.battery"
-local menu 	= require "ui.bar.menu"
-local notifcenter = require "ui.bar.notifcenter"
+local menu 	= require "ui.menu"
+local notifcenter = require "ui.notifcenter"
 
 local function init (s)
 	menu.init(s)
@@ -21,7 +21,7 @@ local function init (s)
 		layout 		= wibox.layout.flex.horizontal,
 		widget_template = {
 			widget = wibox.container.margin,
-			margins = beautiful.useless_gap,
+			margins = dpi(5),
 			{
 				widget = wibox.container.background,
 				shape = function(cr,w,h)
@@ -38,7 +38,7 @@ local function init (s)
 						},
 						widget = wibox.container.place,
 						halign = 'center',
-						forced_width = beautiful.wibar_height - 2*beautiful.useless_gap,
+						forced_width = beautiful.wibar_height - dpi(10),
 					},
 				}
 			},
@@ -109,10 +109,10 @@ local function init (s)
                             id = 'notifcenter_trigger'
                         },
 						layout = wibox.layout.fixed.horizontal,
-						spacing = beautiful.useless_gap,
+						spacing = dpi(5),
 					},
 					widget = wibox.container.margin,
-					margins = beautiful.useless_gap,
+					margins = dpi(5),
 				}
 			},
 		}

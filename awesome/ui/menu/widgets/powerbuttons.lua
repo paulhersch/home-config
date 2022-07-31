@@ -86,7 +86,7 @@ menu = awful.popup {
                 beautiful.magenta,
                 function ()
                     menu.visible = false
-                    awful.spawn("pkill awesome")
+                    awful.spawn("reboot")
                 end
             ),
             create_menu_button(
@@ -122,7 +122,7 @@ menu = awful.popup {
                 beautiful.cyan,
                 function ()
                     menu.visible = false
-                    awful.spawn("reboot")
+                    awful.spawn("pkill awesome")
                 end
             )
         }

@@ -2,12 +2,12 @@ local wibox = require "wibox"
 local dpi = require "beautiful.xresources".apply_dpi
 local beautiful = require "beautiful"
 
-local playerwidget = require "ui.bar.widgets.playerctl"
-local calendar = require "ui.bar.widgets.calendar"
-local layouts = require "ui.bar.widgets.layout"
-local powerbuttons = require "ui.bar.widgets.powerbuttons"
+local playerwidget = require "ui.menu.widgets.playerctl"
+local calendar = require "ui.menu.widgets.calendar"
+local layouts = require "ui.menu.widgets.layout"
+local powerbuttons = require "ui.menu.widgets.powerbuttons"
 --ocal notifications = require "bar.widgets.not_center"
-local grindtimer = require "ui.bar.widgets.grinder"
+local grindtimer = require "ui.menu.widgets.grinder"
 
 local layout = wibox.widget {
     layout        = wibox.layout.grid,

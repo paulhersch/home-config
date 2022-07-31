@@ -9,6 +9,7 @@ local helpers = require "helpers"
 local iconsdir = gears.filesystem.get_configuration_dir() .. "assets/titlebarbuttons/"
 local mat_icons = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
+RUBATO_DIR = "plugins.rubato."
 local recycler = require "plugins.awesome-widgets.recycler"
 local rubato = require "plugins.rubato"
 
@@ -116,7 +117,10 @@ notifications = recycler(
         spacing = dpi(5),
         rubato_lib = rubato,
         pos_const = function ()
-            return rubato.timed { duration = 0.1, intro = 0.05, prop_intro = true, rate = 60 }
+            return rubato.timed { duration = 0.1, intro = 0.2, prop_intro = true, rate = 60, easing = rubato.quadratic }
+        end,
+        inout_const = function ()
+            return rubato.timed { duration = 0.1, intro = 0.04, rate = 60 }
         end
     }
 )

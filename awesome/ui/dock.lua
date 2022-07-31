@@ -46,7 +46,7 @@ local function init(args)
 	local pinneds	= args.pinned_apps or nil
 	local colors	= args.colors and {
             dock = args.colors.dock and {
-                bg = args.colors.dock or beautiful.bg_normal
+                bg = args.colors.dock.bg or beautiful.bg_normal
             } or {
                 bg = beautiful.bg_normal,
             },
@@ -536,17 +536,25 @@ local function init(args)
                 dock_box.opacity = pos
             end
         }
-        local autohidetimer = gears.timer {
-            timeout	= 1,
+        local hidetimer = gears.timer {
+            timeout	= 1.5,
             single_shot = true,
             callback = function() autohideanim.target = 0 end
         }
+        local revealtimer = gears.timer {
+            timeout = 0.5,
+            single_shot = true,
+            callback = function()
+                autohideanim.target = 1
+            end
+        }
         dock_box:connect_signal("mouse::leave", function()
-            autohidetimer:again()
+            hidetimer:again()
+            revealtimer:stop()
         end)
         dock_box:connect_signal("mouse::enter", function()
-            autohideanim.target = 1
-            autohidetimer:stop()
+            revealtimer:again()
+            hidetimer:stop()
         end)
     else
         dock_box.y = screen.y + screen.geometry.height - height - offset

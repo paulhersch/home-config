@@ -8,6 +8,7 @@ local helpers = require "helpers"
 
 local time = 0
 local updater
+local widget
 
 local start_btn
 start_btn = helpers.pointer_on_focus(wibox.widget {
@@ -46,7 +47,7 @@ start_btn:connect_signal("mouse::leave",function ()
     start_btn.bg = beautiful.bg_focus_dark
 end)
 
-local widget = wibox.widget {
+widget = wibox.widget {
     layout = wibox.layout.align.vertical,
     {
         widget = wibox.container.margin,
@@ -56,6 +57,7 @@ local widget = wibox.widget {
         {
             widget = wibox.container.place,
             halign = 'center',
+            valign = 'center',
             start_btn
         }
     },
