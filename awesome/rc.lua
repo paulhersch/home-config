@@ -99,6 +99,11 @@ end)
 
 -- rules {{{
 ruled.client.connect_signal("request::rules", function()
+    ruled.client.append_rule {
+		id         = "screen",
+		rule       = { },
+		properties = { screen = awful.screen.focused() },
+	}
 	ruled.client.append_rule {
 		id         = "titlebars",
 		rule_any   = { type = { "normal", "dialog" } },

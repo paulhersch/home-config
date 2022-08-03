@@ -525,9 +525,9 @@ local function init(args)
 
     if animations.autohide.enabled then
         local autohideanim = animations.rubato.timed {
-            intro	= 0.3,
-            outro	= 0.1,
-            duration= 0.4,
+            intro	= 0.1,
+            outro	= 0.05,
+            duration= 0.2,
             pos	= 0,
             rate	= 60,
             easing	= animations.rubato.quadratic,

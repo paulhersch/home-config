@@ -82,7 +82,13 @@ local function init (s)
 				widget = wibox.container.place,
 				halign = 'left',
 				fill_horizontal = false,
-				s.taglist,
+                {
+                    widget = wibox.container.margin,
+                    margins = {
+                        left = dpi(5)
+                    },
+                    s.taglist,
+                }
 			},
 			{
                 widget = wibox.container.place,
