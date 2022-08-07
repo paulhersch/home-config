@@ -10,7 +10,7 @@ o.expandtab = true
 o.termguicolors = true
 o.showmode = false
 o.fillchars.vert = '┃'
-o.fillchars.horiz = '━'
+--o.fillchars.horiz = '━' --using the bar anyways
 o.cmdheight = 0
 
 o.spell = true
@@ -22,9 +22,15 @@ require("everblush").setup({
 
 local evblushcols = require("everblush.core").get_colors()
 
-vim.highlight.create('VertSplit', {guibg=evblushcols.background, guifg=evblushcols.color0}) --visually remove splits
-vim.highlight.create('CursorLine', {guibg=evblushcols.background})
-vim.highlight.create('CursorLineNr', {guifg=evblushcols.foreground})
-vim.highlight.create('Comment', {gui='italic'})
-vim.highlight.create('TSComment', {gui='italic'})
-vim.highlight.create('TSKeyword', {gui='italic'})
+vim.api.nvim_set_hl(0, 'NvimTreeOpenedFolderName', { fg = evblushcols.color4 })
+vim.api.nvim_set_hl(0, 'NvimTreeEmptyFolderName', { fg = evblushcols.comment })
+vim.api.nvim_set_hl(0, 'NvimTreeNormal', { fg = evblushcols.color7 })
+
+vim.api.nvim_set_hl(0, 'NvimTreeOpenedFile', { fg = evblushcols.foreground, italic=true })
+
+vim.api.nvim_set_hl(0, 'VertSplit', {bg=evblushcols.background, fg=evblushcols.color0}) --visually remove splits
+vim.api.nvim_set_hl(0, 'CursorLine', {bg=evblushcols.background})
+vim.api.nvim_set_hl(0, 'CursorLineNr', {fg=evblushcols.foreground})
+vim.api.nvim_set_hl(0, 'Comment', {italic=true, fg = evblushcols.comment})
+vim.api.nvim_set_hl(0, 'TSComment', {italic=true, fg = evblushcols.comment})
+vim.api.nvim_set_hl(0, 'TSKeyword', {fg = evblushcols.color5 , italic=true}) --manual override
