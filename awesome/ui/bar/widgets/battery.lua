@@ -4,15 +4,55 @@ local gears	= require "gears"
 local awful	= require "awful"
 local naughty	= require "naughty"
 
+local dpi = beautiful.xresources.apply_dpi
+
 local uPower	= require "plugins.uPower"
 
 --here I am using the awesome-battery_widget from AireOne, slightly renamed for simplicity
 local iconsdir	= gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
-
-local symbol = wibox.widget {
+local batshape = function(cr,w,h) return gears.shape.rounded_rect(cr,w,h,2) end
+local chel = require "helpers".color
+--[[local symbol = wibox.widget {
 	id	= 'symbol',
 	widget	= wibox.widget.imagebox,
 	resize	= true,
+}]]
+local symbol = wibox.widget {
+    layout = wibox.layout.fixed.horizontal,
+    {
+        widget = wibox.container.place,
+        valign ='center',
+        {
+            id = 'end',
+            widget = wibox.container.background,
+            bg = beautiful.fg_normal,
+            forced_width = dpi(0),
+            forced_height = dpi(0),
+            shape = function (cr,w,h)
+                return gears.shape.partially_rounded_rect(cr,w,h,true,false,false,true,dpi(2))
+            end,
+            wibox.widget.base.make_widget()
+        }
+    },
+    {
+        widget = wibox.container.rotate,
+        direction = 'south',
+        {
+            id = 'val',
+            widget = wibox.widget.progressbar,
+            border_width = dpi(2),
+            paddings = dpi(2),
+            border_color = beautiful.fg_normal,
+            color = beautiful.green,
+            background_color = beautiful.bg_normal,
+            shape = batshape,
+            bar_shape = batshape,
+            max_value = 100,
+            value = 50,
+            forced_height = dpi(0),
+            forced_width = dpi(0),
+        }
+    }
 }
 
 local tooltip	= awful.tooltip {
@@ -28,38 +68,21 @@ local batterywidget = uPower {
 	widget_template		= symbol
 }
 
+local r_d, g_d, b_d = chel.col_diff(beautiful.green, beautiful.red)
+
 batterywidget:connect_signal("upower::update", function (_, device)
 	if device.kind == 2 then --checks if device is a battery
 		tooltip.text = device.state == 2
 			and device.percentage .. "%, noch " .. uPower.to_clock(device.time_to_empty)
 			or  device.percentage .. "%, noch " .. uPower.to_clock(device.time_to_full)
-		local icon = "battery_full.svg"
-        if device.state == 2 then
-			if	device.percentage >= 93
-				then icon = "battery_full.svg"
-			elseif	device.percentage < 93 and device.percentage >= 80
-				then icon = "battery6.svg"
-			elseif	device.percentage < 80 and device.percentage >= 68
-				then icon = "battery5.svg"
-			elseif	device.percentage < 68 and device.percentage >= 56
-				then icon = "battery4.svg"
-			elseif	device.percentage < 56 and device.percentage >= 43
-				then icon = "battery3.svg"
-			elseif	device.percentage < 43 and device.percentage >= 31
-				then icon = "battery2.svg"
-			elseif	device.percentage < 31 and device.percentage >= 18
-				then icon = "battery1.svg"
-            else
-                icon = "battery_alert.svg"
-                naughty.notification({
-                    title	= "battery low",
-                    message	= "Your battery is at " .. device.percentage .. "%, you might want to grab a charger"
-                })
-            end
-		else
-			icon = "bolt.svg"
-		end
-		symbol:get_children_by_id('symbol')[1].image = gears.color.recolor_image(iconsdir .. icon, beautiful.fg_focus)
+        --this creates some colors in between green and red with some offsets
+        local perc_float = device.percentage > 80 and 0 or (device.percentage > 20 and 1 - (device.percentage - 20)/60 or 1)
+		symbol:get_children_by_id('val')[1].value = device.percentage
+		symbol:get_children_by_id('val')[1].forced_height = dpi(14)
+        symbol:get_children_by_id('val')[1].forced_width = dpi(27)
+        symbol:get_children_by_id('val')[1].color = chel.col_shift(beautiful.green, r_d*perc_float*255, g_d*perc_float*255, b_d*perc_float*255)
+        symbol:get_children_by_id('end')[1].forced_width = dpi(2)
+        symbol:get_children_by_id('end')[1].forced_height = dpi(6)
 	end
 end)
 

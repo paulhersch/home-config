@@ -9,7 +9,6 @@ local helpers = require "helpers"
 local iconsdir = gears.filesystem.get_configuration_dir() .. "assets/titlebarbuttons/"
 local mat_icons = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
-RUBATO_DIR = "plugins.rubato."
 local recycler = require "plugins.awesome-widgets.recycler"
 local rubato = require "plugins.rubato"
 

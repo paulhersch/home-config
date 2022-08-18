@@ -4,6 +4,8 @@ local awful	= require "awful"
 local gears	= require "gears"
 local dpi	= beautiful.xresources.apply_dpi
 
+local icon_helpers = require "plugins.bling.helpers.icon_theme"
+local icon_theme = icon_helpers("Papirus-Dark", 64)
 --color helpers
 local function dec_hex(IN) --stole this from some lua forum
     local B,K,OUT,I,D=16,"0123456789ABCDEF","",0,nil
@@ -388,8 +390,13 @@ local function init(args)
             layout = wibox.layout.fixed.horizontal
         },
         widget_template = create_template(
-            { widget = awful.widget.clienticon },
+            {
+                widget = wibox.widget.imagebox,
+                resize = true,
+                id = 'icon'
+            },
             function (self, c, _, _)
+                self:get_children_by_id('icon')[1].image = icon_theme:get_client_icon_path(c)
                 self:add_button( awful.button {
                     modifiers	= {},
                     button		= 1,
@@ -414,14 +421,16 @@ local function init(args)
     local pinned_apps = { layout = wibox.layout.fixed.horizontal }
         if pinneds then
             for i,p in ipairs(pinneds) do
-                local self = wibox.widget( create_template(
-                    {
-                        widget	= wibox.widget.imagebox,
-                        image	= p.icon,
-                        resize	= true,
-                    },
-                    nil
-                ))
+                local self = wibox.widget (
+                    create_template(
+                        {
+                            widget	= wibox.widget.imagebox,
+                            image	= p.icon,
+                            resize	= true,
+                        },
+                        nil
+                    )
+                )
                 self.hover = animations.rubato.timed { --this exists for when there is no client
                     intro		= 0.02,
                     outro		= 0.02,
@@ -556,8 +565,36 @@ local function init(args)
             revealtimer:again()
             hidetimer:stop()
         end)
+--[[        client.connect_signal("property::geometry", function (c)
+            if c.y + c.height > dock_box.x or (c.x + c.width > dock_box.x and c.x < dock_box.x) then
+                hidetimer:start()
+            end
+        end)]]
     else
-        dock_box.y = screen.y + screen.geometry.height - height - offset
+        local hidetimer = gears.timer {
+            timeout	= 1.5,
+            single_shot = true,
+            callback = function()
+                dock_box.y = screen.geometry.y + screen.geometry.height - offset
+                dock_box.visible = false
+            end
+        }
+        local revealtimer = gears.timer {
+            timeout = 0.5,
+            single_shot = true,
+            callback = function()
+                dock_box.y = screen.geometry.y + screen.geometry.height - offset - height
+                dock_box.visible = true
+            end
+        }
+        dock_box:connect_signal("mouse::leave", function()
+            hidetimer:again()
+            revealtimer:stop()
+        end)
+        dock_box:connect_signal("mouse::enter", function()
+            revealtimer:again()
+            hidetimer:stop()
+        end)
     end
 end
 

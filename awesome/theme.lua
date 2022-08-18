@@ -7,11 +7,11 @@ local xresources = require("beautiful.xresources")
 local rnotification = require("ruled.notification")
 local dpi = xresources.apply_dpi
 local beautiful = require ("beautiful")
-local g = require("gears")
-local naughty   = require ("naughty")
+local gears = require("gears")
 local col_shift = require("helpers").color.col_shift
+local cairo = require("lgi").cairo
 
-local themes_path = g.filesystem.get_themes_dir()
+local themes_path = gears.filesystem.get_themes_dir()
 local homedir = os.getenv("HOME")
 
 local theme = {}
@@ -26,7 +26,7 @@ theme.icon_font     = "Fira Code Nerd Font Mono"
 local xres = xresources.get_current_theme()
 
 local function is_dark(hexCol)
-    local re,gr,bl,op = g.color.parse_color(hexCol)
+    local re,gr,bl,op = gears.color.parse_color(hexCol)
     return (re+gr+bl)/3 <= 0.5
 end
 
@@ -38,12 +38,7 @@ theme.yellow        = xres.color3
 theme.blue          = xres.color4
 theme.magenta       = xres.color5
 theme.cyan          = xres.color6
-theme.dark_red      = xres.color7
-theme.dark_green    = xres.color8
-theme.dark_yellow   = xres.color9
-theme.dark_blue     = xres.color10
-theme.dark_magenta  = xres.color11
-theme.dark_cyan     = xres.color12
+theme.gray          = xres.color7
 
 theme.bg_normal     = xres.background
 theme.bg_focus_dark = dark_theme
@@ -70,6 +65,7 @@ theme.border_color_urgent = theme.bg_urgent
 theme.border_color_normal = theme.bg_normal
 theme.border_color_new = theme.border_color_normal
 theme.border_color_active = theme.bg_focus
+theme.border_focus = theme.border_color_active
 theme.border_color_marked = theme.bg_normal
 
 theme.tooltip_bg        = theme.bg_normal
@@ -80,23 +76,39 @@ theme.layoutlist_shape_selected = theme.theme_shape
 
 theme.menubar_bg_normal = theme.bg_normal
 theme.menubar_bg_focus = theme.bg_focus
-theme.menubar_fg_nromal = theme.fg_normal
+theme.menubar_fg_normal = theme.fg_normal
 theme.menubar_fg_focus = theme.fg_focus
+
+theme.menu_font = theme.font .. " 11"
+theme.menu_height = beautiful.get_font_height(theme.menu_font) + dpi(2)
+theme.menu_border_color = theme.bg_normal
+theme.menu_border_width = dpi(5)
+theme.menu_fg_focus = theme.fg_focus
+theme.menu_bg_focus = theme.bg_focus
+theme.menu_fg_normal = theme.fg_normal
+theme.menu_bg_normal = theme.bg_normal
+theme.menu_submenu_icon = function ()
+    local icon = cairo.ImageSurface.create(cairo.Format.ARGB32,theme.menu_height/3,theme.menu_height/3)
+    local cr = cairo.Context(icon)
+    cr:set_source(gears.color(beautiful.fg_normal))
+    cr:move_to(0,0)
+    cr:line_to(0,theme.menu_height/3)
+    cr:line_to(theme.menu_height/3,theme.menu_height/6)
+    cr:line_to(0,0)
+    cr:close_path()
+    cr:fill()
+    return icon
+end
 
 theme.useless_gap = dpi(5)
 
 theme.rounded_rect = function(cr,w,h)
-    return g.shape.rounded_rect(cr,w,h,5)
+    return gears.shape.rounded_rect(cr,w,h,5)
 end
 theme.theme_shape = theme.rounded_rect
 
 -- some length parameters
 theme.wibar_height  = dpi(30)
-theme.bar_date_width= dpi(230)
-
--- these variables control the popup menu from the bar
-theme.menu_item_spacing = theme.wibar_height/5
-theme.menu_widget_base_unit  = dpi(50)
 
 -- You can use your own layout icons like this:
 theme.layout_floating  = themes_path.."default/layouts/floating.png"
@@ -107,7 +119,7 @@ theme.layout_cornernw = themes_path.."default/layouts/cornernw.png"
 theme = beautiful.theme_assets.recolor_layout(theme, theme.fg_normal)
 -- Generate Awesome icon:
 theme.awesome_icon = theme_assets.awesome_icon(
-    theme.menu_widget_base_unit*2, theme.bg_normal, theme.fg_normal
+    dpi(50), theme.bg_normal, theme.fg_normal
 )
 
 -- Set different colors for urgent notifications.

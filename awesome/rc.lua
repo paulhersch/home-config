@@ -21,6 +21,8 @@ end)
 
 beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
 
+--globals for Orlando widgets
+RUBATO_DIR = "plugins.rubato."
 require ("ui")
 
 tag.connect_signal("request::default_layouts", function()

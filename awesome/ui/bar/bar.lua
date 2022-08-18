@@ -2,7 +2,6 @@ local wibox	= require "wibox"
 local awful	= require "awful"
 local gears	= require "gears"
 local beautiful = require "beautiful"
-local naughty	= require "naughty"
 local dpi	= beautiful.xresources.apply_dpi
 
 local helpers	= require "helpers"
@@ -10,11 +9,10 @@ local helpers	= require "helpers"
 local battery   = require "ui.bar.widgets.battery"
 local menu 	= require "ui.menu"
 local notifcenter = require "ui.notifcenter"
+local burger = require "plugins.awesome-widgets".hamburger({})
 
 local function init (s)
-	menu.init(s)
-    notifcenter.init(s)
---	local menu_box = s == screen.primary and menu.init() or nil
+    local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
 	s.taglist = awful.widget.taglist {
 		screen		= s,
 		filter		= awful.widget.taglist.filter.all,
@@ -25,41 +23,68 @@ local function init (s)
 		widget_template = {
 			widget = wibox.container.margin,
 			margins = {
-                top = dpi(5),
-                bottom = dpi(5)
+                top = dpi(8),
+                bottom = dpi(8)
             },
-			{
-				widget = wibox.container.background,
-				shape = function(cr,w,h)
-					return gears.shape.rounded_rect(cr,w,h,dpi(5))
-				end,
-				{
-					widget = wibox.container.background,
-					id = 'background_role',
-					{
-							{
-							widget = wibox.widget.textbox,
-							font = beautiful.font_bold,
-							id = 'text_role'
-						},
-						widget = wibox.container.place,
-						halign = 'center',
-						forced_width = beautiful.wibar_height - dpi(10),
-					},
-				}
-			},
-			create_callback = function(self, t, _, _)
+            {
+                widget = wibox.container.background,
+                id = 'bg',
+                shape = beautiful.theme_shape,
+                fg = beautiful.fg_normal,
+                bg = beautiful.bg_focus_dark,
+                {
+                    {
+                        widget = wibox.widget.textbox,
+                        font = beautiful.font_bold,
+                        halign = 'center',
+                        id = 'index'
+                    },
+                    widget = wibox.container.place,
+                    halign = 'center',
+                    forced_width = beautiful.wibar_height - dpi(16),
+                },
+            },
+            create_callback = function(self, t, _, _)
+                local def_bg = #t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark
+
+                t:connect_signal("tagged", function ()
+                    def_bg = tagged_tag_col
+                end)
+                t:connect_signal("untagged", function ()
+                    def_bg = #t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark
+                end)
+                t:connect_signal("property::selected", function ()
+                    if t.selected
+                        then
+                            self:get_children_by_id('bg')[1].bg = beautiful.blue
+--                            self:get_children_by_id('bg')[1].fg = beautiful.bg_normal
+                        else
+                            self:get_children_by_id('bg')[1].bg = def_bg
+--                            self:get_children_by_id('bg')[1].fg = beautiful.fg_normal
+                    end
+                end)
 				self:connect_signal("mouse::enter", function()
-					self:get_children_by_id('background_role')[1].bg = beautiful.bg_focus
+					if not t.selected then
+                        self:get_children_by_id('bg')[1].bg = helpers.color.col_mix(beautiful.blue, def_bg)
+                    end
 				end)
 				self:connect_signal("mouse::leave", function()
 					if not t.selected then
-						self:get_children_by_id('background_role')[1].bg = beautiful.bg_normal
+						self:get_children_by_id('bg')[1].bg = def_bg
 					end
 				end)
 				self:connect_signal("button::press", function(_, _, _, b)
 					if b == 1 then t:view_only() end
 				end)
+                -- init
+                self:get_children_by_id('index')[1].text = ' ' --t.index
+                self:get_children_by_id('bg')[1].bg = def_bg
+                if t.selected
+                    then
+                        self:get_children_by_id('bg')[1].bg = beautiful.blue
+                        self:get_children_by_id('bg')[1].fg = beautiful.bg_normal
+                end
+                helpers.pointer_on_focus(self, s.bar)
 			end
 		}
 	}
@@ -107,25 +132,28 @@ local function init (s)
 				widget = wibox.container.place,
 				halign = 'right',
 				fill_horizontal = false,
+                fill_vertical = true,
 				{
+					widget = wibox.container.margin,
+					margins = dpi(5),
 					{
+						s.systray,
 						{
-							widget = wibox.container.rotate,
-							direction = 'east',
+							widget = wibox.container.place,
+                            valign = 'center',
 							battery,
 						},
-						s.systray,
                         {
-                            widget = wibox.widget.imagebox,
+                            --[[widget = wibox.widget.imagebox,
                             resize = true,
-                            image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "/assets/materialicons/comment.svg", beautiful.fg_normal),
-                            id = 'notifcenter_trigger'
+                            image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "/assets/materialicons/comment.svg", beautiful.fg_normal),]]
+                            id = 'notifcenter_trigger',
+                            widget = wibox.container.background,
+                            burger,
                         },
 						layout = wibox.layout.fixed.horizontal,
 						spacing = dpi(5),
 					},
-					widget = wibox.container.margin,
-					margins = dpi(5),
 				}
 			},
 		}
@@ -134,7 +162,9 @@ local function init (s)
 		top = beautiful.wibar_height-- + 2*beautiful.useless_gap
 	})
 
-	s.center_open = true
+	menu.init(s)
+    notifcenter.init(s)
+	s.center_open = false
 	s.bar:get_children_by_id('center_trigger')[1]:connect_signal("button::press", function(_, _, _, button)
 		if button == 1 then
 			if s.center_open then
@@ -146,7 +176,7 @@ local function init (s)
 		end
 	end)
 	helpers.pointer_on_focus(s.bar:get_children_by_id('center_trigger')[1], s.bar)
-	s.notifcenter_open = true
+	s.notifcenter_open = false
 	s.bar:get_children_by_id('notifcenter_trigger')[1]:connect_signal("button::press", function(_, _, _, button)
 		if button == 1 then
 			if s.notifcenter_open then

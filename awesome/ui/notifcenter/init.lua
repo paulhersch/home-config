@@ -3,6 +3,7 @@ local beautiful = require "beautiful"
 local dpi = beautiful.xresources.apply_dpi
 
 local widget = require "ui.notifcenter.widget"
+local rubato = require "plugins.rubato"
 
 local function init(s)
     local cent_width = dpi(400)
@@ -23,13 +24,32 @@ local function init(s)
             widget
         }
     }
+    s.notifcenter.slide = rubato.timed {
+        rate = 60,
+        duration = 0.3,
+        intro = 0.1,
+        outro = 0.1,
+        pos = 1,
+        easing = rubato.easing.linear,
+        subscribed = function (pos)
+            s.notifcenter.visible = pos < 1
+            --s.notifcenter.height = 5 + pos * (s.geometry.height - beautiful.wibar_height - 4*beautiful.useless_gap - 5)
+            s.notifcenter.x = s.geometry.x + s.geometry.width - s.notifcenter.width - 2*beautiful.useless_gap + pos * cent_width
+        end
+    }
+    function s.notifcenter:show()
+        self.slide.target = 0
+    end
+    function s.notifcenter:hide()
+        self.slide.target = 1
+    end
 end
 
 local function show(s)
-    s.notifcenter.visible = true
+    s.notifcenter:show()
 end
 local function hide(s)
-    s.notifcenter.visible = false
+    s.notifcenter:hide()
 end
 
 return {

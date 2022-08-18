@@ -24,7 +24,7 @@ local function info_highlight(grid)
 			widget.bg = beautiful.menubar_bg_focus
 			widget.widget.widget.markup = string.format(
 				"<span foreground='%s' font='12'>%s</span>",
-				beautiful.border_focus,
+				beautiful.menubar_fg_focus,
 				widget.widget.widget.markup:match("^<span[^>]*>(.*)</span>$")
 			)
 		else

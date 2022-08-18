@@ -2,6 +2,8 @@ local wibox = require "wibox"
 local dpi = require "beautiful.xresources".apply_dpi
 local beautiful = require "beautiful"
 
+local rubato = require "plugins.rubato"
+
 local playerwidget = require "ui.menu.widgets.playerctl"
 local calendar = require "ui.menu.widgets.calendar"
 local layouts = require "ui.menu.widgets.layout"
@@ -28,12 +30,12 @@ layout:add_widget_at(grindtimer,3,1,2,2)
 --layout:add_widget_at(notifications, 5, 1, 5, 5)
 
 local function init(s)
-	s.center = wibox {
+	s.menu = wibox {
 		height = dpi(400),
 		width = dpi(500),
 		screen = s,
 		ontop = true,
-		visible = true,
+		visible = false,
 		x = s.geometry.x + (s.geometry.width-dpi(500))/2,
 		y = beautiful.wibar_height + 2*beautiful.useless_gap,
 		bg = beautiful.bg_normal,
@@ -47,15 +49,33 @@ local function init(s)
 		}
 	}
 	layout:add_widget_at(playerwidget.create(s.center), 1, 1, 1, 3)
+    s.menu.flyin = rubato.timed {
+        rate = 60,
+        duration = 0.3,
+        intro = 0.1,
+        outro = 0.1,
+        pos = 1,
+        easing = rubato.easing.linear,
+        subscribed = function (pos)
+            s.menu.visible = pos < 1
+            s.menu.y = beautiful.wibar_height + 2*beautiful.useless_gap - (dpi(400)*pos)
+        end
+    }
+    function s.menu:show()
+        s.menu.flyin.target = 0
+    end
+    function s.menu:hide()
+        s.menu.flyin.target = 1
+    end
 end
 
 
 local function hide(s)
-	s.center.visible = false
+	s.menu:hide()
     powerbuttons.hide()
 end
 local function show(s)
-	s.center.visible = true
+	s.menu:show()
 end
 
 return {

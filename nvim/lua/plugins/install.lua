@@ -23,11 +23,9 @@ return require('packer').startup(function(use)
     --colorschemes
     use 'sainnhe/everforest'
     use 'sainnhe/sonokai'
-    use 'decaycs/decay.nvim'
-    use 'cocopon/iceberg.vim'
-    use 'ozkanonur/nimda.vim'
     use { 'Everblush/everblush.nvim', as = 'everblush' }
     use { 'folke/tokyonight.nvim', branch = 'main' }
+    use { 'B4mbus/oxocarbon-lua.nvim', as = 'oxocarbon' }
     --adding IDE capabilities
     use 'neovim/nvim-lspconfig'
     use 'lewis6991/gitsigns.nvim'

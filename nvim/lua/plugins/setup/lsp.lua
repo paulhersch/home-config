@@ -78,7 +78,7 @@ lc.sumneko_lua.setup{
             },
             workspace = {
                 checkThirdParty = false,
-                library = cwd == "awesome" and "/run/current-system/sw/share/awesome/lib" or cwd == "nvim" and vim.api.nvim_get_runtime_file("", true) or nil,
+                library = cwd == "awesome" and "/run/current-system/sw/share/awesome/lib" or (cwd == "nvim" and vim.api.nvim_get_runtime_file("", true) or nil),
             },
             telemetry = { enable = false },
         }
@@ -87,6 +87,17 @@ lc.sumneko_lua.setup{
 lc.omnisharp.setup {
     cmd = { "omnisharp", "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
 }
-lc.pylsp.setup{}
+lc.pylsp.setup{
+    settings = {
+        pylsp = {
+            plugins = {
+                pycodestyle = {
+                    ignore = {'W391'},
+                    maxLineLength = 160
+                }
+            }
+        }
+    }
+}
 lc.hls.setup{}
 lc.texlab.setup{}

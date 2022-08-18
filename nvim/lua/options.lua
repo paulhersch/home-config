@@ -19,6 +19,10 @@ o.spelllang = { 'de_de' }
 require("everblush").setup({
     nvim_tree = { contrast = false }
 })
+--remove diagnostics at end of line
+vim.diagnostic.config({
+    virtual_text = false
+})
 
 local evblushcols = require("everblush.core").get_colors()
 

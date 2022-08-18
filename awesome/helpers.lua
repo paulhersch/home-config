@@ -79,6 +79,10 @@ color.col_diff = function(f, s)
 	local sr, sg, sb, so = gears.color.parse_color(s)
 	return sr-fr,sg-fg,sb-fb,so-fo
 end
+color.col_mix = function(f, s)
+    local r,g,b,o = color.col_diff(f,s)
+    return color.col_shift(f,r*128,g*128,b*128,o*128)
+end
 --}}}
 local last_wibox
 local function pointer_on_focus(widget, wibox) --unstable-ish when the wibox has to be read from mouse, so the option to include the wibox exists
