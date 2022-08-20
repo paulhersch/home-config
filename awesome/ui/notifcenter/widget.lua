@@ -53,7 +53,6 @@ notifications = recycler(
                                     image = gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal),
                                     forced_height = beautiful.get_font_height(beautiful.font_bold .. " 12")*(2/3),
                                     forced_width = beautiful.get_font_height(beautiful.font_bold .. " 12"),
-                                    --buttons =
                                 }
                             }
                         }
@@ -124,12 +123,6 @@ notifications = recycler(
     }
 )
 
-
---notifications = wibox.widget {
---    layout = wibox.layout.fixed.vertical,
---    spacing = dpi(5)
---}
-
 local notifbox = wibox.widget { --empty because it will be filled with the update function
     layout = wibox.layout.fixed.vertical,
     spacing = dpi(5),
@@ -164,7 +157,6 @@ local notifbox = wibox.widget { --empty because it will be filled with the updat
                         modifiers = {},
                         button = 1,
                         on_press = function ()
-                            --notifications:reset()
                             notifications:set_children() --clears
                         end
                     }
@@ -177,93 +169,8 @@ local notifbox = wibox.widget { --empty because it will be filled with the updat
 helpers.pointer_on_focus(notifbox:get_children_by_id('clear_button')[1])
 
 local function add_notif (n)
-    if n.app_name ~= 'Spotify' then --ignore spotify notifications
+    if n.app_name ~= 'Spotify' and n.title ~= 'Launching Application' then --ignore some notifications
         notifications:add_at(1,n)
-        --[[local w
-        local function cross_enter ()
-            w:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.red))
-        end
-        local function cross_leave ()
-            w:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal))
-        end
-        w = wibox.widget {
-            widget = wibox.container.background,
-            bg = beautiful.bg_focus,
-            shape = beautiful.theme_shape,
-            {
-                layout = wibox.layout.fixed.vertical,
-                {
-                    widget = wibox.container.background,
-                    bg = beautiful.bg_focus_dark,
-                    {
-                        widget = wibox.container.margin,
-                        margins = dpi(5),
-                        {
-                            layout = wibox.layout.fixed.horizontal,
-                            {
-                                widget = wibox.widget.textbox,
-                                font = beautiful.font_bold .. " 12",
-                                text = n.title
-                            },
-                            {
-                                widget = wibox.container.place,
-                                fill_horizontal = true,
-                                halign = 'right',
-                                valign = 'center',
-                                {
-                                    id = 'remove',
-                                    widget = wibox.widget.imagebox,
-                                    image = gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal),
-                                    forced_height = beautiful.get_font_height(beautiful.font_bold .. " 12")*(2/3),
-                                    forced_width = beautiful.get_font_height(beautiful.font_bold .. " 12"),
-                                    buttons = awful.button {
-                                        modifiers = {},
-                                        button = 1,
-                                        on_press = function ()
-                                            w:get_children_by_id('remove')[1]:disconnect_signal("mouse::enter", cross_enter)
-                                            w:get_children_by_id('remove')[1]:disconnect_signal("mouse::leave", cross_leave)
-                                            notifications:remove_widgets(w)
-                                            w = nil
-                                            collectgarbage("collect")
-                                        end
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    widget = wibox.container.margin,
-                    margins = dpi(5),
-                    {
-                        layout = wibox.layout.fixed.horizontal,
-                        n.icon ~= nil and {
-                            widget = wibox.container.margin,
-                            margins = dpi(5),
-                            {
-                                id = 'icon',
-                                widget = wibox.widget.imagebox,
-                                image = n.icon,
-                                resize = true,
-                                forced_width = dpi(40),
-                                forced_height = dpi(40),
-                                clip_shape = beautiful.theme_shape
-                            }
-                        },
-                        {
-                            widget = wibox.widget.textbox,
-                            font = beautiful.font_thin .. " 10",
-                            text = n.message
-                        }
-                    }
-                }
-            }
-        }
-        w:get_children_by_id('remove')[1]:connect_signal("mouse::enter", cross_enter)
-        w:get_children_by_id('remove')[1]:connect_signal("mouse::leave", cross_leave)
-
-        --always insert at the top of the widget
-        notifications:insert(1,w)]]
     end
 end
 

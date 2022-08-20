@@ -83,6 +83,14 @@ batterywidget:connect_signal("upower::update", function (_, device)
         symbol:get_children_by_id('val')[1].color = chel.col_shift(beautiful.green, r_d*perc_float*255, g_d*perc_float*255, b_d*perc_float*255)
         symbol:get_children_by_id('end')[1].forced_width = dpi(2)
         symbol:get_children_by_id('end')[1].forced_height = dpi(6)
+        --display warning if battery is below 20%
+        if device.state == 2 and device.percentage < 20 then
+            naughty.notification{
+                title = "battery low!",
+                message = "battery at " .. device.percentage .. " percent, charge up!",
+                icon = iconsdir .. "battery_alert.svg"
+            }
+        end
 	end
 end)
 

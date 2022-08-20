@@ -19,12 +19,6 @@ naughty.connect_signal("request::display_error", function(message, startup)
     }
 end)
 
-beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
-
---globals for Orlando widgets
-RUBATO_DIR = "plugins.rubato."
-require ("ui")
-
 tag.connect_signal("request::default_layouts", function()
     awful.layout.append_default_layouts({
         awful.layout.suit.tile,
@@ -33,6 +27,17 @@ tag.connect_signal("request::default_layouts", function()
         awful.layout.suit.corner.nw,
     })
 end)
+
+screen.connect_signal("request::desktop_decoration", function(s)
+	awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+end)
+
+beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
+
+--globals for Orlando widgets
+RUBATO_DIR = "plugins.rubato."
+require ("ui")
+
 
 -- {{{ Wallpaper
 screen.connect_signal("request::wallpaper", function(s)
@@ -77,9 +82,6 @@ end)
 }]]
 -- }}}
 
-screen.connect_signal("request::desktop_decoration", function(s)
-	awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
-end)
 
 -- client management {{{
 client.connect_signal("mouse::enter", function(c)
@@ -87,6 +89,7 @@ client.connect_signal("mouse::enter", function(c)
 end)
 
 client.connect_signal("request::manage", function(c)
+    c:move_to_screen(awful.screen.focused())
 	if c.floating then
 		awful.placement.centered(c)
 		c:raise()
@@ -101,11 +104,6 @@ end)
 
 -- rules {{{
 ruled.client.connect_signal("request::rules", function()
-    ruled.client.append_rule {
-		id         = "screen",
-		rule       = { },
-		properties = { screen = awful.screen.focused() },
-	}
 	ruled.client.append_rule {
 		id         = "titlebars",
 		rule_any   = { type = { "normal", "dialog" } },

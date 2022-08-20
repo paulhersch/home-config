@@ -141,6 +141,7 @@ function module.open()
 		border_color = beautiful.border_focus,
 		border_width = beautiful.border_width,
 		ontop = true,
+        screen = awful.screen.focused(),
 		widget = {
 			widget = wibox.container.margin,
 			margins = 20,

@@ -14,7 +14,7 @@ local function init(s)
         width = cent_width,
         height = s.geometry.height - beautiful.wibar_height - 4*beautiful.useless_gap,-- - 2*beautiful.border_width - 6*beautiful.useless_gap, --bottom gap
         ontop = true,
-        visible = true,
+        visible = false,
 --        border_width = beautiful.border_width,
 --        border_color = beautiful.bg_focus,
         shape = beautiful.theme_shape,
@@ -24,7 +24,7 @@ local function init(s)
             widget
         }
     }
-    s.notifcenter.slide = rubato.timed {
+    --[[s.notifcenter.slide = rubato.timed {
         rate = 60,
         duration = 0.3,
         intro = 0.1,
@@ -36,12 +36,14 @@ local function init(s)
             --s.notifcenter.height = 5 + pos * (s.geometry.height - beautiful.wibar_height - 4*beautiful.useless_gap - 5)
             s.notifcenter.x = s.geometry.x + s.geometry.width - s.notifcenter.width - 2*beautiful.useless_gap + pos * cent_width
         end
-    }
+    }]]
     function s.notifcenter:show()
-        self.slide.target = 0
+        self.visible = true
+        --self.slide.target = 0
     end
     function s.notifcenter:hide()
-        self.slide.target = 1
+        self.visible = false
+        --self.slide.target = 1
     end
 end
 

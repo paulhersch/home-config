@@ -49,7 +49,7 @@ local function init(s)
 		}
 	}
 	layout:add_widget_at(playerwidget.create(s.center), 1, 1, 1, 3)
-    s.menu.flyin = rubato.timed {
+    --[[s.menu.flyin = rubato.timed {
         rate = 60,
         duration = 0.3,
         intro = 0.1,
@@ -60,12 +60,14 @@ local function init(s)
             s.menu.visible = pos < 1
             s.menu.y = beautiful.wibar_height + 2*beautiful.useless_gap - (dpi(400)*pos)
         end
-    }
+    }]]
     function s.menu:show()
-        s.menu.flyin.target = 0
+        self.visible = true
+        --s.menu.flyin.target = 0
     end
     function s.menu:hide()
-        s.menu.flyin.target = 1
+        self.visible = false
+        --s.menu.flyin.target = 1
     end
 end
 

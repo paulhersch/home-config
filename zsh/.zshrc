@@ -64,7 +64,8 @@ bindkey ';5C' forward-word
 #
 
 alias cl="clear"
-
+alias git-update="git fetch --recurse-submodules=no --progress --prune ${1}"
+alias docker="docker -H unix:///run/user/1000/docker.sock"
 
 fortune -s | cowsay -f eyes
 
