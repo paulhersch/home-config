@@ -78,7 +78,7 @@ lc.sumneko_lua.setup{
             },
             workspace = {
                 checkThirdParty = false,
-                library = cwd == "awesome" and "/run/current-system/sw/share/awesome/lib" or (cwd == "nvim" and vim.api.nvim_get_runtime_file("", true) or nil),
+                library = cwd == "awesome" and os.getenv("AWM_LIB_PATH") --[["/run/current-system/sw/share/awesome/lib"]] or (cwd == "nvim" and vim.api.nvim_get_runtime_file("", true) or nil),
             },
             telemetry = { enable = false },
         }

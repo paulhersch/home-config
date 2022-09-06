@@ -64,21 +64,23 @@ require("nvim-tree").setup {
 require('bufferline').setup{
     animation = false,
     auto_hide = true,
+    icon_separator_active = '┃',-- vim.opt.fillchars.vert,
+    icon_separator_inactive ='┃',-- vim.opt.fillchars.vert
 }
 
 local nvim_tree_events = require('nvim-tree.events')
 local bufferline_state = require('bufferline.state')
 
 local function get_tree_size()
-    return vim.api.nvim_win_get_width(require('nvim-tree.view').get_winnr(vim.fn.tabpagenr()))
+    return require('nvim-tree.view').View.width
 end
 
 nvim_tree_events.subscribe("TreeOpen", function()
-    bufferline_state.set_offset(get_tree_size() + 1)
+    bufferline_state.set_offset(get_tree_size())
 end)
 
 nvim_tree_events.subscribe("Resize", function()
-    bufferline_state.set_offset(get_tree_size() + 1)
+    bufferline_state.set_offset(get_tree_size())
 end)
 
 nvim_tree_events.subscribe("TreeClose", function()

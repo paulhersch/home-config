@@ -15,11 +15,11 @@ awful.keyboard.append_global_keybindings({
 		{description = "reload awesome", group = "awesome"}),
 	awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
 		{description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey }, "d", function() launcher.open() end,
-		{description = "rofi", group = "launcher"}),
-
-	--awful.key({ modkey }, "d", function() awful.spawn("rofi -show combi -combi-modi drun,run") end,
+    --awful.key({ modkey }, "d", function() launcher.open() end,
 	--	{description = "rofi", group = "launcher"}),
+
+	awful.key({ modkey }, "d", function() awful.spawn("rofi -show combi -combi-modi drun,run") end,
+		{description = "rofi", group = "launcher"}),
 })
 
 -- Focus related keybindings
@@ -66,16 +66,27 @@ awful.keyboard.append_global_keybindings({
 		on_press    = function (index)
 			local s = awful.screen.focused()
 			local current = s.selected_tag
-			if not s.lasttag then s.lasttag = current end
+			--if not s.lasttag then s.lasttag = current end
 			local tag = s.tags[index]
 			--simple ws toggle like in i3
 			if tag then
-				if current == tag then --tag x, key for tag x
-					s.lasttag:view_only()
+				if current == tag then --if double press cycle through screens and focus tags
+                    local screens = {}
+                    for sc in screen do screens[#screens+1] = sc end
+                    local i
+                    for j, v in ipairs(screens) do
+                        if v == s then
+                            i = j
+                        end
+                    end
+                    print(i)
+                    awful.screen.focus(i == #screens and screens[1] or screens[i+1])
+                    awful.screen.focused().tags[index]:view_only()
+					--s.lasttag:view_only()
 				else --tag x, key for tag y
 					tag:view_only()
 				end
-				s.lasttag = current
+				--s.lasttag = current
 			end
 			collectgarbage("collect")
 		end,
@@ -111,4 +122,19 @@ awful.keyboard.append_global_keybindings({
 	awful.key({},	"XF86AudioPlay", function() awful.spawn.with_shell("playerctl -p spotify,ncspot play-pause") end),
 	awful.key({},	"XF86AudioPrev", function() awful.spawn.with_shell("playerctl -p spotify,ncspot previous") end),
 	awful.key({},	"XF86AudioNext", function() awful.spawn.with_shell("playerctl -p spotify,ncspot next") end),
+})
+
+local tabbed = require "plugins.bling.module.tabbed"
+
+awful.keyboard.append_global_keybindings({
+    awful.key({modkey},   "t", function ()
+        local c = client.focus
+        if c and c.bling_tabbed then
+            tabbed.remove(c)
+        else
+            tabbed.init(c)
+        end
+        --tabbed.init(client.focus)
+    end),
+    awful.key({modkey},   "a", function () tabbed.pick() end)
 })

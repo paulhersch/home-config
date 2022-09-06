@@ -16,26 +16,27 @@ start_btn = helpers.pointer_on_focus(wibox.widget {
     widget = wibox.container.background,
     bg = beautiful.bg_focus_dark,
     shape = beautiful.theme_shape,
+    buttons = awful.button {
+        modifiers = {},
+        button = 1,
+        on_press = function ()
+            if updater.started then
+                updater:stop()
+                start_btn:get_children_by_id('text')[1].text = 'start the grind'
+            else
+                updater:start()
+                start_btn:get_children_by_id('text')[1].text = 'stop the grind'
+            end
+        end
+    },
     {
         widget = wibox.container.margin,
         margins = dpi(5),
         {
             id = 'text',
             widget = wibox.widget.textbox,
+            font = beautiful.font .. " 10",
             text = 'start the grind',
-            buttons = awful.button {
-                modifiers = {},
-                button = 1,
-                on_press = function ()
-                    if updater.started then
-                        updater:stop()
-                        start_btn:get_children_by_id('text')[1].text = 'start the grind'
-                    else
-                        updater:start()
-                        start_btn:get_children_by_id('text')[1].text = 'stop the grind'
-                    end
-                end
-            }
         }
     }
 })
@@ -98,6 +99,7 @@ widget = wibox.widget {
             {
                 id = 'time',
                 widget = wibox.widget.textbox,
+                font = beautiful.font .. " 10",
                 text = ""
             }
         }

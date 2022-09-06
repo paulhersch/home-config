@@ -8,20 +8,21 @@ local rnotification = require("ruled.notification")
 local dpi = xresources.apply_dpi
 local beautiful = require ("beautiful")
 local gears = require("gears")
-local col_shift = require("helpers").color.col_shift
 local cairo = require("lgi").cairo
+
+local col_shift = require("helpers").color.col_shift
+local col_mix = require("helpers").color.col_mix
 
 local themes_path = gears.filesystem.get_themes_dir()
 local homedir = os.getenv("HOME")
 
 local theme = {}
 
-theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/fog-hill.jpg"
+theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/dark-water.jpg"
 
-theme.font          = "Inter Medium"
-theme.font_thin     = "Inter Regular"
-theme.font_bold     = "Inter Bold"
-theme.icon_font     = "Fira Code Nerd Font Mono"
+theme.font          = "Lato Medium"
+theme.font_thin     = "Lato Regular"
+theme.font_bold     = "Lato Bold"
 
 local xres = xresources.get_current_theme()
 
@@ -56,6 +57,9 @@ theme.fg_focus      = dark_theme
             or col_shift(theme.fg_normal, -20)
 theme.fg_urgent     = theme.fg_normal
 theme.fg_minimize   = theme.fg_normal
+theme.fg_dark       = dark_theme
+            and col_shift(theme.fg_normal, -20)
+            or col_shift(theme.fg_normal, 20)
 
 --theme.bg_systray    = theme.bg_normal
 theme.systray_icon_spacing = theme.useless_gap
@@ -106,6 +110,34 @@ theme.rounded_rect = function(cr,w,h)
     return gears.shape.rounded_rect(cr,w,h,5)
 end
 theme.theme_shape = theme.rounded_rect
+theme.notification_shape = theme.shape
+
+theme.tabbed_spawn_in_tab = true  -- whether a new client should spawn into the focused tabbing container
+
+-- For tabbar in general
+theme.tabbar_ontop  = false
+theme.tabbar_radius = 5                -- border radius of the tabbar
+theme.tabbar_style = "modern"         -- style of the tabbar ("default", "boxes" or "modern")
+theme.tabbar_font = theme.font .. " 10"          -- font of the tabbar
+theme.tabbar_size = theme.wibar_height                 -- size of the tabbar
+theme.tabbar_position = "top"          -- position of the tabbar
+
+theme.tabbar_bg_normal = theme.bg_focus_dark     -- background color of the focused client on the tabbar
+theme.tabbar_fg_normal = theme.fg_normal     -- foreground color of the focused client on the tabbar
+theme.tabbar_bg_focus  = theme.bg_normal     -- background color of unfocused clients on the tabbar
+theme.tabbar_fg_focus  = theme.fg_normal     -- foreground color of unfocused clients on the tabbar
+
+theme.tabbar_bg_normal_inactive = theme.tabbar_bg_normal  -- background color of unfocused clients on the tabbar when inactive
+theme.tabbar_fg_normal_inactive = theme.tabbar_fg_normal  -- foreground color of unfocused clients on the tabbar when inactive
+theme.tabbar_bg_focus_inactive = theme.tabbar_bg_focus   -- background color of the focused client on the tabbar when inactive
+theme.tabbar_fg_focus_inactive = theme.tabbar_fg_focus   -- foreground color of the focused client on the tabbar when inactive
+theme.tabbar_disable = false           -- disable the tab bar entirely
+
+-- the following variables are currently only for the "modern" tabbar style
+theme.tabbar_color_close = theme.red -- chnges the color of the close button
+theme.tabbar_color_min   = theme.yellow -- chnges the color of the minimize button
+theme.tabbar_color_float = theme.blue -- chnges the color of the float button
+
 
 -- some length parameters
 theme.wibar_height  = dpi(30)
@@ -126,7 +158,11 @@ theme.awesome_icon = theme_assets.awesome_icon(
 rnotification.connect_signal('request::rules', function()
     rnotification.append_rule {
         rule       = { urgency = 'critical' },
-        properties = { bg = '#ff0000', fg = '#ffffff' }
+        properties = { bg = col_mix(theme.red,theme.bg_normal), fg = theme.fg_normal }
+    }
+    rnotification.append_rule {
+        rule       = { urgency = 'normal' },
+        properties = { bg = theme.bg_focus, fg = theme.fg_normal }
     }
 end)
 

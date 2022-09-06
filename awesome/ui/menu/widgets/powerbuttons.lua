@@ -23,8 +23,8 @@ local function create_menu_button (text, symbol, symbol_bg, callback)
                 {
                     widget = wibox.container.background,
                     bg = symbol_bg,
-                    forced_width = beautiful.get_font_height(beautiful.font_thin .. " 11") + dpi(5),
-                    forced_height = beautiful.get_font_height(beautiful.font_thin .. " 11") + dpi(5),
+                    forced_width = beautiful.get_font_height(beautiful.font_thin .. " 10") + dpi(5),
+                    forced_height = beautiful.get_font_height(beautiful.font_thin .. " 10") + dpi(5),
                     shape = beautiful.theme_shape,
                     {
                         widget = wibox.container.margin,
@@ -37,7 +37,7 @@ local function create_menu_button (text, symbol, symbol_bg, callback)
                 },
                 {
                     widget = wibox.widget.textbox,
-                    font = beautiful.font_thin .. " 11",
+                    font = beautiful.font_thin .. " 10",
                     text = text
                 }
             }
@@ -152,7 +152,7 @@ local menu_opener = wibox.widget {
                 margins = { left = dpi(5) },
                 {
                     widget = wibox.widget.textbox,
-                    font = beautiful.font_bold,
+                    font = beautiful.font_bold .. " 10",
                     text = "Hi " .. os.getenv("USER"),
                     valign = 'center'
                 }

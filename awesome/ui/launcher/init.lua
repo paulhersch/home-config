@@ -239,6 +239,8 @@ function module.open()
 					text = cmd
 				}
 			end
+            popup.visible = false
+            popup = nil
 		end,
 		keypressed_callback = function(mod, key, cmd)
 			if key == "Down" or (mod.Control and key == "n") then

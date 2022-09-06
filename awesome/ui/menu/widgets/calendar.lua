@@ -17,7 +17,7 @@ local styles = {
 
 local cal = wibox.widget {
 	widget = wibox.container.background,
-	bg = beautiful.blue,
+	bg = beautiful.bg_focus_dark,
 	shape = beautiful.theme_shape,
 	{
 		widget = wibox.container.margin,
@@ -32,8 +32,8 @@ local cal = wibox.widget {
 				return wibox.widget {
 					widget = wibox.container.background,
 					shape = beautiful.theme_shape,
-					bg = flag == 'focus' and beautiful.bg_focus,
-					fg = flag == 'focus' and beautiful.fg_normal or beautiful.bg_normal,
+					bg = flag == 'focus' and beautiful.blue,
+					fg = flag == 'focus' and beautiful.bg_focus_dark or beautiful.fg_dark,
 					{
 						widget = wibox.container.margin,
 						margins = dpi(5),

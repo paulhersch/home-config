@@ -37,8 +37,10 @@ local function init (s)
                         widget = wibox.widget.textbox,
                         font = beautiful.font_bold,
                         halign = 'center',
-                        id = 'index'
+                        id = 'index',
+                        text = ' ',
                     },
+                    --wibox.widget.base.make_widget(),
                     widget = wibox.container.place,
                     halign = 'center',
                     forced_width = beautiful.wibar_height - dpi(16),
@@ -46,22 +48,19 @@ local function init (s)
             },
             create_callback = function(self, t, _, _)
                 local def_bg = #t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark
-
+                function self:set_bg()
+                    self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or def_bg
+                end
                 t:connect_signal("tagged", function ()
                     def_bg = tagged_tag_col
+                    self:set_bg()
                 end)
                 t:connect_signal("untagged", function ()
                     def_bg = #t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark
+                    self:set_bg()
                 end)
                 t:connect_signal("property::selected", function ()
-                    if t.selected
-                        then
-                            self:get_children_by_id('bg')[1].bg = beautiful.blue
---                            self:get_children_by_id('bg')[1].fg = beautiful.bg_normal
-                        else
-                            self:get_children_by_id('bg')[1].bg = def_bg
---                            self:get_children_by_id('bg')[1].fg = beautiful.fg_normal
-                    end
+                    self:set_bg()
                 end)
 				self:connect_signal("mouse::enter", function()
 					if not t.selected then
@@ -77,13 +76,6 @@ local function init (s)
 					if b == 1 then t:view_only() end
 				end)
                 -- init
-                self:get_children_by_id('index')[1].text = ' ' --t.index
-                self:get_children_by_id('bg')[1].bg = def_bg
-                if t.selected
-                    then
-                        self:get_children_by_id('bg')[1].bg = beautiful.blue
-                        self:get_children_by_id('bg')[1].fg = beautiful.bg_normal
-                end
                 helpers.pointer_on_focus(self, s.bar)
 			end
 		}

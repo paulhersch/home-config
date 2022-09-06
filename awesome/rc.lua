@@ -1,7 +1,6 @@
 -- awesome_mode: api-level=5:screen=on
 local gears = require("gears")
 local awful = require("awful")
-local wibox = require("wibox")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local ruled = require("ruled")
@@ -9,7 +8,7 @@ require("awful.autofocus")
 
 local dpi	= beautiful.xresources.apply_dpi
 
-require ("keybinds")
+awesome.set_preferred_icon_size(128)
 
 naughty.connect_signal("request::display_error", function(message, startup)
     naughty.notification {
@@ -36,6 +35,7 @@ beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
 
 --globals for Orlando widgets
 RUBATO_DIR = "plugins.rubato."
+require ("keybinds")
 require ("ui")
 
 
@@ -136,21 +136,21 @@ ruled.notification.connect_signal('request::rules', function()
         rule       = { },
         properties = {
             screen           = awful.screen.preferred,
-            implicit_timeout = 10,
+            implicit_timeout = 5,
         }
     }
 end)
 
-naughty.connect_signal("request::display", function(n)
-    naughty.layout.box { notification = n }
-end)
+--naughty.connect_signal("request::display", function(n)
+--    naughty.layout.box { notification = n }
+--end)
 
 -- }}}
 
 -- Autostart {{{
 awful.spawn("nm-applet")
-awful.spawn("blueman-applet")
+--awful.spawn("blueman-applet")
 awful.spawn("xfce4-clipman")
 awful.spawn("redshift -O 4600K -P")
-awful.spawn("picom --config " .. os.getenv("HOME") .. "/.config/awesome/configs/picom.conf --experimental-backends")
+awful.spawn("picom --config " .. gears.filesystem.get_configuration_dir() .. "/configs/picom.conf")
 -- }}}

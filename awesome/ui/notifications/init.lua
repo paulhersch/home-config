@@ -1,109 +1,133 @@
---[[local naughty	= require "naughty"
-
-naughty.connect_signal("request::display", function(n)
-	naughty.layout.box { notification = n }
-end)]]
---      ███╗   ██╗ ██████╗ ████████╗██╗███████╗██╗ ██████╗ █████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
---      ████╗  ██║██╔═══██╗╚══██╔══╝██║██╔════╝██║██╔════╝██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
---      ██╔██╗ ██║██║   ██║   ██║   ██║█████╗  ██║██║     ███████║   ██║   ██║██║   ██║██╔██╗ ██║███████╗
---      ██║╚██╗██║██║   ██║   ██║   ██║██╔══╝  ██║██║     ██╔══██║   ██║   ██║██║   ██║██║╚██╗██║╚════██║
---      ██║ ╚████║╚██████╔╝   ██║   ██║██║     ██║╚██████╗██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║███████║
---      ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚═╝╚═╝     ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-
--- ===================================================================
--- Imports
--- ===================================================================
-
-
 local naughty = require("naughty")
 local beautiful = require("beautiful")
-local gears = require("gears")
 local wibox = require("wibox")
 local awful = require("awful")
 local dpi = beautiful.xresources.apply_dpi
 
+local helpers = require "helpers"
 
--- ===================================================================
--- Theme Definitions
--- ===================================================================
+local dnd = false
 
-
-naughty.config.defaults.ontop = true
-naughty.config.defaults.icon_size = dpi(32)
-naughty.config.defaults.screen = awful.screen.focused()
-naughty.config.defaults.title = "System Notification"
-naughty.config.defaults.margin = dpi(16)
-naughty.config.defaults.border_width = 0
-naughty.config.defaults.position = "bottom_right"
-naughty.config.defaults.shape = beautiful.theme_shape
-
-naughty.config.padding = dpi(7)
-naughty.config.spacing = dpi(7)
-naughty.config.icon_dirs = {
-   "/run/current-system/sw/share/icons/Papirus-Dark",
-   "/run/current-system/sw/share/icons/hicolor/"
-}
-naughty.config.icon_formats = {"png", "svg"}
-
--- Timeouts
-naughty.config.presets.critical.timeout = 0
-
-naughty.config.presets.normal = {
-    shape = beautiful.theme_shape,
-   font = beautiful.title_font,
-   fg = beautiful.fg_normal,
-   bg = beautiful.bg_normal,
-   position = "top_right"
-}
-
-naughty.config.presets.low = {
-   font = beautiful.title_font,
-   fg = beautiful.fg_normal,
-   bg = beautiful.bg_normal,
-   position = "top_right"
-}
-
-naughty.config.presets.critical = {
-   fg = "#ffffff",
-   bg = "#ff0000",
-   position = "top_right",
-   timeout = 0
-}
-
-naughty.config.presets.ok = naughty.config.presets.normal
-naughty.config.presets.info = naughty.config.presets.normal
-naughty.config.presets.warn = naughty.config.presets.critical
-
-
--- ===================================================================
--- Error Handling
--- ===================================================================
-
-
---[[if awesome.startup_errors then
-   naughty.notify({
-      preset = naughty.config.presets.critical,
-      title = "Oops, there were errors during startup!",
-      text = awesome.startup_errors
-   })
+local n = {}
+n.enable = function ()
+    dnd = false
 end
 
-do
-   local in_error = false
-   awesome.connect_signal(
-      "debug::error",
-      function(err)
-         if in_error then
-            return
-         end
-         in_error = true
+n.disable = function ()
+    dnd = false
+end
 
-         naughty.notify({
-            preset = naughty.config.presets.critical,
-            title = "Oops, an error happened!",
-            text = tostring(err)
-         })
-         in_error = false
-      end
-   )
-end--]]
+--[[n.actions_template = wibox.widget {
+    widget = wibox.container.background,
+    bg = beautiful.bg_focus,
+    shape = beautiful.shape,
+    {
+        widget = wibox.container.margin,
+        margins = dpi(5),
+        {
+            widget = wibox.widget.textbox,
+            id = 'text_role',
+            font = beautiful.font_thin .. " 10"
+        }
+    }
+}
+
+n.actions_template:connect_signal("mouse::enter",function ()
+    n.actions_template.bg = beautiful.bg_focus_dark
+end)
+n.actions_template:connect_signal("mouse::leave",function ()
+    n.actions_template.bg = beautiful.bg_focus
+end)
+helpers.pointer_on_focus(n.actions_template)
+]]
+
+local actionlist = require("naughty.list.actions")
+local wicon      = require("naughty.widget.icon")
+local wtitle     = require("naughty.widget.title")
+local wmessage   = require("naughty.widget.message")
+
+local template = {
+    {
+        {
+            {
+                widget = wibox.container.background,
+--                bg = beautiful.bg_focus_dark,
+                {
+                    wtitle,
+                    widget = wibox.container.margin,
+                    margins = {
+                        top = dpi(5),
+                        left = dpi(5),
+                        right = dpi(5)
+                    }
+                }
+            },
+            {
+                {
+                    {
+                        {
+                            {
+                                {
+                                    wicon,
+                                    widget = wibox.container.background,
+                                    shape = beautiful.theme_shape
+                                },
+                                widget = wibox.container.place,
+                                valign = 'center'
+                            },
+                            wmessage,
+                            spacing = dpi(5),
+                            layout  = wibox.layout.fixed.horizontal,
+                        },
+                        widget = wibox.container.margin,
+                        margins = dpi(5)
+                    },
+                    {
+                        base_layout = {
+                            layout = wibox.layout.flex.horizontal,
+                            spacing = dpi(5)
+                        },
+                        --widget_template = {
+                        --    
+                        --},
+                        widget = naughty.list.actions,
+                    },
+                    layout  = wibox.layout.fixed.vertical,
+                },
+                id     = "background_role",
+                widget = wibox.container.background,
+            },
+            spacing = dpi(5),
+            layout  = wibox.layout.fixed.vertical,
+        },
+        widget = wibox.container.background,
+        shape = beautiful.theme_shape,
+        bg = beautiful.bg_focus_dark
+    },
+    widget = wibox.container.constraint,
+    strategy = 'max',
+    width = dpi(500)
+}
+
+naughty.config.padding = 2*beautiful.useless_gap
+naughty.config.spacing = 2*beautiful.useless_gap
+naughty.config.defaults.position = "bottom_left"
+naughty.config.defaults.border_width = 0
+
+
+local function init ()
+    naughty.connect_signal("request::display", function (notif)
+        if not dnd then
+            naughty.layout.box {
+                notification = notif,
+                --widget_template = template,
+            }
+        end
+    end)
+end
+
+return {
+    enable = n.enable,
+    disable = n.disable,
+    init = init
+}
