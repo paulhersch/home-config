@@ -10,11 +10,21 @@ o.expandtab = true
 o.termguicolors = true
 o.showmode = false
 o.fillchars.vert = '┃'
---o.fillchars.horiz = '━' --using the bar anyways
---o.cmdheight = 0
-
+o.linebreak = true
+o.fillchars.horiz = '━'
+--o.cmdheight = 0 --only in git master rn
 o.spell = true
 o.spelllang = { 'de_de' }
+
+local g = vim.g
+if g.neovide then
+    vim.cmd [[set guifont=CaskaydiaCove\ Nerd\ Font\ Mono:h9]]
+    g.neovide_refresh_rate = 60
+    g.neovide_refresh_rate_idle = 1
+    g.neovide_scroll_animation_length = 0.1
+    g.neovide_cursor_animation_length = 0.05
+    g.neovide_confirm_quit=true
+end
 
 require("everblush").setup({
     nvim_tree = { contrast = false }
@@ -43,6 +53,18 @@ hl('Comment', {italic=true, fg = evblushcols.comment})
 hl('TSComment', {italic=true, fg = evblushcols.comment})
 hl('TSKeyword', {fg = evblushcols.color5 , italic=true}) --manual override
 
+--simple highlights for Telescope
+hl('TelescopeNormal', {bg = evblushcols.color0})
+hl('TelescopeBorder', {bg = evblushcols.color0, fg = evblushcols.color0})
+hl('TelescopePromptBorder', {bg = evblushcols.color0, fg = evblushcols.color0})
+--hl('TelescopePromptNormal', {bg = evblushcols.color0, fg = evblushcols.foreground})
+hl('TelescopePromptTitle', {bg = evblushcols.comment, fg = evblushcols.color4})
+
+hl('TelescopePreviewNormal', {bg = evblushcols.contrast, fg = evblushcols.foreground})
+hl('TelescopePreviewBorder', {bg = evblushcols.contrast, fg = evblushcols.contrast})
+hl('TelescopePreviewTitle', {bg = evblushcols.comment, fg = evblushcols.color4})
+
+--custom highlights for barbar.nvim
 hl('BufferCurrent', {fg = evblushcols.foreground, bg = evblushcols.contrast})
 hl('BufferCurrentIndex', {fg = evblushcols.background, bg = evblushcols.contrast})
 hl('BufferCurrentMod', {fg = evblushcols.foreground, bg = evblushcols.contrast, italic=true})

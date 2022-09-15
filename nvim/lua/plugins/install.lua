@@ -22,13 +22,21 @@ return require('packer').startup(function(use)
 
     --colorschemes
     use 'sainnhe/everforest'
-    use 'sainnhe/sonokai'
+    use { 'Julpikar/night-owl.nvim', as = 'nightowl' }
     use { 'Everblush/everblush.nvim', as = 'everblush' }
-    use { 'folke/tokyonight.nvim', branch = 'main' }
-    use { 'B4mbus/oxocarbon-lua.nvim', as = 'oxocarbon' }
     --adding IDE capabilities
     use 'neovim/nvim-lspconfig'
     use 'lewis6991/gitsigns.nvim'
+    use {
+        'norcalli/nvim-colorizer.lua',
+        config = function ()
+            require 'colorizer'.setup({
+                '*';
+            },{
+                mode = 'background'
+            })
+        end
+    }
 
     use {
         'filipdutescu/renamer.nvim',
