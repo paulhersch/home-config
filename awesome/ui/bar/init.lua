@@ -1,11 +1,9 @@
 local bar	= require "ui.bar.bar"
---local sidebar   = require "bar.sidebar"
 
 local awful	= require "awful"
 
 screen.connect_signal("request::desktop_decoration", function(s)
 	bar.init(s)
---	sidebar.init(s)
 end)
 
 

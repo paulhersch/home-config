@@ -9,7 +9,7 @@ local helpers	= require "helpers"
 local battery   = require "ui.bar.widgets.battery"
 local menu 	= require "ui.menu"
 local notifcenter = require "ui.notifcenter"
-local burger = require "plugins.awesome-widgets".hamburger({})
+--local burger = require "plugins.awesome-widgets".hamburger({})
 
 local function init (s)
     local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
@@ -47,7 +47,7 @@ local function init (s)
                 },
             },
             create_callback = function(self, t, _, _)
-                local def_bg = #t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark
+                --[[local def_bg = #t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark
                 function self:set_bg()
                     self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or def_bg
                 end
@@ -63,21 +63,24 @@ local function init (s)
                     self:set_bg()
                 end)
 				self:connect_signal("mouse::enter", function()
+                    t.backup_bg = self:get_children_by_id('bg')[1].bg
 					if not t.selected then
-                        self:get_children_by_id('bg')[1].bg = helpers.color.col_mix(beautiful.blue, def_bg)
+                        self:get_children_by_id('bg')[1].bg = helpers.color.col_mix(beautiful.blue, t.backup_bg)
                     end
 				end)
 				self:connect_signal("mouse::leave", function()
-					if not t.selected then
-						self:get_children_by_id('bg')[1].bg = def_bg
-					end
-				end)
+                    if self:get_children_by_id('bg')[1].bg ~= helpers.color.col_mix(beautiful.blue, t.backup_bg) then return end
+					self:get_children_by_id('bg')[1].bg = t.backup_bg
+				end)]]
 				self:connect_signal("button::press", function(_, _, _, b)
 					if b == 1 then t:view_only() end
 				end)
                 -- init
                 helpers.pointer_on_focus(self, s.bar)
-			end
+			end,
+            update_callback = function (self, t, _, _)
+                self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark)
+            end
 		}
 	}
 	s.systray = s == screen.primary and wibox.widget.systray() or nil
@@ -140,8 +143,8 @@ local function init (s)
                             resize = true,
                             image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "/assets/materialicons/comment.svg", beautiful.fg_normal),]]
                             id = 'notifcenter_trigger',
-                            widget = wibox.container.background,
-                            burger,
+                            widget = wibox.widget.imagebox,
+                            image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal)
                         },
 						layout = wibox.layout.fixed.horizontal,
 						spacing = dpi(5),
@@ -191,8 +194,22 @@ local function show(s)
     if s.center_open then menu.show(s) end
 end
 
+local function display_pending_notifs()
+    for s in screen do
+        s.bar:get_children_by_id('notifcenter_trigger')[1]:set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.blue))
+    end
+end
+
+local function no_pending_notifs()
+    for s in screen do
+        s.bar:get_children_by_id('notifcenter_trigger')[1]:set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal))
+    end
+end
+
 return {
 	init	= init,
 	hide	= hide,
-	show	= show
+	show	= show,
+    notifcenter_filled = display_pending_notifs,
+    notifcenter_cleared = no_pending_notifs
 }

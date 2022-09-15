@@ -19,16 +19,19 @@ local widget = awful.widget.layoutlist {
             widget = wibox.container.margin,
             margins = dpi(5),
             {
-                id              = 'background_role',
-                shape           = beautiful.theme_shape,
-                bg = beautiful.bg_focus,
-                widget          = wibox.container.background,
+                widget = wibox.container.background,
+                shape = beautiful.theme_shape,
                 {
-                    widget = wibox.container.margin,
-                    margins = dpi(5),
+                    id = 'background_role',
+                    bg = beautiful.bg_focus,
+                    widget = wibox.container.background,
                     {
-                        id            = 'icon_role',
-                        widget        = wibox.widget.imagebox,
+                        widget = wibox.container.margin,
+                        margins = dpi(5),
+                        {
+                            id = 'icon_role',
+                            widget = wibox.widget.imagebox,
+                        }
                     }
                 }
             }

@@ -6,15 +6,14 @@ local dpi = beautiful.xresources.apply_dpi
 
 local helpers = require "helpers"
 
-local dnd = false
+local shownotif = true
 
-local n = {}
-n.enable = function ()
-    dnd = false
+local function show_notifs ()
+    shownotif = true
 end
 
-n.disable = function ()
-    dnd = false
+local function hide_notifs ()
+    shownotif = false
 end
 
 --[[n.actions_template = wibox.widget {
@@ -82,16 +81,17 @@ local template = {
                         widget = wibox.container.margin,
                         margins = dpi(5)
                     },
-                    {
-                        base_layout = {
-                            layout = wibox.layout.flex.horizontal,
-                            spacing = dpi(5)
-                        },
+                    --{
+                        --base_layout = {
+                        --    layout = wibox.layout.flex.horizontal,
+                        --    spacing = dpi(5)
+                        --},
                         --widget_template = {
                         --    
                         --},
-                        widget = naughty.list.actions,
-                    },
+                        --widget =
+                        actionlist,
+                    --},
                     layout  = wibox.layout.fixed.vertical,
                 },
                 id     = "background_role",
@@ -109,25 +109,26 @@ local template = {
     width = dpi(500)
 }
 
-naughty.config.padding = 2*beautiful.useless_gap
-naughty.config.spacing = 2*beautiful.useless_gap
+naughty.config.padding = dpi(50)
+naughty.config.spacing = dpi(50)
 naughty.config.defaults.position = "bottom_left"
 naughty.config.defaults.border_width = 0
 
 
 local function init ()
     naughty.connect_signal("request::display", function (notif)
-        if not dnd then
+        if shownotif then
             naughty.layout.box {
                 notification = notif,
-                --widget_template = template,
+                widget_template = template,
+                shape = beautiful.theme_shape
             }
         end
     end)
 end
 
 return {
-    enable = n.enable,
-    disable = n.disable,
+    enable = show_notifs,
+    disable = hide_notifs,
     init = init
 }

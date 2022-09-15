@@ -8,7 +8,7 @@ local awful = require "awful"
 local iconsdir	= gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
 local controller = playerctl.lib {
-	player = { "spotify", "ncspot" }
+	player = { "spotify" }
 }
 local function create(base_box)
 local playerwidget = wibox.widget {
@@ -27,8 +27,8 @@ local playerwidget = wibox.widget {
 			{
 				widget = wibox.container.background,
 				shape = beautiful.rounded_rect,
-				bg = beautiful.green,
-				fg = beautiful.bg_normal,
+				bg = beautiful.bg_focus,
+				fg = beautiful.fg_normal,
 				forced_width = dpi(200),
 				{
 					widget = wibox.container.margin,
@@ -60,8 +60,8 @@ local playerwidget = wibox.widget {
 								widget = wibox.widget.progressbar,
 								forced_height = dpi(5),
 								forced_width = dpi(180),
-								background_color = beautiful.green,
-								color = beautiful.bg_normal,
+								background_color = beautiful.bg_focus,
+								color = beautiful.blue,
 								bar_shape = gears.shape.rounded_bar,
 								shape = gears.shape.rounded_bar,
 								max_value = 1,

@@ -4,7 +4,9 @@ local beautiful = require "beautiful"
 
 local rubato = require "plugins.rubato"
 
-local playerwidget = require "ui.menu.widgets.playerctl"
+--local playerwidget = require "ui.menu.widgets.playerctl"
+local playerwidget = require "ui.menu.widgets.mpd"
+
 local calendar = require "ui.menu.widgets.calendar"
 local layouts = require "ui.menu.widgets.layout"
 local powerbuttons = require "ui.menu.widgets.powerbuttons"

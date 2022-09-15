@@ -53,33 +53,6 @@ screen.connect_signal("request::wallpaper", function(s)
 	}]]
 	gears.wallpaper.maximized(beautiful.wallpaper, s)
 end)
---this is just for shits and giggles
---[[awful.popup {
-    widget = {
-        {
-            {
-                text = "Activate Linux",
-                font = beautiful.font .. " 20",
-                widget = wibox.widget.textbox
-            },
-            {
-                text = "Go to Settings to activate Linux.",
-                font = beautiful.font .. " 15",
-                widget = wibox.widget.textbox
-            },
-            layout = wibox.layout.fixed.vertical
-        },
-        margins = 30,
-        widget = wibox.container.margin
-    },
-    opacity = 0.5,
-    bg = "#00000000",
-    type = "desktop",
-    visible = true,
-    ontop = true,
-    input_passthrough = true,
-    placement = awful.placement.bottom_right
-}]]
 -- }}}
 
 
@@ -95,6 +68,7 @@ client.connect_signal("request::manage", function(c)
 		c:raise()
 	else c:to_secondary_section() end
 	c.shape = c.fullscreen and gears.shape.rectangle or beautiful.theme_shape
+    c:activate{raise = true}
 end)
 
 client.connect_signal("property::fullscreen", function(c)
@@ -135,15 +109,11 @@ ruled.notification.connect_signal('request::rules', function()
     ruled.notification.append_rule {
         rule       = { },
         properties = {
-            screen           = awful.screen.preferred,
+            screen           = awful.screen.focused,
             implicit_timeout = 5,
         }
     }
 end)
-
---naughty.connect_signal("request::display", function(n)
---    naughty.layout.box { notification = n }
---end)
 
 -- }}}
 

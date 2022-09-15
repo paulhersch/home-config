@@ -49,58 +49,67 @@ start_btn:connect_signal("mouse::leave",function ()
 end)
 
 widget = wibox.widget {
-    layout = wibox.layout.align.vertical,
+    widget = wibox.container.background,
+    bg = beautiful.bg_focus_dark,
+    shape = beautiful.theme_shape,
     {
         widget = wibox.container.margin,
-        margins = {
-            bottom = dpi(5)
-        },
+        margins = dpi(5),
         {
-            widget = wibox.container.place,
-            halign = 'center',
-            valign = 'center',
-            start_btn
-        }
-    },
-    {
-        id = 'second',
-        widget = wibox.container.arcchart,
-        paddings = dpi(3),
-        colors = { beautiful.magenta },
-        max_value = 60,
-        thickness = dpi(4),
-        forced_height = dpi(70),
-        {
-            id = 'minute',
-            widget = wibox.container.arcchart,
-            paddings = dpi(3),
-            colors = { beautiful.blue },
-            max_value = 60,
-            thickness = dpi(4),
+            layout = wibox.layout.align.vertical,
             {
-                id = 'hour',
+                widget = wibox.container.margin,
+                margins = {
+                    bottom = dpi(5)
+                },
+                {
+                    widget = wibox.container.place,
+                    halign = 'center',
+                    valign = 'center',
+                    start_btn
+                }
+            },
+            {
+                id = 'second',
                 widget = wibox.container.arcchart,
-                paddings = dpi(5),
-                colors = { beautiful.green },
-                max_value = 24,
+                paddings = dpi(3),
+                colors = { beautiful.fg_normal },
+                max_value = 60,
                 thickness = dpi(4),
-                wibox.widget.base.make_widget()
-            }
-        }
-    },
-    {
-        widget = wibox.container.margin,
-        margins = {
-            top = dpi(5)
-        },
-        {
-            widget = wibox.container.place,
-            halign = 'center',
+                forced_height = dpi(70),
+                {
+                    id = 'minute',
+                    widget = wibox.container.arcchart,
+                    paddings = dpi(3),
+                    colors = { beautiful.grey },
+                    max_value = 60,
+                    thickness = dpi(4),
+                    {
+                        id = 'hour',
+                        widget = wibox.container.arcchart,
+                        paddings = dpi(5),
+                        colors = { beautiful.bg_focus },
+                        max_value = 24,
+                        thickness = dpi(4),
+                        wibox.widget.base.make_widget()
+                    }
+                }
+            },
             {
-                id = 'time',
-                widget = wibox.widget.textbox,
-                font = beautiful.font .. " 10",
-                text = ""
+                widget = wibox.container.margin,
+                margins = {
+                    top = dpi(5)
+                },
+                {
+                    widget = wibox.container.place,
+                    halign = 'center',
+                    {
+                        id = 'time',
+                        widget = wibox.widget.textbox,
+                        font = beautiful.font .. " 10",
+                        text = ""
+                    }
+                }
             }
         }
     }

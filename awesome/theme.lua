@@ -134,9 +134,9 @@ theme.tabbar_fg_focus_inactive = theme.tabbar_fg_focus   -- foreground color of 
 theme.tabbar_disable = false           -- disable the tab bar entirely
 
 -- the following variables are currently only for the "modern" tabbar style
-theme.tabbar_color_close = theme.red -- chnges the color of the close button
-theme.tabbar_color_min   = theme.yellow -- chnges the color of the minimize button
-theme.tabbar_color_float = theme.blue -- chnges the color of the float button
+theme.tabbar_color_close = theme.red -- changes the color of the close button
+theme.tabbar_color_min   = theme.yellow -- changes the color of the minimize button
+theme.tabbar_color_float = theme.blue -- changes the color of the float button
 
 
 -- some length parameters

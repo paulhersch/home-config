@@ -391,12 +391,13 @@ local function init(args)
         },
         widget_template = create_template(
             {
-                widget = wibox.widget.imagebox,
-                resize = true,
-                id = 'icon'
+                --widget = wibox.widget.imagebox,
+                --resize = true,
+                --id = 'icon'
+                widget = awful.widget.clienticon
             },
             function (self, c, _, _)
-                self:get_children_by_id('icon')[1].image = icon_theme:get_client_icon_path(c)
+                --self:get_children_by_id('icon')[1].image = icon_theme:get_client_icon_path(c) or c.icon
                 self:add_button( awful.button {
                     modifiers	= {},
                     button		= 1,

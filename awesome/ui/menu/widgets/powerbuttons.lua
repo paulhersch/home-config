@@ -130,41 +130,90 @@ menu = awful.popup {
 }
 
 local menu_opener = wibox.widget {
-    layout = wibox.layout.fixed.horizontal,
+    widget = wibox.container.background,
+    bg = beautiful.bg_focus_dark,
+    shape = beautiful.theme_shape,
     {
         widget = wibox.container.margin,
         margins = dpi(5),
         {
-            widget = wibox.widget.imagebox,
-            clip_shape = gears.shape.circle,
-            image = os.getenv("HOME") .. "/.face"
-        }
-    },
-    {
-        widget = wibox.container.place,
-        fill_horizontal = true,
-        fill_vertical = true,
-        halign = 'left',
-        {
-            layout = wibox.layout.fixed.vertical,
+            layout = wibox.layout.fixed.horizontal,
             {
                 widget = wibox.container.margin,
-                margins = { left = dpi(5) },
+                margins = dpi(5),
                 {
-                    widget = wibox.widget.textbox,
-                    font = beautiful.font_bold .. " 10",
-                    text = "Hi " .. os.getenv("USER"),
-                    valign = 'center'
+                    widget = wibox.widget.imagebox,
+                    --clip_shape = gears.shape.circle,
+                    clip_shape = beautiful.theme_shape,
+                    image = os.getenv("HOME") .. "/.face"
                 }
             },
-            create_menu_button("bye", iconsdir .. "logout.svg", beautiful.fg_normal, function ()
-                local s = awful.screen.focused()
-                awful.placement.next_to(menu,{geometry = s.center, preferred_positions = {"right"}, preferred_anchors = "front"})
-                menu.visible = not menu.visible
-            end)
+            {
+                widget = wibox.container.place,
+                fill_horizontal = true,
+                fill_vertical = true,
+                halign = 'left',
+                {
+                    layout = wibox.layout.fixed.vertical,
+                    {
+                        widget = wibox.container.margin,
+                        margins = { left = dpi(5) },
+                        {
+                            widget = wibox.widget.textbox,
+                            font = beautiful.font_bold .. " 11",
+                            text = "Hi " .. os.getenv("USER"),
+                            valign = 'center'
+                        }
+                    },
+                    {
+                        widget = wibox.container.place,
+                        fill_horizontal = true,
+                        halign = 'left',
+                        {
+                            widget = wibox.container.background,
+                            bg = beautiful.bg_focus_dark,
+                            shape = beautiful.theme_shape,
+                            id = 'bye_bg',
+                            {
+                                widget = wibox.container.margin,
+                                margins = dpi(5),
+                                {
+                                    widget = wibox.widget.textbox,
+                                    text = "bye",
+                                }
+                            }
+                        }
+                    }
+                    --[[create_menu_button("bye", iconsdir .. "logout.svg", beautiful.fg_normal, function ()
+                        local s = awful.screen.focused()
+                        awful.placement.next_to(menu,{geometry = s.center, preferred_positions = {"right"}, preferred_anchors = "front"})
+                        menu.visible = not menu.visible
+                    end)
+                    ]]
+                }
+            }
         }
     }
 }
+
+local bye_bg = menu_opener:get_children_by_id('bye_bg')[1]
+helpers.pointer_on_focus(bye_bg)
+bye_bg:connect_signal("button::press", function (_, _, _, b, _, fwr)
+    if b == 1 then
+        local s = awful.screen.focused()
+        --awful.placement.next_to(menu,{geometry = s.center, preferred_positions = {"right"}, preferred_anchors = "front"})
+        menu.x = s.menu.x + fwr.x
+        menu.y = s.menu.y + fwr.y + fwr.height
+        menu.visible = not menu.visible
+    end
+end)
+bye_bg:connect_signal("mouse::enter", function ()
+    bye_bg.bg = beautiful.bg_focus
+end)
+bye_bg:connect_signal("mouse::leave", function ()
+    bye_bg.bg = beautiful.bg_focus_dark
+end)
+
 local function hide()
     menu.visible = false
 end

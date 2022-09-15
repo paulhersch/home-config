@@ -12,6 +12,14 @@ local mat_icons = gears.filesystem.get_configuration_dir() .. "assets/materialic
 local recycler = require "plugins.awesome-widgets.recycler"
 local rubato = require "plugins.rubato"
 
+local function bar_indic_notif()
+    require("ui.bar.bar").notifcenter_filled()
+end
+
+local function bar_indic_no_notif()
+    require("ui.bar.bar").notifcenter_cleared()
+end
+
 local notifications
 local function cross_enter (self, _)
     self:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.red))
@@ -19,6 +27,8 @@ end
 local function cross_leave (self, _)
     self:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal))
 end
+
+
 
 local notifctl = require "ui.notifications"
 local template = {
@@ -40,7 +50,7 @@ local template = {
                     {
                         layout = wibox.layout.fixed.horizontal,
                         {
-                            id = 'title',
+                            id = 'appname',
                             widget = wibox.widget.textbox,
                             font = beautiful.font_bold .. " 11",
                         },
@@ -52,7 +62,7 @@ local template = {
                             {
                                 id = 'remove',
                                 widget = wibox.widget.imagebox,
-                                forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11")*(2/3),
+                                forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11")/2,
                                 forced_width = beautiful.get_font_height(beautiful.font_bold .. " 11"),
                             }
                         }
@@ -64,9 +74,10 @@ local template = {
                 margins = dpi(5),
                 {
                     layout = wibox.layout.fixed.horizontal,
+                    spacing = dpi(5),
                     {
-                        widget = wibox.container.margin,
-                        margins = dpi(5),
+                        widget = wibox.container.place,
+                        valign = 'center',
                         {
                             id = 'icon',
                             widget = wibox.widget.imagebox,
@@ -77,9 +88,18 @@ local template = {
                         }
                     },
                     {
-                        id = 'text',
-                        widget = wibox.widget.textbox,
-                        font = beautiful.font_thin .. " 11",
+                        layout = wibox.layout.fixed.vertical,
+                        spacing = dpi(5),
+                        {
+                            id = 'title',
+                            widget = wibox.widget.textbox,
+                            font = beautiful.font_bold .. " 11",
+                        },
+                        {
+                            id = 'text',
+                            widget = wibox.widget.textbox,
+                            font = beautiful.font_thin .. " 11",
+                        }
                     }
                 }
             }
@@ -96,6 +116,7 @@ notifications = recycler(
             self:get_children_by_id('remove')[1]:connect_signal("mouse::enter", function() cross_enter(w) end)
             self:get_children_by_id('remove')[1]:connect_signal("mouse::leave", function() cross_leave(w) end)
             self:get_children_by_id('title')[1].text = n.title
+            self:get_children_by_id('appname')[1].text = n.app_name
             self:get_children_by_id('text')[1].text = n.message
             if n.icon then
                 self:get_children_by_id('icon')[1]:set_image(n.icon)
@@ -110,6 +131,7 @@ notifications = recycler(
                         self:get_children_by_id('remove')[1]:disconnect_signal("mouse::enter", cross_enter)
                         self:get_children_by_id('remove')[1]:disconnect_signal("mouse::leave", cross_leave)
                         notifications:remove(self)
+                        if #notifications:get_children() == 0 then bar_indic_no_notif() end
                         collectgarbage("collect")
                     end
                 }
@@ -210,6 +232,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                 button = 1,
                 on_press = function ()
                     notifications:set_children() --clears
+                    bar_indic_no_notif()
                 end
             },
             {
@@ -242,14 +265,27 @@ local function check_blacklists (n)
     return false
 end
 
-local function add_notif (n)
+naughty.connect_signal("request::display", function(n)
     if not check_blacklists(n) then --ignore some notifications
         notifications:add_at(1,n)
+        bar_indic_notif()
     end
-end
+end)
 
-naughty.connect_signal("request::display", function(n)
-    add_notif(n)
+client.connect_signal("property::active", function (c)
+    --most apps report their name via class so that should be alright
+    if #notifications:get_children() == 0 then return end
+
+    local cname = string.lower(c.class)
+    local notscopy = notifications:get_children()
+    for _, entry in pairs(notscopy) do
+        if string.lower(entry:get_children_by_id('appname')[1].text) == cname then
+            notifications:remove(entry)
+        end
+    end
+
+    if #notifications:get_children() == 0 then bar_indic_no_notif() end
+
 end)
 
 return notifbox

@@ -32,8 +32,7 @@ local cal = wibox.widget {
 				return wibox.widget {
 					widget = wibox.container.background,
 					shape = beautiful.theme_shape,
-					bg = flag == 'focus' and beautiful.blue,
-					fg = flag == 'focus' and beautiful.bg_focus_dark or beautiful.fg_dark,
+					fg = flag == 'focus' and beautiful.blue or beautiful.fg_dark,
 					{
 						widget = wibox.container.margin,
 						margins = dpi(5),

@@ -3,7 +3,6 @@ local beautiful = require "beautiful"
 local dpi = beautiful.xresources.apply_dpi
 
 local widget = require "ui.notifcenter.widget"
-local rubato = require "plugins.rubato"
 
 local function init(s)
     local cent_width = dpi(400)

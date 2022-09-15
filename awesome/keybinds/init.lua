@@ -2,7 +2,7 @@ local awful	= require ("awful")
 local gears	= require ("gears")
 
 local configdir	= gears.filesystem.get_configuration_dir()
-local terminal = "kitty"
+local terminal = "wezterm"
 local filemanager = "pcmanfm"
 local modkey = "Mod1"
 
@@ -15,11 +15,11 @@ awful.keyboard.append_global_keybindings({
 		{description = "reload awesome", group = "awesome"}),
 	awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
 		{description = "open a terminal", group = "launcher"}),
-    --awful.key({ modkey }, "d", function() launcher.open() end,
-	--	{description = "rofi", group = "launcher"}),
+    awful.key({ modkey }, "d", function() launcher.open() end,
+		{description = "App launcher", group = "launcher"}),
 
-	awful.key({ modkey }, "d", function() awful.spawn("rofi -show combi -combi-modi drun,run") end,
-		{description = "rofi", group = "launcher"}),
+	--awful.key({ modkey }, "d", function() awful.spawn("rofi -show combi -combi-modi drun,run") end,
+	--	{description = "rofi", group = "launcher"}),
 })
 
 -- Focus related keybindings
