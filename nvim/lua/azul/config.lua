@@ -230,7 +230,7 @@ M.highlights_base = function (colors)
         NvimTreeSymlink = { fg = colors.color7 },
         NvimTreeFolderIcon = { fg = colors.color4, bg = colors.background },
         NvimTreeFolderName = { fg = colors.foreground },
-        NvimTreeOpenedFolderName = { fg = colors.color2 },
+        NvimTreeOpenedFolderName = { fg = colors.color4 },
         NvimTreeEmptyFolderName = { fg = colors.color2 },
         NvimTreeStatusLineNC = { bg = colors.background, fg = colors.background },
 
