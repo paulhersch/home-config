@@ -8,7 +8,7 @@ colors
 #
 # 	ZSH-SETTINGS
 #
-HISTFILE=~/.config/zsh/zhistory
+HISTFILE=~/.zhistory
 HISTSIZE=10000
 SAVEHIST=10000
 
@@ -60,12 +60,15 @@ bindkey ';5D' backward-word
 bindkey ';5C' forward-word
 
 #
-#	ALIASES
+#	ALIASES & CUSTOM FUNCTIONS
 #
 
 alias cl="clear"
 alias git-update="git fetch --recurse-submodules=no --progress --prune ${1}"
 alias docker="docker -H unix:///run/user/1000/docker.sock"
+texwithbiber () {
+    lualatex "$1" && biber "$1" && lualatex "$1"
+}
 
 fortune -s | cowsay -f eyes
 
