@@ -88,17 +88,21 @@ local template = {
                         }
                     },
                     {
-                        layout = wibox.layout.fixed.vertical,
-                        spacing = dpi(5),
+                        widget = wibox.container.place,
+                        valign = 'top',
                         {
-                            id = 'title',
-                            widget = wibox.widget.textbox,
-                            font = beautiful.font_bold .. " 11",
-                        },
-                        {
-                            id = 'text',
-                            widget = wibox.widget.textbox,
-                            font = beautiful.font_thin .. " 11",
+                            layout = wibox.layout.fixed.vertical,
+                            spacing = dpi(5),
+                            {
+                                id = 'title',
+                                widget = wibox.widget.textbox,
+                                font = beautiful.font_bold .. " 11",
+                            },
+                            {
+                                id = 'text',
+                                widget = wibox.widget.textbox,
+                                font = beautiful.font_thin .. " 11",
+                            }
                         }
                     }
                 }
@@ -174,7 +178,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                 button = 1,
                 on_press = function ()
                     notifs_active = not notifs_active
-                    if notifs_active == true then notifctl.enable() else notifctl.disable() end
+                    if notifs_active == true then notifctl.enable_notifs() else notifctl.disable_notifs() end
                     notifbox:get_children_by_id('toggle_dnd')[1]:set_image(notifs_active
                         and gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus)
                         or gears.color.recolor_image(mat_icons .. "notifications_off.svg", beautiful.fg_focus)
@@ -252,10 +256,10 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
 helpers.pointer_on_focus(notifbox:get_children_by_id('clear_button')[1])
 helpers.pointer_on_focus(notifbox:get_children_by_id('toggle_dnd_bg')[1])
 
-local blacklisted_appnames = { "Spotify" }
+local blacklisted_appnames = { "Spotify", "NetworkManager" }
 local blacklisted_titles = { "Launching Application", "battery low!" }
 
-local function check_blacklists (n)
+local function check_list (n)
     for _, an in ipairs(blacklisted_appnames) do
         if an == n.app_name then return true end
     end
@@ -266,7 +270,7 @@ local function check_blacklists (n)
 end
 
 naughty.connect_signal("request::display", function(n)
-    if not check_blacklists(n) then --ignore some notifications
+    if not check_list(n) then --ignore some notifications
         notifications:add_at(1,n)
         bar_indic_notif()
     end

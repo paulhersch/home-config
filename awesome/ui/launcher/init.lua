@@ -233,7 +233,7 @@ function module.open()
 					text = entry.name
 				}
 			else
-				awful.spawn.with_shell(cmd)
+				awful.spawn.with_shell(cmd ' > /dev/null')
 				notify {
 					title = "Running Command",
 					text = cmd

@@ -117,7 +117,7 @@ local function init (s)
                 {
                     widget = wibox.widget.textclock,
                     font = beautiful.font_bold,
-                    format = '%H:%M',
+                    format = '%a, %d. %B um %H:%M',
                     id = 'center_trigger',
                     --widget = wibox.widget.textbox,
                     --text = "menu"

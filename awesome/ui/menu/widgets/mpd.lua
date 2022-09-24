@@ -41,7 +41,7 @@ local function create(base_box)
                                 id = 'title',
                                 widget = wibox.widget.textbox,
                                 font = beautiful.font_bold .. " 11",
-                                align = 'center',
+                                halign = 'center',
                                 forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11"),
                                 text = "nothing playing"
                             }
@@ -50,7 +50,7 @@ local function create(base_box)
                             id = 'artist',
                             widget = wibox.widget.textbox,
                             font = beautiful.font_thin .. " 9",
-                            align = 'center',
+                            halign = 'center',
                             forced_height = beautiful.get_font_height(beautiful.font_thin .. " 9"),
                             text = "nothing playing"
                         }

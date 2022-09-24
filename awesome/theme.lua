@@ -20,9 +20,9 @@ local theme = {}
 
 theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/dark-water.jpg"
 
-theme.font          = "Lato Medium"
-theme.font_thin     = "Lato Regular"
-theme.font_bold     = "Lato Bold"
+theme.font          = "Inter Medium"
+theme.font_thin     = "Inter Regular"
+theme.font_bold     = "Inter Bold"
 
 local xres = xresources.get_current_theme()
 
@@ -43,11 +43,11 @@ theme.gray          = xres.color7
 
 theme.bg_normal     = xres.background
 theme.bg_focus_dark = dark_theme
-            and col_shift(theme.bg_normal, 15)
-            or col_shift (theme.bg_normal, -15)
+            and col_shift(theme.bg_normal, 8)
+            or col_shift (theme.bg_normal, -8)
 theme.bg_focus      = dark_theme
-            and col_shift(theme.bg_normal, 30)
-            or col_shift(theme.bg_normal, -30)
+            and col_shift(theme.bg_normal, 16)
+            or col_shift(theme.bg_normal, -16)
 theme.bg_urgent     = xres.color1
 theme.bg_minimize   = theme.bg_normal
 

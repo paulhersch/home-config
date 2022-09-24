@@ -4,6 +4,7 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local ruled = require("ruled")
+local wibox = require("wibox")
 require("awful.autofocus")
 
 local dpi	= beautiful.xresources.apply_dpi
@@ -41,7 +42,7 @@ require ("ui")
 
 -- {{{ Wallpaper
 screen.connect_signal("request::wallpaper", function(s)
---[[	awful.wallpaper {
+	awful.wallpaper {
 		screen = s,
 		widget = {
 			image		= beautiful.wallpaper,
@@ -50,8 +51,8 @@ screen.connect_signal("request::wallpaper", function(s)
 			scaling_quality	= 'best',
 			horizontal_fit_policy='fit'
 		}
-	}]]
-	gears.wallpaper.maximized(beautiful.wallpaper, s)
+	}
+	--gears.wallpaper.maximized(beautiful.wallpaper, s)
 end)
 -- }}}
 
@@ -69,6 +70,7 @@ client.connect_signal("request::manage", function(c)
 	else c:to_secondary_section() end
 	c.shape = c.fullscreen and gears.shape.rectangle or beautiful.theme_shape
     c:activate{raise = true}
+    if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
 end)
 
 client.connect_signal("property::fullscreen", function(c)
@@ -78,13 +80,11 @@ end)
 
 -- rules {{{
 ruled.client.connect_signal("request::rules", function()
+	--ruled.client.append_rule {
+	--	rule_any   = { type = { "normal", "dialog" } },
+	--	properties = { titlebars_enabled = not requests_no_titlebar },
+	--}
 	ruled.client.append_rule {
-		id         = "titlebars",
-		rule_any   = { type = { "normal", "dialog" } },
-		properties = { titlebars_enabled = true },
-	}
-	ruled.client.append_rule {
-		id = "floating_startup",
 		rule = {},
 		except_any = { type = { "normal", "dialog" } },
 		properties = { floating = true, placement = awful.placement.centered }
@@ -99,11 +99,27 @@ ruled.client.connect_signal("request::rules", function()
 			height	= dpi(480)
 		},
 	}
+    ruled.client.append_rule{
+        rule_any = {
+            class = { "cavaonstart" },
+        },
+        properties = {
+            floating = true,
+            screen = awful.screen.preferred,
+            immobilized_horizontal = true,
+            immobilized_vertical = true,
+            width = 640,
+            height = 480,
+            focusable = false,
+            x = 455,
+            y = 50,
+            sticky = true
+        }
+    }
 end)
 --}}}
 
 -- {{{ Notifications
-
 ruled.notification.connect_signal('request::rules', function()
     -- All notifications will match this rule.
     ruled.notification.append_rule {
@@ -114,7 +130,6 @@ ruled.notification.connect_signal('request::rules', function()
         }
     }
 end)
-
 -- }}}
 
 -- Autostart {{{
