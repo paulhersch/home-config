@@ -22,5 +22,5 @@ map("n", "gi", "<cmd>lua require('goto-preview').glsp_references(<CR>", {silent 
 map("n", "gt", "<cmd>lua require('telescope.builtin').lsp_references()<CR>", {silent = true, noremap = true})
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", {silent = true, noremap = true})
 map("n", "D", "<cmd>lua vim.diagnostic.open_float()<cr>", {silent = true, noremap = true})
--- telescope >>>>>>>>>>> nvim builtin search
+-- telescope search is nice
 map("n", "gf", "<cmd>lua require('telescope.builtin').live_grep()<CR>", {silent = true, noremap = true})
