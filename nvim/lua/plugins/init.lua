@@ -7,7 +7,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
     vim.cmd "PackerSync"
 end
 
-local presence = require "plugins.confs.presence"
 local nvimtree = require "plugins.confs.nvimtree"
 local barbar = require "plugins.confs.barbar"
 local gitsigns = require "plugins.confs.gitsigns"
@@ -15,14 +14,11 @@ local lualine = require "plugins.confs.lualine"
 local lspc = require "plugins.confs.lspconfs"
 local cmp = require "plugins.confs.cmp"
 local telescope = require "plugins.confs.telescope"
---local simpledark = require "plugins.confs.simpledark"
---local everblush = require "plugins.confs.everblush"
-
+local dashboard = require "plugins.confs.dashboard"
 
 return require('packer').startup(function(use)
     use "wbthomason/packer.nvim"
 
-    use(presence)
     use(nvimtree)
     use(barbar)
     use(gitsigns)
@@ -30,8 +26,7 @@ return require('packer').startup(function(use)
     use(lspc)
     use(cmp)
     use(telescope)
---    use(simpledark)
---    use(everblush)
+    use(dashboard)
 
     use { 'lukas-reineke/indent-blankline.nvim',
         requires = 'nvim-treesitter/nvim-treesitter',
@@ -43,10 +38,6 @@ return require('packer').startup(function(use)
         end
     }
 
-    --colorschemes
-    use 'sainnhe/everforest'
-    use { 'Julpikar/night-owl.nvim', as = 'nightowl' }
-    use { 'pradyungn/Mountain' , rtp = 'vim' }
     --adding IDE capabilities
     use {
         'norcalli/nvim-colorizer.lua',
@@ -60,6 +51,18 @@ return require('packer').startup(function(use)
     }
 
     use {
+        'glepnir/lspsaga.nvim',
+        branch = 'main',
+        require = 'neovim/nvim-lspconfig',
+        config = function ()
+            --local colors = require "azul.core".get_colors()
+            require('lspsaga').init_lsp_saga {
+                diagnostic_header = { "✋", "👆", "👉", "🤏" },
+                --symbol_in_winbar = { enable = true }
+            }
+        end
+    }
+    --[[use {
         'filipdutescu/renamer.nvim',
         branch = 'master',
         requires = 'nvim-lua/plenary.nvim',
@@ -79,25 +82,15 @@ return require('packer').startup(function(use)
                 with_popup = true,
             }
         end
-    }
-
-    use { 'rmagatti/goto-preview',
-        config = function()
-            require('goto-preview').setup {}
-        end
-    }
-
-    --use { 'weilbith/nvim-code-action-menu',
-    --    cmd = 'CodeActionMenu',
-    --}
+    }]]
 
     use { 'voldikss/vim-floaterm',
-        --[[run = function()
+        --[[config = function()
             vim.cmd('FloatermNew')
             vim.cmd('FloatermHide')
             vim.cmd('stopinsert')
         end]]
-        --somehow the stopinsert wont do its job
+        --somehow this doenst work
     }
 
     use {

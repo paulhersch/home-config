@@ -9,8 +9,8 @@ return {
             hijack_netrw = true,
 
             --autostart
-            open_on_tab = true,
-            open_on_setup = true,
+            --open_on_tab = true,
+            --open_on_setup = true,
 
             hijack_cursor = true, --sets cursor to start of line
             update_cwd = true,

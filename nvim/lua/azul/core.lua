@@ -3,7 +3,7 @@ local M = {}
 function M.get_colors()
     local colors = {}
     colors.comment = "#545a5c"
-    colors.contrast = "#232a2c"
+    colors.contrast = "#21282a"
     colors.background = "#192224"
     colors.foreground = "#aaaaaa"
     colors.cursorline = "#313737"

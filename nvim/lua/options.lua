@@ -27,5 +27,5 @@ if g.neovide then
 end
 
 require("azul").setup {
-    nvim_tree = { contrast = true }
+    --nvim_tree = { contrast = true }
 }

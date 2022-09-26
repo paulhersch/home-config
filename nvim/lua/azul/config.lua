@@ -23,7 +23,7 @@ M.highlights_base = function (colors)
         LineNr = { fg = colors.cursorline, bg = colors.background },
         FloatBorder = { fg = colors.foreground, bg = colors.background },
         Whitespace = { fg = colors.color1 },
-        VertSplit = { bg = colors.background, fg = colors.color0 },
+        VertSplit = { bg = colors.background, fg = colors.contrast },
         CursorLine = { bg = colors.background },
         CursorLineNr = { fg = colors.foreground },
         CursorColumn = { bg = colors.background },
@@ -213,10 +213,15 @@ M.highlights_base = function (colors)
         TelescopePreviewNormal = { bg = colors.contrast, fg = colors.foreground },
         TelescopePreviewBorder = { bg = colors.contrast, fg = colors.contrast },
         TelescopePreviewTitle = { bg = colors.comment, fg = colors.background },
-        TelescopeSelection = { bg = colors.color4, fg = colors.background },
+        TelescopeSelection = { bg = colors.contrast },
         -- Indent Blank Line
         IndentBlanklineChar = { fg = colors.color0, bg = colors.background },
 
+        --gleipnir Dashboard highlights
+        DashboardHeader = { fg = colors.color7 },
+        DashboardCenter = { fg = colors.color4 },
+        DashboardShortCut = { fg = colors.color2 },
+        DashboardFooter = { fg = colors.comment },
         -- NvimTree
         NvimTreeNormal = { fg = colors.foreground, bg = colors.background },
         NvimTreeNormalNC = { fg = colors.foreground, bg = colors.background },

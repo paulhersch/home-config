@@ -1,6 +1,6 @@
 return {
     'nvim-lualine/lualine.nvim',
-    --requires = 'Everblush/everblush.nvim',
+    requires = 'kyazdani42/nvim-web-devicons',
     as = 'lualine',
     config = function()
         local function short_cwd()
@@ -55,7 +55,7 @@ return {
                     },
                 },
                 disabled_filetypes = { 'packer' },
-                globalstatus = false,
+                globalstatus = true,
             },
             sections = {
                 lualine_a = {
