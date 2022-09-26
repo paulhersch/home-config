@@ -132,7 +132,7 @@ batterywidget:connect_signal("upower::update", function (_, device)
             end
         end
         --this creates some colors in between green and red with some offsets
-        local perc_float = percentage > 80 and 0 or (percentage > 20 and 1 - (percentage - 20)/60 or 1)
+        local perc_float = percentage > 80 and 0 or (percentage > 10 and 1 - (percentage - 20)/70 or 1)
         val.value = percentage
         val.color = chel.col_shift(beautiful.green, r_d*perc_float*255, g_d*perc_float*255, b_d*perc_float*255)
         stack.forced_width = dpi(27)

@@ -115,8 +115,6 @@ widget = wibox.widget {
     }
 }
 
-
-
 local function update ()
     local h,m,s = math.floor(time/3600), math.floor(time/60) % 60, time % 60
     widget:get_children_by_id('hour')[1].values = { h }

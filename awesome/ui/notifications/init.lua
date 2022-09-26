@@ -125,7 +125,7 @@ local template = {
 local whitelist_titles = { "battery low!" }
 local whitelist_programs = { }
 local blacklist_sound_titles = { "Launching Application" }
-local blacklist_sound_programs = { "NetworkManager" }
+local blacklist_sound_programs = { "NetworkManager", "Spotify" }
 
 naughty.config.padding = dpi(50)
 naughty.config.spacing = dpi(50)
