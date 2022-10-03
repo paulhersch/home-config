@@ -1,5 +1,6 @@
 require "ui.bar"
 require "ui.notifications".init()
+--require "ui.titlebar"
 
 local beautiful = require "beautiful"
 local dock = require "ui.dock"

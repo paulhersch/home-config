@@ -43,5 +43,6 @@ return {
         }
         lc.hls.setup{}
         lc.texlab.setup{}
+        lc.rnix.setup{}
     end
 }
