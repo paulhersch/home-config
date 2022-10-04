@@ -141,6 +141,7 @@ theme.tabbar_color_float = theme.blue -- changes the color of the float button
 
 -- some length parameters
 theme.wibar_height  = dpi(30)
+theme.titlebar_height = dpi(30)
 
 -- You can use your own layout icons like this:
 theme.layout_floating  = themes_path.."default/layouts/floating.png"

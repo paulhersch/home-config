@@ -123,18 +123,3 @@ awful.keyboard.append_global_keybindings({
 	awful.key({},	"XF86AudioPrev", function() awful.spawn.with_shell("playerctl -p spotify,ncspot previous") end),
 	awful.key({},	"XF86AudioNext", function() awful.spawn.with_shell("playerctl -p spotify,ncspot next") end),
 })
-
-local tabbed = require "plugins.bling.module.tabbed"
-
-awful.keyboard.append_global_keybindings({
-    awful.key({modkey},   "t", function ()
-        local c = client.focus
-        if c and c.bling_tabbed then
-            tabbed.remove(c)
-        else
-            tabbed.init(c)
-        end
-        --tabbed.init(client.focus)
-    end),
-    awful.key({modkey},   "a", function () tabbed.pick() end)
-})
