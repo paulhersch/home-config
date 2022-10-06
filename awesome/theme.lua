@@ -105,6 +105,7 @@ theme.menu_submenu_icon = function ()
 end
 
 theme.useless_gap = dpi(5)
+theme.master_width_factor = 0.65
 
 theme.rounded_rect = function(cr,w,h)
     return gears.shape.rounded_rect(cr,w,h,5)
