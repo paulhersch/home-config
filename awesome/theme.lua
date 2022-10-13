@@ -114,31 +114,6 @@ theme.notification_shape = theme.shape
 
 theme.tabbed_spawn_in_tab = true  -- whether a new client should spawn into the focused tabbing container
 
--- For tabbar in general
-theme.tabbar_ontop  = false
-theme.tabbar_radius = 5                -- border radius of the tabbar
-theme.tabbar_style = "modern"         -- style of the tabbar ("default", "boxes" or "modern")
-theme.tabbar_font = theme.font .. " 10"          -- font of the tabbar
-theme.tabbar_size = theme.wibar_height                 -- size of the tabbar
-theme.tabbar_position = "top"          -- position of the tabbar
-
-theme.tabbar_bg_normal = theme.bg_focus_dark     -- background color of the focused client on the tabbar
-theme.tabbar_fg_normal = theme.fg_normal     -- foreground color of the focused client on the tabbar
-theme.tabbar_bg_focus  = theme.bg_normal     -- background color of unfocused clients on the tabbar
-theme.tabbar_fg_focus  = theme.fg_normal     -- foreground color of unfocused clients on the tabbar
-
-theme.tabbar_bg_normal_inactive = theme.tabbar_bg_normal  -- background color of unfocused clients on the tabbar when inactive
-theme.tabbar_fg_normal_inactive = theme.tabbar_fg_normal  -- foreground color of unfocused clients on the tabbar when inactive
-theme.tabbar_bg_focus_inactive = theme.tabbar_bg_focus   -- background color of the focused client on the tabbar when inactive
-theme.tabbar_fg_focus_inactive = theme.tabbar_fg_focus   -- foreground color of the focused client on the tabbar when inactive
-theme.tabbar_disable = false           -- disable the tab bar entirely
-
--- the following variables are currently only for the "modern" tabbar style
-theme.tabbar_color_close = theme.red -- changes the color of the close button
-theme.tabbar_color_min   = theme.yellow -- changes the color of the minimize button
-theme.tabbar_color_float = theme.blue -- changes the color of the float button
-
-
 -- some length parameters
 theme.wibar_height  = dpi(30)
 theme.titlebar_height = dpi(30)

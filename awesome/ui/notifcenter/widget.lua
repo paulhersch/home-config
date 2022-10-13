@@ -270,7 +270,7 @@ local function check_list (n)
 end
 
 naughty.connect_signal("request::display", function(n)
-    if not check_list(n) then --ignore some notifications
+    if not check_list(n) and not n.app_name == client.focus.class then --ignore some notifications
         notifications:add_at(1,n)
         bar_indic_notif()
     end
