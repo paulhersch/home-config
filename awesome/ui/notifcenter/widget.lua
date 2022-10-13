@@ -49,6 +49,7 @@ local template = {
                     margins = dpi(5),
                     {
                         layout = wibox.layout.fixed.horizontal,
+                        forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11"),
                         {
                             id = 'appname',
                             widget = wibox.widget.textbox,
@@ -112,49 +113,49 @@ local template = {
 }
 
 notifications = recycler(
-    function()
-        template.shape = beautiful.theme_shape
-        local w = wibox.widget(template)
-        function w:populate(n)
-            self:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal))
-            self:get_children_by_id('remove')[1]:connect_signal("mouse::enter", function() cross_enter(w) end)
-            self:get_children_by_id('remove')[1]:connect_signal("mouse::leave", function() cross_leave(w) end)
-            self:get_children_by_id('title')[1].text = n.title
-            self:get_children_by_id('appname')[1].text = n.app_name
-            self:get_children_by_id('text')[1].text = n.message
-            if n.icon then
-                self:get_children_by_id('icon')[1]:set_image(n.icon)
-                self:get_children_by_id('icon')[1].forced_height = dpi(40)
-                self:get_children_by_id('icon')[1].forced_width = dpi(40)
+function()
+    template.shape = beautiful.theme_shape
+    local w = wibox.widget(template)
+    function w:populate(n)
+        self:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal))
+        self:get_children_by_id('remove')[1]:connect_signal("mouse::enter", function() cross_enter(w) end)
+        self:get_children_by_id('remove')[1]:connect_signal("mouse::leave", function() cross_leave(w) end)
+        self:get_children_by_id('title')[1].text = n.title
+        self:get_children_by_id('appname')[1].text = n.app_name
+        self:get_children_by_id('text')[1].text = n.message
+        if n.icon then
+            self:get_children_by_id('icon')[1]:set_image(n.icon)
+            self:get_children_by_id('icon')[1].forced_height = dpi(40)
+            self:get_children_by_id('icon')[1].forced_width = dpi(40)
+        end
+        self:get_children_by_id('remove')[1]:add_button(
+        awful.button {
+            modifiers = {},
+            button = 1,
+            on_press = function ()
+                self:get_children_by_id('remove')[1]:disconnect_signal("mouse::enter", cross_enter)
+                self:get_children_by_id('remove')[1]:disconnect_signal("mouse::leave", cross_leave)
+                notifications:remove(self)
+                if #notifications:get_children() == 0 then bar_indic_no_notif() end
+                collectgarbage("collect")
             end
-            self:get_children_by_id('remove')[1]:add_button(
-                awful.button {
-                    modifiers = {},
-                    button = 1,
-                    on_press = function ()
-                        self:get_children_by_id('remove')[1]:disconnect_signal("mouse::enter", cross_enter)
-                        self:get_children_by_id('remove')[1]:disconnect_signal("mouse::leave", cross_leave)
-                        notifications:remove(self)
-                        if #notifications:get_children() == 0 then bar_indic_no_notif() end
-                        collectgarbage("collect")
-                    end
-                }
-            )
-        end
-        return w
+        }
+        )
+    end
+    return w
+end,
+{
+    padx = 0,
+    pady = 0,
+    spacing = dpi(5),
+    rubato_lib = rubato,
+    pos_const = function ()
+        return rubato.timed { duration = 0.1, intro = 0.2, prop_intro = true, rate = 60, easing = rubato.quadratic }
     end,
-    {
-        padx = 0,
-        pady = 0,
-        spacing = dpi(5),
-        rubato_lib = rubato,
-        pos_const = function ()
-            return rubato.timed { duration = 0.1, intro = 0.2, prop_intro = true, rate = 60, easing = rubato.quadratic }
-        end,
-        inout_const = function ()
-            return rubato.timed { duration = 0.1, intro = 0.04, rate = 60 }
-        end
-    }
+    inout_const = function ()
+        return rubato.timed { duration = 0.1, intro = 0.04, rate = 60 }
+    end
+}
 )
 
 
@@ -180,8 +181,8 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                     notifs_active = not notifs_active
                     if notifs_active == true then notifctl.enable_notifs() else notifctl.disable_notifs() end
                     notifbox:get_children_by_id('toggle_dnd')[1]:set_image(notifs_active
-                        and gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus)
-                        or gears.color.recolor_image(mat_icons .. "notifications_off.svg", beautiful.fg_focus)
+                    and gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus)
+                    or gears.color.recolor_image(mat_icons .. "notifications_off.svg", beautiful.fg_focus)
                     )
                 end
             },
@@ -203,7 +204,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
             margins = {
                 left = dpi(5),
                 right = dpi(5)
-    },
+            },
             {
                 widget = wibox.container.background,
                 forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11") + dpi(10),
@@ -253,6 +254,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
     },
     notifications
 }
+
 helpers.pointer_on_focus(notifbox:get_children_by_id('clear_button')[1])
 helpers.pointer_on_focus(notifbox:get_children_by_id('toggle_dnd_bg')[1])
 
@@ -280,15 +282,17 @@ client.connect_signal("property::active", function (c)
     --most apps report their name via class so that should be alright
     if #notifications:get_children() == 0 then return end
 
-    local cname = string.lower(c.class)
-    local notscopy = notifications:get_children()
-    for _, entry in pairs(notscopy) do
-        if string.lower(entry:get_children_by_id('appname')[1].text) == cname then
-            notifications:remove(entry)
+    if c.class then
+        local cname = string.lower(c.class) or nil
+        local notscopy = notifications:get_children()
+        for _, entry in pairs(notscopy) do
+            if string.lower(entry:get_children_by_id('appname')[1].text) == cname then
+                notifications:remove(entry)
+            end
         end
-    end
 
-    if #notifications:get_children() == 0 then bar_indic_no_notif() end
+        if #notifications:get_children() == 0 then bar_indic_no_notif() end
+    end
 
 end)
 
