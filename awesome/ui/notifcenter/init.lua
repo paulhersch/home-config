@@ -49,6 +49,7 @@ end
 local function show(s)
     s.notifcenter:show()
 end
+
 local function hide(s)
     s.notifcenter:hide()
 end
