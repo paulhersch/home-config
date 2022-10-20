@@ -44,5 +44,8 @@ return {
         lc.hls.setup{}
         lc.texlab.setup{}
         lc.rnix.setup{}
+        lc.jdtls.setup {
+            cmd = { "jdt-language-server" }
+        }
     end
 }

@@ -65,7 +65,7 @@ bindkey ';5C' forward-word
 
 alias cl="clear"
 alias git-update="git fetch --recurse-submodules=no --progress --prune ${1}"
-alias docker="docker -H unix:///run/user/1001/docker.sock"
+alias docker-nix="docker -H unix:///run/user/1001/docker.sock"
 texwithbiber () {
     lualatex "$1" && biber "$1" && lualatex "$1"
 }
