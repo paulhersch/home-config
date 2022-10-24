@@ -2,10 +2,18 @@ local wibox = require "wibox"
 local beautiful = require "beautiful"
 local dpi = beautiful.xresources.apply_dpi
 
-local widget = require "ui.notifcenter.widget"
+local notifwidget = require "ui.quicksettings.widgets.notifcenter"
 
 local function init(s)
-    local cent_width = dpi(400)
+    local cent_width = math.ceil(s.geometry.width/4.5)
+    --[[local layout = wibox.widget {
+        layout = wibox.layout.grid,
+        spacing = dpi(5)
+    }
+
+    layout:add_widget_at(calendar, 1, 1, 1, 1)
+    layout:add_widget_at(notifwidget, 2, 1, 4, 1)
+    ]]
     s.notifcenter = wibox {
         screen = s,
         x = s.geometry.x + s.geometry.width - cent_width - 2*beautiful.useless_gap,-- - beautiful.border_width,
@@ -18,7 +26,7 @@ local function init(s)
         widget = wibox.widget {
             widget = wibox.container.margin,
             margins = dpi(5),
-            widget
+            notifwidget
         }
     }
     function s.notifcenter:show()

@@ -7,7 +7,7 @@ local dpi	= beautiful.xresources.apply_dpi
 local helpers	= require "helpers"
 
 local menu 	= require "ui.menu"
-local notifcenter = require "ui.notifcenter"
+local quicksettings = require "ui.quicksettings"
 
 local battery   = require "ui.bar.widgets.battery"
 
@@ -21,9 +21,9 @@ local notif_trigger = wibox.widget {
             on_press = function ()
                 local s = awful.screen.focused()
                 if s.notifcenter_open then
-                    notifcenter.hide(s)
+                    quicksettings.hide(s)
                 else
-                    notifcenter.show(s)
+                    quicksettings.show(s)
                 end
                 s.notifcenter_open = not s.notifcenter_open
             end
@@ -99,7 +99,7 @@ local function init (s)
             end
 		}
 	}
-	
+
     s.systray = s == screen.primary and wibox.widget.systray() or nil
 
 	s.bar = wibox {
@@ -166,7 +166,7 @@ local function init (s)
     })
 
     menu.init(s)
-    notifcenter.init(s)
+    quicksettings.init(s)
 
 end
 

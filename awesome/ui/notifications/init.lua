@@ -5,26 +5,37 @@ local awful = require("awful")
 local dpi = beautiful.xresources.apply_dpi
 local gears = require("gears")
 
-local helpers = require "helpers"
+NOTIFCENTER_DISPLAY = true
+NOTIFCENTER_PLAYSOUND = true
 
-local shownotif = true
-local playsound = true
+local notifobject = wibox.widget.base.make_widget()
 
 local function show_notifs ()
-    shownotif = true
+    NOTIFCENTER_DISPLAY = true
+    notifobject:emit_signal("display::enabled")
+    if NOTIFCENTER_PLAYSOUND then
+        notifobject:emit_signal("sound::enabled")
+    else
+        notifobject:emit_signal("sound::disabled")
+    end
 end
 
 local function hide_notifs ()
-    shownotif = false
+    NOTIFCENTER_DISPLAY = false
+    notifobject:emit_signal("display::disabled")
+    notifobject:emit_signal("sound::disabled")
 end
 
 local function mute_notifs ()
-    playsound = false
+    NOTIFCENTER_PLAYSOUND = false
+    notifobject:emit_signal("sound::disabled")
 end
 
 local function unmute_notifs ()
-    playsound = true
+    NOTIFCENTER_PLAYSOUND = true
+    notifobject:emit_signal("sound::enabled")
 end
+
 --[[n.actions_template = wibox.widget {
     widget = wibox.container.background,
     bg = beautiful.bg_focus,
@@ -159,7 +170,7 @@ end
 
 local function init ()
     naughty.connect_signal("request::display", function (notif)
-        if shownotif
+        if NOTIFCENTER_DISPLAY
             or whitelist_programs:check(notif)
             or whitelist_titles:check(notif)
             then
@@ -170,7 +181,7 @@ local function init ()
                 padding = dpi(10),
                 spacing = dpi(12)
             }
-            if playsound then
+            if NOTIFCENTER_PLAYSOUND then
                 if (not (blacklist_sound_titles:check(notif) or blacklist_sound_programs:check(notif))) then
                     awful.spawn("play -v 0.2 " .. gears.filesystem.get_configuration_dir() .. "assets/sounds/notif.mp3")
                 end
@@ -184,5 +195,6 @@ return {
     disable_notifs = hide_notifs,
     enable_sound = unmute_notifs,
     disable_sound = mute_notifs,
-    init = init
+    init = init,
+    signals = notifobject
 }
