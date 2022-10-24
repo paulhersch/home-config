@@ -45,7 +45,7 @@ return {
         lc.texlab.setup{}
         lc.rnix.setup{}
         lc.jdtls.setup {
-            cmd = { "jdt-language-server" }
+            cmd = { "jdt-language-server", "-configuration", os.getenv('HOME') .. "/.cache/jdtls/config", "-data", os.getenv('HOME') .. "/.cache/jdtls/workspace"}
         }
     end
 }

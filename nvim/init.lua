@@ -5,11 +5,11 @@
 ---@param cmd string the function to bind this key to
 ---@param opts table table of extra options, default is noremap and silent
 function Map(mode, key, cmd, opts)
-    local options = { noremap = true, silent = true }
-    if opts then
-        options = vim.tbl_extend("force", options, opts)
-    end
-    vim.api.nvim_set_keymap(mode, key, cmd, options)
+	local options = { noremap = true, silent = true }
+	if opts then
+		options = vim.tbl_extend("force", options, opts)
+	end
+	vim.api.nvim_set_keymap(mode, key, cmd, options)
 end
 
 require ("plugins")
