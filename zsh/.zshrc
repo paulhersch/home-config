@@ -63,6 +63,7 @@ bindkey ';5C' forward-word
 #	ALIASES & CUSTOM FUNCTIONS
 #
 
+alias ls="exa"
 alias cl="clear"
 alias git-update="git fetch --recurse-submodules=no --progress --prune ${1}"
 alias docker-nix="docker -H unix:///run/user/1001/docker.sock"
