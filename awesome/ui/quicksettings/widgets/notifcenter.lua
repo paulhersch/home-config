@@ -398,8 +398,8 @@ client.connect_signal("property::active", function (c)
     if c.class then
         local cname = string.lower(c.class) or nil
         local drawer
-        for _, entry in pairs(main_widget:get_children()) do
-            if string.lower(entry:get_children_by_id('appname')[1].text) == cname then
+        for _, entry in ipairs(main_widget:get_children()) do
+            if string.lower(entry.app) == cname then
                 drawer = entry
             end
         end
