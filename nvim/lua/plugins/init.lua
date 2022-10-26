@@ -62,27 +62,6 @@ return require('packer').startup(function(use)
 			}
 		end
 	}
-	--[[use {
-		'filipdutescu/renamer.nvim',
-		branch = 'master',
-		requires = 'nvim-lua/plenary.nvim',
-		config = function()
-			require('renamer').setup {
-				title = 'Rename',
-				padding = {
-					top = 0,
-					left = 0,
-					right = 0,
-					bottom = 0
-				},
-				border = true,
-				-- Whether or not to highlight the current word references through LSP
-				show_refs = false,
-				-- Whether or not to enter the new name through the UI or Neovim's `input` prompt
-				with_popup = true,
-			}
-		end
-	}]]
 
 	use { 'voldikss/vim-floaterm',
 		--[[config = function()
@@ -97,6 +76,7 @@ return require('packer').startup(function(use)
 		'nvim-treesitter/nvim-treesitter',
 		requires = 'tree-sitter/tree-sitter',
 		run = ':TSUpdate',
+		commit = '4cccb6f494eb255b32a290d37c35ca12584c74d0',
 		config = function()
 			require("nvim-treesitter.configs").setup {
 				auto_install = true,

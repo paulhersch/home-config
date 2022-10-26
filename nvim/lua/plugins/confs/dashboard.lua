@@ -7,19 +7,19 @@ return {
 		db.custom_center = {
 			{
 				icon = ' ',
-				desc = 'Open Nvim Tree				 ',
+				desc = 'Open Nvim Tree               ',
 				action = 'NvimTreeOpen',
 				shortcut = 'SPC f'
 			},
 			{
 				icon = ' ',
-				desc = 'Find file with Telescope		',
+				desc = 'Find file with Telescope        ',
 				action = 'Telescope find_files',
 				shortcut = 'ff'
 			},
 			{
 				icon = ' ',
-				desc = 'Live Grep with Telescope		',
+				desc = 'Live Grep with Telescope        ',
 				action = 'Telescope live_grep',
 				shortcut = 'gf'
 			}
