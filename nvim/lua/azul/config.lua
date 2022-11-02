@@ -1,6 +1,7 @@
 local M = {}
 
-M.highlights_base = function (colors)
+local colors = require("azul.core").get_colors()
+M.highlights_base = function (--[[colors]])
 	return {
 		Normal = { fg = colors.foreground, bg = colors.background },
 		StatusLineNC = { bg = colors.background, fg = colors.background },
@@ -265,6 +266,14 @@ M.highlights_base = function (colors)
 		-- BufferLine
 		BufferLineIndicatorSelected = { fg = colors.color2 },
 		BufferLineFill = { fg = colors.background, bg = colors.background },
+
+		-- BarBar Bufferline
+		BufferCurrent = { fg = colors.foreground, bg = colors.background, bold = true, italic = true },
+		BufferCurrentSign = { fg = colors.background, bg = colors.background },
+		BufferVisible = { fg = colors.foreground, bg = colors.background, bold = true, italic = true },
+		BufferVisibleSign = { fg = colors.background, bg = colors.background },
+		BufferInactive = { fg = colors.color15, bg = colors.background_dark },
+		BufferInactiveSign = { fg = colors.background_dark, bg = colors.background_dark },
 	}
 end
 

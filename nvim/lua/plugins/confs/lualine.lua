@@ -19,7 +19,7 @@ return {
 		local colors = require "azul.core".get_colors()
 		require("lualine").setup {
 			options = {
-				section_separators = { left = '', right = ''},
+				section_separators = { left = '', right = ''},
 				icons_enabled = true,
 				theme = {
 					--personalized version of everblushs lualine theme
@@ -61,14 +61,14 @@ return {
 				lualine_a = {
 					{
 						'mode',
-						seperator = { left = '', right = '' },
+						seperator = { left = '', right = '' },
 					}
 				},
 				lualine_b = {
 					{
 						'filename',
 						color = { bg = colors.color0, fg = colors.color4 },
-						separator = { left = '', right = ''},
+						separator = { left = '', right = ''},
 						symbols = {
 							readonly = '(readonly)',
 							modified = ' [+]',
@@ -90,7 +90,7 @@ return {
 						sections = { 'error', 'warn' },
 						colored = true,
 						symbols = { error = '✗ ', warn = '！' },
-						separator = { left = '', right = ''},
+						separator = { left = '', right = ''},
 					},
 					{
 						'filetype',
@@ -98,14 +98,12 @@ return {
 					}
 				},
 				lualine_z = {}
-				--lualine_z = { 'location' }
 			},
 			inactive_sections = {
 				lualine_a = {},
 				lualine_b = { 'filename' },
 				lualine_c = {},
 				lualine_x = {},
-				--lualine_y = { 'location' },
 				lualine_y = {},
 				lualine_z = {}
 			},

@@ -9,6 +9,7 @@ end
 
 local nvimtree = require "plugins.confs.nvimtree"
 local barbar = require "plugins.confs.barbar"
+--local bufferline = require "plugins.confs.bufferline"
 local gitsigns = require "plugins.confs.gitsigns"
 local lualine = require "plugins.confs.lualine"
 local lspc = require "plugins.confs.lspconfs"

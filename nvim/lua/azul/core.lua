@@ -4,6 +4,7 @@ function M.get_colors()
 	local colors = {}
 	colors.comment = "#545151"
 	colors.background = "#171a1a"
+	colors.background_dark = "#121515"
 	colors.contrast = "#1b2121"
 	colors.foreground = "#c6c3c3"
 	colors.cursorline = "#313737"
