@@ -18,7 +18,7 @@ setopt nocaseglob                                               # Case insensiti
 setopt nobeep
 setopt appendhistory
 setopt histignorealldups
-setopt prompt_subst 						# To use local Vars in prompt
+setopt prompt_subst 											# To use local Vars in prompt
 setopt autocd
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'       # Case insensitive tab completion
@@ -64,11 +64,15 @@ bindkey ';5C' forward-word
 #
 
 alias ls="exa"
+alias tree="exa --tree"
 alias cl="clear"
 alias git-update="git fetch --recurse-submodules=no --progress --prune ${1}"
 alias docker-nix="docker -H unix:///run/user/1001/docker.sock"
 texwithbiber () {
     lualatex "$1" && biber "$1" && lualatex "$1"
+}
+findnixpackage () {
+	echo "/"$(ls -la $(which "$1") | cut -d ">" -f 2 | cut -d "/" -f 2,3,4)
 }
 
 fortune -s | cowsay -f eyes
