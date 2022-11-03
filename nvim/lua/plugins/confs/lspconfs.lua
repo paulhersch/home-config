@@ -3,6 +3,7 @@ return {
     config = function()
         local cwd = vim.fn.substitute(vim.fn.getcwd(), '^.*/', '', '')
         local lc = require('lspconfig')
+		local util = require('lspconfig.util')
         lc.sumneko_lua.setup{
             settings = {
                 root_dir = "file://" .. vim.fn.getcwd(), --.git is default before cwd, so editing dots fucks with sumneko
@@ -44,8 +45,17 @@ return {
         lc.hls.setup{}
         lc.texlab.setup{}
         lc.rnix.setup{}
-        lc.jdtls.setup {
+		--shit server
+        --[[lc.jdtls.setup {
             cmd = { "jdt-language-server", "-configuration", os.getenv('HOME') .. "/.cache/jdtls/config", "-data", os.getenv('HOME') .. "/.cache/jdtls/workspace"}
-        }
+        }]]
+		lc.java_language_server.setup {
+			cmd = { "java-language-server" },
+			root_dir = function(fname)
+				local root = util.root_pattern('build.gradle', 'pom.xml', '.git', '.')(fname)
+				if root then return root end
+				return vim.fn.getcwd()
+			end
+		}
     end
 }
