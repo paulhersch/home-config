@@ -312,7 +312,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                         fill_horizontal = true,
                         {
                             widget = wibox.widget.textbox,
-                            text = 'notifications',
+                            text = "Notifications",
                             font = beautiful.font_bold .. " 11"
                         }
                     }

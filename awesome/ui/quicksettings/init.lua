@@ -3,9 +3,10 @@ local beautiful = require "beautiful"
 local dpi = beautiful.xresources.apply_dpi
 
 local notifwidget = require "ui.quicksettings.widgets.notifcenter"
+local pctlwidget = require "ui.quicksettings.widgets.playerctl"
 
 local function init(s)
-    local cent_width = math.ceil(s.geometry.width/4.5)
+    local cent_width = dpi(450) --math.ceil(s.geometry.width/4.5)
     --[[local layout = wibox.widget {
         layout = wibox.layout.grid,
         spacing = dpi(5)
@@ -26,7 +27,12 @@ local function init(s)
         widget = wibox.widget {
             widget = wibox.container.margin,
             margins = dpi(5),
-            notifwidget
+			{
+				layout = wibox.layout.fixed.vertical,
+				spacing = dpi(5),
+				pctlwidget,
+				notifwidget
+			}
         }
     }
     function s.notifcenter:show()

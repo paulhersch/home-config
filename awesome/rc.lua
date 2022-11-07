@@ -39,7 +39,6 @@ RUBATO_DIR = "plugins.rubato."
 require ("keybinds")
 require ("ui")
 
-
 -- {{{ Wallpaper
 screen.connect_signal("request::wallpaper", function(s)
 	awful.wallpaper {
@@ -80,10 +79,6 @@ end)
 
 -- rules {{{
 ruled.client.connect_signal("request::rules", function()
-	--ruled.client.append_rule {
-	--	rule_any   = { type = { "normal", "dialog" } },
-	--	properties = { titlebars_enabled = not requests_no_titlebar },
-	--}
 	ruled.client.append_rule {
 		rule = {},
 		except_any = { type = { "normal", "dialog" } },

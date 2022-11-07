@@ -88,7 +88,7 @@ local tooltip	= awful.tooltip {
 }
 
 local batterywidget = uPower {
-	instant_update		= false,
+	instant_update		= true,
 	device_path 		= '/org/freedesktop/UPower/devices/battery_BAT0',
 	use_display_device  = true,
 	widget_template		= {

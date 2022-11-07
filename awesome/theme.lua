@@ -107,10 +107,11 @@ end
 theme.useless_gap = dpi(5)
 theme.master_width_factor = 0.65
 
-theme.rounded_rect = function(cr,w,h)
-    return gears.shape.rounded_rect(cr,w,h,5)
+theme.menu_item_spacing = dpi(5)
+
+theme.theme_shape = function (c, w, h)
+	return gears.shape.rounded_rect(c, w, h, 5)
 end
-theme.theme_shape = theme.rounded_rect
 theme.notification_shape = theme.shape
 
 theme.tabbed_spawn_in_tab = true  -- whether a new client should spawn into the focused tabbing container
@@ -120,10 +121,10 @@ theme.wibar_height  = dpi(30)
 theme.titlebar_height = dpi(30)
 
 -- You can use your own layout icons like this:
-theme.layout_floating  = themes_path.."default/layouts/floating.png"
-theme.layout_tile = themes_path.."default/layouts/tile.png"
-theme.layout_spiral  = themes_path.."default/layouts/spiral.png"
-theme.layout_cornernw = themes_path.."default/layouts/cornernw.png"
+theme.layout_floating  = themes_path.."sky/layouts/floating.png"
+theme.layout_tile = themes_path.."sky/layouts/tile.png"
+theme.layout_spiral  = themes_path.."sky/layouts/spiral.png"
+theme.layout_cornernw = themes_path.."sky/layouts/cornernw.png"
 
 theme = beautiful.theme_assets.recolor_layout(theme, theme.fg_normal)
 -- Generate Awesome icon:
