@@ -15,8 +15,8 @@ M.highlights_base = function (--[[colors]])
 		SpellLocal = { fg = colors.color4 },
 		SpellRare = { fg = colors.color6 },
 		NormalNC = { fg = colors.foreground, bg = colors.background },
-		Pmenu = { fg = colors.foreground, bg = colors.background },
-		PmenuSel = { fg = colors.background, bg = colors.color4 },
+		Pmenu = { fg = colors.foreground, bg = colors.contrast },
+		PmenuSel = { fg = colors.contrast, bg = colors.color4 },
 		WildMenu = { fg = colors.color7, bg = colors.color4 },
 		Comment = { fg = colors.comment, italic = true },
 		Folded = { fg = colors.color4, bg = colors.background },
@@ -37,7 +37,7 @@ M.highlights_base = function (--[[colors]])
 		DiffChange = { bg = colors.background, fg = colors.color5 },
 		DiffDelete = { bg = colors.background, fg = colors.color1 },
 		QuickFixLine = { bg = colors.color2 },
-		PmenuSbar = { bg = colors.background },
+		PmenuSbar = { bg = colors.contrast },
 		PmenuThumb = { bg = colors.color2 },
 		MatchParen = { fg = colors.color4, bg = colors.background },
 		Cursor = { fg = colors.foreground, bg = colors.cursor },
@@ -94,6 +94,8 @@ M.highlights_base = function (--[[colors]])
 		TabLine = { fg = colors.color2, bg = colors.background },
 		TabLineSel = { fg = colors.foreground, bg = colors.background },
 		TabLineFill = { fg = colors.foreground, bg = colors.background },
+
+		-- CMP
 		CmpDocumentationBorder = { fg = colors.foreground, bg = colors.background },
 		CmpItemAbbr = { fg = colors.foreground, bg = colors.background },
 		CmpItemAbbrDeprecated = { fg = colors.color2, bg = colors.background },
@@ -223,6 +225,7 @@ M.highlights_base = function (--[[colors]])
 		DashboardCenter = { fg = colors.color4 },
 		DashboardShortCut = { fg = colors.color2 },
 		DashboardFooter = { fg = colors.comment },
+
 		-- NvimTree
 		NvimTreeNormal = { fg = colors.foreground, bg = colors.background },
 		NvimTreeNormalNC = { fg = colors.foreground, bg = colors.background },
@@ -269,11 +272,16 @@ M.highlights_base = function (--[[colors]])
 
 		-- BarBar Bufferline
 		BufferCurrent = { fg = colors.foreground, bg = colors.background, bold = true, italic = true },
+		BufferCurrentMod = { fg = colors.color12, bg = colors.background, bold = true, italic = true },
 		BufferCurrentSign = { fg = colors.background, bg = colors.background },
 		BufferVisible = { fg = colors.foreground, bg = colors.background, bold = true, italic = true },
+		BufferVisibleMod = { fg = colors.color4, bg = colors.background, bold = true, italic = true },
 		BufferVisibleSign = { fg = colors.background, bg = colors.background },
 		BufferInactive = { fg = colors.color15, bg = colors.background_dark },
+		BufferInactiveMod = { fg = colors.color15, bg = colors.background_dark, bold = true },
 		BufferInactiveSign = { fg = colors.background_dark, bg = colors.background_dark },
+		BufferTabpageFill = { fg = colors.background_dark, bg = colors.background_dark },
+		BufferOffset = { fg = colors.background, bg = colors.background }
 	}
 end
 
