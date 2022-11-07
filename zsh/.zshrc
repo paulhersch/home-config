@@ -80,7 +80,7 @@ fortune -s | cowsay -f eyes
 precmd() {
 	_LAST_CMD=$(print -P "%(0?.%K{2} %k.%K{1} %k)") # green = last cmd exit 0
 	vcs_info
-	_GIT_STS=$( [ ! -z $vcs_info_msg_0_ ] && print " on  ${vcs_info_msg_0_}")
+	_GIT_STS=$( [ ! -z $vcs_info_msg_0_ ] && print " on  ${vcs_info_msg_0_}")
 	print -P "${_LAST_CMD}%K{8} %~%F{4}${_GIT_STS} %f%k"
 } #this prints stuff over the prompt
 PROMPT="%F{5}%f "
