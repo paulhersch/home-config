@@ -45,26 +45,30 @@ local template = {
 			{
 				widget = wibox.container.place,
 				content_fill_horizontal = true,
-				--basewidth 440 (qs 450 - 2*5 margin)
-				forced_width = dpi(440) - 2*height - margin,
+				--basewidth 440 (qs 450 - 2\*5 margin)
+				forced_width = dpi(440) - 2.2*height - 3*margin,
 				halign = "left",
 				{
 					widget = wibox.container.margin,
-					margins = margin,
+					margins = { left = margin, bottom = margin, right = margin},
 					{
 						layout = wibox.layout.fixed.vertical,
 						spacing = margin,
 						{
 							id = "title",
-							text = "nothing playing",
+							markup = "nothing playing",
 							widget = wibox.widget.textbox,
-							font = titlefont
+							font = titlefont,
+							ellipsize = 'end',
+							forced_height = beautiful.get_font_height(titlefont),
 						},
 						{
 							id = "artist",
-							text = "nothing playing",
+							markup = "nothing playing",
 							widget = wibox.widget.textbox,
-							font = artistfont
+							font = artistfont,
+							ellipsize = 'end',
+							forced_height = beautiful.get_font_height(artistfont),
 						}
 					}
 				}
@@ -75,7 +79,8 @@ local template = {
 				valign = 'left',
 				{
 					layout = wibox.layout.flex.horizontal,
-					forced_width = 2*height,
+					forced_width = 2.2*height,
+					spacing = margin/2,
 					{
 						id = "shuffle",
 						image = gcl.recolor_image(maticons .. "shuffle.svg", beautiful.bg_focus_dark),
@@ -121,14 +126,16 @@ end
 local function update_widget_meta(w, meta)
 	local val = meta.value
 
-	w:get_children_by_id("title")[1].text = val["xesam:title"]
+	w:get_children_by_id("title")[1]:set_markup_silently(val["xesam:title"])
 
 	local artists = val["xesam:artist"][1]
 	for i = 2, #val["xesam:artist"] do
 		artists  = artists .. ", " .. val["xesam:artist"][i]
 	end
-	w:get_children_by_id("artist")[1].text = artists
+	w:get_children_by_id("artist")[1]:set_markup_silently(artists)
 end
+
+local inactive_color = helpers.color.col_mix(beautiful.bg_focus, beautiful.fg_normal)
 
 local function widget_from_player (player)
 	local w = wibox.widget(template)
@@ -155,12 +162,12 @@ local function widget_from_player (player)
 
 	player.on_shuffle = function (_, shuffle, _)
 		w:get_children_by_id("shuffle")[1]:set_image(
-			gcl.recolor_image(maticons .. "shuffle.svg", shuffle and beautiful.fg_normal or beautiful.bg_focus_dark))
+			gcl.recolor_image(maticons .. "shuffle.svg", shuffle and beautiful.fg_normal or inactive_color))
 	end
 
 	player.on_loop_status = function(_, status, _)
 		w:get_children_by_id("repeat")[1]:set_image(
-			gcl.recolor_image(maticons .. "repeat.svg", status == "NONE" and beautiful.bg_focus_dark or beautiful.fg_normal))
+			gcl.recolor_image(maticons .. "repeat.svg", status == "NONE" and inactive_color or beautiful.fg_normal))
 	end
 
 	func_on_click(w:get_children_by_id("prev")[1], function() player:previous() end)
@@ -180,9 +187,9 @@ local function widget_from_player (player)
 	w:get_children_by_id("playpause")[1]:set_image(gcl.recolor_image(maticons ..
 		(player.playback_status == "PLAYING" and "pause.svg" or "play.svg"), beautiful.fg_normal))
 	w:get_children_by_id("repeat")[1]:set_image(
-		gcl.recolor_image(maticons .. "repeat.svg", player.loop_status == "NONE" and beautiful.bg_focus_dark or beautiful.fg_normal))
+		gcl.recolor_image(maticons .. "repeat.svg", player.loop_status == "NONE" and inactive_color or beautiful.fg_normal))
 	w:get_children_by_id("shuffle")[1]:set_image(
-		gcl.recolor_image(maticons .. "shuffle.svg", player.shuffle and beautiful.fg_normal or beautiful.bg_focus_dark))
+		gcl.recolor_image(maticons .. "shuffle.svg", player.shuffle and beautiful.fg_normal or inactive_color))
 
 	--gsub makes first letter uppercase, looks better Imo
 	w:get_children_by_id("playername")[1].text = player.player_name:gsub("^%l", string.upper)
