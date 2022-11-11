@@ -7,7 +7,7 @@ return {
 
 		local existing_capabilities = vim.lsp.protocol.make_client_capabilities()
 		util.default_config = vim.tbl_extend("force", util.default_config, {
-			capabilities = require('cmp_nvim_lsp').update_capabilities(existing_capabilities),
+			capabilities = require('cmp_nvim_lsp').default_capabilities(existing_capabilities),
 		})
         lc.sumneko_lua.setup{
             settings = {
