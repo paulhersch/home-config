@@ -23,7 +23,7 @@ local function init(s)
         height = s.geometry.height - beautiful.wibar_height - 6*beautiful.useless_gap,-- - 2*beautiful.border_width - 6*beautiful.useless_gap, --bottom gap
         ontop = true,
         visible = false,
-        shape = beautiful.theme_shape,
+        --shape = beautiful.theme_shape,
         widget = wibox.widget {
             widget = wibox.container.margin,
             margins = dpi(5),

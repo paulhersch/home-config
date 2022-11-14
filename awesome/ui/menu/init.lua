@@ -41,7 +41,7 @@ local function init(s)
 		bg = beautiful.bg_normal,
 --		border_width = beautiful.border_width,
 --		border_color = beautiful.bg_focus,
-		shape = beautiful.theme_shape,
+--		shape = beautiful.theme_shape,
 		widget = wibox.widget {
 			widget = wibox.container.margin,
 			margins = dpi(5),

@@ -141,7 +141,7 @@ local function init (s)
                 fill_vertical = true,
 				{
                     widget = wibox.container.margin,
-                    margins = { top = dpi(5), right = dpi(8) },
+                    margins = { top = dpi(5), right = dpi(4) },
                     {
                         widget = wibox.container.constraint,
                         height = beautiful.wibar_height - dpi(10),

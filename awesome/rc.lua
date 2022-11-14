@@ -45,14 +45,15 @@ screen.connect_signal("request::wallpaper", function(s)
 	awful.wallpaper {
 		screen = s,
 		widget = {
-			image		= beautiful.wallpaper,
+			--[[image		= beautiful.wallpaper,
 			widget		= wibox.widget.imagebox,
 			resize		= true,
 			scaling_quality	= 'best',
-			horizontal_fit_policy='fit'
+			horizontal_fit_policy='fit']]
+			widget = wibox.widget.background,
+			bg = beautiful.bg_focus
 		}
 	}
-	--gears.wallpaper.maximized(beautiful.wallpaper, s)
 end)
 -- }}}
 
