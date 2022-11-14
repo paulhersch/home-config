@@ -34,8 +34,9 @@ end)
 
 beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
 
---globals for Orlando widgets
+--globals for andOrlando widgets
 RUBATO_DIR = "plugins.rubato."
+
 require ("keybinds")
 require ("ui")
 
@@ -67,14 +68,14 @@ client.connect_signal("request::manage", function(c)
 		awful.placement.centered(c)
 		c:raise()
 	else c:to_secondary_section() end
-	c.shape = c.fullscreen and gears.shape.rectangle or beautiful.theme_shape
+	--c.shape = c.fullscreen and gears.shape.rectangle or beautiful.theme_shape
     c:activate{raise = true}
     if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
 end)
 
-client.connect_signal("property::fullscreen", function(c)
+--[[client.connect_signal("property::fullscreen", function(c)
 	c.shape = c.fullscreen and gears.shape.rectangle or beautiful.theme_shape
-end)
+end)]]
 --}}}
 
 -- rules {{{

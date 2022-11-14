@@ -105,10 +105,10 @@ local function init (s)
 	s.bar = wibox {
 		ontop = true,
 		visible = true,
-		x = s.geometry.x,-- + beautiful.useless_gap,
-		y = s.geometry.y, -- + s.geometry.height - beautiful.wibar_height,-- + beautiful.useless_gap,
+		x = s.geometry.x + 2*beautiful.useless_gap,
+		y = s.geometry.y + 2*beautiful.useless_gap,
 		height = beautiful.wibar_height,
-		width = s.geometry.width,-- - 2*beautiful.useless_gap - 2*beautiful.border_width,
+		width = s.geometry.width - 4*beautiful.useless_gap,
 		screen = s,
 		shape = gears.shape.rectangle,-- beautiful.theme_shape,
         widget = wibox.widget {
@@ -141,7 +141,7 @@ local function init (s)
                 fill_vertical = true,
 				{
                     widget = wibox.container.margin,
-                    margins = { top = dpi(5) },
+                    margins = { top = dpi(5), right = dpi(8) },
                     {
                         widget = wibox.container.constraint,
                         height = beautiful.wibar_height - dpi(10),
@@ -162,7 +162,7 @@ local function init (s)
         }
     }
     s.bar:struts ({
-        top = beautiful.wibar_height
+        top = beautiful.wibar_height + 2*beautiful.useless_gap
     })
 
     menu.init(s)

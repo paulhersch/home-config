@@ -37,7 +37,7 @@ local function init(s)
 		ontop = true,
 		visible = false,
 		x = s.geometry.x + (s.geometry.width-dpi(500))/2,
-		y = beautiful.wibar_height + 2*beautiful.useless_gap,
+		y = beautiful.wibar_height + 4*beautiful.useless_gap,
 		bg = beautiful.bg_normal,
 --		border_width = beautiful.border_width,
 --		border_color = beautiful.bg_focus,

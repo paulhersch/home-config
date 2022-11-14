@@ -64,7 +64,7 @@ theme.fg_dark       = dark_theme
 --theme.bg_systray    = theme.bg_normal
 theme.systray_icon_spacing = theme.useless_gap
 
-theme.border_width        = dpi(3)
+theme.border_width        = 0
 theme.border_color_urgent = theme.bg_urgent
 theme.border_color_normal = theme.bg_normal
 theme.border_color_new = theme.border_color_normal
