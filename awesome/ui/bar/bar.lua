@@ -6,9 +6,6 @@ local dpi	= beautiful.xresources.apply_dpi
 
 local helpers	= require "helpers"
 
-local menu 	= require "ui.menu"
-local quicksettings = require "ui.quicksettings"
-
 local battery   = require "ui.bar.widgets.battery".widget
 
 local pctl_indicator = wibox.widget
@@ -53,6 +50,9 @@ local menu_trigger = wibox.widget {
 }
 
 local function init (s)
+	local menu 	= require "ui.menu"
+	local quicksettings = require "ui.quicksettings"
+
     s.menu_open = false
     s.notifcenter_open = false
 
