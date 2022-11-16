@@ -15,6 +15,13 @@ local widget = wibox.widget {
 	spacing = dpi(5)
 }
 
+local function show_icon()
+    require "ui.bar.bar".pctl_active()
+end
+local function hide_icon()
+    require "ui.bar.bar".pctl_inactive()
+end
+
 local titlefont, artistfont, margin = beautiful.font_bold .. " 11", beautiful.font_thin .. " 10", dpi(5)
 local height = beautiful.get_font_height(titlefont) + beautiful.get_font_height(artistfont) + 3*margin
 
@@ -176,11 +183,15 @@ local function widget_from_player (player)
 	func_on_click(w:get_children_by_id("shuffle")[1], function() player:set_shuffle(not player.shuffle) end)
 	func_on_click(w:get_children_by_id("repeat")[1], function () player:set_loop_status(player.loop_status == "NONE" and "PLAYLIST" or "NONE") end)
 
-	-- deconstruct
+	----
+    -- deconstruct
+    ----
 	player.on_exit = function (_, _)
 		widget:remove_widgets(w)
 		w = nil
+        if #widget:get_children() == 0 then hide_icon() end
 	end
+
 	----
 	-- initial updates
 	----
@@ -206,6 +217,7 @@ local function start_managing(name, just_added)
 	local new_widget = widget_from_player(player)
 	-- initial update of metadata (doing it in the "add" function somehow kills the construction process)
 	if not just_added then update_widget_meta(new_widget, player.metadata) end
+    if #widget:get_children() == 0 then show_icon() end
 	widget:insert(1, new_widget)
 end
 

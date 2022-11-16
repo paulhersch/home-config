@@ -50,7 +50,7 @@ screen.connect_signal("request::wallpaper", function(s)
 			resize		= true,
 			scaling_quality	= 'best',
 			horizontal_fit_policy='fit']]
-			widget = wibox.widget.background,
+			widget = wibox.container.background,
 			bg = beautiful.bg_focus
 		}
 	}
