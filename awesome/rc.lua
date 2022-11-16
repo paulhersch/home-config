@@ -40,24 +40,6 @@ RUBATO_DIR = "plugins.rubato."
 require ("keybinds")
 require ("ui")
 
--- {{{ Wallpaper
-screen.connect_signal("request::wallpaper", function(s)
-	awful.wallpaper {
-		screen = s,
-		widget = {
-			--[[image		= beautiful.wallpaper,
-			widget		= wibox.widget.imagebox,
-			resize		= true,
-			scaling_quality	= 'best',
-			horizontal_fit_policy='fit']]
-			widget = wibox.widget.background,
-			bg = beautiful.bg_focus
-		}
-	}
-end)
--- }}}
-
-
 -- client management {{{
 client.connect_signal("mouse::enter", function(c)
 	c:activate { context = "mouse_enter", raise = false }

@@ -1,3 +1,4 @@
+require "ui.wallpaper"
 require "ui.bar"
 require "ui.notifications".init()
 --require "ui.titlebar"
