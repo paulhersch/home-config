@@ -12,11 +12,6 @@ local uPower	= require "plugins.uPower"
 local iconsdir	= gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 local batshape = function(cr,w,h) return gears.shape.rounded_rect(cr,w,h,2) end
 local chel = require "helpers".color
---[[local symbol = wibox.widget {
-	id	= 'symbol',
-	widget	= wibox.widget.imagebox,
-	resize	= true,
-}]]
 
 local charge_indicator = wibox.widget {
     widget = wibox.container.rotate,
@@ -92,18 +87,31 @@ local batterywidget = uPower {
 	device_path 		= '/org/freedesktop/UPower/devices/battery_BAT0',
 	use_display_device  = true,
 	widget_template		= {
-        widget = wibox.container.margin,
-        margins = { top = dpi(3), bottom = dpi(3) },
-        symbol
+		-- currently a dummy so i can delete and add widgets to my liking
+		id = "base_layout",
+		layout = wibox.layout.fixed.horizontal,
     }
 }
 
 local r_d, g_d, b_d = chel.col_diff(beautiful.green, beautiful.red)
 
 local lastpercnotif
+local needs_initial = true
 
 batterywidget:connect_signal("upower::update", function (_, device)
+	-- *slightly* crackhead updater but shoule be fine, because only one boolcheck
+	-- (lets pray lua kind of knows that the value will never be updated afterwards)
+	if needs_initial then
+		batterywidget:add(device.kind == 2 and symbol or wibox.widget {
+			widget = wibox.widget.imagebox,
+			image = gears.color.recolor_image(
+			iconsdir .. "power.svg"
+			, beautiful.fg_normal)
+		})
+		needs_initial = nil
+	end
 	if device.kind == 2 then --checks if device is a battery
+		-- stupid ass check
         local percentage = device.percentage
         --not really the correct way to determine the "discharging" state, but idc
         local discharging = device.state == 2 or device.state == 5 or device.state == 6
@@ -138,6 +146,17 @@ batterywidget:connect_signal("upower::update", function (_, device)
         stack.forced_width = dpi(27)
         symbol:get_children_by_id('end')[1].forced_width = dpi(2)
         symbol:get_children_by_id('end')[1].forced_height = dpi(6)
+	else
+		--override symbol, stack, ... (the variables) if we actually dont use a battery and display a funny placeholder instead
+		tooltip = nil
+		symbol = nil
+		stack = nil
+		val = nil
+		charge_indicator = nil
+		lastpercnotif = nil
+		r_d, g_d, b_d = nil, nil, nil
+		chel = nil
+		batshape = nil
 	end
 end)
 

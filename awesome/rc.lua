@@ -51,15 +51,9 @@ client.connect_signal("request::manage", function(c)
 		awful.placement.centered(c)
 		c:raise()
 	else c:to_secondary_section() end
-	--c.shape = c.fullscreen and gears.shape.rectangle or beautiful.theme_shape
     c:activate{raise = true}
     if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
 end)
-
---[[client.connect_signal("property::fullscreen", function(c)
-	c.shape = c.fullscreen and gears.shape.rectangle or beautiful.theme_shape
-end)]]
---}}}
 
 -- rules {{{
 ruled.client.connect_signal("request::rules", function()
@@ -78,23 +72,6 @@ ruled.client.connect_signal("request::rules", function()
 			height	= dpi(480)
 		},
 	}
-    ruled.client.append_rule{
-        rule_any = {
-            class = { "cavaonstart" },
-        },
-        properties = {
-            floating = true,
-            screen = awful.screen.preferred,
-            immobilized_horizontal = true,
-            immobilized_vertical = true,
-            width = 640,
-            height = 480,
-            focusable = false,
-            x = 455,
-            y = 50,
-            sticky = true
-        }
-    }
 end)
 --}}}
 

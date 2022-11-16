@@ -9,25 +9,24 @@ local helpers	= require "helpers"
 local menu 	= require "ui.menu"
 local quicksettings = require "ui.quicksettings"
 
-local battery   = require "ui.bar.widgets.battery"
+local battery   = require "ui.bar.widgets.battery".widget
 
-local notif_trigger = wibox.widget {
+local pctl_indicator = wibox.widget
+{
     widget = wibox.widget.imagebox,
-    image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal),
-    buttons = {
-        awful.button {
-            modifiers = {},
-            button = 1,
-            on_press = function ()
-                local s = awful.screen.focused()
-                if s.notifcenter_open then
-                    quicksettings.hide(s)
-                else
-                    quicksettings.show(s)
-                end
-                s.notifcenter_open = not s.notifcenter_open
-            end
-        }
+    image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/music_note.svg", beautiful.fg_normal),
+}
+
+local quicksettings_trigger = wibox.widget {
+    layout = wibox.layout.fixed.horizontal,
+    spacing = dpi(5),
+    battery,
+    {
+        id = 'bellicon',
+        widget = wibox.widget.imagebox,
+		resize = true,
+		halign = 'center',
+        image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal),
     }
 }
 
@@ -85,7 +84,7 @@ local function init (s)
                     --wibox.widget.base.make_widget(),
                     widget = wibox.container.place,
                     halign = 'center',
-                    forced_width = beautiful.wibar_height - dpi(16),
+                    forced_width = beautiful.wibar_height - dpi(26),
                 },
             },
             create_callback = function(self, t, _, _)
@@ -100,15 +99,24 @@ local function init (s)
 		}
 	}
 
-    s.systray = s == screen.primary and wibox.widget.systray() or nil
+    local systray = s == screen.primary and wibox.widget {
+        widget = wibox.container.place,
+        valign = 'center',
+        {
+            widget = wibox.widget.systray,
+            base_size = dpi(20),
+        }
+    } or nil
+
+    s.quicksettings_trigger = quicksettings_trigger
 
 	s.bar = wibox {
 		ontop = true,
 		visible = true,
-		x = s.geometry.x + 2*beautiful.useless_gap,
-		y = s.geometry.y + 2*beautiful.useless_gap,
+		x = s.geometry.x,
+		y = s.geometry.y,
 		height = beautiful.wibar_height,
-		width = s.geometry.width - 4*beautiful.useless_gap,
+		width = s.geometry.width,
 		screen = s,
 		shape = gears.shape.rectangle,-- beautiful.theme_shape,
         widget = wibox.widget {
@@ -120,10 +128,9 @@ local function init (s)
 				fill_horizontal = false,
                 {
                     widget = wibox.container.margin,
-                    margins = { left = dpi(8), top = dpi(8) },
+                    margins = dpi(13),
                     {
                         widget = wibox.container.constraint,
-                        forced_height = beautiful.wibar_height - dpi(16),
                         s.taglist
                     }
                 }
@@ -141,32 +148,54 @@ local function init (s)
                 fill_vertical = true,
 				{
                     widget = wibox.container.margin,
-                    margins = { top = dpi(5), right = dpi(4) },
+                    margins = dpi(5),
                     {
-                        widget = wibox.container.constraint,
-                        height = beautiful.wibar_height - dpi(10),
+                        layout = wibox.layout.fixed.horizontal,
+                        spacing = dpi(5),
+                        systray,
                         {
-                            s.systray,
+                            id = 'qs_trigger_bg',
+                            widget = wibox.container.background,
+                            shape = beautiful.theme_shape,
                             {
-                                widget = wibox.container.place,
-                                valign = 'center',
-                                battery,
+                                widget = wibox.container.margin,
+                                margins = dpi(5),
+                                helpers.pointer_on_focus(quicksettings_trigger)
                             },
-                            helpers.pointer_on_focus(notif_trigger),
-                            layout = wibox.layout.fixed.horizontal,
-                            spacing = dpi(5),
-                        },
+                            buttons = {
+                                awful.button {
+                                    modifiers = {},
+                                    button = 1,
+                                    on_press = function ()
+                                        if s.notifcenter_open then
+                                            quicksettings.hide(s)
+                                        else
+                                            quicksettings.show(s)
+                                        end
+                                        s.notifcenter_open = not s.notifcenter_open
+                                    end
+                                }
+                            }
+                        }
                     }
                 }
             },
         }
     }
     s.bar:struts ({
-        top = beautiful.wibar_height + 2*beautiful.useless_gap
+        top = beautiful.wibar_height
     })
 
     menu.init(s)
     quicksettings.init(s)
+
+    local qs_trigger_bg = s.bar:get_children_by_id('qs_trigger_bg')[1]
+    qs_trigger_bg:connect_signal("mouse::enter", function ()
+        if not s.notifcenter_open then qs_trigger_bg.bg = beautiful.bg_focus end
+    end)
+    qs_trigger_bg:connect_signal("mouse::leave", function ()
+        if not s.notifcenter_open then qs_trigger_bg.bg = beautiful.bg_normal end
+    end)
 
 end
 
@@ -180,11 +209,21 @@ local function show(s)
 end
 
 local function display_pending_notifs()
-    notif_trigger:set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.blue))
+    quicksettings_trigger:get_children_by_id('bellicon')[1]
+                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.blue))
 end
 
 local function no_pending_notifs()
-    notif_trigger:set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal))
+    quicksettings_trigger:get_children_by_id('bellicon')[1]
+                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal))
+end
+
+local function pctl_song_active()
+    quicksettings_trigger:insert(1, pctl_indicator)
+end
+
+local function pctl_song_inactive()
+    quicksettings_trigger:remove_widgets(pctl_indicator)
 end
 
 return {
@@ -192,5 +231,7 @@ return {
 	hide	= hide,
 	show	= show,
     notifcenter_filled = display_pending_notifs,
-    notifcenter_cleared = no_pending_notifs
+    notifcenter_cleared = no_pending_notifs,
+    pctl_active = pctl_song_active,
+    pctl_inactive = pctl_song_inactive
 }

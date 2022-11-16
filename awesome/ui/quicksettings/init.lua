@@ -18,9 +18,9 @@ local function init(s)
     s.notifcenter = wibox {
         screen = s,
         x = s.geometry.x + s.geometry.width - cent_width - 2*beautiful.useless_gap,-- - beautiful.border_width,
-        y = s.geometry.y + beautiful.wibar_height + 4*beautiful.useless_gap,
+        y = s.geometry.y + beautiful.wibar_height + 2*beautiful.useless_gap,
         width = cent_width,
-        height = s.geometry.height - beautiful.wibar_height - 6*beautiful.useless_gap,-- - 2*beautiful.border_width - 6*beautiful.useless_gap, --bottom gap
+        height = s.geometry.height - beautiful.wibar_height - 4*beautiful.useless_gap,-- - 2*beautiful.border_width - 6*beautiful.useless_gap, --bottom gap
         ontop = true,
         visible = false,
         --shape = beautiful.theme_shape,

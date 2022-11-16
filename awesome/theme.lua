@@ -117,7 +117,7 @@ theme.notification_shape = theme.shape
 theme.tabbed_spawn_in_tab = true  -- whether a new client should spawn into the focused tabbing container
 
 -- some length parameters
-theme.wibar_height  = dpi(30)
+theme.wibar_height  = dpi(40)
 theme.titlebar_height = dpi(30)
 
 -- You can use your own layout icons like this:
