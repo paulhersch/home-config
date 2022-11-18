@@ -221,8 +221,8 @@ local function add_notif_widget(n)
     w:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal))
     w:get_children_by_id('remove')[1]:connect_signal("mouse::enter", function() cross_enter(w) end)
     w:get_children_by_id('remove')[1]:connect_signal("mouse::leave", function() cross_leave(w) end)
-    w:get_children_by_id('title')[1].text = n.title
-    w:get_children_by_id('text')[1].text = n.message
+    w:get_children_by_id('title')[1]:set_markup_silently(n.title)
+    w:get_children_by_id('text')[1]:set_markup_silently(n.message)
     if n.icon then
         w:get_children_by_id('icon')[1]:set_image(n.icon)
         w:get_children_by_id('icon')[1].forced_height = dpi(40)

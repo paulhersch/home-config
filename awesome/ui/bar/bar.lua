@@ -14,17 +14,19 @@ local pctl_indicator = wibox.widget
     image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/music_note.svg", beautiful.fg_normal),
 }
 
+local notif_indicator = wibox.widget
+{
+	id = 'notif_icon',
+	widget = wibox.widget.imagebox,
+	resize = true,
+	halign = 'center',
+	image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/forum.svg", beautiful.fg_normal),
+}
+
 local quicksettings_trigger = wibox.widget {
     layout = wibox.layout.fixed.horizontal,
     spacing = dpi(5),
-    battery,
-    {
-        id = 'bellicon',
-        widget = wibox.widget.imagebox,
-		resize = true,
-		halign = 'center',
-        image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal),
-    }
+    battery
 }
 
 local menu_trigger = wibox.widget {
@@ -38,6 +40,7 @@ local menu_trigger = wibox.widget {
             button = 1,
             on_press = function ()
                 local s = awful.screen.focused()
+				local menu 	= require "ui.menu"
                 if s.menu_open then
                     menu.hide(s)
                 else
@@ -201,21 +204,29 @@ end
 
 local function hide(s)
 	s.bar.visible = false
-	menu.hide(s)
+	s.menu:hide()
+	s.notifcenter:hide()
 end
 local function show(s)
 	s.bar.visible = true
-    if s.center_open then menu.show(s) end
+    if s.center_open then s.menu:show() end
+	if s.notifcenter_open then s.quicksettings:show() end
 end
 
 local function display_pending_notifs()
-    quicksettings_trigger:get_children_by_id('bellicon')[1]
-                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.blue))
+--    quicksettings_trigger:get_children_by_id('notif_icon')[1]
+--                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/mail_unread.svg", beautiful.fg_normal))
+	if not quicksettings_trigger:index(notif_indicator) then
+		quicksettings_trigger:insert(1, notif_indicator)
+	end
 end
 
 local function no_pending_notifs()
-    quicksettings_trigger:get_children_by_id('bellicon')[1]
-                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/notifications.svg", beautiful.fg_normal))
+--    quicksettings_trigger:get_children_by_id('notif_icon')[1]
+--                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/mail.svg", beautiful.fg_normal))
+	if quicksettings_trigger:index(notif_indicator) then
+		quicksettings_trigger:remove_widgets(notif_indicator)
+	end
 end
 
 local function pctl_song_active()

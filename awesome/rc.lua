@@ -7,6 +7,8 @@ local ruled = require("ruled")
 local wibox = require("wibox")
 require("awful.autofocus")
 
+awful.spawn("autorandr -c")
+
 local dpi	= beautiful.xresources.apply_dpi
 
 awesome.set_preferred_icon_size(128)
@@ -64,7 +66,7 @@ ruled.client.connect_signal("request::rules", function()
 	}
 	ruled.client.append_rule {
 		rule_any = {
-			class = { "Thunar", "Pcmanfm", "Galculator" }
+			class = { "Thunar", "Pcmanfm", "Galculator", "Nemo" }
 		},
 		properties = {
 			floating= true,

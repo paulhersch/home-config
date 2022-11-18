@@ -61,8 +61,9 @@ theme.fg_dark       = dark_theme
             and col_shift(theme.fg_normal, -20)
             or col_shift(theme.fg_normal, 20)
 
---theme.bg_systray    = theme.bg_normal
-theme.systray_icon_spacing = theme.useless_gap
+theme.useless_gap = dpi(5)
+
+theme.systray_icon_spacing = dpi(8)
 
 theme.border_width        = 0
 theme.border_color_urgent = theme.bg_urgent
@@ -104,7 +105,6 @@ theme.menu_submenu_icon = function ()
     return icon
 end
 
-theme.useless_gap = dpi(5)
 theme.master_width_factor = 0.65
 
 theme.menu_item_spacing = dpi(5)

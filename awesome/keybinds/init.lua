@@ -3,7 +3,7 @@ local gears	= require ("gears")
 
 local configdir	= gears.filesystem.get_configuration_dir()
 local terminal = "st"
-local filemanager = "pcmanfm"
+local filemanager = "nemo"
 local modkey = "Mod1"
 
 local launcher = require ("ui.launcher")
