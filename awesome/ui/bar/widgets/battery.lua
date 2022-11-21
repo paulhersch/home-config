@@ -53,27 +53,31 @@ local stack = wibox.widget {
 }
 
 local symbol = wibox.widget {
-    layout = wibox.layout.fixed.horizontal,
-    {
-        widget = wibox.container.place,
-        valign ='center',
-        {
-            id = 'end',
-            widget = wibox.container.background,
-            bg = beautiful.fg_normal,
-            forced_width = dpi(0),
-            forced_height = dpi(0),
-            shape = function (cr,w,h)
-                return gears.shape.partially_rounded_rect(cr,w,h,true,false,false,true,dpi(2))
-            end,
-            wibox.widget.base.make_widget()
-        }
-    },
-    {
-        widget = wibox.container.rotate,
-        direction = 'south',
-        stack
-    }
+	widget = wibox.container.margin,
+	margins = {top = dpi(2), bottom = dpi(2)},
+	{
+		layout = wibox.layout.fixed.horizontal,
+		{
+			widget = wibox.container.place,
+			valign ='center',
+			{
+				id = 'end',
+				widget = wibox.container.background,
+				bg = beautiful.fg_normal,
+				forced_width = dpi(0),
+				forced_height = dpi(0),
+				shape = function (cr,w,h)
+					return gears.shape.partially_rounded_rect(cr,w,h,true,false,false,true,dpi(2))
+				end,
+				wibox.widget.base.make_widget()
+			}
+		},
+		{
+			widget = wibox.container.rotate,
+			direction = 'south',
+			stack
+		}
+	}
 }
 
 local tooltip	= awful.tooltip {
