@@ -6,6 +6,10 @@ local wibox = require("wibox")
 local awful = require("awful")
 local icon = require("ui.launcher.icon")
 local Gio = require("lgi").Gio
+
+local dpi = beautiful.xresources.apply_dpi
+
+local iconsdir = gears.filesystem.get_configuration_dir() .. "/assets/materialicons/"
 -- TODO --
 -- - Add scrolling support
 -- - Add animations
@@ -22,17 +26,10 @@ local function info_highlight(grid)
 
 		if i == module.index_entry then
 			widget.bg = beautiful.menubar_bg_focus
-			widget.widget.widget.markup = string.format(
-				"<span foreground='%s' font='12'>%s</span>",
-				beautiful.menubar_fg_focus,
-				widget.widget.widget.markup:match("^<span[^>]*>(.*)</span>$")
-			)
+			widget.fg = beautiful.fg_focus
 		else
 			widget.bg = nil
-			widget.widget.widget.markup = string.format(
-				"<span font='12'>%s</span>",
-				widget.widget.widget.markup:match("^<span[^>]*>(.*)</span>$")
-			)
+			widget.fg = beautiful.fg_normal
 		end
 
 		if module.index_start <= i and i <= module.index_start + 14 then
@@ -82,16 +79,19 @@ local function info_filter(grid, cmd)
 		local widget = wibox.widget {
 			widget = wibox.container.background,
 			id = "bg",
+			shape = gears.shape.rounded_bar,
+			fg = beautiful.fg_normal,
 			{
 				widget = wibox.container.margin,
-				margins = 5,
+				top = dpi(5),
+				bottom = dpi(5),
+				left = dpi(10),
+				right = dpi(10),
 				{
 					widget = wibox.widget.textbox,
+					font = beautiful.font_thin .. " 11",
 					id = "text",
-					markup = string.format(
-						"<span font='12'>%s</span>",
-						entry.name
-					)
+					text = entry.name
 				},
 			}
 		}
@@ -141,64 +141,90 @@ function module.open()
 		border_color = beautiful.border_focus,
 		border_width = beautiful.border_width,
 		ontop = true,
-        screen = awful.screen.focused(),
-		widget = {
+		screen = awful.screen.focused(),
+		widget =
+		{
 			widget = wibox.container.margin,
 			margins = 20,
 			{
 				layout = wibox.layout.grid,
 				forced_num_cols = 1,
 				homogeneous = false,
+				min_cols_size = dpi(500),
 				{
-					widget = wibox.container.place,
-					halign = "right",
-					icon.close(
-						function()
-							awful.keygrabber.stop()
-							popup.visible = false
-							popup = nil
-						end
-					),
-				},
-				{ widget = wibox.widget.textbox }, -- Prompt
-				{ -- Separator
-					widget = wibox.container.margin,
-					top = 10,
+					widget = wibox.container.background,
+					bg = beautiful.bg_focus_dark,
+					shape = gears.shape.rounded_bar,
 					{
-						widget = wibox.widget.separator,
-						orientation = "horizontal",
-						color = beautiful.border_focus,
-						thickness = 2,
-						forced_height = 2,
-						forced_width = geometry.width / 3
+						widget = wibox.container.margin,
+						margins = dpi(10),
+						{
+							layout = wibox.layout.align.horizontal,
+							expand = 'inside',
+							forced_height = beautiful.get_font_height(beautiful.font_bold .. " 13"),
+							{
+								widget = wibox.widget.imagebox,
+								image = gears.color.recolor_image(iconsdir .. "search.svg", beautiful.fg_normal),
+								forced_width = beautiful.get_font_height(beautiful.font_bold .. " 13"),
+							},
+							{
+								widget = wibox.container.margin,
+								left = dpi(5),
+								right = dpi(5),
+								{
+									id = 'prompttext',
+									font = beautiful.font_bold .. " 13",
+									widget = wibox.widget.textbox
+								}
+							},
+							{
+								widget = wibox.container.place,
+								forced_width = beautiful.get_font_height(beautiful.font_bold .. " 13"),
+								icon.close(
+								function()
+									awful.keygrabber.stop()
+									popup.visible = false
+									popup = nil
+								end
+								),
+							},
+						}
 					}
 				},
-				{ -- Entries
+				{
+					widget = wibox.container.margin,
+					top = dpi(10),
+					wibox.widget.base.empty_widget()
+				},
+				{
+					id = 'entries',
 					widget = wibox.layout.grid,
 					homogeneous = false,
 					expand = true,
 					forced_num_cols = 1
 				},
-				{ -- Page Info
-						widget = wibox.widget.textbox,
-						align = "right"
-					}
+				{
+					id = 'pageinfo',
+					widget = wibox.widget.textbox,
+					align = "right"
+				}
 			}
 		}
 	}
-	local grid = popup.widget.widget:get_widgets_at(4, 1)[1]
 
-	module.widget_page = popup.widget.widget:get_widgets_at(5, 1)[1]
+	local grid = popup.widget:get_children_by_id('entries')[1]
+
+	module.widget_page = popup.widget:get_children_by_id('pageinfo')[1]
 	grid:connect_signal(
-		"button::press",
-		function(_, _, _, button)
-			if button == 5 then
-					if module.index_start + 14 ~= #module.entries_filtered then
-						module.index_start = module.index_start + 1
-						module.index_entry = module.index_entry + 1
-					info_highlight(grid)
-				end
-			elseif button == 4 then
+	"button::press",
+	function(_, _, _, button)
+		if button == 5 then
+			if module.index_start + 14 ~= #module.entries_filtered then
+				module.index_start = module.index_start + 1
+				module.index_entry = module.index_entry + 1
+				info_highlight(grid)
+			end
+		elseif button == 4 then
 				if module.index_start ~= 1 then
 					module.index_start = module.index_start - 1
 					module.index_entry = module.index_entry - 1
@@ -220,8 +246,8 @@ function module.open()
 
 	info_filter(grid, "")
 	awful.prompt.run {
-		prompt = "<span font='12'>Run: </span>",
-		textbox = popup.widget.widget:get_widgets_at(2, 1)[1],
+		prompt = "",
+		textbox = popup.widget:get_children_by_id('prompttext')[1],
 		done_callback = function() popup.visible = false; popup = nil; end,
 		changed_callback = function(cmd) info_filter(grid, cmd) end,
 		exe_callback = function(cmd)
