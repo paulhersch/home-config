@@ -33,7 +33,7 @@ return {
             }
         }
         lc.omnisharp.setup {
-            cmd = { "omnisharp", "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
+            cmd = { "OmniSharp", "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
         }
         lc.pylsp.setup{
             settings = {

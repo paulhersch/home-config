@@ -75,7 +75,9 @@ return require('packer').startup(function(use)
 
 	use {
 		'nvim-treesitter/nvim-treesitter',
-		requires = 'tree-sitter/tree-sitter',
+		requires = {
+			'tree-sitter/tree-sitter',
+		},
 		run = ':TSUpdate',
 		--commit = '4cccb6f494eb255b32a290d37c35ca12584c74d0',
 		config = function()
