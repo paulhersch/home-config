@@ -77,7 +77,7 @@ return require('packer').startup(function(use)
 		'nvim-treesitter/nvim-treesitter',
 		requires = 'tree-sitter/tree-sitter',
 		run = ':TSUpdate',
-		commit = '4cccb6f494eb255b32a290d37c35ca12584c74d0',
+		--commit = '4cccb6f494eb255b32a290d37c35ca12584c74d0',
 		config = function()
 			require("nvim-treesitter.configs").setup {
 				auto_install = true,

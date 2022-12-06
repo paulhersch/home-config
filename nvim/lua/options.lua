@@ -14,8 +14,8 @@ o.fillchars.vert = '┃'
 o.linebreak = true
 o.fillchars.horiz = '━'
 -- o.cmdheight = 0 --only in git master rn
-o.spell = true
-o.spelllang = { 'de_de' }
+--o.spell = true
+--o.spelllang = { 'de_de' }
 -- fucking annoying bullshit
 -- o.foldmethod = "expr"
 -- o.foldexpr = "nvim_treesitter#foldexpr()"

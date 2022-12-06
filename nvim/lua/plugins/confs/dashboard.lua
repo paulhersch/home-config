@@ -3,12 +3,12 @@ return {
 	branch = 'master',
 	config = function ()
 		local db = require "dashboard"
-		Map("n", "<Space>f", "<cmd>NvimTreeOpen <CR>", _)
+		Map("n", "<Space>f", "<cmd>NvimTreeToggle<CR>", _)
 		db.custom_center = {
 			{
 				icon = ' ',
 				desc = 'Open Nvim Tree               ',
-				action = 'NvimTreeOpen',
+				action = 'NvimTreeToggle',
 				shortcut = 'SPC f'
 			},
 			{

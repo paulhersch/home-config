@@ -62,5 +62,6 @@ return {
 				return vim.fn.getcwd()
 			end,
 		}
+		lc.ltex.setup{}
     end
 }
