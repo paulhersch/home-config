@@ -16,7 +16,6 @@ screen.connect_signal("request::wallpaper", function(s)
 			valign = 'center',
 			halign = 'center',
 			horizontal_fit_policy = "fit",
-			clip_shape = gears.shape.rounded_rect
 		}
 	}
 end)
