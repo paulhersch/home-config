@@ -1,5 +1,4 @@
 local o = vim.opt
-local api = vim.api
 
 o.background = 'dark'
 o.clipboard = 'unnamedplus'
@@ -13,12 +12,7 @@ o.showmode = false
 o.fillchars.vert = '┃'
 o.linebreak = true
 o.fillchars.horiz = '━'
--- o.cmdheight = 0 --only in git master rn
---o.spell = true
---o.spelllang = { 'de_de' }
--- fucking annoying bullshit
--- o.foldmethod = "expr"
--- o.foldexpr = "nvim_treesitter#foldexpr()"
+o.cmdheight = 0
 
 local g = vim.g
 if g.neovide then
@@ -30,6 +24,4 @@ if g.neovide then
 	g.neovide_confirm_quit=true
 end
 
-require("azul").setup {
-    --nvim_tree = { contrast = true }
-}
+require("azul").setup {}

@@ -60,5 +60,6 @@ return {
 				}
 			}
 		})
+		Map("n", "<Space>f", "<cmd>NvimTreeToggle<CR>", {})
 	end
 }

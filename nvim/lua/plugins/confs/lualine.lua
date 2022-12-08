@@ -1,6 +1,8 @@
 return {
 	'nvim-lualine/lualine.nvim',
-	requires = 'kyazdani42/nvim-web-devicons',
+	requires = {
+		'kyazdani42/nvim-web-devicons',
+	},
 	as = 'lualine',
 	config = function()
 		local function short_cwd()
@@ -24,12 +26,12 @@ return {
 				theme = {
 					--personalized version of everblushs lualine theme
 					normal = {
-						a = { bg = colors.color4, fg = colors.background },
+						a = { bg = colors.color2, fg = colors.background },
 						b = { bg = colors.color0, fg = colors.color7 },
 						c = { bg = colors.contrast, fg = colors.contrast }
 					},
 					insert = {
-						a = { bg = colors.color2, fg = colors.background },
+						a = { bg = colors.color4, fg = colors.background },
 						b = { bg = colors.color0, fg = colors.color7 },
 						c = { bg = colors.contrast, fg = colors.contrast }
 					},
@@ -62,6 +64,7 @@ return {
 					{
 						'mode',
 						seperator = { left = '', right = '' },
+						fmt = string.lower
 					}
 				},
 				lualine_b = {
@@ -91,10 +94,11 @@ return {
 						colored = true,
 						symbols = { error = '✗ ', warn = '！' },
 						separator = { left = '', right = ''},
+						update_in_insert = true
 					},
 					{
 						'filetype',
-						color = { bg = colors.color0, fg = colors.color4 }
+						color = { bg = colors.color0, fg = colors.color12 }
 					}
 				},
 				lualine_z = {}

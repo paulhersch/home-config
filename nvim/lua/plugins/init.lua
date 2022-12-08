@@ -29,7 +29,36 @@ return require('packer').startup(function(use)
 	use(telescope)
 	use(dashboard)
 
-	use { 'lukas-reineke/indent-blankline.nvim',
+	use {
+		'Shatur/neovim-session-manager',
+		require = {
+			'nvim-lua/plenary.nvim'
+		},
+		config = function ()
+			local Path = require('plenary.path')
+			require('session_manager').setup ({
+				sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
+				path_replacer = '__',
+				colon_replacer = '++',
+				autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir,
+				autosave_last_session = true,
+				autosave_ignore_not_normal = true,
+				autosave_ignore_dirs = {},
+				autosave_ignore_filetypes = {
+					'gitcommit',
+					'NvimTree',
+					'toggleterm',
+				},
+				autosave_only_in_session = false,
+				max_path_length = 80,
+			})
+			Map("n", "fs", "<cmd>SessionManager load_session<cr>", {})
+			Map("n", "ds", "<cmd>SessionManager delete_session<cr>", {})
+		end
+	}
+
+	use {
+		'lukas-reineke/indent-blankline.nvim',
 		requires = 'nvim-treesitter/nvim-treesitter',
 		config = function()
 			require("indent_blankline").setup {
@@ -61,16 +90,37 @@ return require('packer').startup(function(use)
 				diagnostic_header = { "✋", "👆", "👉", "🤏" },
 				--symbol_in_winbar = { enable = true }
 			}
+			Map("n", "gt", "<cmd>Lspsaga lsp_finder<CR>", {})
+			Map("n", "ca", "<cmd>Lspsaga code_action <CR>", {})
+			Map("n", "gr", "<cmd>Lspsaga rename <CR>", {})
+			Map("i", "<C-R>", "<cmd>Lspsaga rename <CR>", {})
+			Map("n", "gd", "<cmd>Lspsaga peek_definition <CR>", {})
+			Map("n", "D", "<cmd>Lspsaga hover_doc <CR>", {})
+			Map("i", "<C-D>", "<cmd>Lspsaga diagnostic_jump_next <CR>", {})
+			Map("n", "<C-D>", "<cmd>Lspsaga diagnostic_jump_next <CR>", {})
 		end
 	}
 
-	use { 'voldikss/vim-floaterm',
-		--[[config = function()
-			vim.cmd('FloatermNew')
-			vim.cmd('FloatermHide')
-			vim.cmd('stopinsert')
-		end]]
-		--somehow this doenst work
+	use {
+		'akinsho/toggleterm.nvim',
+		config = function ()
+			local colors = require("azul.core").get_colors()
+			require("toggleterm").setup {
+				autochdir = true,
+				direction = 'float',
+				float_opts = {
+					border = 'single'
+				},
+				highlights = {
+					FloatBorder = {
+						guifg=colors.contrast,
+						guibg=colors.contrast
+					}
+				}
+			}
+			Map("n", "tt", "<cmd>ToggleTerm<CR>", {})
+			Map("t", "<C-T>", "<cmd>ToggleTerm<CR>", {})
+		end
 	}
 
 	use {
@@ -89,6 +139,25 @@ return require('packer').startup(function(use)
 					additional_vim_regex_highlighting = false,
 				}
 			}
+		end
+	}
+
+	use {
+		'j-hui/fidget.nvim',
+		config = function ()
+			require('fidget').setup{}
+		end
+	}
+
+	use {
+		'stevearc/aerial.nvim',
+		requires = {
+			'nvim-treesitter/nvim-treesitter'
+		},
+		config = function ()
+			require('aerial').setup{}
+			Map("n", "<Space>a", "<cmd>AerialToggle<cr>", {})
+			Map("i", "<C-A>", "<cmd>AerialToggle<cr>", {})
 		end
 	}
 

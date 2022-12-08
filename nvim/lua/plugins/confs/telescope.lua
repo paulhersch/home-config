@@ -1,7 +1,10 @@
 return {
 	'nvim-telescope/telescope.nvim',
 	tag = '0.1.0',
-	requires = { {'nvim-lua/plenary.nvim'} },
+	requires = {
+		'nvim-lua/plenary.nvim',
+		'nvim-telescope/telescope-ui-select.nvim'
+	},
 	config = function()
 		require ("telescope").setup {
 			defaults = {
@@ -50,6 +53,16 @@ return {
 				buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
 			},
 			extensions_list = { "themes", "terms" },
+			extensions = {
+				["ui-select"] = {
+					require("telescope.themes").get_dropdown {
+						-- even more opts
+					}
+				}
+			}
 		}
+		require("telescope").load_extension("ui-select")
+		Map("n", "gf", "<cmd>Telescope live_grep<CR>", {})
+		Map("n", "ff", "<cmd>Telescope find_files<CR>", {})
 	end
 }

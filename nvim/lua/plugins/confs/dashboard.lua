@@ -3,7 +3,6 @@ return {
 	branch = 'master',
 	config = function ()
 		local db = require "dashboard"
-		Map("n", "<Space>f", "<cmd>NvimTreeToggle<CR>", _)
 		db.custom_center = {
 			{
 				icon = ' ',
@@ -22,6 +21,12 @@ return {
 				desc = 'Live Grep with Telescope        ',
 				action = 'Telescope live_grep',
 				shortcut = 'gf'
+			},
+			{
+				icon = ' ',
+				desc = 'Select recent session           ',
+				action = 'SessionManager load_session',
+				shortcut = 'fs'
 			}
 		}
 		db.custom_header = {

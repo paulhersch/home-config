@@ -6,7 +6,7 @@ function M.highlight_all(colors, opts)
 	if opts.transparent_background == true then
 		colors.background = "none"
 	end
-	local base_highlights = config.highlights_base(colors)
+	local base_highlights = config.highlights_base()
 	for group, properties in pairs(base_highlights) do
 		hl(0, group, properties)
 	end
