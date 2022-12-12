@@ -18,8 +18,6 @@ local layout = wibox.widget {
     spacing       = dpi(5),
 	horizontal_expand = true,
 	vertical_expand = true,
-	forced_width = dpi(490),
-	forced_height = dpi(790),
 	forced_num_cols = 5,
 	forced_num_rows = 4
 }
@@ -36,8 +34,8 @@ local function init(s)
 		screen = s,
 		ontop = true,
 		visible = false,
-		x = s.geometry.x + (s.geometry.width-dpi(500))/2,
-		y = beautiful.wibar_height + 2*beautiful.useless_gap,
+		x = s.geometry.x + s.geometry.width - 2*beautiful.useless_gap - dpi(500),
+		y = s.geometry.y + s.geometry.height - (dpi(400) + beautiful.wibar_height + 2*beautiful.useless_gap),
 		bg = beautiful.bg_normal,
 --		border_width = beautiful.border_width,
 --		border_color = beautiful.bg_focus,

@@ -29,34 +29,65 @@ local quicksettings_trigger = wibox.widget {
     battery
 }
 
-local menu_trigger = wibox.widget {
-    widget = wibox.widget.textclock,
-    font = beautiful.font_bold,
-    format = '%H:%M',
-    id = 'menu_trigger',
-    buttons = {
-        awful.button {
-            modifiers = {},
-            button = 1,
-            on_press = function ()
-                local s = awful.screen.focused()
-				local menu 	= require "ui.menu"
-                if s.menu_open then
-                    menu.hide(s)
-                else
-                    menu.show(s)
-                end
-                s.menu_open = not s.menu_open
-            end
-        }
-    }
+local popups = {
+	"menu",
+	"quicksettings"
 }
+
+-- shortcut to wrap menu and quicksettings triggers (and also the "normal" widgets without popups, if popup_name is nil the popup wont be shown)
+local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
+	local templ = wibox.widget {
+		widget = wibox.container.margin,
+		margins = dpi(5),
+		{
+			id = popup_name ~= nil and popup_name .. "_bg" or nil,
+			widget = wibox.container.background,
+			bg = beautiful.bg_focus_dark,
+			shape = beautiful.theme_shape,
+			{
+				widget = wibox.container.margin,
+				margins = dpi(5),
+				widget
+			},
+			buttons = popup_name ~= nil and {
+				awful.button {
+					modifiers = {},
+					button = 1,
+					on_press = function ()
+						if screen[popup_name .. "_stat"] then
+							require("ui." .. popup_name).hide(screen)
+						else
+							for _, p in ipairs(popups) do
+								require("ui." .. p).hide(screen)
+								screen[p .. "_stat"] = false
+							end
+							require("ui." .. popup_name).show(screen)
+						end
+						screen[popup_name .. "_stat"] = not screen[popup_name .. "_stat"]
+					end
+				}
+			}
+		}
+	}
+	if popup_name ~= nil then
+		local trigger_bg = templ[popup_name .. "_bg"]
+		helpers.pointer_on_focus(templ)
+		trigger_bg:connect_signal("mouse::enter", function ()
+			if not screen[popup_name].visible then trigger_bg.bg = beautiful.bg_focus end
+		end)
+		trigger_bg:connect_signal("mouse::leave", function ()
+			if not screen[popup_name].visible then trigger_bg.bg = beautiful.bg_focus_dark end
+		end)
+
+	end
+	return templ
+end
 
 local function init (s)
 	local menu 	= require "ui.menu"
 	local quicksettings = require "ui.quicksettings"
 
-    s.menu_open = false
+	s.menu_open = false
     s.notifcenter_open = false
 
     local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
@@ -84,10 +115,10 @@ local function init (s)
                         id = 'index',
                         text = ' ',
                     },
-                    --wibox.widget.base.make_widget(),
                     widget = wibox.container.place,
                     halign = 'center',
-                    forced_width = beautiful.wibar_height - dpi(26),
+                    forced_width = dpi(15),
+                    forced_height = dpi(15),
                 },
             },
             create_callback = function(self, t, _, _)
@@ -97,7 +128,7 @@ local function init (s)
                 helpers.pointer_on_focus(self, s.bar)
 			end,
             update_callback = function (self, t, _, _)
-                self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus_dark)
+                self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
             end
 		}
 	}
@@ -113,93 +144,89 @@ local function init (s)
 
     s.quicksettings_trigger = quicksettings_trigger
 
+	local widget
+	widget = wibox.widget {
+		layout = wibox.layout.flex.horizontal,
+		{
+			widget = wibox.container.place,
+			halign = 'left',
+			valign = 'top',
+			fill_horizontal = false,
+			wrap_in_bg_and_popup_button({
+				widget = wibox.container.place,
+				valign = 'center',
+				fill_vertical = true,
+				s.taglist
+			})
+		},
+		{
+			widget = wibox.container.place,
+			halign = 'right',
+			valign = 'top',
+			fill_horizontal = false,
+			fill_vertical = true,
+			{
+				layout = wibox.layout.fixed.horizontal,
+				spacing = dpi(5),
+				wrap_in_bg_and_popup_button(systray, nil, s),
+
+				wrap_in_bg_and_popup_button(
+				{
+					layout = wibox.layout.fixed.horizontal,
+					{
+						widget = wibox.widget.textclock,
+						format = "%H",
+						font = beautiful.font_bold .. " 18"
+					},
+					{
+						widget = wibox.container.background,
+						fg = beautiful.gray,
+						{
+							widget = wibox.widget.textclock,
+							format = "%M",
+							font = beautiful.font_bold .. " 18"
+						}
+					},
+					{
+						widget = wibox.container.margin,
+						margins = dpi(5),
+						wibox.widget.base.make_widget()
+					},
+					{
+						widget = wibox.widget.textclock,
+						font = beautiful.font_thin .. " 9",
+						format = "%A"
+					}
+				},
+				"menu",
+				s),
+
+				wrap_in_bg_and_popup_button(
+				quicksettings_trigger,
+				"quicksettings",
+				s),
+			}
+		},
+	}
+
 	s.bar = wibox {
 		ontop = true,
 		visible = true,
 		x = s.geometry.x,
-		y = s.geometry.y,
+		y = s.geometry.y + s.geometry.height - beautiful.wibar_height,
 		height = beautiful.wibar_height,
 		width = s.geometry.width,
 		screen = s,
 		shape = gears.shape.rectangle,-- beautiful.theme_shape,
-        widget = wibox.widget {
-			layout = wibox.layout.flex.horizontal,
-			{
-				widget = wibox.container.place,
-				halign = 'left',
-                valign = 'top',
-				fill_horizontal = false,
-                {
-                    widget = wibox.container.margin,
-                    margins = dpi(13),
-                    {
-                        widget = wibox.container.constraint,
-                        s.taglist
-                    }
-                }
-			},
-            {
-                widget = wibox.container.place,
-                halign = 'center',
-                helpers.pointer_on_focus(menu_trigger),
-            },
-			{
-				widget = wibox.container.place,
-				halign = 'right',
-                valign = 'top',
-				fill_horizontal = false,
-                fill_vertical = true,
-				{
-                    widget = wibox.container.margin,
-                    margins = dpi(5),
-                    {
-                        layout = wibox.layout.fixed.horizontal,
-                        spacing = dpi(5),
-                        systray,
-                        {
-                            id = 'qs_trigger_bg',
-                            widget = wibox.container.background,
-                            shape = beautiful.theme_shape,
-                            {
-                                widget = wibox.container.margin,
-                                margins = dpi(5),
-                                helpers.pointer_on_focus(quicksettings_trigger)
-                            },
-                            buttons = {
-                                awful.button {
-                                    modifiers = {},
-                                    button = 1,
-                                    on_press = function ()
-                                        if s.notifcenter_open then
-                                            quicksettings.hide(s)
-                                        else
-                                            quicksettings.show(s)
-                                        end
-                                        s.notifcenter_open = not s.notifcenter_open
-                                    end
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-        }
-    }
-    s.bar:struts ({
-        top = beautiful.wibar_height
-    })
+        widget = widget
+	}
 
-    menu.init(s)
-    quicksettings.init(s)
+	s.bar:struts ({
+		bottom = beautiful.wibar_height
+	})
 
-    local qs_trigger_bg = s.bar:get_children_by_id('qs_trigger_bg')[1]
-    qs_trigger_bg:connect_signal("mouse::enter", function ()
-        if not s.notifcenter_open then qs_trigger_bg.bg = beautiful.bg_focus end
-    end)
-    qs_trigger_bg:connect_signal("mouse::leave", function ()
-        if not s.notifcenter_open then qs_trigger_bg.bg = beautiful.bg_normal end
-    end)
-
+	menu.init(s)
+	quicksettings.init(s)
 end
 
 local function hide(s)
@@ -207,6 +234,7 @@ local function hide(s)
 	s.menu:hide()
 	s.notifcenter:hide()
 end
+
 local function show(s)
 	s.bar.visible = true
     if s.center_open then s.menu:show() end
@@ -214,16 +242,12 @@ local function show(s)
 end
 
 local function display_pending_notifs()
---    quicksettings_trigger:get_children_by_id('notif_icon')[1]
---                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/mail_unread.svg", beautiful.fg_normal))
 	if not quicksettings_trigger:index(notif_indicator) then
 		quicksettings_trigger:insert(1, notif_indicator)
 	end
 end
 
 local function no_pending_notifs()
---    quicksettings_trigger:get_children_by_id('notif_icon')[1]
---                        :set_image(gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/mail.svg", beautiful.fg_normal))
 	if quicksettings_trigger:index(notif_indicator) then
 		quicksettings_trigger:remove_widgets(notif_indicator)
 	end

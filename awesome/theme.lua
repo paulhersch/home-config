@@ -64,6 +64,7 @@ theme.fg_dark       = dark_theme
 theme.useless_gap = dpi(5)
 
 theme.systray_icon_spacing = dpi(8)
+theme.bg_systray = theme.bg_focus_dark
 
 theme.border_width        = 0
 theme.border_color_urgent = theme.bg_urgent
