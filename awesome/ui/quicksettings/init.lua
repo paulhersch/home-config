@@ -4,6 +4,7 @@ local dpi = beautiful.xresources.apply_dpi
 
 local notifwidget = require "ui.quicksettings.widgets.notifcenter"
 local pctlwidget = require "ui.quicksettings.widgets.playerctl"
+local volumewidget = require "ui.quicksettings.widgets.volume"
 
 local function init(s)
     local cent_width = dpi(450) --math.ceil(s.geometry.width/4.5)
@@ -30,6 +31,7 @@ local function init(s)
 			{
 				layout = wibox.layout.fixed.vertical,
 				spacing = dpi(5),
+				volumewidget,
 				pctlwidget,
 				notifwidget
 			}
