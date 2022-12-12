@@ -6,6 +6,8 @@ local gears = require "gears"
 
 local maticons = gears.filesystem.get_configuration_dir() .. "/assets/materialicons/"
 
+local update_on_master
+
 local entry_template = {
 	widget = wibox.layout.fixed.horizontal,
 	forced_height = dpi(30),
@@ -15,10 +17,19 @@ local entry_template = {
 		forced_width = dpi(30),
 		margins = dpi(5),
 		{
+			id = "symbol",
 			widget = wibox.widget.imagebox,
 			image = gears.color.recolor_image(maticons .. "volume_up.svg", beautiful.fg_normal),
 			resize = true,
-		}
+		},
+		buttons = { awful.button {
+			modifiers = {},
+			button = 1,
+			on_press = function()
+				awful.spawn("pamixer -t")
+				update_on_master()
+			end
+		}}
 	},
 	{
 		id = "slider",
@@ -42,7 +53,6 @@ local entry_template = {
 local widget = wibox.widget (entry_template)
 local slider = widget:get_children_by_id('slider')[1]
 
-
 slider:connect_signal("mouse::enter", function()
 	slider.handle_color = beautiful.gray
 end)
@@ -50,14 +60,29 @@ slider:connect_signal("mouse::leave", function()
 	slider.handle_color = beautiful.bg_focus_dark
 end)
 
+ update_on_master = function()
+	--volume
+	awful.spawn.easy_async("pamixer --get-volume", function (out, _, _, code)
+		if code == 0 then slider.value = out end
+	end)
+	--mute status
+	awful.spawn.easy_async("pamixer --get-mute", function (_, _, _, code)
+		if code == 0 then
+			slider.bar_active_color = beautiful.gray
+			widget:get_children_by_id('symbol')[1]:set_image(
+				gears.color.recolor_image(maticons .. "volume_off.svg", beautiful.fg_normal))
+		else
+			slider.bar_active_color = beautiful.blue
+			widget:get_children_by_id('symbol')[1]:set_image(
+				gears.color.recolor_image(maticons .. "volume_up.svg", beautiful.fg_normal))
+		end
+	end)
+end
+
 local timer = gears.timer {
 	timeout = 5,
 	autostart = true,
-	callback = function()
-		awful.spawn.easy_async("pamixer --get-volume", function (out, _, _, code)
-			if code == 0 then slider.value = out end
-		end)
-	end
+	callback = update_on_master
 }
 
 slider:add_button(awful.button {
