@@ -1,15 +1,9 @@
-[submodule "awesome/plugins/rubato"]
-	path = awesome/plugins/rubato
-	url = https://github.com/andOrlando/rubato
 [submodule "awesome/plugins/uPower"]
 	path = awesome/plugins/uPower
 	url = https://github.com/Aire-One/awesome-battery_widget
-[submodule "awesome/plugins/json"]
-	path = awesome/plugins/json
-	url = https://github.com/rxi/json.lua
+[submodule "awesome/plugins/rubato"]
+	path = awesome/plugins/rubato
+	url = https://github.com/andOrlando/rubato
 [submodule "awesome/plugins/bling"]
 	path = awesome/plugins/bling
 	url = https://github.com/BlingCorp/bling
-[submodule "awesome/plugins/awesome-widgets"]
-	path = awesome/plugins/awesome-widgets
-	url = https://github.com/andOrlando/awesome-widgets/
