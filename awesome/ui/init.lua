@@ -3,7 +3,7 @@ require "ui.bar"
 require "ui.notifications".init()
 --require "ui.titlebar"
 
-local beautiful = require "beautiful"
+--[[local beautiful = require "beautiful"
 local dock = require "ui.dock"
 local dpi = beautiful.xresources.apply_dpi
 
@@ -55,4 +55,4 @@ screen.connect_signal("request::desktop_decoration", function(s)
             rubato = require "plugins.rubato"
         }
 	})
-end)
+end)]]

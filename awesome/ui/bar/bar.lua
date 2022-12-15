@@ -3,7 +3,6 @@ local awful	= require "awful"
 local gears	= require "gears"
 local beautiful = require "beautiful"
 local dpi	= beautiful.xresources.apply_dpi
-
 local helpers	= require "helpers"
 
 local battery   = require "ui.bar.widgets.battery".widget
@@ -34,6 +33,13 @@ local popups = {
 	"quicksettings"
 }
 
+local function hide_all_popups_on_screen(screen, override_shown)
+	for _, p in ipairs(popups) do
+		require("ui.bar.popups." .. p).hide(screen)
+		if (override_shown) then screen[p .. "_stat"] = false end
+	end
+end
+
 -- shortcut to wrap menu and quicksettings triggers (and also the "normal" widgets without popups, if popup_name is nil the popup wont be shown)
 local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
 	local templ = wibox.widget {
@@ -55,13 +61,10 @@ local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
 					button = 1,
 					on_press = function ()
 						if screen[popup_name .. "_stat"] then
-							require("ui." .. popup_name).hide(screen)
+							require("ui.bar.popups." .. popup_name).hide(screen)
 						else
-							for _, p in ipairs(popups) do
-								require("ui." .. p).hide(screen)
-								screen[p .. "_stat"] = false
-							end
-							require("ui." .. popup_name).show(screen)
+							hide_all_popups_on_screen(screen, true)
+							require("ui.bar.popups." .. popup_name).show(screen)
 						end
 						screen[popup_name .. "_stat"] = not screen[popup_name .. "_stat"]
 					end
@@ -78,17 +81,13 @@ local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
 		trigger_bg:connect_signal("mouse::leave", function ()
 			if not screen[popup_name].visible then trigger_bg.bg = beautiful.bg_focus_dark end
 		end)
-
 	end
 	return templ
 end
 
 local function init (s)
-	local menu 	= require "ui.menu"
-	local quicksettings = require "ui.quicksettings"
-
-	s.menu_open = false
-    s.notifcenter_open = false
+	local menu 	= require "ui.bar.popups.menu"
+	local quicksettings = require "ui.bar.popups.quicksettings"
 
     local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
 
@@ -142,22 +141,29 @@ local function init (s)
         }
     } or nil
 
-    s.quicksettings_trigger = quicksettings_trigger
+	s.quicksettings_trigger = quicksettings_trigger
 
 	local widget
 	widget = wibox.widget {
 		layout = wibox.layout.flex.horizontal,
 		{
-			widget = wibox.container.place,
-			halign = 'left',
-			valign = 'top',
-			fill_horizontal = false,
-			wrap_in_bg_and_popup_button({
+			layout = wibox.layout.fixed.horizontal,
+			spacing = dpi(5),
+			--[[wrap_in_bg_and_popup_button({
+
+			}, "launcher", s),]]
+			{
 				widget = wibox.container.place,
-				valign = 'center',
-				fill_vertical = true,
-				s.taglist
-			})
+				halign = 'left',
+				valign = 'top',
+				fill_horizontal = false,
+				wrap_in_bg_and_popup_button({
+					widget = wibox.container.place,
+					valign = 'center',
+					fill_vertical = true,
+					s.taglist,
+				})
+			},
 		},
 		{
 			widget = wibox.container.place,
@@ -200,7 +206,6 @@ local function init (s)
 				},
 				"menu",
 				s),
-
 				wrap_in_bg_and_popup_button(
 				quicksettings_trigger,
 				"quicksettings",
@@ -213,7 +218,7 @@ local function init (s)
 		ontop = true,
 		visible = true,
 		x = s.geometry.x,
-		y = s.geometry.y + s.geometry.height - beautiful.wibar_height,
+		y = s.geometry.y, --+ s.geometry.height - beautiful.wibar_height,
 		height = beautiful.wibar_height,
 		width = s.geometry.width,
 		screen = s,
@@ -222,7 +227,7 @@ local function init (s)
 	}
 
 	s.bar:struts ({
-		bottom = beautiful.wibar_height
+		top = beautiful.wibar_height
 	})
 
 	menu.init(s)
@@ -231,14 +236,11 @@ end
 
 local function hide(s)
 	s.bar.visible = false
-	s.menu:hide()
-	s.notifcenter:hide()
+	hide_all_popups_on_screen(screen, false)
 end
 
 local function show(s)
 	s.bar.visible = true
-    if s.center_open then s.menu:show() end
-	if s.notifcenter_open then s.quicksettings:show() end
 end
 
 local function display_pending_notifs()
