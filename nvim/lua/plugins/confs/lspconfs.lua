@@ -1,7 +1,10 @@
 return {
     'neovim/nvim-lspconfig',
     config = function()
-        local cwd = vim.fn.substitute(vim.fn.getcwd(), '^.*/', '', '')
+        local function shortcwd()
+			local cwd = vim.fn.substitute(vim.fn.getcwd(), '^.*/', '', '')
+			return cwd
+		end
         local lc = require('lspconfig')
 		local util = require('lspconfig.util')
 
@@ -9,25 +12,41 @@ return {
 		util.default_config = vim.tbl_extend("force", util.default_config, {
 			capabilities = require('cmp_nvim_lsp').default_capabilities(existing_capabilities),
 		})
-        lc.sumneko_lua.setup{
+		lc.sumneko_lua.setup {
+			on_new_config = function (config, root_dir)
+				vim.cmd([[echo 'reloading lsp settings']])
+				local short_root_dir = vim.fn.substitute(root_dir, '^.*/', '', '')
+				vim.cmd([[echo 'pwd: ]] .. short_root_dir .. [[']])
+				if short_root_dir == "awesome" then
+					config = vim.tbl_deep_extend("force", config, {
+						settings = { Lua = {
+							runtime = "5.2",
+							diagnostics = { globals = {
+								"root", "awesome", "tag", "screen", "client",
+								"modkey", "altkey", "mouse", "mousegrabber",
+							}},
+							workspace = { library = os.getenv("AWM_LIB_PATH")}
+						}}
+					})
+				else if short_root_dir == "nvim" then
+					config = vim.tbl_deep_extend("force", config, {
+						settings = { Lua = {
+							runtime = "LuaJIT",
+							diagnostics = { globals = { "vim" }},
+							workspace = { library = vim.api.nvim_get_runtime_file("", true)}
+						}}
+					})
+				end end
+			end,
             settings = {
-                root_dir = "file://" .. vim.fn.getcwd(), --.git is default before cwd, so editing dots fucks with sumneko
                 Lua = {
-                    runtime = {
-                        version = cwd == "awesome" and "5.2" or
-                        cwd == "nvim" and "LuaJIT" or nil,
-                    },
-                    diagnostics = {
-                        -- Get the language server to recognize globals
-                        globals = cwd == "awesome" and {
-                            "root", "awesome", "tag", "screen", "client",
-                            "modkey", "altkey", "mouse", "mousegrabber"
-                        } or cwd == "nvim" and { "vim" } or { },
-                    },
                     workspace = {
                         checkThirdParty = false,
-                        library = cwd == "awesome" and os.getenv("AWM_LIB_PATH") --[["/run/current-system/sw/share/awesome/lib"]] or (cwd == "nvim" and vim.api.nvim_get_runtime_file("", true) or nil),
                     },
+					completion = {
+						callSnippet = { Both = true },
+						keywordSnippet = { Both = true }
+					},
                     telemetry = { enable = false },
                 }
             }

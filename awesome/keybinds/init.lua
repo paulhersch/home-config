@@ -6,7 +6,7 @@ local terminal = "st"
 local filemanager = "nemo"
 local modkey = "Mod1"
 
-local launcher = require ("ui.launcher")
+local launcher = require ("ui.search")
 
 require ("keybinds.clients").init(modkey)
 -- General Awesome keys

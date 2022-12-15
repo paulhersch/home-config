@@ -10,8 +10,8 @@ local beautiful = require ("beautiful")
 local gears = require("gears")
 local cairo = require("lgi").cairo
 
-local col_shift = require("helpers").color.col_shift
 local col_mix = require("helpers").color.col_mix
+local color = require("plugins.color")
 
 local themes_path = gears.filesystem.get_themes_dir()
 local homedir = os.getenv("HOME")
@@ -41,25 +41,26 @@ theme.magenta       = xres.color5
 theme.cyan          = xres.color6
 theme.gray          = xres.color7
 
-theme.bg_normal     = xres.background
-theme.bg_focus_dark = dark_theme
-            and col_shift(theme.bg_normal, 8)
-            or col_shift (theme.bg_normal, -8)
-theme.bg_focus      = dark_theme
-            and col_shift(theme.bg_normal, 16)
-            or col_shift(theme.bg_normal, -16)
+local bg = color.color { hex = xres.background }
+
+theme.bg_normal     = bg.hex
+theme.bg_focus_dark = (dark_theme
+            and bg + "10r" + "10g" + "10b"
+            or bg - "10r" - "10g" - "10b").hex
+theme.bg_focus      = (dark_theme
+            and bg + "20r" + "20g" + "20b"
+            or bg - "20r" - "20g" - "20b").hex
 theme.bg_urgent     = xres.color1
 theme.bg_minimize   = theme.bg_normal
 
-theme.fg_normal     = xres.foreground
-theme.fg_focus      = dark_theme
-            and col_shift(theme.fg_normal, 20)
-            or col_shift(theme.fg_normal, -20)
+local fg = color.color { hex = xres.foreground }
+
+theme.fg_normal     = fg.hex
+theme.fg_focus      = (dark_theme
+            and fg + "20r" + "20g" + "20b"
+            or fg - "20r" - "20g" - "20b").hex
 theme.fg_urgent     = theme.fg_normal
 theme.fg_minimize   = theme.fg_normal
-theme.fg_dark       = dark_theme
-            and col_shift(theme.fg_normal, -20)
-            or col_shift(theme.fg_normal, 20)
 
 theme.useless_gap = dpi(5)
 

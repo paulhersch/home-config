@@ -1,0 +1,1 @@
+-- This is here so that lspconf doesnt ignore the root folder

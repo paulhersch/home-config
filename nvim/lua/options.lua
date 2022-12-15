@@ -16,7 +16,7 @@ o.cmdheight = 0
 
 local g = vim.g
 if g.neovide then
-	vim.cmd [[set guifont=CaskaydiaCove\ Nerd\ Font\ Mono:h9]]
+	vim.cmd [[set guifont=CaskaydiaCove\ Nerd\ Font\ Mono:h7]]
 	g.neovide_refresh_rate = 60
 	g.neovide_refresh_rate_idle = 1
 	g.neovide_scroll_animation_length = 0.1

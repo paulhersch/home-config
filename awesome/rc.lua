@@ -4,7 +4,6 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local ruled = require("ruled")
-local wibox = require("wibox")
 require("awful.autofocus")
 
 awful.spawn("autorandr -c")

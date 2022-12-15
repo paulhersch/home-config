@@ -30,6 +30,11 @@ return require('packer').startup(function(use)
 	use(dashboard)
 
 	use {
+		'L3MON4D3/LuaSnip',
+		run = "make install_jsregexp"
+	}
+
+	use {
 		'Shatur/neovim-session-manager',
 		require = {
 			'nvim-lua/plenary.nvim'
@@ -157,7 +162,6 @@ return require('packer').startup(function(use)
 		config = function ()
 			require('aerial').setup{}
 			Map("n", "<Space>a", "<cmd>AerialToggle<cr>", {})
-			Map("i", "<C-A>", "<cmd>AerialToggle<cr>", {})
 		end
 	}
 
@@ -176,6 +180,7 @@ return require('packer').startup(function(use)
 			vim.diagnostic.config({
 				virtual_text = false
 			})
+			Map("n", "<Space>t", "<cmd>TroubleToggle<cr>", {})
 		end
 	}
 end)
