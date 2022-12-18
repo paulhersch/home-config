@@ -7,6 +7,7 @@ return {
 		'saadparwaiz1/cmp_luasnip',
 		'L3MON4D3/LuaSnip',
 		'ray-x/cmp-treesitter',
+		'hrsh7th/cmp-nvim-lsp-signature-help'
 	},
 	config = function()
 		local luasnip = require("luasnip")
@@ -80,13 +81,14 @@ return {
 				['<C-e>'] = cmp.mapping.abort(),
 				['<CR>'] = cmp.mapping.confirm({ select = false }),
 			}),
-			sources = cmp.config.sources({
+			sources = --[[cmp.config.sources(]]{
 				{ name = 'nvim_lsp' },
 				{ name = 'luasnip' },
 				{ name = 'treesitter' },
 				{ name = 'path' },
-				{ name = 'buffer', keyword_length = 3 }
-			})
+				{ name = 'buffer', keyword_length = 3 },
+				{ name = 'nvim_lsp_signature_help' }
+			}--)
 		})
 	end
 }
