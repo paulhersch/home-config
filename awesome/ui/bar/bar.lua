@@ -125,6 +125,7 @@ local function init (s)
 					if b == 1 then t:view_only() end
 				end)
                 helpers.pointer_on_focus(self, s.bar)
+                self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
 			end,
             update_callback = function (self, t, _, _)
                 self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
@@ -236,11 +237,17 @@ end
 
 local function hide(s)
 	s.bar.visible = false
-	hide_all_popups_on_screen(screen, false)
+	hide_all_popups_on_screen(s, false)
 end
 
 local function show(s)
 	s.bar.visible = true
+	for _, p in ipairs(popups) do
+		if s[p .. "_stat"] then
+			require("ui.bar.popups." .. p).show(s)
+			break
+		end
+	end
 end
 
 local function display_pending_notifs()

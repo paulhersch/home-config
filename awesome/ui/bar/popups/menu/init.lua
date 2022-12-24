@@ -24,7 +24,7 @@ local layout = wibox.widget {
 
 layout:add_widget_at(calendar, 2, 3, 3, 3)
 layout:add_widget_at(layouts, 2, 1, 1, 2)
-layout:add_widget_at(powerbuttons.widget, 1, 4, 1, 2)
+layout:add_widget_at(powerbuttons.widget, 1, 1, 1, 5)
 layout:add_widget_at(grindtimer,3,1,2,2)
 
 local function init(s)

@@ -138,6 +138,7 @@ local menu_opener = wibox.widget {
         margins = dpi(5),
         {
             layout = wibox.layout.fixed.horizontal,
+			spacing = dpi(10),
             {
                 widget = wibox.container.margin,
                 margins = dpi(5),
@@ -160,7 +161,7 @@ local menu_opener = wibox.widget {
                         margins = { left = dpi(5) },
                         {
                             widget = wibox.widget.textbox,
-                            font = beautiful.font_bold .. " 11",
+                            font = beautiful.font_bold .. " 13",
                             text = "Hi " .. os.getenv("USER"),
                             valign = 'center'
                         }
