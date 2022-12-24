@@ -94,6 +94,10 @@ return require('packer').startup(function(use)
 			require('lspsaga').init_lsp_saga {
 				diagnostic_header = { "✋", "👆", "👉", "🤏" },
 				--symbol_in_winbar = { enable = true }
+				code_action_lightbulb = {
+					enable = true,
+					enable_in_insert = false
+				}
 			}
 			Map("n", "gt", "<cmd>Lspsaga lsp_finder<CR>", {})
 			Map("n", "ca", "<cmd>Lspsaga code_action <CR>", {})
@@ -134,7 +138,6 @@ return require('packer').startup(function(use)
 			'tree-sitter/tree-sitter',
 		},
 		run = ':TSUpdate',
-		--commit = '4cccb6f494eb255b32a290d37c35ca12584c74d0',
 		config = function()
 			require("nvim-treesitter.configs").setup {
 				auto_install = true,

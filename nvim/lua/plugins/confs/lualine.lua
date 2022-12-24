@@ -64,7 +64,6 @@ return {
 					{
 						'mode',
 						seperator = { left = '', right = '' },
-						fmt = string.lower
 					}
 				},
 				lualine_b = {
