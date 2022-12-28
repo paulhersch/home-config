@@ -7,7 +7,8 @@ return {
 		'saadparwaiz1/cmp_luasnip',
 		'L3MON4D3/LuaSnip',
 		'ray-x/cmp-treesitter',
-		'hrsh7th/cmp-nvim-lsp-signature-help'
+		'hrsh7th/cmp-nvim-lsp-signature-help',
+		'hrsh7th/cmp-cmdline'
 	},
 	config = function()
 		local luasnip = require("luasnip")
@@ -40,7 +41,25 @@ return {
 			Operator = "",
 			TypeParameter = ""
 		}
-
+		cmp.setup.cmdline("/", {
+			mapping = cmp.mapping.preset.cmdline(),
+			sources = {
+				{ name = 'buffer' }
+			}
+		})
+		cmp.setup.cmdline(':', {
+			mapping = cmp.mapping.preset.cmdline(),
+			sources = cmp.config.sources({
+				{ name = 'path' }
+			}, {
+				{
+					name = 'cmdline',
+					option = {
+						ignore_cmds = { 'Man', '!' }
+					}
+				}
+			})
+		})
 		cmp.setup({
 			snippet = {
 				expand = function(args)
@@ -78,7 +97,6 @@ return {
 				end, { "i", "s" }),
 				['<C-w>'] = cmp.mapping.scroll_docs(-4),
 				['<C-s>'] = cmp.mapping.scroll_docs(4),
-				['<C-e>'] = cmp.mapping.abort(),
 				['<CR>'] = cmp.mapping.confirm({ select = false }),
 			}),
 			sources = --[[cmp.config.sources(]]{
@@ -86,7 +104,7 @@ return {
 				{ name = 'luasnip' },
 				{ name = 'treesitter' },
 				{ name = 'path' },
-				{ name = 'buffer', keyword_length = 3 },
+				--{ name = 'buffer', keyword_length = 3 },
 				{ name = 'nvim_lsp_signature_help' }
 			}--)
 		})

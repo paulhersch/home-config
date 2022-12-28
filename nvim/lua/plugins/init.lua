@@ -34,7 +34,7 @@ return require('packer').startup(function(use)
 		run = "make install_jsregexp"
 	}
 
---[[	use {
+	use {
 		'Shatur/neovim-session-manager',
 		require = {
 			'nvim-lua/plenary.nvim'
@@ -60,7 +60,7 @@ return require('packer').startup(function(use)
 			Map("n", "fs", "<cmd>SessionManager load_session<cr>", {})
 			Map("n", "ds", "<cmd>SessionManager delete_session<cr>", {})
 		end
-	}]]
+	}
 
 	use {
 		'lukas-reineke/indent-blankline.nvim',

@@ -5,40 +5,9 @@ return {
 		local util = require('lspconfig.util')
 
 		Map("n", "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>", {})
-		--local existing_capabilities = vim.lsp.protocol.make_client_capabilities()
-		--util.default_config = vim.tbl_extend("force", util.default_config, {
-		--	capabilities = require('cmp_nvim_lsp').default_capabilities(existing_capabilities),
-		--})
-		--vim.cmd([[echo 'running sumneko setup']])
-		lc.sumneko_lua.setup ({
-			on_new_config = function (config, root_dir)
-				local short_root_dir = vim.fn.substitute(root_dir, '^.*/', '', '')
-				--vim.cmd([[echo 'pwd: ]] .. short_root_dir .. [[']])
-				if short_root_dir == "awesome" then
-					--vim.cmd([[echo 'loading awm settings']])
-					config = vim.tbl_deep_extend("force", config, {
-						settings = { Lua = {
-							runtime = "5.2",
-							diagnostics = { globals = {
-								"root", "awesome", "tag", "screen", "client",
-								"modkey", "altkey", "mouse", "mousegrabber",
-							}},
-							workspace = { library = os.getenv("AWM_LIB_PATH")}
-						}}
-					})
-				else if short_root_dir == "nvim" then
-					--vim.cmd([[echo 'loading nvim settings']])
-					config = vim.tbl_deep_extend("force", config, {
-						settings = { Lua = {
-							runtime = "LuaJIT",
-							diagnostics = { globals = { "vim" }},
-							workspace = { library = vim.api.nvim_get_runtime_file("", true)}
-						}}
-					})
-					--vim.cmd([[echo 'which settings? ]] .. config.settings.Lua.runtime .. [[']])
-				end end
-			end,
-			settings = {
+		local short_root_dir = vim.fn.substitute(vim.fn.getcwd(), '^.*/', '', '')
+		--somehow the sumneko setup with workspaces only works properly when i run stuff at startup not at runtime, so this has to do for now
+		local lua_conf = {
                 Lua = {
 					runtime = "Lua5.2",
                     workspace = {
@@ -51,7 +20,28 @@ return {
                     telemetry = { enable = false },
                 }
             }
-        })
+		if short_root_dir == "awesome" then
+			lua_conf = vim.tbl_deep_extend("force", lua_conf, {
+				Lua = {
+					runtime = "5.2",
+					diagnostics = { globals = {
+						"root", "awesome", "tag", "screen", "client",
+						"modkey", "altkey", "mouse", "mousegrabber",
+					}},
+					workspace = { library = { os.getenv("AWM_LIB_PATH") }}
+				}
+			})
+		end
+		if short_root_dir == "nvim" then
+			lua_conf = vim.tbl_deep_extend("force", lua_conf, {
+				Lua = {
+					runtime = "LuaJIT",
+					diagnostics = { globals = { "vim" }},
+					workspace = { library = vim.api.nvim_get_runtime_file("", true)}
+				}
+			})
+		end
+		lc.sumneko_lua.setup ({settings=lua_conf})
         lc.omnisharp.setup ({
             cmd = { "OmniSharp", "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
         })
