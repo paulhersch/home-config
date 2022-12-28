@@ -2,14 +2,8 @@ local wibox = require "wibox"
 local dpi = require "beautiful.xresources".apply_dpi
 local beautiful = require "beautiful"
 
-local rubato = require "plugins.rubato"
-
---local playerwidget = require "ui.menu.widgets.playerctl"
---local playerwidget = require "ui.menu.widgets.mpd"
-
 local calendar = require "ui.bar.popups.menu.widgets.calendar"
 local layouts = require "ui.bar.popups.menu.widgets.layout"
-local powerbuttons = require "ui.bar.popups.menu.widgets.powerbuttons"
 local grindtimer = require "ui.bar.popups.menu.widgets.grinder"
 
 local layout = wibox.widget {
@@ -19,17 +13,16 @@ local layout = wibox.widget {
 	horizontal_expand = true,
 	vertical_expand = true,
 	forced_num_cols = 5,
-	forced_num_rows = 4
+	forced_num_rows = 3
 }
 
-layout:add_widget_at(calendar, 2, 3, 3, 3)
-layout:add_widget_at(layouts, 2, 1, 1, 2)
-layout:add_widget_at(powerbuttons.widget, 1, 1, 1, 5)
-layout:add_widget_at(grindtimer,3,1,2,2)
+layout:add_widget_at(calendar, 1, 3, 3, 3)
+layout:add_widget_at(layouts, 1, 1, 1, 2)
+layout:add_widget_at(grindtimer,2,1,2,2)
 
 local function init(s)
 	s.menu = wibox {
-		height = dpi(400),
+		height = dpi(300),
 		width = dpi(500),
 		screen = s,
 		ontop = true,
@@ -37,42 +30,23 @@ local function init(s)
 		x = s.geometry.x + s.geometry.width - 2*beautiful.useless_gap - dpi(500),
 		y = s.geometry.y --[[+ s.geometry.height - dpi(400)]] + beautiful.wibar_height + 2*beautiful.useless_gap,
 		bg = beautiful.bg_normal,
---		border_width = beautiful.border_width,
---		border_color = beautiful.bg_focus,
---		shape = beautiful.theme_shape,
 		widget = wibox.widget {
 			widget = wibox.container.margin,
 			margins = dpi(5),
 			layout
 		}
 	}
---	layout:add_widget_at(playerwidget.create(s.center), 1, 1, 1, 3)
-    --[[s.menu.flyin = rubato.timed {
-        rate = 60,
-        duration = 0.3,
-        intro = 0.1,
-        outro = 0.1,
-        pos = 1,
-        easing = rubato.easing.linear,
-        subscribed = function (pos)
-            s.menu.visible = pos < 1
-            s.menu.y = beautiful.wibar_height + 2*beautiful.useless_gap - (dpi(400)*pos)
-        end
-    }]]
     function s.menu:show()
         self.visible = true
-        --s.menu.flyin.target = 0
     end
     function s.menu:hide()
         self.visible = false
-        --s.menu.flyin.target = 1
     end
 end
 
 
 local function hide(s)
 	s.menu:hide()
-    powerbuttons.hide()
 end
 local function show(s)
 	s.menu:show()

@@ -30,7 +30,8 @@ local quicksettings_trigger = wibox.widget {
 
 local popups = {
 	"menu",
-	"quicksettings"
+	"quicksettings",
+	"launcher"
 }
 
 local function hide_all_popups_on_screen(screen, override_shown)
@@ -86,10 +87,12 @@ local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
 end
 
 local function init (s)
-	local menu 	= require "ui.bar.popups.menu"
+	--i dont recall how but load order is fucked if these are somewhere else
+	--[[local menu 	= require "ui.bar.popups.menu"
 	local quicksettings = require "ui.bar.popups.quicksettings"
+	local launcher = require "ui.bar.popups.launcher"]]
 
-    local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
+	local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
 
     s.taglist = awful.widget.taglist {
         screen		= s,
@@ -153,6 +156,11 @@ local function init (s)
 			--[[wrap_in_bg_and_popup_button({
 
 			}, "launcher", s),]]
+			wrap_in_bg_and_popup_button({
+					widget = wibox.widget.imagebox,
+					image = os.getenv("HOME") .. "/.config/awesome/assets/Nix.svg"
+				}, "launcher", s
+			),
 			{
 				widget = wibox.container.place,
 				halign = 'left',
@@ -208,9 +216,8 @@ local function init (s)
 				"menu",
 				s),
 				wrap_in_bg_and_popup_button(
-				quicksettings_trigger,
-				"quicksettings",
-				s),
+					quicksettings_trigger, "quicksettings", s
+				)
 			}
 		},
 	}
@@ -231,8 +238,13 @@ local function init (s)
 		top = beautiful.wibar_height
 	})
 
+	--[[
 	menu.init(s)
 	quicksettings.init(s)
+	launcher.init(s)]]
+	for _, p in ipairs(popups) do
+		require("ui.bar.popups." .. p).init(s)
+	end
 end
 
 local function hide(s)
