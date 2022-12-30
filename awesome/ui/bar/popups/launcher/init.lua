@@ -5,6 +5,8 @@ local helpers = require "helpers"
 local gears = require "gears"
 local awful = require "awful"
 
+local searchwidget = require "ui.bar.popups.launcher.search"
+
 local function create_power_button(imagename, on_press, color)
 	local widget = helpers.pointer_on_focus(wibox.widget {
 		widget = wibox.container.background,
@@ -35,35 +37,38 @@ local function create_power_button(imagename, on_press, color)
 	return widget
 end
 
-local widget = wibox.widget {
-	layout = wibox.layout.fixed.horizontal,
-	spacing = dpi(10),
-	{
-		widget = wibox.container.constraint,
-		strategy = "max",
-		width = dpi(50),
+local function create_launcher_widgets(s)
+	return wibox.widget {
+		layout = wibox.layout.fixed.horizontal,
+		spacing = dpi(5),
 		{
-			widget = wibox.container.place,
-			valign = 'bottom',
+			widget = wibox.container.constraint,
+			strategy = "max",
+			width = dpi(50),
 			{
-				layout = wibox.layout.fixed.vertical,
-				spacing = dpi(5),
-				create_power_button("poweroff.svg", function ()
-					awful.spawn("poweroff")
-				end, beautiful.red),
-				create_power_button("restart.svg", function ()
-					awful.spawn("reboot")
-				end, beautiful.green),
-				create_power_button("lock.svg", function ()
-					awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
-				end, beautiful.yellow),
-				create_power_button("logout.svg", function ()
-					awful.spawn("pkill awesome")
-				end, beautiful.blue)
+				widget = wibox.container.place,
+				valign = 'bottom',
+				{
+					layout = wibox.layout.fixed.vertical,
+					spacing = dpi(5),
+					create_power_button("poweroff.svg", function ()
+						awful.spawn("poweroff")
+					end, beautiful.red),
+					create_power_button("restart.svg", function ()
+						awful.spawn("reboot")
+					end, beautiful.green),
+					create_power_button("lock.svg", function ()
+						awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
+					end, beautiful.yellow),
+					create_power_button("logout.svg", function ()
+						awful.spawn("pkill awesome")
+					end, beautiful.blue)
+				}
 			}
-		}
+		},
+		searchwidget.init(s)
 	}
-}
+end
 
 local function init(s)
 	local w, h = dpi(400), dpi(600)
@@ -78,7 +83,7 @@ local function init(s)
 		widget = wibox.widget {
 			widget = wibox.container.margin,
 			margins = dpi(5),
-			widget
+			create_launcher_widgets(s)
 		}
 	}
 
@@ -87,6 +92,11 @@ local function init(s)
 	end
 	function s.launcher:hide()
 		self.visible = false
+		local searchwidget_instance = s.popup_launcher_widget
+		if searchwidget_instance:is_active() then
+			print("stop search")
+			searchwidget_instance:stop_search()
+		end
 	end
 end
 

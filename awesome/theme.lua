@@ -20,9 +20,9 @@ local theme = {}
 
 theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/dark-water.jpg"
 
-theme.font          = "Recursive Sn Lnr St SmB"
-theme.font_thin     = "Recursive Sn Lnr St"
-theme.font_bold     = "Recursive Sn Lnr St Blk"
+theme.font          = "Recursive Sn Lnr St"
+theme.font_thin     = "Recursive Sn Lnr St Lt"
+theme.font_bold     = "Recursive Sn Lnr St Med"
 
 local xres = xresources.get_current_theme()
 
