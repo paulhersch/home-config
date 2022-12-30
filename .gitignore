@@ -1,0 +1,7 @@
+zsh/.zcompdump
+zsh/zhistory
+*.stfolder
+!zsh
+!nvim
+!awesome
+nvim/plugin
