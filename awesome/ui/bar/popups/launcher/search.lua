@@ -66,8 +66,7 @@ end
 
 --global table that stores entries for applications
 local LAUNCHER_CACHED_ENTRIES = {}
-local selected_entry = 1
-for index, app in ipairs(app_info.get_all()) do
+for _, app in ipairs(app_info.get_all()) do
 	if app:should_show() then
 		--widget instance
 		local widget = wibox.widget(entry_template)
@@ -111,11 +110,12 @@ for index, app in ipairs(app_info.get_all()) do
 		local bg = widget:get_children_by_id("bg")[1]
 		widget:connect_signal("mouse::enter", function ()
 			bg.bg = beautiful.bg_focus
-			selected_entry = 1
+			local s = awful.screen.focused()
+			s.popup_launcher_widget:get_children_by_id("grid")[1]:get_widgets_at(s.popup_launcher_widget.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_focus_dark
+			s.popup_launcher_widget.selected_entry = s.popup_launcher_widget:get_children_by_id("grid")[1]
+					:get_widget_position(widget).row
 		end)
 		widget:connect_signal("mouse::leave", function ()
-			bg.bg = beautiful.bg_focus_dark
-			selected_entry = 1
 		end)
 		widget:add_button( awful.button {
 			modifiers = {},
@@ -202,8 +202,30 @@ local function init(s)
 	local prompttext = s.popup_launcher_widget:get_children_by_id("prompttext")[1]
 	local entry_grid = s.popup_launcher_widget:get_children_by_id("grid")[1]
 
+	s.popup_launcher_widget.selected_entry = 1
+
 	function s.popup_launcher_widget:stop_search()
 		awful.keyboard.emulate_key_combination({}, "Escape")
+	end
+
+	function s.popup_launcher_widget:select_up()
+		if s.popup_launcher_widget.selected_entry then
+			if s.popup_launcher_widget.selected_entry > 1 then
+				local old_hl = entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1]
+				self.selected_entry = self.selected_entry - 1
+				local new_hl = entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)
+				if new_hl then
+					old_hl:get_children_by_id('bg')[1].bg = beautiful.bg_focus_dark
+					new_hl[1]:get_children_by_id('bg')[1].bg = beautiful.bg_focus
+				end
+			end
+		else
+			s.popup_launcher_widget.selected_entry = 9
+			local items = entry_grid:get_widgets_at(9, 1, 1, 1)
+			if items then
+				items[1]:get_children_by_id('bg')[1].bg = beautiful.bg_focus
+			end
+		end
 	end
 
 	function s.popup_launcher_widget:reset()
@@ -235,6 +257,13 @@ local function init(s)
 			textbox = prompttext,
 			fg_cursor = beautiful.fg_normal,
 			font = beautiful.font,
+			hooks = {
+				{{}, "Up", function (cmd)
+					--naughty.notification { text = "up" }
+					self:select_up()
+					return cmd, true
+				end}
+			},
 			changed_callback = function (cmd)
 				s.popup_launcher_widget:filter_entries(cmd)
 				collectgarbage("collect")
@@ -253,7 +282,7 @@ local function init(s)
 		modifiers = {},
 		button = 1,
 		on_press = function ()
-			 s.popup_launcher_widget:start_search()
+			s.popup_launcher_widget:start_search()
 		end
 	})
 
