@@ -40,38 +40,57 @@ end
 local function create_launcher_widgets(s)
 	return wibox.widget {
 		layout = wibox.layout.fixed.horizontal,
-		spacing = dpi(5),
+		spacing = dpi(10),
 		{
-			widget = wibox.container.constraint,
-			strategy = "max",
-			width = dpi(50),
+			widget = wibox.container.place,
+			valign = 'bottom',
+			halign = 'center',
 			{
-				widget = wibox.container.place,
-				valign = 'bottom',
+				widget = wibox.container.background,
+				bg = beautiful.bg_focus_dark,
+				shape = beautiful.theme_shape,
 				{
-					layout = wibox.layout.fixed.vertical,
-					spacing = dpi(5),
-					create_power_button("poweroff.svg", function ()
-						awful.spawn("poweroff")
-					end, beautiful.red),
-					create_power_button("restart.svg", function ()
-						awful.spawn("reboot")
-					end, beautiful.green),
-					create_power_button("lock.svg", function ()
-						awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
-					end, beautiful.yellow),
-					create_power_button("logout.svg", function ()
-						awful.spawn("pkill awesome")
-					end, beautiful.blue)
+					widget = wibox.container.margin,
+					margins = dpi(5),
+					{
+						widget = wibox.container.constraint,
+						strategy = "max",
+						width = dpi(50),
+						{
+							layout = wibox.layout.fixed.vertical,
+							spacing = dpi(5),
+							create_power_button("poweroff.svg", function ()
+								awful.spawn("poweroff")
+							end, beautiful.red),
+							create_power_button("restart.svg", function ()
+								awful.spawn("reboot")
+							end, beautiful.green),
+							create_power_button("lock.svg", function ()
+								awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
+							end, beautiful.yellow),
+							create_power_button("logout.svg", function ()
+								awful.spawn("pkill awesome")
+							end, beautiful.blue)
+						}
+					}
 				}
 			}
 		},
-		searchwidget.init(s)
+		{
+			widget = wibox.container.background,
+			bg = beautiful.bg_focus_dark,
+			shape = beautiful.theme_shape,
+			{
+				widget = wibox.container.margin,
+				margins = dpi(5),
+				searchwidget.init(s)
+			}
+		}
 	}
 end
 
 local function init(s)
-	local w, h = dpi(400), dpi(600)
+	local w, h = dpi(450), dpi(600)
 
 	s.launcher = wibox {
 		x = s.geometry.x + 2*beautiful.useless_gap,
@@ -82,7 +101,7 @@ local function init(s)
 		screen = s,
 		widget = wibox.widget {
 			widget = wibox.container.margin,
-			margins = dpi(5),
+			margins = dpi(10),
 			create_launcher_widgets(s)
 		}
 	}
@@ -94,7 +113,6 @@ local function init(s)
 		self.visible = false
 		local searchwidget_instance = s.popup_launcher_widget
 		if searchwidget_instance:is_active() then
-			print("stop search")
 			searchwidget_instance:stop_search()
 		end
 	end
@@ -104,6 +122,11 @@ local function show(s)
 	s.launcher:show()
 end
 
+local function run_applauncher(s)
+	s.launcher:show()
+	s.popup_launcher_widget:start_search(true)
+end
+
 local function hide(s)
 	s.launcher:hide()
 end
@@ -111,5 +134,6 @@ end
 return {
 	init = init,
 	show = show,
-	hide = hide
+	hide = hide,
+	run_applauncher = run_applauncher
 }

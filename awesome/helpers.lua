@@ -85,7 +85,8 @@ color.col_mix = function(f, s)
 end
 --}}}
 local last_wibox
-local function pointer_on_focus(widget, wibox) --unstable-ish when the wibox has to be read from mouse, so the option to include the wibox exists
+
+local function pointer_on_focus(widget, wibox)
     if wibox then
 	    widget:connect_signal("mouse::enter", function()
     	    wibox.cursor = "hand1"
@@ -102,10 +103,31 @@ local function pointer_on_focus(widget, wibox) --unstable-ish when the wibox has
             last_wibox.cursor = "left_ptr"
         end)
     end
-    return widget --so that i can use that function to return widgets
+    return widget
+end
+
+local function textcursor_on_focus(widget, wibox)
+    if wibox then
+	    widget:connect_signal("mouse::enter", function()
+    	    wibox.cursor = "xterm"
+	    end)
+	    widget:connect_signal("mouse::leave", function()
+		    wibox.cursor = "left_ptr"
+	    end)
+    else
+        widget:connect_signal("mouse::enter", function ()
+            last_wibox = mouse.current_wibox
+            last_wibox.cursor = "xterm"
+        end)
+        widget:connect_signal("mouse::leave", function ()
+            last_wibox.cursor = "left_ptr"
+        end)
+    end
+    return widget
 end
 
 return {
 	color = color,
-	pointer_on_focus = pointer_on_focus
+	pointer_on_focus = pointer_on_focus,
+	textcursor_on_focus = textcursor_on_focus
 }

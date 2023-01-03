@@ -6,20 +6,18 @@ local terminal = "st"
 local filemanager = "nemo"
 local modkey = "Mod1"
 
-local launcher = require ("ui.search")
+local launcher = require ("ui.bar.popups.launcher")
 
 require ("keybinds.clients").init(modkey)
+
 -- General Awesome keys
 awful.keyboard.append_global_keybindings({
 	awful.key({ modkey, "Control" }, "r", awesome.restart,
 		{description = "reload awesome", group = "awesome"}),
 	awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
 		{description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey }, "d", function() launcher.open() end,
+    awful.key({ modkey }, "d", function() launcher.run_applauncher(awful.screen.focused()) end,
 		{description = "App launcher", group = "launcher"}),
-
-	--awful.key({ modkey }, "d", function() awful.spawn("rofi -show combi -combi-modi drun,run") end,
-	--	{description = "rofi", group = "launcher"}),
 })
 
 -- Focus related keybindings
