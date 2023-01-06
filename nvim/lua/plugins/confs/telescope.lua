@@ -55,9 +55,7 @@ return {
 			extensions_list = { "themes", "terms" },
 			extensions = {
 				["ui-select"] = {
-					require("telescope.themes").get_dropdown {
-						-- even more opts
-					}
+					require("telescope.themes").get_dropdown { }
 				}
 			}
 		}

@@ -177,6 +177,11 @@ M.highlights_base = function (--[[colors]])
 		["@variable"] = { fg = colors.color7 },
 		["@variable.builtin"] = { fg = colors.color4 },
 
+		--Builtin LSP highlights
+		LspReferenceText = { fg = colors.background, bg = colors.color12 },
+		LspReferenceRead = { fg = colors.background, bg = colors.color12 },
+		LspReferenceWrite = { fg = colors.background, bg = colors.color12 },
+
 		-- Diagnostic
 		DiagnosticError = { fg = colors.color1 },
 		DiagnosticWarn = { fg = colors.color3 },

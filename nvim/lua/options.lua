@@ -13,6 +13,7 @@ o.fillchars.vert = '┃'
 o.linebreak = true
 o.fillchars.horiz = '━'
 o.cmdheight = 0
+o.updatetime = 1000
 
 local g = vim.g
 if g.neovide then
