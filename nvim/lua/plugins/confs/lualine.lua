@@ -76,12 +76,11 @@ return {
 				lualine_a = {
 					{
 						'mode',
-						seperator = { left = '', right = '' },
 						fmt = function ()
 							return ' '
 						end,
 						padding = 0
-					}
+					},
 				},
 				lualine_b = {
 					{
@@ -89,8 +88,8 @@ return {
 						color = { fg = colors.color4 },
 						separator = { left = '', right = ''},
 						symbols = {
-							readonly = '',
-							modified = '',
+							readonly = '-',
+							modified = '+',
 							unnamed = 'unnamed'
 						}
 					},
@@ -110,7 +109,7 @@ return {
 						sources = { 'nvim_lsp', 'nvim_diagnostic' },
 						sections = { 'error', 'warn' },
 						colored = true,
-						symbols = { error = ' ', warn = ' ' },
+						symbols = { error = ' ', warn = ' ', info = ' ' },
 						separator = { left = '', right = ''},
 						update_in_insert = true
 					},

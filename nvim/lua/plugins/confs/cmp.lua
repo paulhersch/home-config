@@ -15,10 +15,10 @@ return {
 		local cmp = require("cmp")
 
 		local cmp_kinds = {
-			Text = "",
-			Method = "",
-			Function = "",
-			Constructor = "",
+			Text = "",
+			Method = "",
+			Function = "",
+			Constructor = "",
 			Field = "ﰠ",
 			Variable = "",
 			Class = "ﴯ",
@@ -33,7 +33,7 @@ return {
 			Color = "",
 			File = "",
 			Reference = "",
-			Folder = "",
+			Folder = "",
 			EnumMember = "",
 			Constant = "",
 			Struct = "פּ",
@@ -77,10 +77,10 @@ return {
 				format = function(_, vim_item)
 					if vim_item.kind ~= nil then
 						vim_item.menu = "    (" .. vim_item.kind .. ")"
-						vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or "<>") .. " "
+						vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or "_") .. " "
 					else
 						-- backup in case kind just doesnt exist
-						vim_item.kind = " <> "
+						vim_item.kind = " _ "
 					end
 					return vim_item
 				end,
@@ -99,14 +99,13 @@ return {
 				['<C-s>'] = cmp.mapping.scroll_docs(4),
 				['<CR>'] = cmp.mapping.confirm({ select = false }),
 			}),
-			sources = --[[cmp.config.sources(]]{
+			sources = {
 				{ name = 'nvim_lsp' },
 				{ name = 'luasnip' },
 				{ name = 'treesitter' },
 				{ name = 'path' },
-				--{ name = 'buffer', keyword_length = 3 },
 				{ name = 'nvim_lsp_signature_help' }
-			}--)
+			}
 		})
 	end
 }

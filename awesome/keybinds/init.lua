@@ -2,7 +2,7 @@ local awful	= require ("awful")
 local gears	= require ("gears")
 
 local configdir	= gears.filesystem.get_configuration_dir()
-local terminal = "st"
+local terminal = "wezterm"
 local filemanager = "nemo"
 local modkey = "Mod1"
 
