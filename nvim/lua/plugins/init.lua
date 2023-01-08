@@ -1,10 +1,10 @@
-local fn = vim.fn
-local install_path = fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
+local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
+local pack_bootstrap
 
-if fn.empty(fn.glob(install_path)) > 0 then
-	fn.system({'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path})
-	vim.cmd "packadd packer.nvim"
-	vim.cmd "PackerSync"
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+	vim.fn.system({'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path})
+	vim.cmd [[packadd packer.nvim]]
+	pack_bootstrap = true
 end
 
 local nvimtree = require "plugins.confs.nvimtree"
@@ -19,14 +19,14 @@ local dashboard = require "plugins.confs.dashboard"
 return require('packer').startup(function(use)
 	use "wbthomason/packer.nvim"
 
-	use {
+	--[[use {
 		'L3MON4D3/LuaSnip',
-		run = "make install_jsregexp",
 		require = 'rafamadriz/friendly-snippets',
+		run = "make install_jsregexp",
 		config = function ()
-			require("luasnip.loaders.from_vscode").lazy_load()
+			require("luasnip.loaders.from_vscode").load()
 		end
-	}
+	}]]
 
 	use {
 		'windwp/nvim-autopairs',
@@ -135,7 +135,9 @@ return require('packer').startup(function(use)
 		requires = {
 			'tree-sitter/tree-sitter',
 		},
-		run = ':TSUpdate',
+		run = function()
+			require("nvim-treesitter").install.update()
+		end,
 		config = function()
 			require("nvim-treesitter.configs").setup {
 				auto_install = true,
@@ -193,5 +195,7 @@ return require('packer').startup(function(use)
 	use(cmp)
 	use(telescope)
 	use(dashboard)
-
+	if pack_bootstrap then
+		require("packer").sync()
+	end
 end)

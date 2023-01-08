@@ -29,5 +29,5 @@ end
 require("azul").setup {}
 --remove diagnostics at end of line
 vim.diagnostic.config({
-	virtual_text = false
+	virtual_text = true
 })

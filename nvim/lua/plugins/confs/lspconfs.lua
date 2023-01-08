@@ -4,8 +4,7 @@ return {
     config = function()
         local lc = require('lspconfig')
 		local util = require('lspconfig.util')
-		local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
-
+		local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 		Map("n", "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>", {})
 		Map("n", "sr", '<cmd> lua vim.lsp.buf.document_highlight(); vim.api.nvim_create_autocmd("CursorMoved", { callback = vim.lsp.buf.clear_references, once = true }) <cr>', {})
