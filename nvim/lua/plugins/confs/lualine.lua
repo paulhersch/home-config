@@ -91,6 +91,12 @@ return {
 				},
 				lualine_b = {
 					{
+						function ()
+							return vim.fn.getbufinfo(vim.api.nvim_get_current_buf())[1].changed == 1 and '+' or ''
+						end,
+						color = { bg = colors.color8, fg = colors.foreground}
+					},
+					{
 						--funny random seperator like nvchad does it
 						function ()
 							return ''
@@ -107,8 +113,8 @@ return {
 					{
 						'filename',
 						symbols = {
-							readonly = '-',
-							modified = '+',
+							readonly = '',
+							modified = '',
 							unnamed = 'unnamed'
 						},
 					},

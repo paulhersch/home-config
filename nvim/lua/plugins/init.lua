@@ -73,13 +73,16 @@ return require('packer').startup(function(use)
 	}
 
 	use {
-		'norcalli/nvim-colorizer.lua',
+		'NvChad/nvim-colorizer.lua',
 		config = function ()
-			require 'colorizer'.setup({
-				'*';
-			},{
-				mode = 'background'
-			})
+			require 'colorizer'.setup({}) --[[{
+				filetypes = {
+					'*';
+				},
+				user_default_options = {
+					mode = 'background'
+				}
+			}]]
 		end
 	}
 
