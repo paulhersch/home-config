@@ -4,8 +4,8 @@ local colors = require("azul.core").get_colors()
 M.highlights_base = function (--[[colors]])
 	return {
 		Normal = { fg = colors.foreground, bg = colors.background },
-		StatusLineNC = { bg = colors.background, fg = colors.background },
-		StatusLine = { bg = colors.background, fg = colors.background },
+		StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
+		StatusLine = { bg = "NONE", fg = "NONE" },
 		SignColumn = { bg = colors.background, fg = colors.background },
 		MsgArea = { fg = colors.foreground, bg = colors.background },
 		ModeMsg = { fg = colors.foreground, bg = colors.background },

@@ -9,7 +9,6 @@ end
 
 local nvimtree = require "plugins.confs.nvimtree"
 local barbar = require "plugins.confs.barbar"
---local bufferline = require "plugins.confs.bufferline"
 local gitsigns = require "plugins.confs.gitsigns"
 local lualine = require "plugins.confs.lualine"
 local lspc = require "plugins.confs.lspconfs"
@@ -20,18 +19,18 @@ local dashboard = require "plugins.confs.dashboard"
 return require('packer').startup(function(use)
 	use "wbthomason/packer.nvim"
 
-	use(nvimtree)
-	use(barbar)
-	use(gitsigns)
-	use(lualine)
-	use(lspc)
-	use(cmp)
-	use(telescope)
-	use(dashboard)
-
 	use {
 		'L3MON4D3/LuaSnip',
-		run = "make install_jsregexp"
+		run = "make install_jsregexp",
+		require = 'rafamadriz/friendly-snippets',
+		config = function ()
+			require("luasnip.loaders.from_vscode").lazy_load()
+		end
+	}
+
+	use {
+		'windwp/nvim-autopairs',
+		config = function() require("nvim-autopairs").setup {} end
 	}
 
 	use {
@@ -73,7 +72,6 @@ return require('packer').startup(function(use)
 		end
 	}
 
-	--adding IDE capabilities
 	use {
 		'norcalli/nvim-colorizer.lua',
 		config = function ()
@@ -186,4 +184,14 @@ return require('packer').startup(function(use)
 			Map("n", "<Space>t", "<cmd>TroubleToggle<cr>", {})
 		end
 	}
+
+	use(nvimtree)
+	use(barbar)
+	use(gitsigns)
+	use(lualine)
+	use(lspc)
+	use(cmp)
+	use(telescope)
+	use(dashboard)
+
 end)

@@ -8,11 +8,13 @@ return {
 		'L3MON4D3/LuaSnip',
 		'ray-x/cmp-treesitter',
 		'hrsh7th/cmp-nvim-lsp-signature-help',
-		'hrsh7th/cmp-cmdline'
+		'hrsh7th/cmp-cmdline',
+		'windwp/nvim-autopairs'
 	},
 	config = function()
 		local luasnip = require("luasnip")
 		local cmp = require("cmp")
+		local cmp_autopair = require ("nvim-autopairs.completion.cmp")
 
 		local cmp_kinds = {
 			Text = "",
@@ -41,12 +43,14 @@ return {
 			Operator = "",
 			TypeParameter = ""
 		}
+
 		cmp.setup.cmdline("/", {
 			mapping = cmp.mapping.preset.cmdline(),
 			sources = {
 				{ name = 'buffer' }
 			}
 		})
+
 		cmp.setup.cmdline(':', {
 			mapping = cmp.mapping.preset.cmdline(),
 			sources = cmp.config.sources({
@@ -60,6 +64,7 @@ return {
 				}
 			})
 		})
+
 		cmp.setup({
 			snippet = {
 				expand = function(args)
@@ -101,11 +106,15 @@ return {
 			}),
 			sources = {
 				{ name = 'nvim_lsp' },
-				{ name = 'luasnip' },
+				{ name = 'luasnip', option = { show_autosnippets = true, use_show_condition = false } },
 				{ name = 'treesitter' },
 				{ name = 'path' },
 				{ name = 'nvim_lsp_signature_help' }
 			}
 		})
+		cmp.event:on (
+			'confirm_done',
+			cmp_autopair.on_confirm_done()
+		)
 	end
 }
