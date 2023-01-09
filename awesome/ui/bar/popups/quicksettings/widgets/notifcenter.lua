@@ -387,7 +387,11 @@ local function check_list (n)
 end
 
 naughty.connect_signal("request::display", function(n)
-    if (not check_list(n)) and (string.lower(client.focus.class) ~= n.app_name) then --ignore some notifications
+	local client_focused
+	if client.focus then
+		client_focused = string.lower(client.focus.class) ~= (n.app_name or "")
+	end
+    if (not check_list(n)) and (client_focused) then --ignore some notifications
         add_notif_widget(n)
         bar_indic_notif()
     end
@@ -395,7 +399,7 @@ end)
 
 client.connect_signal("property::active", function (c)
     --most apps report their name via class so that should be alright
-    if c.class then
+    if c then
         local cname = string.lower(c.class) or nil
         local drawer
         for _, entry in ipairs(main_widget:get_children()) do
