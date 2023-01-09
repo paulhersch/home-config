@@ -238,10 +238,6 @@ local function init (s)
 		top = beautiful.wibar_height
 	})
 
-	--[[
-	menu.init(s)
-	quicksettings.init(s)
-	launcher.init(s)]]
 	for _, p in ipairs(popups) do
 		require("ui.bar.popups." .. p).init(s)
 	end

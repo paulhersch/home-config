@@ -12,6 +12,7 @@ o.showmode = false
 o.fillchars.vert = '┃'
 o.linebreak = true
 o.fillchars.horiz = '━'
+o.fillchars.stl = ' '
 o.cmdheight = 0
 o.updatetime = 1000
 
@@ -26,3 +27,7 @@ if g.neovide then
 end
 
 require("azul").setup {}
+--remove diagnostics at end of line
+vim.diagnostic.config({
+	virtual_text = true
+})

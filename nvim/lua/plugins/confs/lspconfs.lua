@@ -1,8 +1,10 @@
 return {
     'neovim/nvim-lspconfig',
+	requires = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
     config = function()
         local lc = require('lspconfig')
 		local util = require('lspconfig.util')
+		local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 		Map("n", "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>", {})
 		Map("n", "sr", '<cmd> lua vim.lsp.buf.document_highlight(); vim.api.nvim_create_autocmd("CursorMoved", { callback = vim.lsp.buf.clear_references, once = true }) <cr>', {})
@@ -51,13 +53,17 @@ return {
 
 		-- ignore stupid "line too long" warning in python
         lc.pylsp.setup{
+			capabilities = capabilities,
             settings = {
                 pylsp = {
                     plugins = {
                         pycodestyle = {
                             ignore = {'W391'},
                             maxLineLength = 160
-                        }
+                        },
+						jedi_completion = {
+							include_params = true
+						}
                     }
                 }
             }

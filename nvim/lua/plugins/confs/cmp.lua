@@ -4,21 +4,23 @@ return {
 		'hrsh7th/cmp-nvim-lsp',
 		'hrsh7th/cmp-path',
 		'hrsh7th/cmp-buffer',
-		'saadparwaiz1/cmp_luasnip',
-		'L3MON4D3/LuaSnip',
+		'hrsh7th/vim-vsnip',
+		'hrsh7th/cmp-vsnip',
+		'rafamadriz/friendly-snippets',
 		'ray-x/cmp-treesitter',
 		'hrsh7th/cmp-nvim-lsp-signature-help',
-		'hrsh7th/cmp-cmdline'
+		'hrsh7th/cmp-cmdline',
+		'windwp/nvim-autopairs'
 	},
 	config = function()
-		local luasnip = require("luasnip")
 		local cmp = require("cmp")
+		local cmp_autopair = require ("nvim-autopairs.completion.cmp")
 
 		local cmp_kinds = {
-			Text = "",
-			Method = "",
-			Function = "",
-			Constructor = "",
+			Text = "",
+			Method = "",
+			Function = "",
+			Constructor = "",
 			Field = "ﰠ",
 			Variable = "",
 			Class = "ﴯ",
@@ -33,7 +35,7 @@ return {
 			Color = "",
 			File = "",
 			Reference = "",
-			Folder = "",
+			Folder = "",
 			EnumMember = "",
 			Constant = "",
 			Struct = "פּ",
@@ -41,12 +43,14 @@ return {
 			Operator = "",
 			TypeParameter = ""
 		}
+
 		cmp.setup.cmdline("/", {
 			mapping = cmp.mapping.preset.cmdline(),
 			sources = {
 				{ name = 'buffer' }
 			}
 		})
+
 		cmp.setup.cmdline(':', {
 			mapping = cmp.mapping.preset.cmdline(),
 			sources = cmp.config.sources({
@@ -60,10 +64,11 @@ return {
 				}
 			})
 		})
+
 		cmp.setup({
 			snippet = {
 				expand = function(args)
-					luasnip.lsp_expand(args.body)
+					vim.fn["vsnip#anonymous"](args.body)
 				end,
 			},
 			window = {
@@ -77,10 +82,10 @@ return {
 				format = function(_, vim_item)
 					if vim_item.kind ~= nil then
 						vim_item.menu = "    (" .. vim_item.kind .. ")"
-						vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or "<>") .. " "
+						vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or "_") .. " "
 					else
 						-- backup in case kind just doesnt exist
-						vim_item.kind = " <> "
+						vim_item.kind = " _ "
 					end
 					return vim_item
 				end,
@@ -89,8 +94,6 @@ return {
 				["<Tab>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
 						cmp.select_next_item()
-					elseif luasnip.expand_or_jumpable() then
-						luasnip.expand_or_jump()
 					else
 						fallback()
 					end
@@ -99,14 +102,18 @@ return {
 				['<C-s>'] = cmp.mapping.scroll_docs(4),
 				['<CR>'] = cmp.mapping.confirm({ select = false }),
 			}),
-			sources = --[[cmp.config.sources(]]{
+			sources = {
 				{ name = 'nvim_lsp' },
-				{ name = 'luasnip' },
+				--{ name = 'luasnip', option = { show_autosnippets = true, use_show_condition = false } },
+				{ name = 'vsnip' },
 				{ name = 'treesitter' },
 				{ name = 'path' },
-				--{ name = 'buffer', keyword_length = 3 },
 				{ name = 'nvim_lsp_signature_help' }
-			}--)
+			}
 		})
+		cmp.event:on (
+			'confirm_done',
+			cmp_autopair.on_confirm_done()
+		)
 	end
 }

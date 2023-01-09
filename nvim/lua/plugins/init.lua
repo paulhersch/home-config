@@ -1,15 +1,14 @@
-local fn = vim.fn
-local install_path = fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
+local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
+local pack_bootstrap
 
-if fn.empty(fn.glob(install_path)) > 0 then
-	fn.system({'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path})
-	vim.cmd "packadd packer.nvim"
-	vim.cmd "PackerSync"
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+	vim.fn.system({'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path})
+	vim.cmd [[packadd packer.nvim]]
+	pack_bootstrap = true
 end
 
 local nvimtree = require "plugins.confs.nvimtree"
 local barbar = require "plugins.confs.barbar"
---local bufferline = require "plugins.confs.bufferline"
 local gitsigns = require "plugins.confs.gitsigns"
 local lualine = require "plugins.confs.lualine"
 local lspc = require "plugins.confs.lspconfs"
@@ -20,18 +19,18 @@ local dashboard = require "plugins.confs.dashboard"
 return require('packer').startup(function(use)
 	use "wbthomason/packer.nvim"
 
-	use(nvimtree)
-	use(barbar)
-	use(gitsigns)
-	use(lualine)
-	use(lspc)
-	use(cmp)
-	use(telescope)
-	use(dashboard)
+	--[[use {
+		'L3MON4D3/LuaSnip',
+		require = 'rafamadriz/friendly-snippets',
+		run = "make install_jsregexp",
+		config = function ()
+			require("luasnip.loaders.from_vscode").load()
+		end
+	}]]
 
 	use {
-		'L3MON4D3/LuaSnip',
-		run = "make install_jsregexp"
+		'windwp/nvim-autopairs',
+		config = function() require("nvim-autopairs").setup {} end
 	}
 
 	use {
@@ -73,7 +72,6 @@ return require('packer').startup(function(use)
 		end
 	}
 
-	--adding IDE capabilities
 	use {
 		'norcalli/nvim-colorizer.lua',
 		config = function ()
@@ -137,7 +135,9 @@ return require('packer').startup(function(use)
 		requires = {
 			'tree-sitter/tree-sitter',
 		},
-		run = ':TSUpdate',
+		run = function()
+			require("nvim-treesitter").install.update()
+		end,
 		config = function()
 			require("nvim-treesitter.configs").setup {
 				auto_install = true,
@@ -186,4 +186,16 @@ return require('packer').startup(function(use)
 			Map("n", "<Space>t", "<cmd>TroubleToggle<cr>", {})
 		end
 	}
+
+	use(nvimtree)
+	use(barbar)
+	use(gitsigns)
+	use(lualine)
+	use(lspc)
+	use(cmp)
+	use(telescope)
+	use(dashboard)
+	if pack_bootstrap then
+		require("packer").sync()
+	end
 end)
