@@ -55,6 +55,7 @@ client.connect_signal("request::manage", function(c)
     c:activate{raise = true}
     if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
 end)
+--}}}
 
 -- rules {{{
 ruled.client.connect_signal("request::rules", function()
@@ -91,7 +92,7 @@ end)
 
 -- Autostart {{{
 awful.spawn("nm-applet")
---awful.spawn("blueman-applet")
+awful.spawn("blueman-applet")
 awful.spawn("xfce4-clipman")
 awful.spawn("redshift -O 4600K -P")
 awful.spawn("picom --config " .. gears.filesystem.get_configuration_dir() .. "/configs/picom.conf")

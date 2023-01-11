@@ -99,7 +99,7 @@ return {
 					{
 						--funny random seperator like nvchad does it
 						function ()
-							return ''
+							return ' '
 						end,
 						padding = 0,
 						color = { bg = colors.color8, fg = colors.color0 }
