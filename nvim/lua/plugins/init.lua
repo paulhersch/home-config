@@ -92,7 +92,7 @@ return require('packer').startup(function(use)
 		require = 'neovim/nvim-lspconfig',
 		config = function ()
 			--local colors = require "azul.core".get_colors()
-			require('lspsaga').init_lsp_saga {
+			require('lspsaga').setup{
 				diagnostic_header = { "✋", "👆", "👉", "🤏" },
 				--symbol_in_winbar = { enable = true }
 				code_action_lightbulb = {

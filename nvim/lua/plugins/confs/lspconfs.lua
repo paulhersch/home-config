@@ -52,22 +52,28 @@ return {
         })
 
 		-- ignore stupid "line too long" warning in python
-        lc.pylsp.setup{
-			capabilities = capabilities,
+        lc.pylsp.setup {
             settings = {
                 pylsp = {
                     plugins = {
                         pycodestyle = {
-                            ignore = {'W391'},
-                            maxLineLength = 160
+							-- flake8 does this
+							enabled = false,
                         },
 						jedi_completion = {
+							enabled = true,
 							include_params = true
+						},
+						flake8 = {
+							-- line too long from flake8
+							ignore = { "E501" },
+							enabled = true
 						}
                     }
                 }
             }
         }
+		--lc.pyright.setup{}
 
 		--shit server
         lc.jdtls.setup {
