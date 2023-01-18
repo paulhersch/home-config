@@ -1,14 +1,26 @@
-local awful	= require ("awful")
-local gears	= require ("gears")
+local awful	= require "awful"
+local gears	= require "gears"
+
+local launcher = require "ui.bar.popups.launcher"
+local menu = require "ui.rightclickmenu"
 
 local configdir	= gears.filesystem.get_configuration_dir()
 local terminal = "wezterm"
 local filemanager = "nemo"
 local modkey = "Mod1"
 
-local launcher = require ("ui.bar.popups.launcher")
-
 require ("keybinds.clients").init(modkey)
+
+-- mousebindings
+awful.mouse.append_global_mousebindings {
+	awful.button {
+		modifiers = {},
+		button = 3,
+		on_press = function ()
+			menu:show()
+		end
+	}
+}
 
 -- General Awesome keys
 awful.keyboard.append_global_keybindings({

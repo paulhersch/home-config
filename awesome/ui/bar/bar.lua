@@ -147,8 +147,8 @@ local function init (s)
 
 	s.quicksettings_trigger = quicksettings_trigger
 
-	local widget
-	widget = wibox.widget {
+	local bar_widget
+	bar_widget = wibox.widget {
 		layout = wibox.layout.flex.horizontal,
 		{
 			layout = wibox.layout.fixed.horizontal,
@@ -231,7 +231,8 @@ local function init (s)
 		width = s.geometry.width,
 		screen = s,
 		shape = gears.shape.rectangle,-- beautiful.theme_shape,
-        widget = widget
+		widget = bar_widget,
+		type = 'dock'
 	}
 
 	s.bar:struts ({

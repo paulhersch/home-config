@@ -63,15 +63,16 @@ theme.fg_urgent     = theme.fg_normal
 theme.fg_minimize   = theme.fg_normal
 
 theme.useless_gap = dpi(5)
+theme.gap_single_client = false
 
 theme.systray_icon_spacing = dpi(8)
 theme.bg_systray = theme.bg_focus_dark
 
-theme.border_width        = 0
+theme.border_width        = dpi(2)
 theme.border_color_urgent = theme.bg_urgent
 theme.border_color_normal = theme.bg_normal
 theme.border_color_new = theme.border_color_normal
-theme.border_color_active = theme.bg_focus
+theme.border_color_active = theme.bg_focus_dark
 theme.border_focus = theme.border_color_active
 theme.border_color_marked = theme.bg_normal
 
@@ -95,12 +96,13 @@ theme.menu_bg_focus = theme.bg_focus
 theme.menu_fg_normal = theme.fg_normal
 theme.menu_bg_normal = theme.bg_normal
 theme.menu_submenu_icon = function ()
-    local icon = cairo.ImageSurface.create(cairo.Format.ARGB32,theme.menu_height/3,theme.menu_height/3)
+	local height = beautiful.get_font_height(theme.menu_font)
+    local icon = cairo.ImageSurface.create(cairo.Format.ARGB32,height,height)
     local cr = cairo.Context(icon)
     cr:set_source(gears.color(beautiful.fg_normal))
     cr:move_to(0,0)
-    cr:line_to(0,theme.menu_height/3)
-    cr:line_to(theme.menu_height/3,theme.menu_height/6)
+    cr:line_to(0,height)
+    cr:line_to(height,height/2)
     cr:line_to(0,0)
     cr:close_path()
     cr:fill()
@@ -131,7 +133,7 @@ theme.layout_cornernw = themes_path.."sky/layouts/cornernw.png"
 theme = beautiful.theme_assets.recolor_layout(theme, theme.fg_normal)
 -- Generate Awesome icon:
 theme.awesome_icon = theme_assets.awesome_icon(
-    dpi(50), theme.bg_normal, theme.fg_normal
+    dpi(50), theme.fg_normal, theme.bg_focus_dark
 )
 
 -- Set different colors for urgent notifications.

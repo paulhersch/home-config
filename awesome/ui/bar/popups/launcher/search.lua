@@ -7,6 +7,7 @@ local Gtk = lgi.require("Gtk", "3.0")
 local gears = require "gears"
 local awful = require "awful"
 local helpers = require "helpers"
+local fzy = require("plugins.fzy.src.fzy_lua")
 
 local app_info = Gio.AppInfo
 local icon_theme = Gtk.IconTheme.get_default()
@@ -125,14 +126,19 @@ local function get_entries()
 			})
 			helpers.pointer_on_focus(widget)
 
-			widget.appname = name
+			local cmd = app:get_commandline()
+
 			widget.appinfo = app
+			widget.search_params = { string.lower(name) }
+			--if desc then table.insert(widget.search_params, string.lower(desc)) end
+			if cmd then table.insert(widget.search_params, string.lower(cmd)) end
 
 			LAUNCHER_CACHED_ENTRIES[#LAUNCHER_CACHED_ENTRIES+1] = widget
 		end
 	end
 	table.sort(LAUNCHER_CACHED_ENTRIES, function (a,b)
-		return a.appname < b.appname
+		--search param 1 is always the name
+		return a.search_params[1] < b.search_params[1]
 	end)
 	return LAUNCHER_CACHED_ENTRIES
 end
@@ -251,16 +257,39 @@ local function init(s)
 		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_focus
 	end
 
-	function s.popup_launcher_widget:filter_entries(filter)
+	function s.popup_launcher_widget:search_entries(filter)
 		self:__reset_highlight()
 
 		local filtered = {}
 		for _, entry in ipairs(launcher_entries) do
-			if string.match(string.lower(entry.appname), string.lower(filter)) then
-				table.insert(filtered, entry)
+			for _, attr in ipairs(entry.search_params) do
+				if fzy.has_match(filter, attr, false) then
+					table.insert(filtered, entry)
+					break
+				end
 			end
 		end
-		--this would usually done via reset, but the prompt is part of the grid so not possible
+		-- some weighting on the match results (to sort matches) 
+		local function calc_filter_score(entry)
+			local filter_res = fzy.filter(filter, entry.search_params, false)
+				local sum = 0.0
+				for _, scoring in ipairs(filter_res) do
+					sum = sum + scoring[3]
+				end
+			return sum
+		end
+
+		-- save the score to not call this all the time
+		for _, entry in ipairs(filtered) do
+			entry.match_score = calc_filter_score(entry)
+		end
+
+		-- sort the filtered entries
+		table.sort(filtered, function (a, b)
+			return a.match_score > b.match_score
+		end)
+
+		-- this would usually done via reset, but the prompt is part of the grid so not possible
 		for i = 1, 9, 1 do
 			entry_grid:remove_widgets_at(i, 1, 1, 1)
 		end
@@ -308,7 +337,7 @@ local function init(s)
 				end}
 			},
 			changed_callback = function (cmd)
-				s.popup_launcher_widget:filter_entries(cmd)
+				s.popup_launcher_widget:search_entries(cmd)
 				collectgarbage("collect")
 			end,
 			done_callback = function ()

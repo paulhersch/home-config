@@ -10,3 +10,6 @@
 [submodule "awesome/plugins/color"]
 	path = awesome/plugins/color
 	url = https://github.com/andOrlando/color
+[submodule "awesome/plugins/fzy"]
+	path = awesome/plugins/fzy
+	url = https://github.com/swarn/fzy-lua
