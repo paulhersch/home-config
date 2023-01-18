@@ -1,8 +1,8 @@
 return {
 	'romgrk/barbar.nvim',
 	requires = {
-		'kyazdani42/nvim-web-devicons',
-		'kyazdani42/nvim-tree.lua'
+		'nvim-tree/nvim-web-devicons',
+		'nvim-tree/nvim-tree.lua'
 	},
 	config = function()
 		require('bufferline').setup {

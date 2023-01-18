@@ -230,10 +230,10 @@ M.highlights_base = function (--[[colors]])
 		TelescopeNormal = { bg = colors.color0 },
 		TelescopeBorder = { bg = colors.color0, fg = colors.color0 },
 		TelescopePromptBorder = { bg = colors.color0, fg = colors.color0 },
-		TelescopePromptTitle = { bg = colors.comment, fg = colors.background },
+		TelescopePromptTitle = { bg = colors.color1, fg = colors.background },
 		TelescopePreviewNormal = { bg = colors.contrast, fg = colors.foreground },
 		TelescopePreviewBorder = { bg = colors.contrast, fg = colors.contrast },
-		TelescopePreviewTitle = { bg = colors.comment, fg = colors.background },
+		TelescopePreviewTitle = { bg = colors.color2, fg = colors.background },
 		TelescopeSelection = { bg = colors.contrast },
 		-- Indent Blank Line
 		IndentBlanklineChar = { fg = colors.color0, bg = colors.background },
@@ -273,6 +273,10 @@ M.highlights_base = function (--[[colors]])
 		LspSagaCodeActionTitle = { fg = colors.color7 },
 		LspSagaCodeActionContent = { fg = colors.color6 },
 		LspSagaSignatureHelpBorder = { fg = colors.color1 },
+
+		LspSagaWinbarSep = { fg = colors.color8, bg = colors.contrast },
+		LspSagaWinbarEnum = { fg = colors.color5, bg = colors.contrast },
+
 		ReferencesCount = { fg = colors.color6 },
 		DefinitionCount = { fg = colors.color6 },
 		DefinitionIcon = { fg = colors.color7 },

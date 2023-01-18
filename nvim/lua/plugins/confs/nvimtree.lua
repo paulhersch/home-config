@@ -1,6 +1,6 @@
 return {
 	'nvim-tree/nvim-tree.lua',
-	requires = { 'kyazdani42/nvim-web-devicons' },
+	requires = { 'nvim-tree/nvim-web-devicons' },
 	as = 'nvim-tree',
 	config = function()
 		require('nvim-tree').setup ({
@@ -14,8 +14,8 @@ return {
 				icons = {
 					hint = "",
 					info = "",
-					warning = "",
-					error = "",
+					warning = " ",
+					error = " ",
 				},
 			},
 			update_focused_file = {
@@ -39,22 +39,22 @@ return {
 				icons = {
 					padding = " ",
 					glyphs = {
-						default = "",
-						symlink = "",
+						default = " ",
+						symlink = " ",
 						git = {
-							renamed = "➜",
-							staged = "✓",
-							unmerged = "",
-							unstaged = "✗",
-							untracked = "★",
+							renamed = "➜ ",
+							staged = "✓ ",
+							unmerged = " ",
+							unstaged = "✗ ",
+							untracked = "★ ",
 						},
 						folder = {
 							arrow_open = "",
 							arrow_closed = "",
-							default = "",
-							empty = "",
-							open = "",
-							symlink = "",
+							default = " ",
+							empty = " ",
+							open = " ",
+							symlink = " ",
 						}
 					}
 				}

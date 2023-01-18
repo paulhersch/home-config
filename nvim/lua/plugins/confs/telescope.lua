@@ -43,7 +43,6 @@ return {
 				path_display = { "truncate" },
 				winblend = 0,
 				border = {},
-				borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
 				color_devicons = true,
 				set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
 				file_previewer = require("telescope.previewers").vim_buffer_cat.new,
@@ -62,5 +61,6 @@ return {
 		require("telescope").load_extension("ui-select")
 		Map("n", "gf", "<cmd>Telescope live_grep<CR>", {})
 		Map("n", "ff", "<cmd>Telescope find_files<CR>", {})
+		Map("n", "fb", "<cmd>Telescope buffers<CR>", {})
 	end
 }

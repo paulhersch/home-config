@@ -52,12 +52,12 @@ return {
         })
 
 		-- ignore stupid "line too long" warning in python
-        lc.pylsp.setup{
+        --[[lc.pylsp.setup{
 			capabilities = capabilities,
             settings = {
                 pylsp = {
                     plugins = {
-                        pycodestyle = {
+                        --[[pycodestyle = {
                             ignore = {'W391'},
                             maxLineLength = 160
                         },
@@ -66,9 +66,20 @@ return {
 						}
                     }
                 }
-            }
-        }
-
+            },
+			cmd = {}
+        }]]
+		lc.pyright.setup{
+			settings = {
+				python = {
+					analysis = {
+						autoSearchPaths = true,
+						diagnosticMode = "workspace",
+						useLibraryCodeForTypes = true
+					}
+				}
+			}
+		}
 		--shit server
         lc.jdtls.setup {
             cmd = { "jdt-language-server", "-configuration", os.getenv('HOME') .. "/.cache/jdtls/config", "-data", os.getenv('HOME') .. "/.cache/jdtls/workspace"}
