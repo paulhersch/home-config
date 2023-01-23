@@ -78,30 +78,32 @@ return {
             end,
             color = { bg = colors.background }
         }
-        local function lsp()
-            local error_count, warning_count, info_count
-            -- On nvim 0.6+ use vim.diagnostic to get lsp generated diagnostic count.
+
+        --stuff for diagnostics
+        local lsp_count = { 0, 0, 0, 0 }
+        local function err_cnt()
+            return lsp_count[vim.diagnostic.severity.ERROR]
+        end
+        local function warn_cnt()
+            return lsp_count[vim.diagnostic.severity.WARN]
+        end
+        local function inf_cnt()
+            return lsp_count[vim.diagnostic.severity.INFO]
+        end
+        local function update_lsp()
+            lsp_count = { 0, 0, 0, 0 }
             local diagnostics = vim.diagnostic.get(0)
-            local count = { 0, 0, 0, 0 }
             for _, diagnostic in ipairs(diagnostics) do
                 if vim.startswith(vim.diagnostic.get_namespace(diagnostic.namespace).name, 'vim.lsp') then
-                    count[diagnostic.severity] = count[diagnostic.severity] + 1
+                    lsp_count[diagnostic.severity] = lsp_count[diagnostic.severity] + 1
                 end
             end
-            error_count = count[vim.diagnostic.severity.ERROR]
-            warning_count = count[vim.diagnostic.severity.WARN]
-            info_count = count[vim.diagnostic.severity.INFO]
-            --[[return {
-                {
-                        [[ ,
-                        color = {bg = colors.color1, fg = colors.background}
-                },
-                separator,
-                separator
-            }]]
-            local test = "test"
-            return test
         end
+
+        vim.api.nvim_create_autocmd({"DiagnosticChanged"}, {
+            callback = update_lsp
+        })
+
         lualine.setup {
             options = {
                 section_separators = { left = '', right = ''},
@@ -154,8 +156,8 @@ return {
 					{
 						'branch',
 						icon = {
-                            '  ',
-                            color = { bg = colors.color15, fg = colors.color0 },
+                            '  ',
+                            color = { bg = colors.color5, fg = colors.color0 },
                         },
 						color = { bg = colors.contrast, fg = colors.color7 }
 					}
@@ -164,17 +166,18 @@ return {
 				lualine_c = {}, --filler for the middle, has funny fill icons when anything is in there so no use
 				lualine_x = { },
 				lualine_y = {
-                    --[[{
+                    {
                         function ()
-                            return error_cnt() > 0 and '   ' or ''
+                            return err_cnt() > 0 and '   ' or ''
                         end,
                         color = { bg = colors.color1, fg = colors.background },
                         padding = 0
                     },
                     {
                         function ()
-                            return error_cnt() > 0 and ' ' .. error_cnt() .. ' ' or ' '
-                        end
+                            return err_cnt() > 0 and ' ' .. err_cnt() .. ' ' or ''
+                        end,
+                        padding = 0
                     },
                     separator,
                     {
@@ -187,44 +190,23 @@ return {
                     {
                         function ()
                             return warn_cnt() > 0 and ' ' .. warn_cnt() .. ' ' or ''
-                        end
+                        end,
+                        padding = 0
                     },
                    separator,
                     {
                         function ()
-                            return hint_cnt() > 0 and '   ' or ''
+                            return inf_cnt() > 0 and '   ' or ''
                         end,
                         color = { bg = colors.color2, fg = colors.background },
                         padding = 0
                     },
                     {
                         function ()
-                            return hint_cnt() > 0 and ' ' .. hint_cnt() .. ' ' or ''
-                        end
-                    },]]
-                    lsp,
-                    {
-                        'diagnostics',
-
-                        -- Table of diagnostic sources, available sources are:
-                        --   'nvim_lsp', 'nvim_diagnostic', 'nvim_workspace_diagnostic', 'coc', 'ale', 'vim_lsp'.
-                        -- or a function that returns a table as such:
-                        --   { error=error_cnt, warn=warn_cnt, info=info_cnt, hint=hint_cnt }
-                        sources = { 'nvim_lsp' },
-
-                        -- Displays diagnostics for the defined severity types
-                        sections = { 'error', 'warn', 'info' },
-
-                        --[[diagnostics_color = {
-                            error = 'DiagnosticError', -- Changes diagnostics' error color.
-                            warn  = 'DiagnosticWarn',  -- Changes diagnostics' warn color.
-                            info  = 'DiagnosticInfo',  -- Changes diagnostics' info color.
-                        },]]
-                        symbols = {error = ' ', warn = ' ', info = ' '},
-                        colored = true,           -- Displays diagnostics status in color if set to true.
-                        update_in_insert = false, -- Update diagnostics in insert mode.
-                        always_visible = false,   -- Show diagnostics even if there are none.
-                    }
+                            return inf_cnt() > 0 and ' ' .. inf_cnt() .. ' ' or ''
+                        end,
+                        padding = 0
+                    },
                 },
                 lualine_z = {}
             },
