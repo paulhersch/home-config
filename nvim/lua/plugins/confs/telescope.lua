@@ -62,5 +62,6 @@ return {
 		Map("n", "gf", "<cmd>Telescope live_grep<CR>", {})
 		Map("n", "ff", "<cmd>Telescope find_files<CR>", {})
 		Map("n", "fb", "<cmd>Telescope buffers<CR>", {})
+        Map("n", "gt", "<cmd>Telescope lsp_references<CR>", {})
 	end
 }

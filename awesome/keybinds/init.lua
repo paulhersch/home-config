@@ -5,7 +5,7 @@ local launcher = require "ui.bar.popups.launcher"
 local menu = require "ui.rightclickmenu"
 
 local configdir	= gears.filesystem.get_configuration_dir()
-local terminal = "wezterm"
+local terminal = "st"
 local filemanager = "nemo"
 local modkey = "Mod1"
 

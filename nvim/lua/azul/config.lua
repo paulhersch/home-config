@@ -277,6 +277,8 @@ M.highlights_base = function (--[[colors]])
 		LspSagaWinbarSep = { fg = colors.color8, bg = colors.contrast },
 		LspSagaWinbarEnum = { fg = colors.color5, bg = colors.contrast },
 
+        DapBreakpointSymbol = { fg = colors.color1 },
+
 		ReferencesCount = { fg = colors.color6 },
 		DefinitionCount = { fg = colors.color6 },
 		DefinitionIcon = { fg = colors.color7 },

@@ -17,30 +17,30 @@ return {
 		local cmp_autopair = require ("nvim-autopairs.completion.cmp")
 
 		local cmp_kinds = {
-			Text = "",
-			Method = "",
-			Function = "",
-			Constructor = "",
-			Field = "ﰠ",
-			Variable = "",
-			Class = "ﴯ",
-			Interface = "",
-			Module = "",
-			Property = "ﰠ",
-			Unit = "塞",
-			Value = "",
-			Enum = "",
-			Keyword = "",
-			Snippet = "",
-			Color = "",
-			File = "",
-			Reference = "",
-			Folder = "",
-			EnumMember = "",
-			Constant = "",
-			Struct = "פּ",
-			Event = "",
-			Operator = "",
+			Text = " ",
+			Method = " ",
+			Function = " ",
+			Constructor = " ",
+			Field = "ﰠ ",
+			Variable = " ",
+			Class = "ﴯ ",
+			Interface = " ",
+			Module = " ",
+			Property = "ﰠ ",
+			Unit = "塞 ",
+			Value = " ",
+			Enum = " ",
+			Keyword = " ",
+			Snippet = " ",
+			Color = " ",
+			File = " ",
+			Reference = " ",
+			Folder = " ",
+			EnumMember = " ",
+			Constant = " ",
+			Struct = "פּ ",
+			Event = " ",
+			Operator = " ",
 			TypeParameter = ""
 		}
 
@@ -64,6 +64,10 @@ return {
 				}
 			})
 		})
+
+		local feedkey = function(key, mode)
+  			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+		end
 
 		cmp.setup({
 			snippet = {
@@ -94,6 +98,8 @@ return {
 				["<Tab>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
 						cmp.select_next_item()
+					elseif vim.fn["vsnip#available"](1) == 1 then
+				        feedkey("<Plug>(vsnip-expand-or-jump)", "")
 					else
 						fallback()
 					end
@@ -104,7 +110,6 @@ return {
 			}),
 			sources = {
 				{ name = 'nvim_lsp' },
-				--{ name = 'luasnip', option = { show_autosnippets = true, use_show_condition = false } },
 				{ name = 'vsnip' },
 				{ name = 'treesitter' },
 				{ name = 'path' },

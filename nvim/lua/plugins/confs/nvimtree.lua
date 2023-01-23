@@ -27,34 +27,35 @@ return {
 				hide_root_folder = true
 			},
 			renderer = {
+                indent_width = 2,
 				indent_markers = {
 					enable = false,
 					icons = {
 						corner = "└",
 						edge = "│",
-						item = "│",
+						item = "├",
 						none = " ",
 					},
 				},
 				icons = {
-					padding = " ",
+					padding = "  ",
 					glyphs = {
-						default = " ",
-						symlink = " ",
+						default = "",
+						symlink = "",
 						git = {
-							renamed = "➜ ",
-							staged = "✓ ",
-							unmerged = " ",
-							unstaged = "✗ ",
-							untracked = "★ ",
+							renamed = "➜",
+							staged = "✓",
+							unmerged = "",
+							unstaged = "✗",
+							untracked = "★",
 						},
 						folder = {
 							arrow_open = "",
 							arrow_closed = "",
-							default = " ",
-							empty = " ",
-							open = " ",
-							symlink = " ",
+							default = "",
+							empty = "",
+							open = "",
+							symlink = "",
 						}
 					}
 				}

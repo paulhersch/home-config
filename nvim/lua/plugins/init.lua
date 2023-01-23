@@ -15,18 +15,10 @@ local lspc = require "plugins.confs.lspconfs"
 local cmp = require "plugins.confs.cmp"
 local telescope = require "plugins.confs.telescope"
 local dashboard = require "plugins.confs.dashboard"
+local dap = require "plugins.confs.dap"
 
 return require('packer').startup(function(use)
 	use "wbthomason/packer.nvim"
-
-	--[[use {
-		'L3MON4D3/LuaSnip',
-		require = 'rafamadriz/friendly-snippets',
-		run = "make install_jsregexp",
-		config = function ()
-			require("luasnip.loaders.from_vscode").load()
-		end
-	}]]
 
 	use {
 		'windwp/nvim-autopairs',
@@ -73,14 +65,10 @@ return require('packer').startup(function(use)
 	}
 
 	use {
-		'norcalli/nvim-colorizer.lua',
+		'NvChad/nvim-colorizer.lua',
 		config = function ()
-			require 'colorizer'.setup({
-				'*';
-			},{
-				mode = 'background'
-			})
-		end
+			require 'colorizer'.setup({})
+        end
 	}
 
 	use {
@@ -89,7 +77,7 @@ return require('packer').startup(function(use)
 		require = 'neovim/nvim-lspconfig',
 		config = function ()
 			--local colors = require "azul.core".get_colors()
-			require('lspsaga').setup {
+			require('lspsaga').setup{
 				diagnostic_header = { "✋", "👆", "👉", "🤏" },
 				symbol_in_winbar = {
 					enable = false,
@@ -101,7 +89,6 @@ return require('packer').startup(function(use)
 					virtual_text = false
 				},
 			}
-			Map("n", "gt", "<cmd>Lspsaga lsp_finder<CR>", {})
 			Map("n", "ca", "<cmd>Lspsaga code_action <CR>", {})
 			Map("n", "gr", "<cmd>Lspsaga rename <CR>", {})
 			Map("i", "<C-R>", "<cmd>Lspsaga rename <CR>", {})
@@ -157,7 +144,11 @@ return require('packer').startup(function(use)
 	use {
 		'j-hui/fidget.nvim',
 		config = function ()
-			require('fidget').setup{}
+			require('fidget').setup{
+                text = {
+                    spinner = {"", "", "", "", "", ""}
+                }
+            }
 		end
 	}
 
@@ -199,6 +190,7 @@ return require('packer').startup(function(use)
 	use(cmp)
 	use(telescope)
 	use(dashboard)
+    use(dap)
 	if pack_bootstrap then
 		require("packer").sync()
 	end
