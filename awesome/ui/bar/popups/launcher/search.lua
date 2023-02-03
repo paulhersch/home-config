@@ -7,7 +7,10 @@ local Gtk = lgi.require("Gtk", "3.0")
 local gears = require "gears"
 local awful = require "awful"
 local helpers = require "helpers"
-local fzy = require("plugins.fzy.src.fzy_lua")
+-- this requires you to use the following plugin
+-- https://github.com/swarn/fzy-lua
+-- i have it installed via nix, so this would have to be edited to make it work on other distros
+local fzy = require "fzy"
 
 local app_info = Gio.AppInfo
 local icon_theme = Gtk.IconTheme.get_default()

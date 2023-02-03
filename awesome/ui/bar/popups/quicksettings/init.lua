@@ -39,10 +39,12 @@ end
 
 local function show(s)
     s.quicksettings.visible = true
+    pctlwidget:enable_updates()
 end
 
 local function hide(s)
     s.quicksettings.visible = false
+    pctlwidget:disable_updates()
 end
 
 return {

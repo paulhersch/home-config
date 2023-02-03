@@ -11,6 +11,9 @@ local naughty = naughty
 
 local notifctl = require "ui.notifications"
 
+local signals = notifctl.signals
+local notifs_active, notifs_sound = true, true
+
 local iconsdir = gears.filesystem.get_configuration_dir() .. "assets/titlebarbuttons/"
 local mat_icons = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
@@ -255,14 +258,14 @@ local function add_notif_widget(n)
     end
 end
 
-local signals = notifctl.signals
-
-local notifs_active, notifs_sound = true, true
-
 local notifbox
 notifbox = wibox.widget { --empty because it will be filled with the update function
-    layout = wibox.layout.fixed.vertical,
-    spacing = dpi(5),
+layout = wibox.layout.fixed.vertical,
+spacing = dpi(5),
+{
+    widget = wibox.container.background,
+    bg = beautiful.bg_focus_dark,
+    shape = beautiful.theme_shape,
     {
         layout = wibox.layout.align.horizontal,
         expand = 'inside',
@@ -299,10 +302,8 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                 right = dpi(5)
             },
             {
-                widget = wibox.container.background,
-                forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11") + dpi(10),
-                bg = beautiful.bg_focus_dark,
-                shape = beautiful.theme_shape,
+                widget = wibox.container.constraint,
+                height = beautiful.get_font_height(beautiful.font_bold .. " 11") + dpi(10),
                 {
                     widget = wibox.container.margin,
                     margins = dpi(5),
@@ -345,13 +346,30 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                 },
             }
         },
-    },
+    }
+},
     main_widget
 }
 
+local toggle_dnd = notifbox:get_children_by_id('toggle_dnd_bg')[1]
+local toggle_sound = notifbox:get_children_by_id('toggle_sound_bg')[1]
+
 --helpers.pointer_on_focus(notifbox:get_children_by_id('clear_button')[1])
-helpers.pointer_on_focus(notifbox:get_children_by_id('toggle_dnd_bg')[1])
-helpers.pointer_on_focus(notifbox:get_children_by_id('toggle_sound_bg')[1])
+helpers.pointer_on_focus(toggle_dnd)
+helpers.pointer_on_focus(toggle_sound)
+
+toggle_dnd:connect_signal("mouse::enter",function ()
+    toggle_dnd.bg = beautiful.bg_focus
+end)
+toggle_dnd:connect_signal("mouse::leave",function ()
+    toggle_dnd.bg = beautiful.bg_focus_dark
+end)
+toggle_sound:connect_signal("mouse::enter",function ()
+    toggle_sound.bg = beautiful.bg_focus
+end)
+toggle_sound:connect_signal("mouse::leave",function ()
+    toggle_sound.bg = beautiful.bg_focus_dark
+end)
 
 signals:connect_signal("display::enabled", function ()
     notifbox:get_children_by_id('toggle_dnd')[1]:set_image(gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus))
