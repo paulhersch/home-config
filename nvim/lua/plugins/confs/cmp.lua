@@ -17,31 +17,31 @@ return {
 		local cmp_autopair = require ("nvim-autopairs.completion.cmp")
 
 		local cmp_kinds = {
-			Text = " ",
+			Text = " ",
 			Method = " ",
 			Function = " ",
 			Constructor = " ",
-			Field = "ﰠ ",
-			Variable = " ",
-			Class = "ﴯ ",
-			Interface = " ",
-			Module = " ",
-			Property = "ﰠ ",
+			Field = " ",
+			Variable = " ",
+			Class = " ",
+			Interface = " ",
+			Module = " ",
+			Property = " ",
 			Unit = "塞 ",
 			Value = " ",
-			Enum = " ",
-			Keyword = " ",
-			Snippet = " ",
-			Color = " ",
-			File = " ",
+			Enum = " ",
+			Keyword = " ",
+			Snippet = " ",
+			Color = " ",
+			File = " ",
 			Reference = " ",
 			Folder = " ",
-			EnumMember = " ",
-			Constant = " ",
-			Struct = "פּ ",
-			Event = " ",
+			EnumMember = " ",
+			Constant = " ",
+			Struct = " ",
+			Event = " ",
 			Operator = " ",
-			TypeParameter = ""
+			TypeParameter = " "
 		}
 
 		cmp.setup.cmdline("/", {

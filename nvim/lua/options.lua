@@ -27,7 +27,7 @@ if g.neovide then
 	g.neovide_confirm_quit=true
 end
 
-require("azul").setup {}
+require("azul").setup({})
 --remove diagnostics at end of line
 vim.diagnostic.config({
 	virtual_text = true
@@ -36,7 +36,7 @@ vim.diagnostic.config({
 local alternative_signs = {
     Error = ' ',
     Warn = ' ',
-    Hint = ' ',
+    Hint = ' ',
     Info = ' '
 }
 for type, icon in pairs(alternative_signs) do

@@ -115,6 +115,7 @@ M.highlights_base = function (--[[colors]])
 		CmpItemKindSnippet = { fg = colors.background, bg = colors.color10 },
 		CmpItemKindStruct = { link = "CmpItemKindConstructor" },
 		CmpItemKindConst = { link = "CmpItemKindProperty" },
+        CmpItemKindEvent = { fg = colors.background, bg = colors.color4 },
 		CmpItemMenu = { fg = colors.color5, italic=true, bg = "NONE" },
 
 		-- treesitter
@@ -157,7 +158,7 @@ M.highlights_base = function (--[[colors]])
 		["@tag"] = { fg = colors.color4 },
 		["@tag.attribute"] = { fg = colors.color1 },
 		["@tag.delimiter"] = { fg = colors.color7 },
-		["@text"] = { fg = colors.color7 },
+		["@text"] = { fg = colors.foreground },
 		["@text.strong"] = { fg = colors.color7 },
 		["@text.emphasis"] = { italic = true, fg = colors.color7 },
 		["@text.underline"] = { fg = colors.color5 },
@@ -174,7 +175,7 @@ M.highlights_base = function (--[[colors]])
 		["@text.danger"] = { fg = colors.color8 },
 		["@type"] = { fg = colors.color3 },
 		["@type.builtin"] = { fg = colors.color3 },
-		["@variable"] = { fg = colors.color7 },
+		["@variable"] = { fg = colors.foreground },
 		["@variable.builtin"] = { fg = colors.color4 },
 
 		--Builtin LSP highlights

@@ -26,12 +26,13 @@ return {
 				adaptive_size = true,
 				hide_root_folder = true
 			},
+            git = { ignore = false },
 			renderer = {
                 indent_width = 2,
 				indent_markers = {
-					enable = false,
+					enable = true,
 					icons = {
-						corner = "└",
+						corner = "╰",
 						edge = "│",
 						item = "├",
 						none = " ",
@@ -47,7 +48,9 @@ return {
 							staged = "",
 							unmerged = "",
 							unstaged = "",
-							untracked = "",
+							untracked = "",
+                            deleted = "",
+                            ignored = ""
 						},
 						folder = {
 							arrow_open = "",

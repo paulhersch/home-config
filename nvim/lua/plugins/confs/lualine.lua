@@ -6,21 +6,25 @@ return {
 	as = 'lualine',
 	config = function()
 		local colors = require "azul.core".get_colors()
-		local lualine = require("lualine")
+        local lualine = require("lualine")
 
-		local function short_cwd()
-			return vim.fn.fnamemodify(vim.fn.getcwd(), ':~')
-		end
+        local tree_ext = {
+            filetypes = { 'NvimTree' },
+            sections = {
+                lualine_b = {
+                    {
+                        function ()
+                            return " "
+                        end,
+                        color = { bg = colors.color4, fg = colors.background }
+                    },
+                    function ()
+                        return vim.fn.fnamemodify(vim.fn.getcwd(), ':~')
+                    end
+                }
+            },
+        }
 
-		local tree_ext = {
-			filetypes = { 'NvimTree' },
-			sections = {
-				lualine_a = { short_cwd }
-			},
-			inactive_sections = {
-				lualine_b = { short_cwd }
-			}
-		}
 		local term_ext = {
 			filetypes = { 'toggleterm' },
 			sections = {
@@ -41,33 +45,38 @@ return {
 				normal = {
 					a = { bg = colors.color2, fg = colors.color0, bold = true },
 					b = { bg = colors.color0, fg = colors.color15 },
-					--c = { bg = colors.contrast, fg = colors.contrast }
 					c = { bg = colors.background, fg = colors.background }
+					--c = { bg = colors.contrast, fg = colors.contrast }
 				},
 				insert = {
 					a = { bg = colors.color4, fg = colors.color0, bold = true },
 					b = { bg = colors.color0, fg = colors.color15 },
-					c = { bg = colors.background, fg = colors.background }
+					c = { bg = colors.background, fg = colors.background },
+					--c = { bg = colors.contrast, fg = colors.contrast }
 				},
 				visual = {
 					a = { bg = colors.color5, fg = colors.color0, bold = true },
 					b = { bg = colors.color0, fg = colors.color15 },
 					c = { bg = colors.background, fg = colors.background }
+					--c = { bg = colors.contrast, fg = colors.contrast }
 				},
 				replace = {
 					a = { bg = colors.color1, fg = colors.color0, bold = true },
 					b = { bg = colors.color0, fg = colors.color15 },
 					c = { bg = colors.background, fg = colors.background }
+					--c = { bg = colors.contrast, fg = colors.contrast }
 				},
 				command = {
 					a = { bg = colors.color7, fg = colors.color0, bold = true },
 					b = { bg = colors.color0, fg = colors.color15 },
 					c = { bg = colors.background, fg = colors.background }
+					--c = { bg = colors.contrast, fg = colors.contrast }
 				},
 				inactive = {
 					a = { bg = colors.color4, fg = colors.color0 },
 					b = { bg = colors.color0, fg = colors.color15 },
 					c = { bg = colors.background, fg = colors.background }
+					--c = { bg = colors.contrast, fg = colors.contrast }
 				},
 			}
 		end
@@ -156,10 +165,10 @@ return {
 					{
 						'branch',
 						icon = {
-                            '  ',
+                            '  ',
                             color = { bg = colors.color5, fg = colors.color0 },
                         },
-						color = { bg = colors.contrast, fg = colors.color7 }
+						--color = { bg = colors.contrast, fg = colors.color7 }
 					}
 
 				},
@@ -193,7 +202,7 @@ return {
                         end,
                         padding = 0
                     },
-                   separator,
+                    separator,
                     {
                         function ()
                             return inf_cnt() > 0 and '   ' or ''

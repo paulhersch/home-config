@@ -47,7 +47,7 @@ return {
         lc.sumneko_lua.setup ({settings=lua_conf})
 
         lc.omnisharp.setup ({
-            cmd = { "OmniSharp", "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
+            cmd = { "OmniSharp" }--, "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
         })
 
         -- ignore stupid "line too long" warning in python
