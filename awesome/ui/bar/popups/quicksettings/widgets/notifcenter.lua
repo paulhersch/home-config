@@ -94,7 +94,7 @@ local entry_template = {
                             {
                                 id = 'text',
                                 widget = wibox.widget.textbox,
-                                font = beautiful.font_thin .. " 11",
+                                font = beautiful.font .. " 10",
                             }
                         }
                     }
@@ -289,7 +289,7 @@ spacing = dpi(5),
                 {
                     id = 'toggle_dnd',
                     widget = wibox.widget.imagebox,
-                    forced_width = beautiful.get_font_height(beautiful.font .. " 11"),
+                    forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
                     image = gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus),
                     resize = true,
                 },
@@ -303,7 +303,7 @@ spacing = dpi(5),
             },
             {
                 widget = wibox.container.constraint,
-                height = beautiful.get_font_height(beautiful.font_bold .. " 11") + dpi(10),
+                height = beautiful.get_font_height(beautiful.font_bold .. " 13") + dpi(10),
                 {
                     widget = wibox.container.margin,
                     margins = dpi(5),
@@ -314,7 +314,7 @@ spacing = dpi(5),
                         {
                             widget = wibox.widget.textbox,
                             text = "Notifications",
-                            font = beautiful.font_bold .. " 11"
+                            font = beautiful.font_bold .. " 13"
                         }
                     }
                 }
@@ -323,7 +323,7 @@ spacing = dpi(5),
         {
             id = 'toggle_sound_bg',
             widget = wibox.container.background,
-            forced_height = beautiful.get_font_height(beautiful.font .. " 11"),
+            forced_height = beautiful.get_font_height(beautiful.font .. " 13"),
             bg = beautiful.bg_focus_dark,
             shape = beautiful.theme_shape,
             buttons = awful.button {
@@ -340,7 +340,7 @@ spacing = dpi(5),
                 {
                     id = 'toggle_sound',
                     widget = wibox.widget.imagebox,
-                    forced_width = beautiful.get_font_height(beautiful.font .. " 11"),
+                    forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
                     image = gears.color.recolor_image(mat_icons .. "volume_up.svg", beautiful.fg_focus),
                     resize = true,
                 },

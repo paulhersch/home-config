@@ -19,10 +19,10 @@ local function init(s)
         visible = false,
         widget = wibox.widget {
             widget = wibox.container.margin,
-            margins = dpi(5),
+            margins = dpi(10),
 			{
 				layout = wibox.layout.fixed.vertical,
-				spacing = dpi(5),
+				spacing = dpi(10),
 			--	volumewidget,
 				pctlwidget,
 				notifwidget

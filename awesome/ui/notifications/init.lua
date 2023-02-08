@@ -69,16 +69,12 @@ local template = {
     {
         {
             {
-                widget = wibox.container.background,
---                bg = beautiful.bg_focus_dark,
-                {
-                    wtitle,
-                    widget = wibox.container.margin,
-                    margins = {
-                        top = dpi(5),
-                        left = dpi(5),
-                        right = dpi(5)
-                    }
+                wtitle,
+                widget = wibox.container.margin,
+                margins = {
+                    top = dpi(5),
+                    left = dpi(5),
+                    right = dpi(5)
                 }
             },
             {
@@ -125,11 +121,10 @@ local template = {
             layout  = wibox.layout.fixed.vertical,
         },
         widget = wibox.container.background,
-        shape = beautiful.theme_shape,
         bg = beautiful.bg_focus_dark
     },
     widget = wibox.container.constraint,
-    strategy = 'max',
+    strategy = 'exact',
     width = dpi(500)
 }
 
@@ -138,9 +133,10 @@ local whitelist_programs = { }
 local blacklist_sound_titles = { "Launching Application" }
 local blacklist_sound_programs = { "NetworkManager", "Spotify" }
 
-naughty.config.padding = dpi(50)
-naughty.config.spacing = dpi(50)
-naughty.config.defaults.position = "bottom_left"
+naughty.config.padding = 2*beautiful.useless_gap
+naughty.config.spacing = beautiful.useless_gap
+naughty.config.defaults.margin = 2*beautiful.useless_gap
+naughty.config.defaults.position = "top_middle"
 naughty.config.defaults.border_width = 0
 
 function whitelist_programs:check(n) --check_list(n.app_name, self) return false end
@@ -177,9 +173,7 @@ local function init ()
             naughty.layout.box {
                 notification = notif,
                 widget_template = template,
-                shape = beautiful.theme_shape,
-                padding = dpi(10),
-                spacing = dpi(12)
+                --shape = beautiful.theme_shape,
             }
             if NOTIFCENTER_PLAYSOUND then
                 if (not (blacklist_sound_titles:check(notif) or blacklist_sound_programs:check(notif))) then

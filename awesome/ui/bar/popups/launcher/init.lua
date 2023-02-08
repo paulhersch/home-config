@@ -65,12 +65,15 @@ local function create_launcher_widgets(s)
 							create_power_button("restart.svg", function ()
 								awful.spawn("reboot")
 							end, beautiful.green),
+                            create_power_button("suspend.svg", function ()
+                                awful.spawn("systemctl suspend")
+                            end, beautiful.cyan),
 							create_power_button("lock.svg", function ()
 								awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
 							end, beautiful.yellow),
 							create_power_button("logout.svg", function ()
 								awful.spawn("pkill awesome")
-							end, beautiful.blue)
+							end, beautiful.blue),
 						}
 					}
 				}

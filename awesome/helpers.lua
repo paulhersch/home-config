@@ -1,4 +1,5 @@
 local gears	= require("gears")
+local cairo = require("lgi").cairo
 
 --typesafe function overloader (copied from lua-users.org) {{{
 --source: http://lua-users.org/wiki/OverloadedFunctions
@@ -115,19 +116,49 @@ local function textcursor_on_focus(widget, wibox)
 		    wibox.cursor = "left_ptr"
 	    end)
     else
-        widget:connect_signal("mouse::enter", function ()
+        widget:connect_signal("mouse::enter", function()
             last_wibox = mouse.current_wibox
             last_wibox.cursor = "xterm"
         end)
-        widget:connect_signal("mouse::leave", function ()
+        widget:connect_signal("mouse::leave", function()
             last_wibox.cursor = "left_ptr"
         end)
     end
     return widget
 end
 
+--@param args table
+---@param ratio number desired aspect ratio (e.g. 16/9 for 16:9 (width/height))
+---@param surf Cairo.Surface the input surface
+---@return Cairo.Surface New surface with applied ratio
+local function crop_surface(ratio, surf)
+    local old_w, old_h = gears.surface.get_size(surf)
+    local old_ratio = old_w/old_h
+
+    local new_h = old_h
+    local new_w = old_w
+    local offset_h, offset_w = 0, 0
+    -- quick mafs
+    if (old_ratio < ratio) then
+        new_h = old_w * (1/ratio)
+        offset_h = (old_h - new_h)/2
+    else
+        new_w = old_h * ratio
+        offset_w = (old_w - new_w)/2
+    end
+
+    local out_surf = cairo.ImageSurface(cairo.Format.ARGB32, new_w, new_h)
+    local cr = cairo.Context(out_surf)
+    cr:set_source_surface(surf, -offset_w, -offset_h)
+    cr.operator = cairo.Operator.SOURCE
+    cr:paint()
+
+    return out_surf
+end
+
 return {
 	color = color,
 	pointer_on_focus = pointer_on_focus,
-	textcursor_on_focus = textcursor_on_focus
+	textcursor_on_focus = textcursor_on_focus,
+    crop_surface = crop_surface
 }

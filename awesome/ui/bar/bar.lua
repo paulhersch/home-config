@@ -43,7 +43,7 @@ end
 
 -- shortcut to wrap menu and quicksettings triggers (and also the "normal" widgets without popups, if popup_name is nil the popup wont be shown)
 local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
-	local templ = wibox.widget {
+    local templ = wibox.widget {
 		widget = wibox.container.margin,
 		margins = dpi(5),
 		{
@@ -55,21 +55,6 @@ local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
 				widget = wibox.container.margin,
 				margins = dpi(5),
 				widget
-			},
-			buttons = popup_name ~= nil and {
-				awful.button {
-					modifiers = {},
-					button = 1,
-					on_press = function ()
-						if screen[popup_name .. "_stat"] then
-							require("ui.bar.popups." .. popup_name).hide(screen)
-						else
-							hide_all_popups_on_screen(screen, true)
-							require("ui.bar.popups." .. popup_name).show(screen)
-						end
-						screen[popup_name .. "_stat"] = not screen[popup_name .. "_stat"]
-					end
-				}
 			}
 		}
 	}
@@ -77,12 +62,35 @@ local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
 		local trigger_bg = templ[popup_name .. "_bg"]
 		helpers.pointer_on_focus(templ)
 		trigger_bg:connect_signal("mouse::enter", function ()
-			if not screen[popup_name].visible then trigger_bg.bg = beautiful.bg_focus end
+            trigger_bg.bg = beautiful.bg_focus
 		end)
 		trigger_bg:connect_signal("mouse::leave", function ()
 			if not screen[popup_name].visible then trigger_bg.bg = beautiful.bg_focus_dark end
-		end)
-	end
+        end)
+        trigger_bg:add_button ( awful.button {
+            modifiers = {},
+            button = 1,
+            on_press = function ()
+                if screen[popup_name .. "_stat"] then
+                    require("ui.bar.popups." .. popup_name).hide(screen)
+                else
+                    for _, p_name in ipairs(popups) do
+                        if screen[p_name .. "_stat"] then
+                            require("ui.bar.popups." .. p_name).hide(screen)
+                            screen[p_name .. "_stat"] = false
+                            --bad practice to use awesome but i am extremely lazy
+                            awesome.emit_signal("bar::popup::" .. p_name .. "::hide_bg")
+                        end
+                    end
+                    require("ui.bar.popups." .. popup_name).show(screen)
+                end
+                screen[popup_name .. "_stat"] = not screen[popup_name .. "_stat"]
+            end
+        })
+        awesome.connect_signal("bar::popup::" .. popup_name .. "::hide_bg", function ()
+            trigger_bg.bg = beautiful.bg_focus_dark
+        end)
+    end
 	return templ
 end
 
@@ -209,7 +217,7 @@ local function init (s)
 					},
 					{
 						widget = wibox.widget.textclock,
-						font = beautiful.font_thin .. " 9",
+						font = beautiful.font .. " 11",
 						format = "%A"
 					}
 				},
