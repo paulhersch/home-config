@@ -40,7 +40,7 @@ end
 
 --basewidth 440 (qs 450 - 2\*5 margin)
 local inactive_color = helpers.color.col_mix(beautiful.bg_focus, beautiful.fg_normal)
-local titlefont, artistfont, margin, basewidth = beautiful.font_bold .. " 12", beautiful.font .. " 10", dpi(5), dpi(440)
+local titlefont, artistfont, margin, basewidth = beautiful.font_bold .. " 12", beautiful.font .. " 10", dpi(5), dpi(430)
 local insideheight =  beautiful.get_font_height(titlefont) + 3*margin + beautiful.get_font_height(artistfont)
 local height = beautiful.get_font_height(titlefont) + insideheight + 6*margin + dpi(20)
 
@@ -128,7 +128,7 @@ local template = {
                         valign = 'center',
                         {
                             widget = wibox.container.margin,
-                            margins = { left = dpi(7), bottom = dpi(14), right = dpi(7) },
+                            margins = { right = dpi(7), bottom = dpi(7) },
                             {
                                 id = "playpause_bg",
                                 widget = wibox.container.background,
@@ -216,9 +216,9 @@ local unescape = function(url)
   return url:gsub("%%(%x%x)", hex_to_char)
 end
 
-local function image_with_gradient(image)
+local function image_with_gradient(image, ratio)
     local in_surf = gears.surface.load_uncached(image)
-    local surf = helpers.crop_surface(2, in_surf)
+    local surf = helpers.crop_surface(ratio, in_surf)
 
     local cr = cairo.Context(surf)
     local w, h = gears.surface.get_size(surf)
@@ -226,26 +226,49 @@ local function image_with_gradient(image)
 
     local pat_h = cairo.Pattern.create_linear(0, 0, w, 0)
     pat_h:add_color_stop_rgba(0 ,gears.color.parse_color(beautiful.bg_focus_dark))
-    pat_h:add_color_stop_rgba(0.3 ,gears.color.parse_color(beautiful.bg_focus_dark .. "CC"))
-    pat_h:add_color_stop_rgba(0.7 ,gears.color.parse_color(beautiful.bg_focus_dark .. "BB"))
-    pat_h:add_color_stop_rgba(1 ,gears.color.parse_color(beautiful.bg_focus_dark .. "99"))
+    pat_h:add_color_stop_rgba(0.2 ,gears.color.parse_color(beautiful.bg_focus_dark))
+    pat_h:add_color_stop_rgba(0.6 ,gears.color.parse_color(beautiful.bg_focus_dark .. "BB"))
+    pat_h:add_color_stop_rgba(0.8 ,gears.color.parse_color(beautiful.bg_focus_dark .. "99"))
+    pat_h:add_color_stop_rgba(1 ,gears.color.parse_color(beautiful.bg_focus_dark .. "88"))
     cr:set_source(pat_h)
     cr:fill()
 
     return surf
 end
 
+-- estimated value based on widget proportions
+local ratio = basewidth/height
+-- one line but nice in case i want to change the look
+local function set_bg_with_gradient(player_widget, path)
+    local editpath = path .. "_cropgrad"
+
+    if not gears.filesystem.file_readable(editpath) then
+        local img = image_with_gradient(path, ratio)
+        img:write_to_png(editpath)
+    end
+
+    --player_widget.bgimage = editpath
+    player_widget:get_children_by_id("album_art")[1].image = editpath
+end
+
 local function update_widget_meta(w, meta, player)
 	local val = meta.value
 
     local title = val["xesam:title"]
-    title = gears.string.xml_escape(title)
+    if title then
+        title = gears.string.xml_escape(title)
+    else
+        title = "no title metadata"
+    end
 
-	local artists = val["xesam:artist"][1]
-	for i = 2, #val["xesam:artist"] do
-		artists  = artists .. ", " .. val["xesam:artist"][i]
-	end
-    artists = gears.string.xml_escape(artists)
+	local artists, artist_string = val["xesam:artist"], "no artist metadata"
+    if artists then
+        artist_string = artists[1]
+	    for i = 2, #artists do
+		    artist_string  = artist_string .. ", " .. artists[i]
+	    end
+        artist_string = gears.string.xml_escape(artist_string)
+    end
 
     local length = val["mpris:length"]
     if length then
@@ -253,7 +276,7 @@ local function update_widget_meta(w, meta, player)
     end
 
 	w:get_children_by_id("title")[1]:set_markup_silently(title)
-	w:get_children_by_id("artist")[1]:set_markup_silently(artists)
+	w:get_children_by_id("artist")[1]:set_markup_silently(artist_string)
 
     local art = val["mpris:artUrl"]
     -- if the image is available from local storage
@@ -262,20 +285,20 @@ local function update_widget_meta(w, meta, player)
             local path = string.sub(art, 7, string.len(art))
             path = unescape(path)
             if gears.filesystem.file_readable(path) then
-                w:get_children_by_id("album_art")[1].image = image_with_gradient(path)
+                set_bg_with_gradient(w, path)
             end
         elseif player.player_name == "spotify" then
             -- using the permalink name of the image as identifier
             local filename = art:match("([%d%a]+)/?$")
             local path = gears.filesystem.get_cache_dir() .. filename
             if gears.filesystem.file_readable(path) then
-                w:get_children_by_id("album_art")[1].image = image_with_gradient(path)
+                set_bg_with_gradient(w, path)
             else
                 awful.spawn.easy_async("curl -L -s " .. art .. " -o " .. path,
                     function (_, _, _, code)
                         -- check if download was successful
                         if code == 0 then
-                            w:get_children_by_id("album_art")[1].image = image_with_gradient(path)
+                            set_bg_with_gradient(w, path)
                         end
                     end
                 )

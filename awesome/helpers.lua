@@ -134,6 +134,7 @@ end
 local function crop_surface(ratio, surf)
     local old_w, old_h = gears.surface.get_size(surf)
     local old_ratio = old_w/old_h
+    if old_ratio == ratio then return surf end
 
     local new_h = old_h
     local new_w = old_w
