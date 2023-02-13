@@ -20,6 +20,21 @@ local dap = require "plugins.confs.dap"
 return require('packer').startup(function(use)
 	use "wbthomason/packer.nvim"
 
+    use {
+        'xuhdev/vim-latex-live-preview',
+        config = function ()
+            local g = vim.g
+            g.livepreview_previewer = "xdg-open"
+            g.livepreview_engine = "lualatex"
+            g.livepreview_use_biber = 1
+            g.livepreview_cursorhold_recompile = 0
+            vim.api.nvim_create_autocmd({"BufReadPost"}, {
+                pattern = "main.tex",
+                command = "LLPStartPreview"
+            })
+        end
+    }
+
 	use {
 		'windwp/nvim-autopairs',
 		config = function() require("nvim-autopairs").setup {} end

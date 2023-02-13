@@ -1,0 +1,26 @@
+{
+    "DefaultDoc": {
+        "prefix": "doc",
+        "body": [
+            "\\documentclass[a4paper, 11pt]{article}",
+            "\\usepackage{amssymb}",
+            "\\usepackage{amsmath}",
+            "\\usepackage[ngerman]{babel}",
+            "\\usepackage{fontspec}",
+            "\\setmainfont{Inter}",
+            "\\begin{document}",
+            "$1",
+            "\\end{document}"
+        ],
+        "description": "Default Document for simple Texts"
+    },
+    "ItemizeHeading" : {
+        "prefix": "itemizeheading",
+        "body" : [
+            "\\item[] \\textbf{$1}",
+            "\\begin{itemize}",
+            "   \\item $2",
+            "\\end{itemize}"
+        ]
+    }
+}

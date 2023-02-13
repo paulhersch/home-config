@@ -1,6 +1,7 @@
-Map("n", "h", ":vertical resize +5 <CR>", {})
+--[[Map("n", "h", ":vertical resize +5 <CR>", {})
 Map("n", "j", ":resize -5 <CR>", {})
 Map("n", "k", ":resize +5 <CR>", {})
-Map("n", "l", ":vertical resize -5 <CR>", {})
+Map("n", "l", ":vertical resize -5 <CR>", {})]]
 Map("t", "<ESC>", "<C-\\><C-n>", {})
 Map("n", "QQ", ":wqa<CR>", {})
+Map("i", "<C-H>", "<C-W>", {})

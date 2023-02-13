@@ -1,4 +1,5 @@
 local o = vim.opt
+local g = vim.g
 
 o.background = 'dark'
 o.clipboard = 'unnamedplus'
@@ -17,7 +18,8 @@ o.fillchars.stl = ' '
 o.cmdheight = 0
 o.updatetime = 1000
 
-local g = vim.g
+g.vsnip_snippet_dir = os.getenv("HOME") .. "/.config/nvim/snips"
+
 if g.neovide then
 	vim.cmd [[set guifont=CaskaydiaCove\ Nerd\ Font\ Mono:h7]]
 	g.neovide_refresh_rate = 60
