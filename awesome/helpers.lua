@@ -127,7 +127,6 @@ local function textcursor_on_focus(widget, wibox)
     return widget
 end
 
---@param args table
 ---@param ratio number desired aspect ratio (e.g. 16/9 for 16:9 (width/height))
 ---@param surf Cairo.Surface the input surface
 ---@return Cairo.Surface New surface with applied ratio

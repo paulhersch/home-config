@@ -68,7 +68,7 @@ theme.gap_single_client = false
 theme.systray_icon_spacing = dpi(8)
 theme.bg_systray = theme.bg_focus_dark
 
-theme.border_width        = dpi(2)
+--theme.border_width        = dpi(2)
 theme.border_color_urgent = theme.bg_urgent
 theme.border_color_normal = theme.bg_normal
 theme.border_color_new = theme.border_color_normal

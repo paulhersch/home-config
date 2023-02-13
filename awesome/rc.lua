@@ -59,7 +59,7 @@ end)
 
 -- rules {{{
 ruled.client.connect_signal("request::rules", function()
-	ruled.client.append_rule {
+    ruled.client.append_rule {
 		rule = {},
 		except_any = { type = { "normal", "dialog" } },
 		properties = { floating = true, placement = awful.placement.centered }

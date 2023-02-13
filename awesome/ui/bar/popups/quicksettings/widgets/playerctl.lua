@@ -39,7 +39,7 @@ local function hide_icon()
 end
 
 --basewidth 440 (qs 450 - 2\*5 margin)
-local inactive_color = helpers.color.col_mix(beautiful.bg_focus, beautiful.fg_normal)
+local inactive_color, active_color = beautiful.bg_focus_dark, beautiful.fg_normal
 local titlefont, artistfont, margin, basewidth = beautiful.font_bold .. " 12", beautiful.font .. " 10", dpi(5), dpi(430)
 local insideheight =  beautiful.get_font_height(titlefont) + 3*margin + beautiful.get_font_height(artistfont)
 local height = beautiful.get_font_height(titlefont) + insideheight + 6*margin + dpi(20)
@@ -128,7 +128,7 @@ local template = {
                         valign = 'center',
                         {
                             widget = wibox.container.margin,
-                            margins = { right = dpi(7), bottom = dpi(7) },
+                            margins = { left = dpi(7), right = dpi(7), bottom = dpi(7) },
                             {
                                 id = "playpause_bg",
                                 widget = wibox.container.background,
@@ -356,12 +356,12 @@ local function widget_from_player (player)
 
 	player.on_shuffle = function (_, shuffle, _)
 		w:get_children_by_id("shuffle")[1]:set_image(
-			gcl.recolor_image(maticons .. "shuffle.svg", shuffle and beautiful.fg_normal or inactive_color))
+			gcl.recolor_image(maticons .. "shuffle.svg", shuffle and active_color or inactive_color))
 	end
 
 	player.on_loop_status = function(_, status, _)
 		w:get_children_by_id("repeat")[1]:set_image(
-			gcl.recolor_image(maticons .. "repeat.svg", status == "NONE" and inactive_color or beautiful.fg_normal))
+			gcl.recolor_image(maticons .. "repeat.svg", status == "NONE" and inactive_color or active_color))
 	end
 
 	func_on_click(w:get_children_by_id("prev")[1], function() player:previous() end)
@@ -393,9 +393,9 @@ local function widget_from_player (player)
 	w:get_children_by_id("playpause")[1]:set_image(gcl.recolor_image(maticons ..
 		(player.playback_status == "PLAYING" and "pause.svg" or "play.svg"), beautiful.bg_normal))
 	w:get_children_by_id("repeat")[1]:set_image(
-		gcl.recolor_image(maticons .. "repeat.svg", player.loop_status == "NONE" and inactive_color or beautiful.fg_normal))
+		gcl.recolor_image(maticons .. "repeat.svg", player.loop_status == "NONE" and inactive_color or active_color))
 	w:get_children_by_id("shuffle")[1]:set_image(
-		gcl.recolor_image(maticons .. "shuffle.svg", player.shuffle and beautiful.fg_normal or inactive_color))
+		gcl.recolor_image(maticons .. "shuffle.svg", player.shuffle and active_color or inactive_color))
     if player.playback_status == "PLAYING" then
         w:get_children_by_id("playpause_bg")[1].bg = beautiful.blue
         if currently_updating then progresstimer:run() end
