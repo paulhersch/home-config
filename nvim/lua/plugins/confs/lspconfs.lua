@@ -1,12 +1,10 @@
 return {
     'neovim/nvim-lspconfig',
-    requires = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
+    dependencies = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
+    ft = { "lua", "cs", "py", "tex", "hs", "nix" },
     config = function()
         local lc = require('lspconfig')
         local util = require('lspconfig.util')
-
-        Map("n", "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>", {})
-        Map("n", "sr", '<cmd> lua vim.lsp.buf.document_highlight(); vim.api.nvim_create_autocmd("CursorMoved", { callback = vim.lsp.buf.clear_references, once = true }) <cr>', {})
 
         local short_root_dir = vim.fn.substitute(vim.fn.getcwd(), '^.*/', '', '')
         --somehow the sumneko setup with workspaces only works properly when i run stuff at startup not at runtime, so this has to do for now
@@ -44,7 +42,7 @@ return {
                 }
             })
         end
-        lc.sumneko_lua.setup ({settings=lua_conf})
+        lc.lua_ls.setup ({settings=lua_conf})
 
         lc.omnisharp.setup ({
             cmd = { "OmniSharp" }--, "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
@@ -88,7 +86,15 @@ return {
 
         lc.ltex.setup{}
         lc.hls.setup{}
-        lc.texlab.setup{}
+        lc.texlab.setup{
+            settings = { texlab = { build = {
+                executable = "lualatex"
+            }}}
+        }
         lc.rnix.setup{}
-    end
+    end,
+    keys = {
+        { "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>" },
+        { "sr", '<cmd> lua vim.lsp.buf.document_highlight() vim.api.nvim_create_autocmd("CursorMoved", { callback = vim.lsp.buf.clear_references, once = true }) <cr>' }
+    }
 }

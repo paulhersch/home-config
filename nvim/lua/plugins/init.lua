@@ -1,11 +1,15 @@
-local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
-local pack_bootstrap
-
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-	vim.fn.system({'git', 'clone', '--depth=1', 'https://github.com/wbthomason/packer.nvim', install_path})
-	vim.cmd [[packadd packer.nvim]]
-	pack_bootstrap = true
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
 end
+vim.opt.rtp:prepend(lazypath)
 
 local nvimtree = require "plugins.confs.nvimtree"
 local barbar = require "plugins.confs.barbar"
@@ -17,11 +21,19 @@ local telescope = require "plugins.confs.telescope"
 local dashboard = require "plugins.confs.dashboard"
 local dap = require "plugins.confs.dap"
 
-return require('packer').startup(function(use)
-	use "wbthomason/packer.nvim"
-
-    use {
-        'xuhdev/vim-latex-live-preview',
+require"lazy".setup({
+    nvimtree,
+    barbar,
+    gitsigns,
+    lualine,
+    lspc,
+    cmp,
+    telescope,
+    dashboard,
+    dap,
+    --[[{ just randomly doesnt work
+        "xuhdev/vim-latex-live-preview",
+        ft = "tex",
         config = function ()
             local g = vim.g
             g.livepreview_previewer = "xdg-open"
@@ -33,25 +45,28 @@ return require('packer').startup(function(use)
                 command = "LLPStartPreview"
             })
         end
-    }
-
-	use {
+    },]]
+    {
 		'windwp/nvim-autopairs',
-		config = function() require("nvim-autopairs").setup {} end
-	}
-
-	use {
+        event = "BufEnter",
+		config = function()
+            require("nvim-autopairs").setup{}
+        end
+	},
+    {
 		'Shatur/neovim-session-manager',
-		require = {
+		dependencies = {
 			'nvim-lua/plenary.nvim'
 		},
+        --event = 'VimEnter'
+        cmd = "SessionManager",
 		config = function ()
 			local Path = require('plenary.path')
 			require('session_manager').setup ({
 				sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
 				path_replacer = '__',
 				colon_replacer = '++',
-				autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir,
+				autoload_mode = require('session_manager.config').AutoloadMode.Disabled,
 				autosave_last_session = true,
 				autosave_ignore_not_normal = true,
 				autosave_ignore_dirs = {},
@@ -63,35 +78,35 @@ return require('packer').startup(function(use)
 				autosave_only_in_session = false,
 				max_path_length = 80,
 			})
-			Map("n", "fs", "<cmd>SessionManager load_session<cr>", {})
-			Map("n", "ds", "<cmd>SessionManager delete_session<cr>", {})
-		end
-	}
-
-	use {
+		end,
+        keys = {
+            { "fs", "<cmd>SessionManager load_session<cr>" },
+            { "ds", "<cmd>SessionManager delete_session<cr>" }
+        }
+	},
+    {
 		'lukas-reineke/indent-blankline.nvim',
-		requires = 'nvim-treesitter/nvim-treesitter',
+		dependencies = 'nvim-treesitter/nvim-treesitter',
+        event = "BufEnter",
 		config = function()
 			require("indent_blankline").setup {
 				space_char_blankline = " ",
 				show_current_context = true,
 			}
 		end
-	}
-
-	use {
+	},
+    {
 		'NvChad/nvim-colorizer.lua',
+        ft = { "css", --[["lua"]] },
 		config = function ()
 			require 'colorizer'.setup({})
         end
-	}
-
-	use {
+	},
+    {
 		'glepnir/lspsaga.nvim',
 		branch = 'main',
-		require = 'neovim/nvim-lspconfig',
+        lazy = true,
 		config = function ()
-			--local colors = require "azul.core".get_colors()
 			require('lspsaga').setup{
 				diagnostic_header = { "✋", "👆", "👉", "🤏" },
 				symbol_in_winbar = {
@@ -104,17 +119,17 @@ return require('packer').startup(function(use)
 					virtual_text = false
 				},
 			}
-			Map("n", "ca", "<cmd>Lspsaga code_action <CR>", {})
-			Map("n", "gr", "<cmd>Lspsaga rename <CR>", {})
-			Map("i", "<C-R>", "<cmd>Lspsaga rename <CR>", {})
-			Map("n", "gd", "<cmd>Lspsaga peek_definition <CR>", {})
-			Map("n", "D", "<cmd>Lspsaga hover_doc <CR>", {})
-			Map("i", "<C-D>", "<cmd>Lspsaga diagnostic_jump_next <CR>", {})
-			Map("n", "<C-D>", "<cmd>Lspsaga diagnostic_jump_next <CR>", {})
-		end
-	}
-
-	use {
+		end,
+        keys = {
+            { "ca", "<cmd>Lspsaga code_action <CR>" },
+            { "gr", "<cmd>Lspsaga rename <CR>" },
+            { "<C-R>", "<cmd>Lspsaga rename <CR>", mode = "i" },
+            { "gd", "<cmd>Lspsaga peek_definition <CR>" },
+            { "D", "<cmd>Lspsaga hover_doc <CR>" },
+            { "<C-D>", "<cmd>Lspsaga diagnostic_jump_next <CR>", mode = {"i", "n"}}
+        }
+	},
+    {
 		'akinsho/toggleterm.nvim',
 		config = function ()
 			local colors = require("azul.core").get_colors()
@@ -131,23 +146,25 @@ return require('packer').startup(function(use)
 					}
 				}
 			}
-			Map("n", "tt", "<cmd>ToggleTerm<CR>", {})
-			Map("t", "<C-T>", "<cmd>ToggleTerm<CR>", {})
-		end
-	}
-
-	use {
+		end,
+        keys = {
+            { "tt", "<cmd>ToggleTerm<CR>" },
+            { "<C-T>", "<cmd>ToggleTerm<CR>", mode = "t" }
+        }
+	},
+    {
 		'nvim-treesitter/nvim-treesitter',
-		requires = {
+		dependencies = {
 			'tree-sitter/tree-sitter',
 		},
-		run = function()
+        event = "BufEnter",
+		build = function()
 			require("nvim-treesitter").install.update()
 		end,
 		config = function()
 			require("nvim-treesitter.configs").setup {
-				auto_install = true,
 				sync_install = false,
+                ensure_installed = "all",
                 indent = {
                     enable = true
                 },
@@ -157,10 +174,10 @@ return require('packer').startup(function(use)
 				}
 			}
 		end
-	}
-
-	use {
+	},
+    {
 		'j-hui/fidget.nvim',
+        event = "LspAttach",
 		config = function ()
 			require('fidget').setup{
                 text = {
@@ -168,22 +185,22 @@ return require('packer').startup(function(use)
                 }
             }
 		end
-	}
-
-	use {
+	},
+    {
 		'stevearc/aerial.nvim',
-		requires = {
+	    dependencies = {
 			'nvim-treesitter/nvim-treesitter'
 		},
 		config = function ()
 			require('aerial').setup{}
-			Map("n", "<Space>a", "<cmd>AerialToggle<cr>", {})
-		end
-	}
-
-	use {
+		end,
+        keys = {
+            { "<Space>a", "<cmd>AerialToggle<cr>" }
+        }
+	},
+    {
 		'folke/trouble.nvim',
-		requires = 'folke/lsp-colors.nvim',
+		dependencies = 'folke/lsp-colors.nvim',
 		config = function()
 			local colors = require("azul.core").get_colors()
 			require("lsp-colors").setup({
@@ -196,20 +213,9 @@ return require('packer').startup(function(use)
 			vim.diagnostic.config({
 				virtual_text = false
 			})
-			Map("n", "<Space>t", "<cmd>TroubleToggle<cr>", {})
-		end
+		end,
+        keys = {
+            { "<Space>t", "<cmd>TroubleToggle<cr>" }
+        }
 	}
-
-	use(nvimtree)
-	use(barbar)
-	use(gitsigns)
-	use(lualine)
-	use(lspc)
-	use(cmp)
-	use(telescope)
-	use(dashboard)
-    use(dap)
-	if pack_bootstrap then
-		require("packer").sync()
-	end
-end)
+})

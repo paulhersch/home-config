@@ -1,6 +1,7 @@
 return {
 	'romgrk/barbar.nvim',
-	requires = {
+    event = "BufEnter",
+	dependencies = {
 		'nvim-tree/nvim-web-devicons',
 		'nvim-tree/nvim-tree.lua'
 	},

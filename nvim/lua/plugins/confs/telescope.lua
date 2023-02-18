@@ -1,10 +1,11 @@
 return {
 	'nvim-telescope/telescope.nvim',
-	tag = '0.1.0',
-	requires = {
+	version = '0.1.0',
+	dependencies = {
 		'nvim-lua/plenary.nvim',
 		'nvim-telescope/telescope-ui-select.nvim'
 	},
+    cmd = "Telescope",
 	config = function()
 		require ("telescope").setup {
 			defaults = {
@@ -59,9 +60,11 @@ return {
 			}
 		}
 		require("telescope").load_extension("ui-select")
-		Map("n", "gf", "<cmd>Telescope live_grep<CR>", {})
-		Map("n", "ff", "<cmd>Telescope find_files<CR>", {})
-		Map("n", "fb", "<cmd>Telescope buffers<CR>", {})
-        Map("n", "gt", "<cmd>Telescope lsp_references<CR>", {})
-	end
+	end,
+    keys = {
+        { "gf", "<cmd>Telescope live_grep<CR>" },
+        { "ff", "<cmd>Telescope find_files<CR>" },
+        { "fb", "<cmd>Telescope buffers<CR>" },
+        { "gt", "<cmd>Telescope lsp_references<CR>" }
+    }
 }

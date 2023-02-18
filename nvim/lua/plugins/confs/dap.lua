@@ -1,8 +1,11 @@
 return {
     'mfussenegger/nvim-dap',
-    requires = {
+    dependencies = {
         'theHamsta/nvim-dap-virtual-text',
         --'rcarriga/nvim-dap-ui'
+    },
+    keys = {
+        { "<leader>b", "<cmd> lua require('dap').toggle_breakpoint()<cr>" }
     },
     config = function ()
         local dap = require("dap")
@@ -32,7 +35,6 @@ return {
 
         vim.fn.sign_define("DapBreakpoint", { text = '●', texthl='DapBreakpointSymbol'})
 
-        Map('n', '<leader>b', '<cmd> lua require"dap".toggle_breakpoint()<cr>', {})
 
         require("nvim-dap-virtual-text").setup {
             enabled = true,

@@ -1,7 +1,8 @@
 return {
 	'nvim-tree/nvim-tree.lua',
-	requires = { 'nvim-tree/nvim-web-devicons' },
-	as = 'nvim-tree',
+	dependencies = { 'nvim-tree/nvim-web-devicons' },
+	name = 'nvim-tree',
+    lazy = true,
 	config = function()
 		require('nvim-tree').setup ({
 			--disable standard file browser and replace with nvim-tree
@@ -64,6 +65,8 @@ return {
 				}
 			}
 		})
-		Map("n", "<Space>f", "<cmd>NvimTreeToggle<CR>", {})
-	end
+	end,
+    keys = {
+        { "<Space>f", "<cmd>NvimTreeToggle<CR>" }
+    }
 }

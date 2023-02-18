@@ -241,6 +241,9 @@ M.highlights_base = function (--[[colors]])
 
 		--gleipnir Dashboard highlights
 		DashboardHeader = { fg = colors.color7 },
+        DashboardIcon = { fg = colors.color4 },
+        DashboardKey = { fg = colors.color5 },
+        DashboardDesc = { fg = colors.color15 },
 		DashboardCenter = { fg = colors.color4 },
 		DashboardShortCut = { fg = colors.color2 },
 		DashboardFooter = { fg = colors.comment },

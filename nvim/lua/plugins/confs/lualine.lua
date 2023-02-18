@@ -1,9 +1,10 @@
 return {
 	'nvim-lualine/lualine.nvim',
-	requires = {
-		'kyazdani42/nvim-web-devicons',
+	dependencies = {
+		'nvim-tree/nvim-web-devicons',
 	},
-	as = 'lualine',
+	name = 'lualine',
+    event = "BufEnter",
 	config = function()
 		local colors = require "azul.core".get_colors()
         local lualine = require("lualine")
