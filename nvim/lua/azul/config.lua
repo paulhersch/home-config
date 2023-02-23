@@ -299,11 +299,11 @@ M.highlights_base = function (--[[colors]])
 		BufferLineFill = { fg = colors.background, bg = colors.background },
 
 		-- BarBar Bufferline
-		BufferCurrent = { fg = colors.foreground, bg = colors.background, bold = true, italic = true },
-		BufferCurrentMod = { fg = colors.color12, bg = colors.background, bold = true, italic = true },
+		BufferCurrent = { fg = colors.foreground, bg = colors.background, bold = true },
+		BufferCurrentMod = { fg = colors.color12, bg = colors.background, bold = true },
 		BufferCurrentSign = { fg = colors.background, bg = colors.background },
-		BufferVisible = { fg = colors.foreground, bg = colors.background, bold = true, italic = true },
-		BufferVisibleMod = { fg = colors.color4, bg = colors.background, bold = true, italic = true },
+		BufferVisible = { fg = colors.foreground, bg = colors.background, bold = true },
+		BufferVisibleMod = { fg = colors.color4, bg = colors.background, bold = true },
 		BufferVisibleSign = { fg = colors.background, bg = colors.background },
 		BufferInactive = { fg = colors.color15, bg = colors.background_dark },
 		BufferInactiveMod = { fg = colors.color15, bg = colors.background_dark, bold = true },

@@ -2,7 +2,7 @@ return {
 	'nvim-tree/nvim-tree.lua',
 	dependencies = { 'nvim-tree/nvim-web-devicons' },
 	name = 'nvim-tree',
-    lazy = true,
+    cmd = { "NvimTreeOpen", "NvimTreeToggle" },
 	config = function()
 		require('nvim-tree').setup ({
 			--disable standard file browser and replace with nvim-tree

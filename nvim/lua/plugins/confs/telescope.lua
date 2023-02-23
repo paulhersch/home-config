@@ -5,7 +5,7 @@ return {
 		'nvim-lua/plenary.nvim',
 		'nvim-telescope/telescope-ui-select.nvim'
 	},
-    cmd = "Telescope",
+    cmd = { "Telescope" },
 	config = function()
 		require ("telescope").setup {
 			defaults = {

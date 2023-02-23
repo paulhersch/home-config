@@ -31,7 +31,7 @@ return {
                         desc = 'Live Grep with Telescope        ',
                         action = 'Telescope live_grep',
                         key = 'gf'
-                    }, 
+                    },
                 },
                 header = {
                     [[=================     ===============     ===============   ========  ========]],
