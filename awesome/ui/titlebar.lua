@@ -31,10 +31,10 @@ local function setup_titlebars(c)
 end
 
 local function toggle_by_floating(c)
-    if not c.floating then
-        awful.titlebar.hide(c, "top")
-    else
+    if c.floating then
         awful.titlebar.show(c, "top")
+    else
+        awful.titlebar.hide(c, "top")
     end
 end
 

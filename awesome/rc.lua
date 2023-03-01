@@ -4,13 +4,24 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local ruled = require("ruled")
+local dpi	= beautiful.xresources.apply_dpi
+local settings = require("settings")
 require("awful.autofocus")
 
-awful.spawn("autorandr -c")
-
-local dpi	= beautiful.xresources.apply_dpi
-
 awesome.set_preferred_icon_size(128)
+beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
+settings.load()
+awesome.connect_signal("exit", function ()
+    settings.save()
+end)
+
+-- Autostart {{{
+awful.spawn("nm-applet")
+awful.spawn("blueman-applet")
+awful.spawn("xfce4-clipman")
+awful.spawn("redshift -O 4600K -P")
+awful.spawn("picom --config " .. gears.filesystem.get_configuration_dir() .. "/configs/picom.conf")
+-- }}}
 
 naughty.connect_signal("request::display_error", function(message, startup)
     naughty.notification {
@@ -33,7 +44,6 @@ screen.connect_signal("request::desktop_decoration", function(s)
 	awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 end)
 
-beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
 
 --globals for andOrlando widgets
 RUBATO_DIR = "plugins.rubato."
@@ -53,7 +63,7 @@ client.connect_signal("request::manage", function(c)
 		c:raise()
 	else c:to_secondary_section() end
     c:activate{raise = true}
-    if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
+    --if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
 end)
 --}}}
 
@@ -88,12 +98,4 @@ ruled.notification.connect_signal('request::rules', function()
         }
     }
 end)
--- }}}
-
--- Autostart {{{
-awful.spawn("nm-applet")
-awful.spawn("blueman-applet")
-awful.spawn("xfce4-clipman")
-awful.spawn("redshift -O 4600K -P")
-awful.spawn("picom --config " .. gears.filesystem.get_configuration_dir() .. "/configs/picom.conf")
 -- }}}
