@@ -5,7 +5,7 @@ M.highlights_base = function (--[[colors]])
 	return {
 		Normal = { fg = colors.foreground, bg = colors.background },
 		StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
-		StatusLine = { bg = "NONE", fg = "NONE" },
+		StatusLine = { bg = colors.contrast, fg = colors.foreground },
 		SignColumn = { bg = colors.background, fg = colors.background },
 		MsgArea = { fg = colors.foreground, bg = colors.background },
 		ModeMsg = { fg = colors.foreground, bg = colors.background },
@@ -95,6 +95,16 @@ M.highlights_base = function (--[[colors]])
 		TabLineSel = { fg = colors.foreground, bg = colors.background },
 		TabLineFill = { fg = colors.foreground, bg = colors.background },
 
+        StatusLineModeNormal = { fg = colors.background, bg = colors.color2 },
+        StatusLineModeInsert = { fg = colors.background, bg = colors.color4 },
+        StatusLineModeVisual = { fg = colors.background, bg = colors.color13 },
+        StatusLineModeReplace = { fg = colors.background, bg = colors.color1 },
+        StatusLineModeCmd = { fg = colors.background, bg = colors.color3 },
+        StatusLineModeTerminal = { fg = colors.background, bg = colors.color2 },
+        StatusLineFileName = { fg = colors.foreground, bg = colors.contrast },
+        StatusLineFileModified = { fg = colors.color1, bg = colors.contrast },
+        StatusLineTerminalSymbol = { fg = colors.contrast, bg = colors.color1 },
+        StatusLineFileexplorerSymbol = { fg = colors.contrast, bg = colors.color4 },
 		-- CMP
 		CmpItemAbbr = { fg = colors.foreground, bg = "NONE" },
 		CmpItemAbbrDeprecated = { fg = colors.color1, strikethrough = true, bg = "NONE" },
@@ -305,9 +315,9 @@ M.highlights_base = function (--[[colors]])
 		BufferVisible = { fg = colors.foreground, bg = colors.background, bold = true },
 		BufferVisibleMod = { fg = colors.color4, bg = colors.background, bold = true },
 		BufferVisibleSign = { fg = colors.background, bg = colors.background },
-		BufferInactive = { fg = colors.color15, bg = colors.background_dark },
-		BufferInactiveMod = { fg = colors.color15, bg = colors.background_dark, bold = true },
-		BufferInactiveSign = { fg = colors.background_dark, bg = colors.background_dark },
+		BufferInactive = { fg = colors.color15, bg = colors.inactive_tabs },
+		BufferInactiveMod = { fg = colors.color15, bg = colors.inactive_tabs, bold = true },
+		BufferInactiveSign = { fg = colors.background_dark, bg = colors.inactive_tabs },
 		BufferTabpageFill = { fg = colors.background_dark, bg = colors.background_dark },
 		BufferOffset = { fg = colors.background, bg = colors.background }
 	}

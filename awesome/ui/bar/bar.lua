@@ -102,6 +102,7 @@ local function init (s)
 
 	local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
 
+    local tagnames = { "०", "१", "२", "३", "४", "५", "६", "७", "८", "९" }
     s.taglist = awful.widget.taglist {
         screen		= s,
 		filter		= awful.widget.taglist.filter.all,
@@ -115,12 +116,12 @@ local function init (s)
                 widget = wibox.container.background,
                 id = 'bg',
                 shape = beautiful.theme_shape,
-                fg = beautiful.fg_normal,
+                fg = beautiful.bg_focus,
                 bg = beautiful.bg_focus_dark,
                 {
                     {
                         widget = wibox.widget.textbox,
-                        font = beautiful.font_bold,
+                        font = "Free Sans Bold" ,
                         halign = 'center',
                         id = 'index',
                         text = ' ',
@@ -132,26 +133,27 @@ local function init (s)
                 },
             },
             create_callback = function(self, t, _, _)
+                self:get_children_by_id("index")[1].text = tagnames[t.index]
                 self:connect_signal("button::press", function(_, _, _, b)
 					if b == 1 then t:view_only() end
 				end)
                 helpers.pointer_on_focus(self, s.bar)
-                self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
+                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
 			end,
             update_callback = function (self, t, _, _)
-                self:get_children_by_id('bg')[1].bg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
+                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
             end
 		}
 	}
 
-    local systray = s == screen.primary and wibox.widget {
+    local systray = s == screen.primary and wrap_in_bg_and_popup_button(wibox.widget {
         widget = wibox.container.place,
         valign = 'center',
         {
             widget = wibox.widget.systray,
             base_size = dpi(20),
         }
-    } or nil
+    }, nil, s) or nil
 
 	s.quicksettings_trigger = quicksettings_trigger
 
@@ -191,8 +193,7 @@ local function init (s)
 			{
 				layout = wibox.layout.fixed.horizontal,
 				spacing = dpi(5),
-				wrap_in_bg_and_popup_button(systray, nil, s),
-
+                systray,
 				wrap_in_bg_and_popup_button(
 				{
 					layout = wibox.layout.fixed.horizontal,

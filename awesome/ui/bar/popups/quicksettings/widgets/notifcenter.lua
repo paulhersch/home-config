@@ -166,9 +166,16 @@ local app_revealer_template = {
     }
 }
 
+-- some programs have a different Window Class then what they report for
+-- notifications. To give them the same name so that the autodeletion
+-- works i am replacing the names
+local app_name_replacements = {
+    ["Telegram Desktop"] = "TelegramDesktop"
+}
+
 local function add_notif_widget(n)
     local w = wibox.widget(entry_template)
-    w.app = n.app_name or 'undefined'
+    w.app = n.app_name and (app_name_replacements[n.app_name] or n.app_name) or 'undefined'
 
     local drawer
     --check if the app already has a drawer thingy

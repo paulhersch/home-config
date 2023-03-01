@@ -139,13 +139,13 @@ naughty.config.defaults.margin = 2*beautiful.useless_gap
 naughty.config.defaults.position = "top_middle"
 naughty.config.defaults.border_width = 0
 
-function whitelist_programs:check(n) --check_list(n.app_name, self) return false end
+function whitelist_programs:check(n)
     for _, na in ipairs(self) do
         if na == n.app_name then return true end
     end
 end
 
-function whitelist_titles:check(n) --check_list(n.title, self) return false end
+function whitelist_titles:check(n)
     for _, na in ipairs(self) do
         if na == n.title then return true end
     end
@@ -156,9 +156,9 @@ function blacklist_sound_programs:check(n)
         if na == n.app_name then return true end
     end
 
-end--check_list(n.app_name, blacklist_sound_programs) return false end
+end
 
-function blacklist_sound_titles:check(n) --check_list(n.title, blacklist_sound_titles) return false end
+function blacklist_sound_titles:check(n)
     for _, na in ipairs(self) do
         if na == n.title then return true end
     end
@@ -177,7 +177,7 @@ local function init ()
             }
             if NOTIFCENTER_PLAYSOUND then
                 if (not (blacklist_sound_titles:check(notif) or blacklist_sound_programs:check(notif))) then
-                    awful.spawn("play -v 0.2 " .. gears.filesystem.get_configuration_dir() .. "assets/sounds/notif.mp3")
+                    awful.spawn.easy_async("play -v 0.2 " .. gears.filesystem.get_configuration_dir() .. "assets/sounds/notif.mp3", function () end)
                 end
             end
         end

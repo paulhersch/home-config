@@ -15,13 +15,17 @@ o.fillchars.vert = '┃'
 o.linebreak = true
 o.fillchars.horiz = '━'
 o.fillchars.stl = ' '
+o.fillchars.stlnc = ' '
+o.fillchars.fold = '━'
+o.fillchars.foldopen = ''
+o.fillchars.foldclose = ''
 o.cmdheight = 0
 o.updatetime = 1000
 
 g.vsnip_snippet_dir = os.getenv("HOME") .. "/.config/nvim/snips"
 
 if g.neovide then
-	o.guifont = "Iosevka Comfy Motion Fixed:h11,Symbols Nerd Font:h11"
+	o.guifont = "Iosevka Comfy Motion:h11,Symbols Nerd Font:h11"
 	g.neovide_refresh_rate = 60
 	g.neovide_refresh_rate_idle = 1
 	g.neovide_scroll_animation_length = 0.1

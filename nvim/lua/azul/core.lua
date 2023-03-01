@@ -5,6 +5,7 @@ function M.get_colors()
 	colors.comment = "#646161"
 	colors.background = "#1b1f1f"
 	colors.background_dark = "#181b1b"
+    colors.inactive_tabs = "#191d1d"
 	colors.contrast = "#1f2323"
 	colors.foreground = "#d6d3d3"
 	colors.cursorline = "#313737"

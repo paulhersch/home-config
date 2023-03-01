@@ -1,7 +1,9 @@
---[[Map("n", "h", ":vertical resize +5 <CR>", {})
-Map("n", "j", ":resize -5 <CR>", {})
-Map("n", "k", ":resize +5 <CR>", {})
-Map("n", "l", ":vertical resize -5 <CR>", {})]]
+-- german layout things
+Map({"n", "x"}, "ö", "l", {})
+Map({"n", "x"}, "l", "k", {})
+Map({"n", "x"}, "k", "j", {})
+Map({"n", "x"}, "j", "h", {})
+
 Map("t", "<ESC>", "<C-\\><C-n>", {})
 Map("n", "QQ", ":wqa<CR>", {})
 Map("i", "<C-H>", "<C-W>", {})

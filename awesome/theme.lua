@@ -113,9 +113,9 @@ theme.master_width_factor = 0.65
 
 theme.menu_item_spacing = dpi(5)
 
-theme.theme_shape = function (c, w, h)
+theme.theme_shape = gears.shape.rectangle --[[function (c, w, h)
 	return gears.shape.rounded_rect(c, w, h, 5)
-end
+end]]
 theme.notification_shape = theme.shape
 
 theme.tabbed_spawn_in_tab = true  -- whether a new client should spawn into the focused tabbing container

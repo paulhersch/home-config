@@ -4,12 +4,13 @@ local awful = require "awful"
 local gears = require "gears"
 local dpi = beautiful.xresources.apply_dpi
 local naughty = require "naughty"
+local helpers = require("helpers")
 
 screen.connect_signal("request::wallpaper", function(s)
 	awful.wallpaper {
 		screen = s,
 		widget = wibox.widget {
-			image		= beautiful.wallpaper,
+			image		= helpers.crop_surface(s.geometry.width/s.geometry.height, gears.surface.load(beautiful.wallpaper)),
 			widget		= wibox.widget.imagebox,
 			resize		= true,
 			scaling_quality	= 'best',

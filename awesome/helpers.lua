@@ -140,11 +140,11 @@ local function crop_surface(ratio, surf)
     local offset_h, offset_w = 0, 0
     -- quick mafs
     if (old_ratio < ratio) then
-        new_h = old_w * (1/ratio)
-        offset_h = (old_h - new_h)/2
+        new_h = math.ceil(old_w * (1/ratio))
+        offset_h = math.ceil((old_h - new_h)/2)
     else
-        new_w = old_h * ratio
-        offset_w = (old_w - new_w)/2
+        new_w = math.ceil(old_h * ratio)
+        offset_w = math.ceil((old_w - new_w)/2)
     end
 
     local out_surf = cairo.ImageSurface(cairo.Format.ARGB32, new_w, new_h)

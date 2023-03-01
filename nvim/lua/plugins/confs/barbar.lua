@@ -1,15 +1,39 @@
 return {
 	'romgrk/barbar.nvim',
-    event = "BufEnter",
 	dependencies = {
 		'nvim-tree/nvim-web-devicons',
 		'nvim-tree/nvim-tree.lua'
 	},
-	config = function()
-		require('bufferline').setup {
-			animation = false,
-			auto_hide = true,
-			icon_separator_active = '',-- vim.opt.fillchars.vert,
+    lazy = true,
+    -- check if barbar needs to be loaded
+    init = function ()
+        local ls_buf = vim.api.nvim_list_bufs
+        local buf_opt = vim.api.nvim_buf_get_option
+        local function check_load()
+            local len = 0
+            local buffers = ls_buf()
+            for _, buffer in ipairs(buffers) do
+                if buf_opt(buffer, 'buflisted') then
+                    len = len + 1
+                end
+            end
+            return len > 1
+        end
+        local self
+        self = vim.api.nvim_create_autocmd("BufEnter",{
+            callback = function ()
+                if check_load() then
+                    require"bufferline"
+                    vim.api.nvim_del_autocmd(self)
+                end
+            end
+        })
+    end,
+    config = function()
+        require('bufferline').setup {
+            animation = false,
+            auto_hide = true,
+            icon_separator_active = '',-- vim.opt.fillchars.vert,
 			icon_separator_inactive ='',-- vim.opt.fillchars.vert
 		}
 

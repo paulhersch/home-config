@@ -113,7 +113,7 @@ menu = awful.popup {
                 beautiful.green,
                 function ()
                     menu.visible = false
-                    awful.spawn.with_shell("systemctl hibernate")
+                    awful.spawn("systemctl hibernate")
                 end
             ),
             create_menu_button(

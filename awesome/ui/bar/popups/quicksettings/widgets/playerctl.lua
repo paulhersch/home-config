@@ -57,6 +57,7 @@ local template = {
                 id = "album_art",
                 widget = wibox.widget.imagebox,
                 forced_height = height,
+                horizontal_fill_policy = "fit"
             }
         },
         {
@@ -128,7 +129,7 @@ local template = {
                         valign = 'center',
                         {
                             widget = wibox.container.margin,
-                            margins = { left = dpi(7), right = dpi(7), bottom = dpi(7) },
+                            margins = { left = dpi(7), right = dpi(14), bottom = dpi(7) },
                             {
                                 id = "playpause_bg",
                                 widget = wibox.container.background,
@@ -173,7 +174,6 @@ local template = {
                                     border_width = 0,
                                     color = beautiful.fg_normal,
                                     background_color = inactive_color,
-                                    shape = gears.shape.rounded_bar
                                 }
                             },
                             {
@@ -299,6 +299,8 @@ local function update_widget_meta(w, meta, player)
                         -- check if download was successful
                         if code == 0 then
                             set_bg_with_gradient(w, path)
+                            -- the edited thing is cached, so the now useless cover art can be deleted
+                            awful.spawn("rm " .. path)
                         end
                     end
                 )
@@ -316,7 +318,6 @@ local function widget_from_player (player)
     end
 
     local function update_pos()
-        --naughty.notification({message = "updating..."})
         local pos = math.floor(player.position / 1000000)
         w:get_children_by_id("progress")[1].value = pos
     end

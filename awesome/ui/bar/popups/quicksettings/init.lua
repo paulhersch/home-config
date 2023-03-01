@@ -8,11 +8,11 @@ local pctlwidget = require "ui.bar.popups.quicksettings.widgets.playerctl"
 
 local function init(s)
     local cent_width = dpi(450)
-	local height = s.geometry.height*(2/5)
+	local height = dpi(800)
     s.quicksettings = wibox {
         screen = s,
         x = s.geometry.x + s.geometry.width - cent_width - 2*beautiful.useless_gap,
-        y = s.geometry.y + --[[s.geometry.height - (]]2*beautiful.useless_gap + beautiful.wibar_height, --+ height),
+        y = s.geometry.y + 2*beautiful.useless_gap + beautiful.wibar_height,
         width = cent_width,
         height = height,
         ontop = true,

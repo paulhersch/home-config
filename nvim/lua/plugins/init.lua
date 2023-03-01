@@ -14,29 +14,89 @@ vim.opt.rtp:prepend(lazypath)
 local nvimtree = require "plugins.confs.nvimtree"
 local barbar = require "plugins.confs.barbar"
 local gitsigns = require "plugins.confs.gitsigns"
-local lualine = require "plugins.confs.lualine"
+--local lualine = require "plugins.confs.lualine"
 local lspc = require "plugins.confs.lspconfs"
 local cmp = require "plugins.confs.cmp"
 local telescope = require "plugins.confs.telescope"
 local dashboard = require "plugins.confs.dashboard"
 local dap = require "plugins.confs.dap"
+local comment = require "plugins.confs.comment"
 
 require"lazy".setup({
     nvimtree,
     barbar,
     gitsigns,
-    lualine,
+    --lualine,
     lspc,
     cmp,
     telescope,
     dashboard,
     dap,
+    comment,
+    --[[{
+        'tanvirtin/vgit.nvim',
+        lazy = false,
+        dependencies = 'nvim-lua/plenary.nvim',
+        config = function()
+            require("vgit")
+        end
+    },]]
+    {
+        dir = '~/.config/nvim/lua/statusline',
+        dependencies = {
+            'nvim-tree/nvim-web-devicons',
+        },
+        lazy = false,
+        config = function ()
+            require("statusline")
+        end
+    },
+    {
+        'direnv/direnv.vim',
+        lazy = false,
+        config = function ()
+            local g = vim.g
+            g.direnv_silent_load = 1
+        end
+    },
+    {
+        "phaazon/hop.nvim",
+        lazy = true,
+        branch = "v2",
+        config = function ()
+            require("hop").setup { keys = 'etovxqpdygfblzhckisuran' }
+        end,
+        keys = {
+            { "h", "<cmd>HopWord<cr>", noremap = true, mode = {"n", "x"}}
+        }
+    },
+    {
+        'nvim-telescope/telescope-ui-select.nvim',
+        lazy = true,
+        --hacky way of lazy loading telscope ui-select
+        init = function()
+            vim.ui.select = function (...)
+                require("telescope").load_extension("ui-select")
+                vim.ui.select(...)
+            end
+        end
+    },
     {
         'rcarriga/nvim-notify',
         dependencies = {
 		    'nvim-lua/plenary.nvim',
         },
-        lazy = false,
+        lazy = true,
+        init = function()
+            vim.notify = function(...)
+                require("notify")
+                vim.notify(...)
+            end
+            vim.api.nvim_echo = function(...)
+                require("notify")
+                vim.api.nvim_echo(...)
+            end
+        end,
         config = function ()
             local notif = require("notify")
             notif.setup({
@@ -45,7 +105,7 @@ require"lazy".setup({
                 timeout = 3500
             })
             vim.notify = notif
-            -- redirect echo to use notify
+            -- redirect echo to use notify, doesnt work with builtin vim cmd rn
             vim.api.nvim_echo = function(chunks, history, opts)
                 local notif_text = ""
                 for _, chunk in pairs(chunks) do
