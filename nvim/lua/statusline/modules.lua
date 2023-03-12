@@ -27,6 +27,13 @@ local modes = {
     ["t"] = {"TERMINAL", "StatusLineModeTerminal"},
 }
 
+m.mode = function()
+    local current_mode = a.nvim_get_mode().mode
+    if modes[current_mode] ~= nil then
+        return string.format("%%#%s#%s", modes[current_mode][2]," ")
+    end
+end
+
 local lsp_count = { 0, 0, 0, 0 }
 local function err_cnt()
     return lsp_count[vim.diagnostic.severity.ERROR]
@@ -47,26 +54,6 @@ local function update_lsp()
     end
 end
 
-m.mode = function()
-    local current_mode = a.nvim_get_mode().mode
-    if modes[current_mode] ~= nil then
-        return string.format("%%#%s#%s", modes[current_mode][2]," ")
-    end
-end
-
-m.file_edited = function ()
-    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "  " or ""
-    return "%#StatusLineFileModified#" .. edited
-end
-
-m.fileinfo = function()
-    local fname = (fn.expand "%" == "" and "unnamed") or fn.expand "%:t"
-    --local ft = fn.getbufvar(a.nvim_get_current_buf(), '&filetype')
-    local icon, icon_hl = devicons.get_icon(fname)
-    icon = icon and "%#" .. icon_hl .. "#" .. icon .. "  " or ""
-    return icon .. "%#StatusLineFileName#" .. string.upper(fname)
-end
-
 m.lsp_info = function()
     update_lsp()
     local e, w, i = err_cnt(), warn_cnt(), inf_cnt()
@@ -74,6 +61,34 @@ m.lsp_info = function()
     local w_str = w > 0 and ("%#DiagnosticWarn#" .. "   " .. w) or ""
     local i_str = i > 0 and ("%#DiagnosticInfo#" .. "   " .. i) or ""
     return e_str .. w_str .. i_str
+end
+
+-- the ww depends on one of my keybinds
+_G.__feedww = function ()
+    vim.api.nvim_input('ww')
+end
+
+m.file_edited = function ()
+    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@v:lua.__feedww@ %T " or ""
+    return "%#StatusLineFileModified#" .. edited
+end
+
+-- this requires the colorscheme to be loaded first
+local statuslinehl = a.nvim_get_hl_by_name("StatusLine", true)
+for _, dat in pairs(devicons.get_icons()) do
+    a.nvim_set_hl(0, "StatusLineDevIcon" .. dat.name, {
+        bg = string.format("#%06x",statuslinehl["background"]),
+        fg = dat.color
+    })
+end
+-- hacky workaround: devicons set hl groups with DevIcon<defname>
+-- so above i set hl groups like this with the StatusLine prefix
+-- and then i can use the hl names from devicons directly in the line
+m.fileinfo = function()
+    local fname = (fn.expand "%" == "" and "unnamed") or fn.expand "%:t"
+    local icon, icon_hl = devicons.get_icon(fname)
+    icon = icon and "%#StatusLine" .. icon_hl .. "#" .. icon .. "  " or ""
+    return icon .. "%#StatusLineFileName#" .. string.upper(fname)
 end
 
 m.git_status = function ()

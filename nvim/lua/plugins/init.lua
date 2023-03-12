@@ -33,19 +33,22 @@ require"lazy".setup({
     dashboard,
     dap,
     comment,
-    --[[{
-        'tanvirtin/vgit.nvim',
+    {
+        dir = '~/.config/nvim/lua/azul',
+        name = "colors",
         lazy = false,
-        dependencies = 'nvim-lua/plenary.nvim',
+        priority = 1000,
         config = function()
-            require("vgit")
+            require("azul").setup{}
         end
-    },]]
+    },
     {
         dir = '~/.config/nvim/lua/statusline',
         dependencies = {
             'nvim-tree/nvim-web-devicons',
+            'colors'
         },
+        name = "statusline",
         lazy = false,
         config = function ()
             require("statusline")
@@ -54,9 +57,26 @@ require"lazy".setup({
     {
         'direnv/direnv.vim',
         lazy = false,
-        config = function ()
+        init = function ()
             local g = vim.g
+            g.direnv_auto = 0
             g.direnv_silent_load = 1
+        end,
+        config = function ()
+            local a = vim.api
+            local augroup = a.nvim_create_augroup("DirenvLoadAucmds", {clear=true})
+            a.nvim_create_autocmd("User", {
+                pattern = "DirenvLoaded",
+                group = augroup,
+                callback = function ()
+                    vim.notify({"Direnv Loaded"}, vim.log.levels.INFO, {title = "direnv.vim"})
+                end
+            })
+            a.nvim_create_autocmd("User", {
+                pattern = "SessionLoadPost",
+                group = augroup,
+                command = ":DirenvExport"
+            })
         end
     },
     {
@@ -100,7 +120,7 @@ require"lazy".setup({
         config = function ()
             local notif = require("notify")
             notif.setup({
-                render = "simple",
+                render = "default",
                 stages = "slide",
                 timeout = 3500
             })

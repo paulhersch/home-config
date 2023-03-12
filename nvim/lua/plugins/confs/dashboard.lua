@@ -6,6 +6,11 @@ return {
     config = function ()
         require "dashboard".setup({
             theme = 'doom',
+            hide = {
+                statusline = false,
+                tabline = false,
+                winbar = false
+            },
             config = {
                 center = {
                     {
@@ -55,15 +60,6 @@ return {
                     [[ `''                                                                       ``']],
                     [[                                                                              ]],
                 },
-                --[[local handle = io.popen("fortune -s")
-        if handle ~= nil then
-            local quote = { "" }
-            for line in handle:lines() do quote[#quote+1] = line end
-            db.custom_footer = quote
-            handle:close()
-        else
-            db.custom_footer = ""
-                end]]
             }})
     end
 }

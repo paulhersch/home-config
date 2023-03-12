@@ -10,7 +10,9 @@ require("awful.autofocus")
 
 awesome.set_preferred_icon_size(128)
 beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
+
 settings.load()
+
 awesome.connect_signal("exit", function ()
     settings.save()
 end)

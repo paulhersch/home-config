@@ -1,4 +1,5 @@
 local awful	= require "awful"
+local hotkeys_popup = require"awful.hotkeys_popup"
 local gears	= require "gears"
 
 local launcher = require "ui.bar.popups.launcher"
@@ -48,22 +49,25 @@ awful.keyboard.append_global_keybindings({
 
 -- Layout related keybindings
 awful.keyboard.append_global_keybindings({
-	awful.key({ modkey, "Shift"   }, "Down", function () awful.client.swap.byidx(  1) end,
+	awful.key({ modkey, "Shift"   }, "Down",    function () awful.client.swap.byidx(  1) end,
 		{description = "swap with next client by index", group = "client"}),
-	awful.key({ modkey, "Shift"   }, "Up", function () awful.client.swap.byidx( -1) end,
+	awful.key({ modkey, "Shift"   }, "Up",      function () awful.client.swap.byidx( -1) end,
 		{description = "swap with previous client by index", group = "client"}),
-	awful.key({ modkey,           }, "Right",     function () awful.tag.incmwfact( 0.05) end,
+	awful.key({ modkey,           }, "Right",   function () awful.tag.incmwfact( 0.05) end,
 		{description = "increase master width factor", group = "layout"}),
-	awful.key({ modkey,           }, "Left",     function () awful.tag.incmwfact(-0.05) end,
+	awful.key({ modkey,           }, "Left",    function () awful.tag.incmwfact(-0.05) end,
 		{description = "decrease master width factor", group = "layout"}),
-	awful.key({ modkey, "Shift"   }, "Left",     function () awful.tag.incnmaster( 1, nil, true) end,
+	awful.key({ modkey, "Shift"   }, "Left",    function () awful.tag.incnmaster( 1, nil, true) end,
 		{description = "increase the number of master clients", group = "layout"}),
-	awful.key({ modkey, "Shift"   }, "Right",     function () awful.tag.incnmaster(-1, nil, true) end,
+	awful.key({ modkey, "Shift"   }, "Right",   function () awful.tag.incnmaster(-1, nil, true) end,
 		{description = "decrease the number of master clients", group = "layout"}),
-	awful.key({ modkey, "Control" }, "Right",     function () awful.tag.incncol( 1, nil, true) end,
+	awful.key({ modkey, "Control" }, "Right",   function () awful.tag.incncol( 1, nil, true) end,
 		{description = "increase the number of columns", group = "layout"}),
-	awful.key({ modkey, "Control" }, "Left",     function () awful.tag.incncol(-1, nil, true) end,
+	awful.key({ modkey, "Control" }, "Left",    function () awful.tag.incncol(-1, nil, true) end,
 		{description = "decrease the number of columns", group = "layout"}),
+    awful.key({ modkey            }, "h",       function () hotkeys_popup.widget.show_help() end, {
+        description = "show help", group = "extra"
+    })
 })
 
 -- Tag related keybindings
@@ -117,19 +121,41 @@ awful.keyboard.append_global_keybindings({
 
 -- Program shortcuts
 awful.keyboard.append_global_keybindings({
-	awful.key({ modkey }, "F3", function() awful.spawn.with_shell(filemanager) end),
-	awful.key({}	, "Print", function() awful.spawn.with_shell(configdir .. "scripts/scrot") end),
-	awful.key({modkey}, "Print", function() awful.spawn.with_shell(configdir .. "scripts/areascrot") end),
+	awful.key({ modkey }, "F3", function() awful.spawn.with_shell(filemanager) end, {
+        description = "Launch Filemanager", group = "launcher"
+    }),
+	awful.key({}	, "Print", function() awful.spawn.with_shell(configdir .. "scripts/scrot") end, {
+        description = "Screenshot", group = "extra"
+    }),
+	awful.key({modkey}, "Print", function() awful.spawn.with_shell(configdir .. "scripts/areascrot") end, {
+        description = "Screenshot with area selection", group = "extra"
+    }),
 })
 
 -- Media keys (for Laptops)
 awful.keyboard.append_global_keybindings({
-	awful.key({},	"XF86MonBrightnessUp", function() awful.spawn.with_shell("brightnessctl s +5%") end),
-	awful.key({},	"XF86MonBrightnessDown", function() awful.spawn.with_shell("brightnessctl s 5%-") end),
-	awful.key({},	"XF86AudioMute", function() awful.spawn.with_shell("pamixer -t") end),
-	awful.key({},	"XF86AudioLowerVolume", function() awful.spawn.with_shell("pamixer -d 5") end),
-	awful.key({},	"XF86AudioRaiseVolume", function() awful.spawn.with_shell("pamixer -i 5") end),
-	awful.key({},	"XF86AudioPlay", function() awful.spawn.with_shell("playerctl -p spotify,ncspot play-pause") end),
-	awful.key({},	"XF86AudioPrev", function() awful.spawn.with_shell("playerctl -p spotify,ncspot previous") end),
-	awful.key({},	"XF86AudioNext", function() awful.spawn.with_shell("playerctl -p spotify,ncspot next") end),
+	awful.key({},	"XF86MonBrightnessUp", function() awful.spawn.with_shell("brightnessctl s +5%") end, {
+        description = "increase Brightness", group = "device control"
+    }),
+	awful.key({},	"XF86MonBrightnessDown", function() awful.spawn.with_shell("brightnessctl s 5%-") end, {
+        description = "decrease Brightness", group = "device control"
+    }),
+	awful.key({},	"XF86AudioMute", function() awful.spawn.with_shell("pamixer -t") end, {
+        description = "lute audio", group = "device control"
+    }),
+	awful.key({},	"XF86AudioLowerVolume", function() awful.spawn.with_shell("pamixer -d 5") end, {
+        description = "lower volume", group = "device control"
+    }),
+	awful.key({},	"XF86AudioRaiseVolume", function() awful.spawn.with_shell("pamixer -i 5") end, {
+        description = "raise volume", group = "device control"
+    }),
+	awful.key({},	"XF86AudioPlay", function() awful.spawn.with_shell("playerctl -p spotify,ncspot play-pause") end, {
+        description = "pause current spotify|ncspot music player", group = "media keys"
+    }),
+	awful.key({},	"XF86AudioPrev", function() awful.spawn.with_shell("playerctl -p spotify,ncspot previous") end, {
+        description = "switch to previous spotify|ncspot song", group = "media keys"
+    }),
+	awful.key({},	"XF86AudioNext", function() awful.spawn.with_shell("playerctl -p spotify,ncspot next") end, {
+        description = "skip to next spotify|ncspot song", group = "media keys"
+    }),
 })
