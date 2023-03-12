@@ -1,3 +1,6 @@
+local ls_buf = vim.api.nvim_list_bufs
+local buf_opt = vim.api.nvim_buf_get_option
+
 return {
 	'romgrk/barbar.nvim',
 	dependencies = {
@@ -7,8 +10,6 @@ return {
     lazy = true,
     -- check if barbar needs to be loaded
     init = function ()
-        local ls_buf = vim.api.nvim_list_bufs
-        local buf_opt = vim.api.nvim_buf_get_option
         local function check_load()
             local len = 0
             local buffers = ls_buf()

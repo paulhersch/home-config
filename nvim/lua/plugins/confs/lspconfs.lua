@@ -1,7 +1,7 @@
 return {
     'neovim/nvim-lspconfig',
     dependencies = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
-    ft = { "lua", "cs", "py", "tex", "hs", "nix" },
+    ft = { "lua", "cs", "python", "tex", "hs", "nix" },
     config = function()
         local lc = require('lspconfig')
         local util = require('lspconfig.util')
