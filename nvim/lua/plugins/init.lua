@@ -55,6 +55,18 @@ require"lazy".setup({
         end
     },
     {
+        dir = '~/.config/nvim/lua/bffrmgr',
+        lazy = false,
+        config = function()
+            require("bffrmgr").setup({
+                max_bufs = 7
+            })
+        end,
+        keys = {
+            { "bb", "<cmd>lua require('bffrmgr').open()<cr>", noremap=true }
+        }
+    },
+    {
         'direnv/direnv.vim',
         lazy = false,
         init = function ()

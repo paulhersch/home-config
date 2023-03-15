@@ -107,6 +107,9 @@ M.highlights_base = function (--[[colors]])
         StatusLineFileexplorerSymbol = { fg = colors.contrast, bg = colors.color4 },
         StatusLinePackagemanagerSymbol = { fg = colors.contrast, bg = colors.color3 },
 
+        BffmgrKey = { fg = colors.color1 },
+        BffmgrBufname = { fg = colors.color4 },
+
         NotifyERRORBorder = { fg=colors.color1 },
         NotifyWARNBorder = { fg=colors.color3 },
         NotifyINFOBorder = { fg=colors.color2 },
