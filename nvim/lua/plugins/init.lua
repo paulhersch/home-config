@@ -14,19 +14,19 @@ vim.opt.rtp:prepend(lazypath)
 local nvimtree = require "plugins.confs.nvimtree"
 local barbar = require "plugins.confs.barbar"
 local gitsigns = require "plugins.confs.gitsigns"
---local lualine = require "plugins.confs.lualine"
 local lspc = require "plugins.confs.lspconfs"
 local cmp = require "plugins.confs.cmp"
 local telescope = require "plugins.confs.telescope"
 local dashboard = require "plugins.confs.dashboard"
 local dap = require "plugins.confs.dap"
 local comment = require "plugins.confs.comment"
+local notify = require "plugins.confs.notify"
 
 require"lazy".setup({
+    notify,
     nvimtree,
     barbar,
     gitsigns,
-    --lualine,
     lspc,
     cmp,
     telescope,
@@ -35,25 +35,18 @@ require"lazy".setup({
     comment,
     {
         dir = '~/.config/nvim/lua/azul',
-        -- priority = 1000,
+        priority = 1000,
         name = "azul",
         lazy = false,
         config = function()
             require("azul").setup{}
         end,
-        -- init = function()
-        --     vim.api.nvim_create_autocmd({"UIEnter"}, {
-        --         callback = function ()
-        --             require("azul").setup{}
-        --         end
-        --     })
-        -- end
     },
     {
         dir = '~/.config/nvim/lua/statusline',
         dependencies = {
             'nvim-tree/nvim-web-devicons',
-            "azul"
+            -- "azul"
         },
         name = "statusline",
         lazy = true,
@@ -128,46 +121,6 @@ require"lazy".setup({
         end
     },
     {
-        'rcarriga/nvim-notify',
-        dependencies = {
-		    'nvim-lua/plenary.nvim',
-        },
-        lazy = true,
-        init = function()
-            vim.notify = function(...)
-                require("notify")
-                vim.notify(...)
-            end
-            vim.api.nvim_echo = function(...)
-                require("notify")
-                vim.api.nvim_echo(...)
-            end
-        end,
-        config = function ()
-            local notif = require("notify")
-            notif.setup({
-                render = "default",
-                stages = "slide",
-                timeout = 3500
-            })
-            vim.notify = notif
-            -- redirect echo to use notify, doesnt work with builtin vim cmd rn
-            vim.api.nvim_echo = function(chunks, history, opts)
-                local notif_text = ""
-                for _, chunk in pairs(chunks) do
-                    if not chunk[1] then
-                        vim.api.nvim_echo({{"Did you try to put a string in a table?"}}, false, {})
-                    end
-                    notif_text = notif_text .. chunk[1]
-                end
-                notif.notify(notif_text, "info", {
-                    title = "Echo Message",
-                    hide_from_history = not history
-                })
-            end
-        end
-    },
-    {
         'windwp/nvim-autopairs',
         event = "BufEnter",
         config = function()
@@ -179,7 +132,6 @@ require"lazy".setup({
         dependencies = {
             'nvim-lua/plenary.nvim'
         },
-        --event = 'VimEnter'
         cmd = "SessionManager",
         config = function ()
             local Path = require('plenary.path')
@@ -322,13 +274,6 @@ require"lazy".setup({
         'folke/trouble.nvim',
         dependencies = 'folke/lsp-colors.nvim',
         config = function()
-            local colors = require("azul.core").get_colors()
-            require("lsp-colors").setup({
-                Error = colors.color1,
-                Warning = colors.color3,
-                Information = colors.color4,
-                Hint = colors.color6
-            })
             require("trouble").setup{}
             vim.diagnostic.config({
                 virtual_text = false

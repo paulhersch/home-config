@@ -6,7 +6,8 @@ return {
 	},
     cmd = { "Telescope" },
 	config = function()
-		require ("telescope").setup {
+		local t = require ("telescope")
+        t.setup {
 			defaults = {
 				vimgrep_arguments = {
 					"rg",
@@ -53,6 +54,7 @@ return {
 			},
 			extensions_list = { "themes", "terms" },
 		}
+        t.load_extension("notify")
 	end,
     keys = {
         { "gf", "<cmd>Telescope live_grep<CR>" },

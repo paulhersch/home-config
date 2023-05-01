@@ -33,10 +33,6 @@ if g.neovide then
 	g.neovide_confirm_quit=true
 end
 
--- require("azul").setup({
---      --nvim_tree = { contrast = true }
--- })
-
 --remove diagnostics at end of line
 vim.diagnostic.config({
 	virtual_text = true
@@ -53,5 +49,4 @@ for type, icon in pairs(alternative_signs) do
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
---vim.cmd ("colorscheme catpuccin-latte")
 vim.fn.sign_define("DapBreakpoint", { text = '●', texthl='DapBreakpointSymbol'})

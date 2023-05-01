@@ -14,7 +14,7 @@ local homedir = os.getenv("HOME")
 
 local theme = {}
 
-theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/dark-water.jpg"
+theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/balconies.png"
 
 theme.font          = "Recursive Sn Lnr St"
 theme.font_thin     = "Recursive Sn Lnr St Lt"
