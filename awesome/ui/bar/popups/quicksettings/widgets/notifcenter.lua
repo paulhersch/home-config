@@ -2,6 +2,7 @@ local wibox = require "wibox"
 local awful = require "awful"
 local naughty = require "naughty"
 local beautiful = require "beautiful"
+local settings  = require "settings"
 local dpi = beautiful.xresources.apply_dpi
 local gears = require "gears"
 local helpers = require "helpers"
@@ -11,11 +12,16 @@ local naughty = naughty
 
 local notifctl = require "ui.notifications"
 
-local signals = notifctl.signals
-local notifs_active, notifs_sound = true, true
+local notifsignals = notifctl.signals
+--local notifs_active, notifs_sound = true, true
 
 local iconsdir = gears.filesystem.get_configuration_dir() .. "assets/titlebarbuttons/"
 local mat_icons = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
+
+local notif_enabled_icon = gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus)
+local notif_disabled_icon = gears.color.recolor_image(mat_icons .. "notifications_off.svg", beautiful.fg_focus)
+local sound_enabled_icon = gears.color.recolor_image(mat_icons .. "volume_up.svg", beautiful.fg_focus)
+local sound_disabled_icon = gears.color.recolor_image(mat_icons .. "volume_off.svg", beautiful.fg_focus)
 
 local function bar_indic_notif()
     require("ui.bar.bar").notifcenter_filled()
@@ -286,8 +292,7 @@ spacing = dpi(5),
                 modifiers = {},
                 button = 1,
                 on_press = function ()
-                    notifs_active = not notifs_active
-                    if notifs_active == true then notifctl.enable_notifs() else notifctl.disable_notifs() end
+                    if settings.get("notifications.dnd") then notifctl.enable_notifs() else notifctl.disable_notifs() end
                 end
             },
             {
@@ -297,7 +302,7 @@ spacing = dpi(5),
                     id = 'toggle_dnd',
                     widget = wibox.widget.imagebox,
                     forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
-                    image = gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus),
+                    image = settings.get("notifications.dnd") and notif_disabled_icon or notif_enabled_icon,
                     resize = true,
                 },
             }
@@ -337,8 +342,7 @@ spacing = dpi(5),
                 modifiers = {},
                 button = 1,
                 on_press = function ()
-                    notifs_sound = not notifs_sound
-                    if notifs_sound == true then notifctl.enable_sound() else notifctl.disable_sound() end
+                    if settings.get("notifications.silent") then notifctl.enable_sound() else notifctl.disable_sound() end
                 end
             },
             {
@@ -348,7 +352,7 @@ spacing = dpi(5),
                     id = 'toggle_sound',
                     widget = wibox.widget.imagebox,
                     forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
-                    image = gears.color.recolor_image(mat_icons .. "volume_up.svg", beautiful.fg_focus),
+                    image = settings.get("notifications.silent") and sound_disabled_icon or sound_enabled_icon,
                     resize = true,
                 },
             }
@@ -378,24 +382,20 @@ toggle_sound:connect_signal("mouse::leave",function ()
     toggle_sound.bg = beautiful.bg_focus_dark
 end)
 
-signals:connect_signal("display::enabled", function ()
-    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(gears.color.recolor_image(mat_icons .. "notifications_active.svg", beautiful.fg_focus))
-    notifs_active = true
+notifsignals:connect_signal("display::enabled", function ()
+    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(notif_enabled_icon)
 end)
 
-signals:connect_signal("display::disabled", function ()
-    notifs_active = false
-    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(gears.color.recolor_image(mat_icons .. "notifications_off.svg", beautiful.fg_focus))
+notifsignals:connect_signal("display::disabled", function ()
+    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(notif_disabled_icon)
 end)
 
-signals:connect_signal("sound::enabled", function ()
-    notifs_sound = true
-    notifbox:get_children_by_id('toggle_sound')[1]:set_image(gears.color.recolor_image(mat_icons .. "volume_up.svg", beautiful.fg_focus))
+notifsignals:connect_signal("sound::enabled", function ()
+    notifbox:get_children_by_id('toggle_sound')[1]:set_image(sound_enabled_icon)
 end)
 
-signals:connect_signal("sound::disabled", function ()
-    notifs_sound = false
-    notifbox:get_children_by_id('toggle_sound')[1]:set_image(gears.color.recolor_image(mat_icons .. "volume_off.svg", beautiful.fg_focus))
+notifsignals:connect_signal("sound::disabled", function ()
+    notifbox:get_children_by_id('toggle_sound')[1]:set_image(sound_disabled_icon)
 end)
 
 local blacklisted_appnames = { "Spotify", "NetworkManager" }

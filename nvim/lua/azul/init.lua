@@ -1,5 +1,5 @@
 local M = {}
-local core = require('azul.core')
+local core = require('azul.core_light')
 local highlights = require('azul.highlights')
 
 function M.setup (opts)

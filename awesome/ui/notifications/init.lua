@@ -2,18 +2,16 @@ local naughty = require("naughty")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
 local awful = require("awful")
+local settings = require("settings")
 local dpi = beautiful.xresources.apply_dpi
 local gears = require("gears")
-
-NOTIFCENTER_DISPLAY = true
-NOTIFCENTER_PLAYSOUND = true
 
 local notifobject = wibox.widget.base.make_widget()
 
 local function show_notifs ()
-    NOTIFCENTER_DISPLAY = true
+    settings.set("notifications.dnd", false)
     notifobject:emit_signal("display::enabled")
-    if NOTIFCENTER_PLAYSOUND then
+    if not settings.get("notifications.silent") then
         notifobject:emit_signal("sound::enabled")
     else
         notifobject:emit_signal("sound::disabled")
@@ -21,18 +19,18 @@ local function show_notifs ()
 end
 
 local function hide_notifs ()
-    NOTIFCENTER_DISPLAY = false
+    settings.set("notifications.dnd", true)
     notifobject:emit_signal("display::disabled")
     notifobject:emit_signal("sound::disabled")
 end
 
 local function mute_notifs ()
-    NOTIFCENTER_PLAYSOUND = false
+    settings.set("notifications.silent", true)
     notifobject:emit_signal("sound::disabled")
 end
 
 local function unmute_notifs ()
-    NOTIFCENTER_PLAYSOUND = true
+    settings.set("notifications.silent", false)
     notifobject:emit_signal("sound::enabled")
 end
 
@@ -166,7 +164,7 @@ end
 
 local function init ()
     naughty.connect_signal("request::display", function (notif)
-        if NOTIFCENTER_DISPLAY
+        if not settings.get("notifications.dnd")
             or whitelist_programs:check(notif)
             or whitelist_titles:check(notif)
             then
@@ -175,7 +173,7 @@ local function init ()
                 widget_template = template,
                 --shape = beautiful.theme_shape,
             }
-            if NOTIFCENTER_PLAYSOUND then
+            if not settings.get("notifications.silent") then
                 if (not (blacklist_sound_titles:check(notif) or blacklist_sound_programs:check(notif))) then
                     awful.spawn.easy_async("play -v 0.2 " .. gears.filesystem.get_configuration_dir() .. "assets/sounds/notif.mp3", function () end)
                 end

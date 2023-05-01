@@ -1,7 +1,7 @@
 return {
     'neovim/nvim-lspconfig',
     --dependencies = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
-    ft = { "lua", "cs", "python", "tex", "hs", "nix" },
+    ft = { "lua", "cs", "python", "tex", "hs", "nix", "rust", "nim" },
     config = function()
         local lc = require('lspconfig')
         local util = require('lspconfig.util')
@@ -42,7 +42,12 @@ return {
                 }
             })
         end
-        lc.lua_ls.setup ({settings=lua_conf})
+        lc.lua_ls.setup ({
+            on_attach = function (client, buf)
+                client.server_capabilities.semanticTokensProvider = nil
+            end,
+            settings=lua_conf
+        })
 
         lc.omnisharp.setup ({
             cmd = { "OmniSharp" }--, "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
@@ -71,27 +76,28 @@ return {
             }
         }
     --shit server
-        lc.jdtls.setup {
-            cmd = { "jdt-language-server", "-configuration", os.getenv('HOME') .. "/.cache/jdtls/config", "-data", os.getenv('HOME') .. "/.cache/jdtls/workspace"}
-        }
-
-        lc.java_language_server.setup {
-            cmd = { "java-language-server" },
-            root_dir = function(fname)
-                local root = util.root_pattern('build.gradle', 'pom.xml', '.git', '.')(fname)
-                if root then return root end
-                return vim.fn.getcwd()
-            end,
-        }
+        -- lc.jdtls.setup {
+        --     cmd = { "jdt-language-server", "-configuration", os.getenv('HOME') .. "/.cache/jdtls/config", "-data", os.getenv('HOME') .. "/.cache/jdtls/workspace"}
+        -- }
+        --
+        -- lc.java_language_server.setup {
+        --     cmd = { "java-language-server" },
+        --     root_dir = function(fname)
+        --         local root = util.root_pattern('build.gradle', 'pom.xml', '.git', '.')(fname)
+        --         if root then return root end
+        --         return vim.fn.getcwd()
+        --     end,
+        -- }
 
         lc.ltex.setup{}
-        lc.hls.setup{}
         lc.texlab.setup{
             settings = { texlab = { build = {
                 executable = "lualatex"
             }}}
         }
         lc.rnix.setup{}
+        lc.rust_analyzer.setup{}
+        lc.nimls.setup{}
     end,
     keys = {
         { "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>" },

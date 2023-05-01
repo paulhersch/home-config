@@ -3,30 +3,41 @@ local M = {}
 function M.get_colors()
 	local colors = {}
 	colors.comment = "#6C6F85"
-	colors.background = "#DADCD5"
+	colors.background = "#D8DAD3"
     colors.inactive_tabs = "#BCC0BA"
 	colors.background_dark = "#CCD0CA"
 	colors.contrast = "#C5C5C2"
 	colors.foreground = "#2b2f2f"
 	colors.cursorline = "#515757"
 	colors.cursor = colors.foreground
-	
-    colors.color0 = colors.background_dark
-	colors.color1 = "#5f4747"
-	colors.color2 = "#3c7f2e"
-	colors.color3 = "#9a972b"
-	colors.color4 = "#275078"
-	colors.color5 = "#744f85"
-	colors.color6 = "#2c7a7a"
-	colors.color7 = "#939998"
-	colors.color8 = "#4C4F69"
-	colors.color9 = "#6f3d3d"
+
+    -- dark
+    colors.color0 = "#6b6767"
+	colors.color1 = "#3f1a1a"
+	colors.color2 = "#2c3f1e"
+	colors.color3 = "#3a371b"
+	colors.color4 = "#072548"
+	colors.color5 = "#241f45"
+	colors.color6 = "#0c3a3a"
+	colors.color7 = "#333938"
+    -- medium
+	colors.color8 = colors.inactive_tabs 
+	colors.color9 = "#6f4d4d"
 	colors.color10 = "#4b7548"
 	colors.color11 = "#88862a"
 	colors.color12 = "#316a92"
 	colors.color13 = "#9e599f"
 	colors.color14 = "#377b82"
-	colors.color15 = "#313434"
+	colors.color15 = "#414444"
+    -- bright pastel
+    colors.color16 =  colors.background_dark
+    colors.color17 = "#ECB5B5"
+    colors.color18 = "#A2D5B5"
+    colors.color19 = "#D5D5AB"
+    colors.color20 = "#9BBBD5"
+    colors.color21 = "#CBB4CB"
+    colors.color22 = "#A0C8C8"
+    colors.color23 = "#9292A2"
 	return colors
 end
 

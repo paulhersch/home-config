@@ -4,8 +4,22 @@ local dpi = beautiful.xresources.apply_dpi
 local helpers = require "helpers"
 local gears = require "gears"
 local awful = require "awful"
-
+local Gtk = require("lgi").require("Gtk", "3.0")
 local searchwidget = require "ui.bar.popups.launcher.search"
+
+
+local icon_theme = Gtk.IconTheme.get_default()
+
+---@param icon_name string
+---@return nil|userdata
+local function get_gtk_icon(icon_name)
+    local info = icon_theme:lookup_icon(icon_name, dpi(48), 0)
+    if info then
+        local path = info:get_filename()
+        return path
+    end
+    return nil
+end
 
 local function create_power_button(imagename, on_press, color)
     local widget = helpers.pointer_on_focus(wibox.widget {
@@ -17,9 +31,9 @@ local function create_power_button(imagename, on_press, color)
             margins = dpi(5),
             {
                 widget = wibox.widget.imagebox,
-                image = gears.color.recolor_image(
+                image = color ~= nil and gears.color.recolor_image(
                     gears.filesystem.get_configuration_dir() .. "/assets/materialicons/" .. imagename,
-                color),
+                color) or imagename,
                 buttons = { awful.button {
                     modifiers = {},
                     button = 1,
@@ -82,6 +96,26 @@ local function init(s)
                             image = helpers.crop_surface(1, gears.surface.load(os.getenv("HOME") .. "/.face")),
                         }
                     },
+                    -- {
+                    --     widget = wibox.container.margin,
+                    --     margin = dpi(5),
+                    --     {
+                    --         layout = wibox.layout.fixed.vertical,
+                    --         spacing = dpi(5),
+                    --         {
+                    --             widget = wibox.widget.imagebox,
+                    --             image = get_gtk_icon("system-file-manager")
+                    --         },
+                    --         {
+                    --             widget = wibox.widget.imagebox,
+                    --             image = get_gtk_icon("applications-internet")
+                    --             -- create_power_button(get_gtk_icon("applications-internet"), function ()
+                    --             --     awful.spawn("")
+                    --             -- end, nil)
+                    --             -- 
+                    --         }
+                    --     }
+                    -- },
                     {
                         widget = wibox.container.place,
                         valign = 'bottom',

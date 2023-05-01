@@ -33,9 +33,10 @@ if g.neovide then
 	g.neovide_confirm_quit=true
 end
 
-require("azul").setup({
-    --nvim_tree = { contrast = true }
-})
+-- require("azul").setup({
+--      --nvim_tree = { contrast = true }
+-- })
+
 --remove diagnostics at end of line
 vim.diagnostic.config({
 	virtual_text = true

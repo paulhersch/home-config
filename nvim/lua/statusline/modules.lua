@@ -57,19 +57,19 @@ end
 m.lsp_info = function()
     update_lsp()
     local e, w, i = err_cnt(), warn_cnt(), inf_cnt()
-    local e_str = e > 0 and ("%#DiagnosticError#" .. "   " .. e) or ""
-    local w_str = w > 0 and ("%#DiagnosticWarn#" .. "   " .. w) or ""
-    local i_str = i > 0 and ("%#DiagnosticInfo#" .. "   " .. i) or ""
+    local e_str = e > 0 and ("%#StatusLineDiagnosticError#" .. "   " .. e) or ""
+    local w_str = w > 0 and ("%#StatusLineDiagnosticWarn#" .. "   " .. w) or ""
+    local i_str = i > 0 and ("%#StatusLineDiagnosticInfo#" .. "   " .. i) or ""
     return e_str .. w_str .. i_str
 end
 
 -- the ww depends on one of my keybinds
-_G.__feedww = function ()
-    vim.api.nvim_input('ww')
-end
+-- _G.__feedww = function ()
+--     vim.api.nvim_input('ww')
+-- end
 
 m.file_edited = function ()
-    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@v:lua.__feedww@ %T " or ""
+    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@v:w@ %T " or ""
     return "%#StatusLineFileModified#" .. edited
 end
 

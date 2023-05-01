@@ -25,7 +25,6 @@ return {
 			},
 			view = {
 				adaptive_size = true,
-				hide_root_folder = true
 			},
             git = { ignore = false },
 			renderer = {
@@ -39,6 +38,7 @@ return {
 						none = " ",
 					},
 				},
+                root_folder_label = false,
 				icons = {
 					padding = "  ",
 					glyphs = {
@@ -62,7 +62,8 @@ return {
 							symlink = "",
 						}
 					}
-				}
+				},
+                symlink_destination = false,
 			}
 		})
 	end,

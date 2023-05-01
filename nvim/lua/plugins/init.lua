@@ -35,23 +35,37 @@ require"lazy".setup({
     comment,
     {
         dir = '~/.config/nvim/lua/azul',
-        name = "colors",
+        -- priority = 1000,
+        name = "azul",
         lazy = false,
-        priority = 1000,
         config = function()
             require("azul").setup{}
-        end
+        end,
+        -- init = function()
+        --     vim.api.nvim_create_autocmd({"UIEnter"}, {
+        --         callback = function ()
+        --             require("azul").setup{}
+        --         end
+        --     })
+        -- end
     },
     {
         dir = '~/.config/nvim/lua/statusline',
         dependencies = {
             'nvim-tree/nvim-web-devicons',
-            'colors'
+            "azul"
         },
         name = "statusline",
-        lazy = false,
+        lazy = true,
         config = function ()
             require("statusline")
+        end,
+        init = function()
+            vim.api.nvim_create_autocmd({"UIEnter"}, {
+                callback = function ()
+                    require("statusline")
+                end
+            })
         end
     },
     {
@@ -141,6 +155,9 @@ require"lazy".setup({
             vim.api.nvim_echo = function(chunks, history, opts)
                 local notif_text = ""
                 for _, chunk in pairs(chunks) do
+                    if not chunk[1] then
+                        vim.api.nvim_echo({{"Did you try to put a string in a table?"}}, false, {})
+                    end
                     notif_text = notif_text .. chunk[1]
                 end
                 notif.notify(notif_text, "info", {
@@ -194,9 +211,15 @@ require"lazy".setup({
         event = "BufEnter",
         config = function()
             require("indent_blankline").setup {
+                show_first_indent_level = false,
                 space_char_blankline = " ",
                 show_current_context = true,
+                filetype_exclude = {
+                    "bffrmgr",
+                    "dashboard"
+                }
             }
+
         end
     },
     {
@@ -236,19 +259,12 @@ require"lazy".setup({
     {
         'akinsho/toggleterm.nvim',
         config = function ()
-            local colors = require("azul.core").get_colors()
             require("toggleterm").setup {
                 autochdir = true,
                 direction = 'float',
                 float_opts = {
                     border = 'single'
                 },
-                highlights = {
-                    FloatBorder = {
-                        guifg=colors.contrast,
-                        guibg=colors.contrast
-                    }
-                }
             }
         end,
         keys = {

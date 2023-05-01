@@ -34,8 +34,12 @@ return {
         require('bufferline').setup {
             animation = false,
             auto_hide = true,
-            icon_separator_active = '',-- vim.opt.fillchars.vert,
-			icon_separator_inactive ='',-- vim.opt.fillchars.vert
+            icons = {
+                separator = {
+                    active = '',-- vim.opt.fillchars.vert,
+			        inactive ='',-- vim.opt.fillchars.vert
+                }
+            }
 		}
 
 		local nvim_tree_events = require('nvim-tree.events')
