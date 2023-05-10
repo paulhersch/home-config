@@ -3,10 +3,10 @@ local M = {}
 function M.get_colors()
 	local colors = {}
 	colors.comment = "#6C6F85"
-	colors.background = "#D8DAD3"
-    colors.inactive_tabs = "#BCC0BA"
-	colors.background_dark = "#CCD0CA"
-	colors.contrast = "#C5C5C2"
+	colors.background = "#E8EAE3"
+    colors.inactive_tabs = "#CCD0CA" --"#BCC0BA"
+	colors.background_dark = "#DCE0DA"
+	colors.contrast = "#BCC0BA" -- "#D5D5D2"
 	colors.foreground = "#2b2f2f"
 	colors.cursorline = "#515757"
 	colors.cursor = colors.foreground
@@ -34,9 +34,9 @@ function M.get_colors()
     colors.color17 = "#ECB5B5"
     colors.color18 = "#A2D5B5"
     colors.color19 = "#D5D5AB"
-    colors.color20 = "#9BBBD5"
+    colors.color20 = "#ABDBE5"
     colors.color21 = "#CBB4CB"
-    colors.color22 = "#A0C8C8"
+    colors.color22 = "#A8D8D0"
     colors.color23 = "#9292A2"
 	return colors
 end
