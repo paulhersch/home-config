@@ -22,6 +22,10 @@ o.fillchars.foldclose = ''
 o.cmdheight = 0
 o.updatetime = 1000
 
+o.foldmethod = "expr"
+o.foldexpr = "nvim_treesitter#foldexpr()"
+o.foldenable = false
+
 g.vsnip_snippet_dir = os.getenv("HOME") .. "/.config/nvim/snips"
 
 if g.neovide then
