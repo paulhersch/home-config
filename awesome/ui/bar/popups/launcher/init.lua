@@ -6,7 +6,7 @@ local gears = require "gears"
 local awful = require "awful"
 local Gtk = require("lgi").require("Gtk", "3.0")
 local searchwidget = require "ui.bar.popups.launcher.search"
-
+local button = require("components.container").button
 
 local icon_theme = Gtk.IconTheme.get_default()
 
@@ -22,32 +22,43 @@ local function get_gtk_icon(icon_name)
 end
 
 local function create_power_button(imagename, on_press, color)
-    local widget = helpers.pointer_on_focus(wibox.widget {
-        widget = wibox.container.background,
-        bg = beautiful.bg_focus_dark,
-        shape = beautiful.theme_shape,
-        {
-            widget = wibox.container.margin,
-            margins = dpi(5),
-            {
-                widget = wibox.widget.imagebox,
-                image = color ~= nil and gears.color.recolor_image(
-                    gears.filesystem.get_configuration_dir() .. "/assets/materialicons/" .. imagename,
+    -- local widget = helpers.pointer_on_focus(wibox.widget {
+    --     widget = wibox.container.background,
+    --     bg = beautiful.bg_focus_dark,
+    --     shape = beautiful.theme_shape,
+    --     {
+    --         widget = wibox.container.margin,
+    --         margins = dpi(5),
+    --         {
+    --             widget = wibox.widget.imagebox,
+    --             image = color ~= nil and gears.color.recolor_image(
+    --                 gears.filesystem.get_configuration_dir() .. "/assets/materialicons/" .. imagename,
+    --             color) or imagename,
+    --             buttons = { awful.button {
+    --                 modifiers = {},
+    --                 button = 1,
+    --                 on_press = on_press
+    --             }}
+    --         }
+    --     }
+    -- })
+    local widget = button({
+        widget = {
+            widget = wibox.widget.imagebox,
+            image = color ~= nil and gears.color.recolor_image(
+                gears.filesystem.get_configuration_dir() .. "/assets/materialicons/" .. imagename,
                 color) or imagename,
-                buttons = { awful.button {
-                    modifiers = {},
-                    button = 1,
-                    on_press = on_press
-                }}
-            }
+        },
+        left = {
+            on_click = on_press
         }
     })
-    widget:connect_signal("mouse::enter", function ()
-        widget.bg = beautiful.bg_focus
-    end)
-    widget:connect_signal("mouse::leave", function ()
-        widget.bg = beautiful.bg_focus_dark
-    end)
+    -- widget:connect_signal("mouse::enter", function ()
+    --     widget.bg = beautiful.bg_focus
+    -- end)
+    -- widget:connect_signal("mouse::leave", function ()
+    --     widget.bg = beautiful.bg_focus_dark
+    -- end)
     return widget
 end
 
@@ -121,32 +132,23 @@ local function init(s)
                         valign = 'bottom',
                         halign = 'center',
                         {
-                            widget = wibox.container.background,
-                            bg = beautiful.bg_focus_dark,
-                            shape = beautiful.theme_shape,
-                            {
-                                widget = wibox.container.margin,
-                                margins = dpi(5),
-                                {
-                                    layout = wibox.layout.fixed.vertical,
-                                    spacing = dpi(5),
-                                    create_power_button("poweroff.svg", function ()
-                                        awful.spawn("poweroff")
-                                    end, beautiful.red),
-                                    create_power_button("restart.svg", function ()
-                                        awful.spawn("reboot")
-                                    end, beautiful.green),
-                                    create_power_button("suspend.svg", function ()
-                                        awful.spawn("systemctl suspend")
-                                    end, beautiful.cyan),
-                                    create_power_button("lock.svg", function ()
-                                        awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
-                                    end, beautiful.yellow),
-                                    create_power_button("logout.svg", function ()
-                                        awful.spawn("pkill awesome")
-                                    end, beautiful.blue),
-                                }
-                            }
+                            layout = wibox.layout.fixed.vertical,
+                            spacing = dpi(5),
+                            create_power_button("poweroff.svg", function ()
+                                awful.spawn("poweroff")
+                            end, beautiful.red),
+                            create_power_button("restart.svg", function ()
+                                awful.spawn("reboot")
+                            end, beautiful.green),
+                            create_power_button("suspend.svg", function ()
+                                awful.spawn("systemctl suspend")
+                            end, beautiful.cyan),
+                            create_power_button("lock.svg", function ()
+                                awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
+                            end, beautiful.yellow),
+                            create_power_button("logout.svg", function ()
+                                awful.spawn("pkill awesome")
+                            end, beautiful.blue),
                         }
                     }
                 },

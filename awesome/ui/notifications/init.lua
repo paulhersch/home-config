@@ -134,7 +134,7 @@ local blacklist_sound_programs = { "NetworkManager", "Spotify" }
 naughty.config.padding = 2*beautiful.useless_gap
 naughty.config.spacing = beautiful.useless_gap
 naughty.config.defaults.margin = 2*beautiful.useless_gap
-naughty.config.defaults.position = "top_middle"
+naughty.config.defaults.position = "bottom_right"
 naughty.config.defaults.border_width = 0
 
 function whitelist_programs:check(n)
