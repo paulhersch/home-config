@@ -1,7 +1,7 @@
 return {
     'neovim/nvim-lspconfig',
     --dependencies = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
-    ft = { "lua", "cs", "python", "tex", "hs", "nix", "rust", "nim" },
+    ft = { "lua", "cs", "python", "tex", "haskell", "nix", "rust", "nim" },
     config = function()
         local lc = require('lspconfig')
         local util = require('lspconfig.util')
@@ -98,6 +98,7 @@ return {
         lc.rnix.setup{}
         lc.rust_analyzer.setup{}
         lc.nimls.setup{}
+        lc.hls.setup{}
     end,
     keys = {
         { "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>" },
