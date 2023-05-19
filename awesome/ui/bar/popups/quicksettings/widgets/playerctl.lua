@@ -238,17 +238,17 @@ end
 
 -- estimated value based on widget proportions
 local ratio = basewidth/height
--- one line but nice in case i want to change the look
+
 local function set_bg_with_gradient(player_widget, path)
-    local editpath = path .. "_cropgrad"
+    --local editpath = path .. "_cropgrad"
 
-    if not gears.filesystem.file_readable(editpath) then
+    --if not gears.filesystem.file_readable(editpath) then
         local img = image_with_gradient(path, ratio)
-        img:write_to_png(editpath)
-    end
+    --    img:write_to_png(editpath)
+    --end
 
-    --player_widget.bgimage = editpath
-    player_widget:get_children_by_id("album_art")[1].image = editpath
+    --player_widget:get_children_by_id("album_art")[1].image = editpath
+    player_widget:get_children_by_id("album_art")[1].image = img
 end
 
 local function update_widget_meta(w, meta, player)

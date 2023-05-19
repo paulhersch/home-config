@@ -1,6 +1,11 @@
 local M = {}
+local g = vim.g
 
 M.highlights_base = function (colors)
+    -- vim.g.terminal_color_x sets colors in the builtin Terminal
+    for i = 1, 15 do
+        g["terminal_color_" .. i] = colors["color" .. i+8]
+    end
 	return {
 		Normal = { fg = colors.foreground, bg = colors.background },
 		StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
@@ -63,7 +68,7 @@ M.highlights_base = function (colors)
         Variable = { fg = colors.foreground },
 		String = { fg = colors.color2 },
 		Number = { fg = colors.color3 },
-		Float = { fg = colors.color8 },
+		Float = { fg = colors.color15 },
 		Keyword = { fg = colors.color5, italic = true, bold = true },
 		Identifier = { fg = colors.color1},
 		Function = { fg = colors.color1 },
@@ -278,9 +283,9 @@ M.highlights_base = function (colors)
 		TelescopeNormal = { bg = colors.background_dark },
 		TelescopeBorder = { bg = colors.background_dark, fg = colors.background_dark },
 		TelescopePromptBorder = { bg = colors.background_dark, fg = colors.background_dark },
-		TelescopePromptTitle = { bg = colors.color16, fg = colors.foreground },
-		TelescopePreviewNormal = { bg = colors.contrast, fg = colors.foreground },
-		TelescopePreviewBorder = { bg = colors.contrast, fg = colors.contrast },
+		TelescopePromptTitle = { bg = colors.color18, fg = colors.foreground },
+		TelescopePreviewNormal = { bg = colors.inactive_tabs, fg = colors.foreground },
+		TelescopePreviewBorder = { bg = colors.inactive_tabs, fg = colors.inactive_tabs },
 		TelescopePreviewTitle = { bg = colors.color17, fg = colors.foreground },
         TelescopePreviewMatch = { bg = colors.contrast },
         TelescopePreviewLine = { bg = colors.background_dark },

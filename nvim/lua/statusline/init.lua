@@ -5,7 +5,10 @@ local a = vim.api
 local o = vim.opt
 local fn = vim.fn
 
---o.statusline ="%!v:lua.require('statusline').get()"
+-- function _G.statusline()
+--     return statusline
+-- end
+-- o.statusline = "%!v:lua.statusline()"
 o.laststatus = 3
 
 -- initial state
@@ -23,19 +26,25 @@ local extra_buf_type_lines = {
     toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL %#StatusLineNC#",
     NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES %#StatusLineNC#",
     TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE %#StatusLineNC#",
-    lazy = "%#StatusLineFileexplorerSymbol#   %#StatusLine# LAZY %#StatusLineNC#",
-    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD %#StatusLineNC#"
+    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY %#StatusLineNC#",
+    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD %#StatusLineNC#",
+    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS %#StatusLineNC#"
 }
 
 -----
 -- the idea of this bit is, that UI wants to update a little more often than the line
 -- needs to, so instead of just having a function that runs all the function calls again
 -- the modules will replace their old states in the table represantation of the line
--- when they are needed to
+-- when they need to
 -----
 
 -- default update events
 -- {"WinEnter", "BufEnter", "SessionLoadPost", "FileChangedShellPost", "VimResized", "Filetype", "CursorMoved", "CursorMovedI"}
+
+-- technically it would also be possible to remove aucmds whenever the buffer is changed to
+-- something like telescope, but the cost of registering aucmds is pretty high compared to just ignoring
+-- like 3 updates while being in this buffer
+
 
 local function update_line()
     local buf_type = fn.getbufvar(a.nvim_get_current_buf(), '&filetype')

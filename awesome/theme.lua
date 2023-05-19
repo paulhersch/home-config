@@ -29,13 +29,13 @@ end
 
 local dark_theme = is_dark(xres.background)
 
-theme.gray          = xres.color0
 theme.red           = xres.color1
 theme.green         = xres.color2
 theme.yellow        = xres.color3
 theme.blue          = xres.color4
 theme.magenta       = xres.color5
 theme.cyan          = xres.color6
+theme.gray          = xres.color7
 
 local bg = color.color { hex = xres.background }
 
