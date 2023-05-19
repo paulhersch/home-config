@@ -48,6 +48,8 @@ theme.bg_focus      = (dark_theme
             or bg - "20r" - "20g" - "20b").hex
 theme.bg_urgent     = xres.color1
 theme.bg_minimize   = theme.bg_normal
+theme.bg_light_edge = (bg + "30r" + "30g" + "30b").hex
+theme.bg_dark_edge = (bg - "30r" - "30g" - "30b").hex
 
 local fg = color.color { hex = xres.foreground }
 

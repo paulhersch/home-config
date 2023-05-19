@@ -4,6 +4,7 @@ local gears	= require "gears"
 local beautiful = require "beautiful"
 local dpi	= beautiful.xresources.apply_dpi
 local helpers	= require "helpers"
+local btn = require("components.container").button
 
 local battery   = require "ui.bar.widgets.battery".widget
 
@@ -43,54 +44,54 @@ end
 
 -- shortcut to wrap menu and quicksettings triggers (and also the "normal" widgets without popups, if popup_name is nil the popup wont be shown)
 local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
-    local templ = wibox.widget {
-		widget = wibox.container.margin,
-		margins = dpi(5),
-		{
-			id = popup_name ~= nil and popup_name .. "_bg" or nil,
-			widget = wibox.container.background,
-			bg = beautiful.bg_focus_dark,
-			shape = beautiful.theme_shape,
-			{
-				widget = wibox.container.margin,
-				margins = dpi(5),
-				widget
-			}
-		}
-	}
-	if popup_name ~= nil then
-		local trigger_bg = templ[popup_name .. "_bg"]
-		helpers.pointer_on_focus(templ)
-		trigger_bg:connect_signal("mouse::enter", function ()
-            trigger_bg.bg = beautiful.bg_focus
-		end)
-		trigger_bg:connect_signal("mouse::leave", function ()
-			if not screen[popup_name].visible then trigger_bg.bg = beautiful.bg_focus_dark end
-        end)
-        trigger_bg:add_button ( awful.button {
-            modifiers = {},
-            button = 1,
-            on_press = function ()
-                if screen[popup_name .. "_stat"] then
-                    require("ui.bar.popups." .. popup_name).hide(screen)
-                else
-                    for _, p_name in ipairs(popups) do
-                        if screen[p_name .. "_stat"] then
-                            require("ui.bar.popups." .. p_name).hide(screen)
-                            screen[p_name .. "_stat"] = false
-                            --bad practice to use awesome but i am extremely lazy
-                            awesome.emit_signal("bar::popup::" .. p_name .. "::hide_bg")
+    local button
+    if popup_name ~= nil then
+        button = btn({
+            widget = widget,
+            manual_draw = true,
+            left = {
+                on_click = function ()
+                    if screen[popup_name .. "_stat"] then
+                        require("ui.bar.popups." .. popup_name).hide(screen)
+                        button:draw_released()
+                    else
+                        for _, p_name in ipairs(popups) do
+                            if screen[p_name .. "_stat"] then
+                                require("ui.bar.popups." .. p_name).hide(screen)
+                                screen[p_name .. "_stat"] = false
+                                --bad practice to use awesome in but i am extremely lazy
+                                awesome.emit_signal("bar::popup::" .. p_name .. "::hide_bg")
+                            end
                         end
+                        require("ui.bar.popups." .. popup_name).show(screen)
+                        button:draw_clicked()
                     end
-                    require("ui.bar.popups." .. popup_name).show(screen)
+                    screen[popup_name .. "_stat"] = not screen[popup_name .. "_stat"]
                 end
-                screen[popup_name .. "_stat"] = not screen[popup_name .. "_stat"]
-            end
+            }
         })
         awesome.connect_signal("bar::popup::" .. popup_name .. "::hide_bg", function ()
-            trigger_bg.bg = beautiful.bg_focus_dark
+            button:draw_released()
         end)
+    else
+        button = {
+            widget = wibox.container.background,
+            bg = beautiful.bg_focus_dark,
+            shape = beautiful.theme_shape,
+            {
+                widget = wibox.container.margin,
+                margins = dpi(5),
+                widget
+            }
+		}
     end
+
+    local templ = wibox.widget {
+        widget = wibox.container.margin,
+        margins = dpi(5),
+        button
+    }
+
 	return templ
 end
 
@@ -163,26 +164,23 @@ local function init (s)
 		{
 			layout = wibox.layout.fixed.horizontal,
 			spacing = dpi(5),
-			--[[wrap_in_bg_and_popup_button({
-
-			}, "launcher", s),]]
 			wrap_in_bg_and_popup_button({
 					widget = wibox.widget.imagebox,
 					image = os.getenv("HOME") .. "/.config/awesome/assets/Nix.svg"
 				}, "launcher", s
 			),
-			{
-				widget = wibox.container.place,
-				halign = 'left',
-				valign = 'top',
-				fill_horizontal = false,
-				wrap_in_bg_and_popup_button({
-					widget = wibox.container.place,
-					valign = 'center',
-					fill_vertical = true,
-					s.taglist,
-				})
-			},
+            {
+                widget = wibox.container.place,
+                halign = 'left',
+                valign = 'top',
+                fill_horizontal = false,
+                wrap_in_bg_and_popup_button({
+                    widget = wibox.container.place,
+                    valign = 'center',
+                    fill_vertical = true,
+                    s.taglist,
+                })
+            },
 		},
 		{
 			widget = wibox.container.place,
