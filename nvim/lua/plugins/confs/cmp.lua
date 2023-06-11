@@ -28,20 +28,20 @@ return {
 			Interface = " ",
 			Module = " ",
 			Property = " ",
-			Unit = "塞 ",
-			Value = " ",
+			Unit = " ",
+			Value = " ",
 			Enum = " ",
 			Keyword = " ",
 			Snippet = " ",
 			Color = " ",
 			File = " ",
-			Reference = " ",
-			Folder = " ",
+			Reference = " ",
+			Folder = " ",
 			EnumMember = " ",
 			Constant = " ",
 			Struct = " ",
 			Event = " ",
-			Operator = " ",
+			Operator = " ",
 			TypeParameter = " "
 		}
 
@@ -60,7 +60,7 @@ return {
 				{
 					name = 'cmdline',
 					option = {
-						ignore_cmds = { 'Man', '!' }
+						ignore_cmds = { 'Man' }
 					}
 				}
 			})
@@ -87,7 +87,7 @@ return {
 				format = function(_, vim_item)
 					if vim_item.kind ~= nil then
 						vim_item.menu = "    (" .. vim_item.kind .. ")"
-						vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or "_") .. " "
+						vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " ") .. " "
 					else
 						-- backup in case kind just doesnt exist
 						vim_item.kind = " _ "

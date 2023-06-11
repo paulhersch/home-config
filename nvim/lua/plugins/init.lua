@@ -35,9 +35,9 @@ require"lazy".setup({
     comment,
     {
         dir = '~/.config/nvim/lua/azul',
-        priority = 1000,
+        -- priority = 1000,
         name = "azul",
-        lazy = false,
+        lazy = true,
         config = function()
             require("azul").setup{}
         end,
@@ -46,7 +46,7 @@ require"lazy".setup({
         dir = '~/.config/nvim/lua/statusline',
         dependencies = {
             'nvim-tree/nvim-web-devicons',
-            -- "azul"
+            'azul'
         },
         name = "statusline",
         lazy = true,

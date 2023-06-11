@@ -2,9 +2,12 @@ local wibox	= require "wibox"
 local awful	= require "awful"
 local gears	= require "gears"
 local beautiful = require "beautiful"
+local cairo = require "lgi".cairo
 local dpi	= beautiful.xresources.apply_dpi
 local helpers	= require "helpers"
-local btn = require("components.container").button
+local container = require "components.container"
+local btn = container.button
+local buttonify = container.buttonify
 
 local battery   = require "ui.bar.widgets.battery".widget
 
@@ -42,8 +45,10 @@ local function hide_all_popups_on_screen(screen, override_shown)
 	end
 end
 
+local buttons = {}
+local btn_sgnl_trigger = wibox.widget.base.make_widget()
 -- shortcut to wrap menu and quicksettings triggers (and also the "normal" widgets without popups, if popup_name is nil the popup wont be shown)
-local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
+local function popup_button(widget, popup_name, screen)
     local button
     if popup_name ~= nil then
         button = btn({
@@ -60,7 +65,7 @@ local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
                                 require("ui.bar.popups." .. p_name).hide(screen)
                                 screen[p_name .. "_stat"] = false
                                 --bad practice to use awesome in but i am extremely lazy
-                                awesome.emit_signal("bar::popup::" .. p_name .. "::hide_bg")
+                                btn_sgnl_trigger:emit_signal(p_name .. "::unclick")
                             end
                         end
                         require("ui.bar.popups." .. popup_name).show(screen)
@@ -70,9 +75,6 @@ local function wrap_in_bg_and_popup_button(widget, popup_name, screen)
                 end
             }
         })
-        awesome.connect_signal("bar::popup::" .. popup_name .. "::hide_bg", function ()
-            button:draw_released()
-        end)
     else
         button = {
             widget = wibox.container.background,
@@ -101,7 +103,8 @@ local function init (s)
 	local quicksettings = require "ui.bar.popups.quicksettings"
 	local launcher = require "ui.bar.popups.launcher"]]
 
-	local tagged_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
+	local tagged_tag_col = beautiful.gray
+    local default_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
 
     local tagnames = { "०", "१", "२", "३", "४", "५", "६", "७", "८", "९" }
     s.taglist = awful.widget.taglist {
@@ -111,43 +114,53 @@ local function init (s)
             layout = wibox.layout.flex.horizontal,
             spacing = dpi(5)
         },
-		widget_template = {
-			widget = wibox.container.margin,
+        widget_template = {
+            widget = wibox.container.background,
+            id = 'bg',
+            shape = beautiful.theme_shape,
+            fg = beautiful.bg_focus,
+            bg = beautiful.bg_focus_dark,
+            forced_width = dpi(20),
+            forced_height = dpi(20),
             {
-                widget = wibox.container.background,
-                id = 'bg',
-                shape = beautiful.theme_shape,
-                fg = beautiful.bg_focus,
-                bg = beautiful.bg_focus_dark,
                 {
-                    {
-                        widget = wibox.widget.textbox,
-                        font = "Free Sans Bold" ,
-                        halign = 'center',
-                        id = 'index',
-                        text = ' ',
-                    },
-                    widget = wibox.container.place,
+                    widget = wibox.widget.textbox,
+                    font = "Free Sans Bold" ,
                     halign = 'center',
-                    forced_width = dpi(15),
-                    forced_height = dpi(15),
+                    id = 'index',
+                    text = ' ',
                 },
+                widget = wibox.container.place,
+                halign = 'center',
             },
             create_callback = function(self, t, _, _)
+                buttonify(self, {})
                 self:get_children_by_id("index")[1].text = tagnames[t.index]
-                self:connect_signal("button::press", function(_, _, _, b)
-					if b == 1 then t:view_only() end
-				end)
-                helpers.pointer_on_focus(self, s.bar)
-                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
+                self:add_button(awful.button {
+                    modifier = {},
+                    button = awful.button.names.LEFT,
+                    on_press = function ()
+                        t:view_only()
+                        self:draw_clicked()
+                    end,
+                    -- on_release = function ()
+                    --     self:draw_released()
+                    -- end
+                })
+                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or default_tag_col)
 			end,
             update_callback = function (self, t, _, _)
-                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or beautiful.bg_focus)
+                if t.selected then
+                    self:draw_clicked()
+                else
+                    self:draw_released()
+                end
+                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or default_tag_col)
             end
 		}
 	}
 
-    local systray = s == screen.primary and wrap_in_bg_and_popup_button(wibox.widget {
+    local systray = s == screen.primary and popup_button(wibox.widget {
         widget = wibox.container.place,
         valign = 'center',
         {
@@ -160,11 +173,29 @@ local function init (s)
 
 	local bar_widget
 	bar_widget = wibox.widget {
+        widget = wibox.container.background,
+        -- bgimage = function (_, cr, w, h)
+            -- local pattern = cairo.Pattern.create_linear(0, 0, 0, h)
+            -- pattern:add_color_stop_rgba(0, gears.color.parse_color(beautiful.bg_normal))
+            -- pattern:add_color_stop_rgba(0.9, gears.color.parse_color(beautiful.bg_normal))
+            -- pattern:add_color_stop_rgba(0.95, gears.color.parse_color(beautiful.bg_focus_dark))
+            -- pattern:add_color_stop_rgba(1, gears.color.parse_color(beautiful.bg_focus))
+            --
+            -- cr:rectangle(0, 0, w, h)
+            -- cr:set_source(pattern)
+            -- cr:fill()
+            -- cr:set_source_rgba(gears.color.parse_color(beautiful.bg_focus_dark))
+            -- cr:set_line_width(dpi(5))
+            -- cr:move_to(0,h)
+            -- cr:line_to(w,h)
+            -- cr:stroke()
+        -- end,
+        {
 		layout = wibox.layout.flex.horizontal,
 		{
 			layout = wibox.layout.fixed.horizontal,
 			spacing = dpi(5),
-			wrap_in_bg_and_popup_button({
+			popup_button({
 					widget = wibox.widget.imagebox,
 					image = os.getenv("HOME") .. "/.config/awesome/assets/Nix.svg"
 				}, "launcher", s
@@ -172,14 +203,9 @@ local function init (s)
             {
                 widget = wibox.container.place,
                 halign = 'left',
-                valign = 'top',
-                fill_horizontal = false,
-                wrap_in_bg_and_popup_button({
-                    widget = wibox.container.place,
-                    valign = 'center',
-                    fill_vertical = true,
-                    s.taglist,
-                })
+                valign = 'center',
+                fill_vertical = true,
+                s.taglist,
             },
 		},
 		{
@@ -192,7 +218,7 @@ local function init (s)
 				layout = wibox.layout.fixed.horizontal,
 				spacing = dpi(5),
                 systray,
-				wrap_in_bg_and_popup_button(
+				popup_button(
 				{
 					layout = wibox.layout.fixed.horizontal,
 					{
@@ -222,11 +248,12 @@ local function init (s)
 				},
 				"menu",
 				s),
-				wrap_in_bg_and_popup_button(
+				popup_button(
 					quicksettings_trigger, "quicksettings", s
 				)
 			}
 		},
+        }
 	}
 
 	s.bar = wibox {

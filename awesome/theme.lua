@@ -16,9 +16,12 @@ local theme = {}
 
 theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/balconies.png"
 
-theme.font          = "Recursive Sn Lnr St"
-theme.font_thin     = "Recursive Sn Lnr St Lt"
-theme.font_bold     = "Recursive Sn Lnr St Med"
+-- theme.font          = "Recursive Sn Lnr St"
+-- theme.font_thin     = "Recursive Sn Lnr St Lt"
+-- theme.font_bold     = "Recursive Sn Lnr St Med"
+theme.font = "Iosevka Comfy Motion Duo"
+theme.font_thin = theme.font .. " Light"
+theme.font_bold = theme.font .. " XBd"
 
 local xres = xresources.get_current_theme()
 
@@ -29,13 +32,13 @@ end
 
 local dark_theme = is_dark(xres.background)
 
-theme.red           = xres.color1
-theme.green         = xres.color2
-theme.yellow        = xres.color3
-theme.blue          = xres.color4
-theme.magenta       = xres.color5
-theme.cyan          = xres.color6
-theme.gray          = xres.color7
+theme.red           = xres.color9
+theme.green         = xres.color10
+theme.yellow        = xres.color11
+theme.blue          = xres.color12
+theme.magenta       = xres.color13
+theme.cyan          = xres.color14
+theme.gray          = xres.color15
 
 local bg = color.color { hex = xres.background }
 
@@ -48,8 +51,8 @@ theme.bg_focus      = (dark_theme
             or bg - "20r" - "20g" - "20b").hex
 theme.bg_urgent     = xres.color1
 theme.bg_minimize   = theme.bg_normal
-theme.bg_light_edge = (bg + "30r" + "30g" + "30b").hex
-theme.bg_dark_edge = (bg - "30r" - "30g" - "30b").hex
+theme.bg_light_edge = (bg + "20r" + "20g" + "20b").hex
+theme.bg_dark_edge = (bg - "20r" - "20g" - "20b").hex
 
 local fg = color.color { hex = xres.foreground }
 

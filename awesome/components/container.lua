@@ -9,6 +9,14 @@ local helpers = require "helpers"
 
 local container = {}
 
+local function is_in(table, elem)
+    for _, v in ipairs(table) do
+        if v == elem then
+            return true
+        end
+    end
+    return false
+end
 
 local button_draw_template = function (cr, w, h, fill, tl, br)
     w = math.floor(w)
@@ -38,6 +46,34 @@ local button_draw_click = function(_, cr, w, h)
     button_draw_template(cr, w, h, beautiful.bg_normal, beautiful.bg_light_edge, beautiful.bg_dark_edge)
 end
 
+---@param bg widget background container widget (has to be background container!!)
+---@param buttons table buttons that should be considered clicks. If none supplied this function
+-- wont connect to the buttons press and release signals
+-- the manual draw functions draw_clicked and draw_released are also available here
+container.buttonify = function (bg, buttons)
+    function bg:draw_clicked()
+        bg.bgimage = button_draw_click
+    end
+    
+    function bg:draw_released()
+        bg.bgimage = button_draw_release
+    end
+
+    if #buttons > 0 then
+        bg:connect_signal("button::press", function (_, _, _, b)
+            if is_in(buttons, b) then
+                bg:draw_clicked()
+            end
+        end)
+
+        bg:connect_signal("button::release", function ()
+            bg:draw_released()
+        end)
+    end
+    
+    helpers.pointer_on_focus(bg)
+    bg.bgimage = button_draw_release
+end
 
 ---create a simple button wrapper for given widget
 ---@class args table
@@ -63,30 +99,31 @@ container.button = function(args)
             widget
         }
     }
+    button._buttonargs = args
 
-    args.right = args.right or {}
-    
-    if args.left and type(args.left) == "table" then
-        args.left.on_click = args.left.on_click or function () end
-        args.left.on_release = args.left.on_release or function () end
-        button:add_button(
-            awful.button {
-                mod = {"Any"},
-                button = awful.button.names.LEFT,
-                on_press = args.manual_draw and
-                    args.left.on_click or function ()
-                        button.bgimage = button_draw_click
-                        args.left.on_click()
-                    end,
-                on_release = args.manual_draw and
-                    args.left.on_release or function()
-                        button.bgimage = button_draw_release
-                        args.left.on_release()
-                    end
-            }
-        )
-    end
-    
+    -- TODO: right button
+    button._buttonargs.left = button._buttonargs.left or {}
+    button._buttonargs.right = button._buttonargs.right or {}
+
+    button._buttonargs.left.on_click = button._buttonargs.left.on_click or function () end
+    button._buttonargs.left.on_release = button._buttonargs.left.on_release or function () end
+    button:add_button(
+        awful.button {
+            mod = {"Any"},
+            button = awful.button.names.LEFT,
+            on_press = args.manual_draw and
+                button._buttonargs.left.on_click or function ()
+                    button.bgimage = button_draw_click
+                    button._buttonargs.left.on_click()
+                end,
+            on_release = args.manual_draw and
+                button._buttonargs.left.on_release or function()
+                    button.bgimage = button_draw_release
+                    button._buttonargs.left.on_release()
+                end
+        }
+    )
+
     function button:highlight()
         self.border_width = dpi(2)
     end

@@ -50,7 +50,13 @@ return {
         })
 
         lc.omnisharp.setup ({
-            cmd = { "OmniSharp" }--, "-lsp", "--hostPID", tostring(vim.fn.getpid()) }
+            cmd = { "OmniSharp" },
+            on_attach = function (client, _)
+                client.server_capabilities.semanticTokensProvider = nil
+            end,
+            flags = {
+                debounce_text_changes = 150,
+            }
         })
 
         -- ignore stupid "line too long" warning in python
