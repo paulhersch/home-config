@@ -23,12 +23,12 @@ local default_line = {
 }
 
 local extra_buf_type_lines = {
-    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL %#StatusLineNC#",
-    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES %#StatusLineNC#",
-    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE %#StatusLineNC#",
-    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY %#StatusLineNC#",
+    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL %#StatusLineNC#",
+    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES %#StatusLineNC#",
+    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE %#StatusLineNC#",
+    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY %#StatusLineNC#",
     dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD %#StatusLineNC#",
-    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS %#StatusLineNC#"
+    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS %#StatusLineNC#"
 }
 
 -----

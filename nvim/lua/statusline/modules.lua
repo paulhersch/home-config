@@ -69,7 +69,7 @@ end
 -- end
 
 m.file_edited = function ()
-    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@v:w@ %T " or ""
+    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@write@ %T " or ""
     return "%#StatusLineFileModified#" .. edited
 end
 

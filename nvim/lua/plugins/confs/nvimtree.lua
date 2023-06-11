@@ -45,20 +45,20 @@ return {
 						default = "",
 						symlink = "",
 						git = {
-                            renamed = "",
+                            renamed = "",
 							staged = "",
-							unmerged = "",
+							unmerged = "",
 							unstaged = "",
 							untracked = "",
                             deleted = "",
-                            ignored = ""
+                            ignored = ""
 						},
 						folder = {
 							arrow_open = "",
 							arrow_closed = "",
-							default = "",
-							empty = "",
-							open = "",
+							default = "",
+							empty = "",
+							open = "",
 							symlink = "",
 						}
 					}

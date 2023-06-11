@@ -44,6 +44,7 @@ local alternative_signs = {
     Hint = '',
     Info = ''
 }
+
 for type, icon in pairs(alternative_signs) do
     local hl = "DiagnosticSign" .. type
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })

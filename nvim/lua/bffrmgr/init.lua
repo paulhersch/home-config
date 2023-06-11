@@ -19,8 +19,11 @@ local function fill_buf()
     if #m.buffers == 0 then
         table.insert(lines, "  Setup not run, or no textbuffers opened  ")
     else
-        for i, b in ipairs(m.buffers) do
-            local line = "  " .. m.__props.keys.sub(m.__props.keys, i, i) ..  " " .. a.nvim_buf_get_name(b) .. "  "
+        local buf_cnt = #m.buffers
+        for i=buf_cnt-1,1,-1 do
+            local b = m.buffers[i]
+            local entry_index = buf_cnt - i
+            local line = "  " .. m.__props.keys.sub(m.__props.keys, entry_index, entry_index) ..  " " .. a.nvim_buf_get_name(b) .. "  "
             table.insert(lines, line)
             if string.len(line) > m.width then
                 m.width = string.len(line)
@@ -47,10 +50,12 @@ local function set_keymap()
         a.nvim_buf_delete(m.buf, {unload=false, force=true})
     end
 
-    local i = 0
-    for _, b in ipairs(m.buffers) do
-        i = i + 1
-        vim.keymap.set("n", m.__props.keys.sub(m.__props.keys, i, i), function ()
+    local buf_cnt = #m.buffers
+    -- traverse from last to first elem, because AutoCmds just append
+    for i = buf_cnt-1,1,-1 do
+        local b = m.buffers[i]
+        local entry_index = buf_cnt - i
+        vim.keymap.set("n", m.__props.keys.sub(m.__props.keys, entry_index, entry_index), function ()
             a.nvim_win_set_buf(m.last_win, b)
             close_win()
         end, {buffer = m.buf, nowait=true})
@@ -132,10 +137,13 @@ local function set_up_autocmds()
                 -- if max number of bufs reached: save least recent changed (index 1)
                 -- and delete buffer, or just drop if invalid
                 if #m.buffers >= m.__props.max_bufs then
-                    if (a.nvim_buf_is_valid(m.buffers[1])) then
-                        a.nvim_buf_call(m.buffers[1], function()
-                            vim.cmd("silent! write")
-                        end)
+                    if a.nvim_buf_is_valid(m.buffers[1]) then
+                        -- write changes if the buffer has been edited before
+                        if m.buffers[1].changed then
+                            a.nvim_buf_call(m.buffers[1], function()
+                                vim.cmd("silent! write")
+                            end)
+                        end
                         a.nvim_buf_delete(m.buffers[1], {unload=false, force=true})
                     end
                     -- move up
