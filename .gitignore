@@ -1,7 +1,1 @@
-zsh/.zcompdump
-zsh/zhistory
-*.stfolder
-!zsh
-!nvim
-!awesome
-nvim/plugin
+nvim/lazy-lock.json
