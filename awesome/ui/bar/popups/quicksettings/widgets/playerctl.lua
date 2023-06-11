@@ -240,14 +240,7 @@ end
 local ratio = basewidth/height
 
 local function set_bg_with_gradient(player_widget, path)
-    --local editpath = path .. "_cropgrad"
-
-    --if not gears.filesystem.file_readable(editpath) then
-        local img = image_with_gradient(path, ratio)
-    --    img:write_to_png(editpath)
-    --end
-
-    --player_widget:get_children_by_id("album_art")[1].image = editpath
+    local img = image_with_gradient(path, ratio)
     player_widget:get_children_by_id("album_art")[1].image = img
 end
 
@@ -281,6 +274,10 @@ local function update_widget_meta(w, meta, player)
     local art = val["mpris:artUrl"]
     -- if the image is available from local storage
     if art then
+        if player.player_name == "mopidy" then
+            string.gsub(art, "/local", "file://" .. os.getenv("HOME") .. "/.local/share/mopidy/local/images")
+            print(art)
+        end
         if string.match(art, "file://") then
             local path = string.sub(art, 7, string.len(art))
             path = unescape(path)

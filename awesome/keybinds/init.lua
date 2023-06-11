@@ -29,7 +29,9 @@ awful.keyboard.append_global_keybindings({
 		{description = "reload awesome", group = "awesome"}),
 	awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
 		{description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey }, "d", function() launcher.run_applauncher(awful.screen.focused()) end,
+    awful.key({ modkey }, "d", function()
+            launcher.run_applauncher(awful.screen.focused())
+        end,
 		{description = "App launcher", group = "launcher"}),
 })
 
