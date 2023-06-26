@@ -13,3 +13,7 @@ Map("n", "ww", function ()
     })
 end, {})
 Map("i", "<C-H>", "<C-W>", {})
+
+Map("n", "<Space>n", function ()
+    vim.o.number = not vim.o.number
+end)

@@ -139,7 +139,7 @@ local function set_up_autocmds()
                 if #m.buffers >= m.__props.max_bufs then
                     if a.nvim_buf_is_valid(m.buffers[1]) then
                         -- write changes if the buffer has been edited before
-                        if m.buffers[1].changed then
+                        if vim.fn.getbufinfo(m.buffers[1])[1].changed == 1 then
                             a.nvim_buf_call(m.buffers[1], function()
                                 vim.cmd("silent! write")
                             end)

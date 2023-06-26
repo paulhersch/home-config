@@ -1,7 +1,7 @@
 return {
     'neovim/nvim-lspconfig',
     --dependencies = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
-    ft = { "lua", "cs", "python", "tex", "haskell", "nix", "rust", "nim" },
+    lazy = false, --is "lazy loaded" anyways
     config = function()
         local lc = require('lspconfig')
         local util = require('lspconfig.util')

@@ -30,7 +30,7 @@ local modes = {
 m.mode = function()
     local current_mode = a.nvim_get_mode().mode
     if modes[current_mode] ~= nil then
-        return string.format("%%#%s#%s", modes[current_mode][2]," ")
+        return string.format("%%#%s#%s", modes[current_mode][2],"  ")
     end
 end
 
@@ -69,30 +69,35 @@ end
 -- end
 
 m.file_edited = function ()
-    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@write@ %T " or ""
+    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@write@ %T " or ""
     return "%#StatusLineFileModified#" .. edited
 end
 
 -- this requires the colorscheme to be loaded first
-local statuslinehl = a.nvim_get_hl_by_name("StatusLine", true)
-for _, dat in pairs(devicons.get_icons()) do
-    a.nvim_set_hl(0, "StatusLineDevIcon" .. dat.name, {
-        bg = string.format("#%06x",statuslinehl["background"]),
-        fg = dat.color
-    })
-end
+-- local statuslinehl = a.nvim_get_hl_by_name("StatusLine", true)
+-- for _, dat in pairs(devicons.get_icons()) do
+--     a.nvim_set_hl(0, "StatusLineDevIcon" .. dat.name, {
+--         bg = string.format("#%06x",statuslinehl["background"]),
+--         fg = dat.color
+--     })
+-- end
 -- hacky workaround: devicons set hl groups with DevIcon<defname>
 -- so above i set hl groups like this with the StatusLine prefix
 -- and then i can use the hl names from devicons directly in the line
 m.fileinfo = function()
     local fname = (fn.expand "%" == "" and "unnamed") or fn.expand "%:t"
-    local icon, icon_hl = devicons.get_icon(fname)
-    icon = icon and "%#StatusLine" .. icon_hl .. "#" .. icon .. "  " or ""
-    return icon .. "%#StatusLineFileName#" .. string.upper(fname)
+    --local icon, icon_hl = devicons.get_icon(fname)
+    -- icon = icon and "%#StatusLine" .. icon_hl .. "#" .. icon .. "  " or ""
+    return --[[icon .. ]] "%#StatusLineFileName#" .. string.upper(fname)
 end
 
-m.git_status = function ()
-    local git = require("git")
+m.git_branch = function ()
+    local branch = vim.fn.system("git branch --show-current 2> /dev/null | tr -d '\n'")
+    if branch ~= "" then
+        return " " .. branch
+    else
+        return ""
+    end
 end
 
 return m

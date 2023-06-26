@@ -1,4 +1,3 @@
-
 local modules = require("statusline.modules")
 local concat = table.concat
 local a = vim.api
@@ -11,6 +10,16 @@ local fn = vim.fn
 -- o.statusline = "%!v:lua.statusline()"
 o.laststatus = 3
 
+-- NO UNICODE ESCAPE SUPPORT IN LUAJIT :(((((
+-- format every character as char with overline
+-- local function overlineify(str)
+--     local ret = ""
+--     for i=1,string.len(str) do
+--         ret = ret .. string.sub(str,i,i) .. "̅̅̅\u80\uBE"
+--     end
+--     return ret
+-- end
+
 -- initial state
 local default_line = {
     "%#Normal#",
@@ -19,16 +28,20 @@ local default_line = {
     modules.file_edited(),
     modules.fileinfo(),
     modules.lsp_info(),
-    " %#StatusLineNC#"
+    "%=",
+    "%#StatusLine#",
+    modules.git_branch(),
+    " "
 }
 
 local extra_buf_type_lines = {
-    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL %#StatusLineNC#",
-    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES %#StatusLineNC#",
-    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE %#StatusLineNC#",
-    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY %#StatusLineNC#",
-    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD %#StatusLineNC#",
-    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS %#StatusLineNC#"
+    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL ", -- %#StatusLineNC#",
+    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES ", --%#StatusLineNC#",
+    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE ", --%#StatusLineNC#",
+    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY ", --%#StatusLineNC#",
+    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD ",-- %#StatusLineNC#",
+    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS ",-- %#StatusLineNC#",
+    aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# SYMBOLS ",-- %#StatusLineNC#"
 }
 
 -----
@@ -73,6 +86,7 @@ a.nvim_create_autocmd({"FileChangedShellPost", "TextChangedI", "TextChanged", "B
 a.nvim_create_autocmd({"BufEnter", "WinEnter"}, {
     callback = function ()
         default_line[5] = modules.fileinfo()
+        default_line[9] = modules.git_branch()
         update_line()
     end
 })
@@ -83,8 +97,6 @@ a.nvim_create_autocmd("ModeChanged", {
         update_line()
     end
 })
-
-
 
 -- local function get()
 --     local buf_type = fn.getbufvar(a.nvim_get_current_buf(), '&filetype')
