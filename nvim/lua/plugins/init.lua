@@ -12,7 +12,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local nvimtree = require "plugins.confs.nvimtree"
-local barbar = require "plugins.confs.barbar"
+--local barbar = require "plugins.confs.barbar"
 local gitsigns = require "plugins.confs.gitsigns"
 local lspc = require "plugins.confs.lspconfs"
 local cmp = require "plugins.confs.cmp"
@@ -25,7 +25,7 @@ local notify = require "plugins.confs.notify"
 require"lazy".setup({
     notify,
     nvimtree,
-    barbar,
+    --barbar,
     gitsigns,
     lspc,
     cmp,
@@ -35,11 +35,15 @@ require"lazy".setup({
     comment,
     {
         dir = '~/.config/nvim/lua/azul',
-        -- priority = 1000,
+        priority = 1000,
         name = "azul",
-        lazy = true,
+        lazy = false,
         config = function()
-            require("azul").setup{}
+            require("azul").setup{
+                nvim_tree = {
+                    contrast = true
+                }
+            }
         end,
     },
     {

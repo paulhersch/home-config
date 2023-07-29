@@ -12,13 +12,14 @@ function M.highlight_all(colors, opts)
 	end
 	local ntree = opts.nvim_tree or { contrast = false }
 	if ntree.contrast == true then
-		hl(0, 'NvimTreeNormal', { bg = colors.contrast })
-		hl(0, 'NvimTreeNormalNC', { bg = colors.contrast })
-		hl(0, 'NvimTreeEndOfBuffer', { bg = colors.contrast, fg = colors.contrast })
-		hl(0, 'NvimTreeEndOfBufferNC', { bg = colors.contrast, fg = colors.contrast })
-		hl(0, 'NvimTreeVertSplit', { fg = colors.background, bg = colors.background })
-		hl(0, 'NvimTreeCursorLine', { bg = colors.contrast, fg = colors.foreground })
-		hl(0, 'NvimTreeFolderIcon', { bg = colors.contrast, fg = colors.color4 })
+		hl(0, 'NvimTreeNormal', { bg = colors.background_dark })
+		hl(0, 'NvimTreeNormalNC', { bg = colors.background_dark })
+		hl(0, 'NvimTreeEndOfBuffer', { bg = colors.background_dark, fg = colors.background_dark })
+		hl(0, 'NvimTreeEndOfBufferNC', { bg = colors.background_dark, fg = colors.background_dark })
+		hl(0, 'NvimTreeWinSeparator', { fg = colors.background_dark, bg = colors.background_dark })
+		hl(0, 'NvimTreeVertSplit', { fg = colors.background_dark, bg = colors.background_dark })
+		hl(0, 'NvimTreeCursorLine', { bg = colors.background_dark, fg = colors.foreground })
+		hl(0, 'NvimTreeFolderIcon', { bg = colors.background_dark, fg = colors.color4 })
 	end
 	local override = opts.override or {}
 	for group, properties in pairs(override) do

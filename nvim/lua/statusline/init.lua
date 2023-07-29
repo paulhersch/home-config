@@ -22,7 +22,7 @@ o.laststatus = 3
 
 -- initial state
 local default_line = {
-    "%#Normal#",
+    "%#StatusLine#",
     modules.mode(),
     "%#StatusLine# ",
     modules.file_edited(),
@@ -43,6 +43,8 @@ local extra_buf_type_lines = {
     bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS ",-- %#StatusLineNC#",
     aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# SYMBOLS ",-- %#StatusLineNC#"
 }
+-- mappings
+extra_buf_type_lines.terminal = extra_buf_type_lines.toggleterm
 
 -----
 -- the idea of this bit is, that UI wants to update a little more often than the line

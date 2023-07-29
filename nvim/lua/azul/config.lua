@@ -8,8 +8,6 @@ M.highlights_base = function (colors)
     end
 	return {
 		Normal = { fg = colors.foreground, bg = colors.background },
-		StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
-		StatusLine = { bg = colors.background_dark, fg = colors.foreground },
 		SignColumn = { bg = "NONE" },
 		MsgArea = { fg = colors.foreground, bg = colors.background },
 		ModeMsg = { fg = colors.foreground, bg = colors.background },
@@ -27,7 +25,7 @@ M.highlights_base = function (colors)
 		LineNr = { fg = colors.contrast, bg = colors.background },
 		FloatBorder = { fg = colors.contrast, bg = colors.contrast },
 		Whitespace = { fg = colors.color1 },
-		VertSplit = { bg = colors.background, fg = colors.color8 },
+		VertSplit = { bg = "NONE", fg = colors.color8 },
 		CursorLine = { bg = "NONE" },
 		CursorLineNr = { fg = colors.cursorline },
 		CursorColumn = { bg = colors.background },
@@ -161,21 +159,23 @@ M.highlights_base = function (colors)
 		["@variable"] = { link = "Variable" },
 		["@variable.builtin"] = { link = "Special" },
 
-        StatusLineModeNormal = { bg = colors.background_dark, fg = colors.color18 },
-        StatusLineModeInsert = { bg = colors.background_dark, fg = colors.color20 },
-        StatusLineModeVisual = { bg = colors.background_dark, fg = colors.color21 },
-        StatusLineModeReplace = { bg = colors.background_dark, fg = colors.color16 },
-        StatusLineModeCmd = { bg = colors.background_dark, fg = colors.color19 },
-        StatusLineModeTerminal = { bg = colors.background_dark, fg = colors.color19 },
-        StatusLineFileName = { fg = colors.foreground, bg = colors.background_dark },
-        StatusLineFileModified = { fg = colors.comment, bg = colors.background_dark },
+		StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
+		StatusLine = { bg = colors.inactive_tabs, fg = colors.foreground },
+        StatusLineModeNormal = { bg = colors.inactive_tabs, fg = colors.color18 },
+        StatusLineModeInsert = { bg = colors.inactive_tabs, fg = colors.color20 },
+        StatusLineModeVisual = { bg = colors.inactive_tabs, fg = colors.color21 },
+        StatusLineModeReplace = { bg = colors.inactive_tabs, fg = colors.color16 },
+        StatusLineModeCmd = { bg = colors.inactive_tabs, fg = colors.color19 },
+        StatusLineModeTerminal = { bg = colors.inactive_tabs, fg = colors.color19 },
+        StatusLineFileName = { fg = colors.foreground, bg = colors.inactive_tabs },
+        StatusLineFileModified = { fg = colors.comment, bg = colors.inactive_tabs },
         StatusLineTerminalSymbol = { fg = colors.foreground, bg = colors.color16 },
         StatusLineFileexplorerSymbol = { fg = colors.foreground, bg = colors.color20 },
         StatusLinePackagemanagerSymbol = { fg = colors.foreground, bg = colors.color19 },
-		StatusLineDiagnosticError = { fg = colors.color9, bg = colors.background_dark },
-		StatusLineDiagnosticWarn = { fg = colors.color11, bg = colors.background_dark },
-		StatusLineDiagnosticInfo = { fg = colors.color12, bg = colors.background_dark },
-		StatusLineDiagnosticHint = { fg = colors.color10, bg = colors.background_dark },
+		StatusLineDiagnosticError = { fg = colors.color9, bg = colors.inactive_tabs },
+		StatusLineDiagnosticWarn = { fg = colors.color11, bg = colors.inactive_tabs },
+		StatusLineDiagnosticInfo = { fg = colors.color12, bg = colors.inactive_tabs },
+		StatusLineDiagnosticHint = { fg = colors.color10, bg = colors.inactive_tabs },
 
         BffmgrKey = { fg = colors.color1 },
         BffmgrBufname = { fg = colors.color4 },
@@ -280,16 +280,16 @@ M.highlights_base = function (colors)
 		GitSignsDelete = { link = "GitGutterDelete" }, -- diff mode: Deleted line |diff.txt|
 
 		-- Telescope
-		TelescopeNormal = { bg = colors.background_dark },
-		TelescopeBorder = { bg = colors.background_dark, fg = colors.background_dark },
-		TelescopePromptBorder = { bg = colors.background_dark, fg = colors.background_dark },
+		TelescopeNormal = { bg = colors.inactive_tabs },
+		TelescopeBorder = { bg = colors.inactive_tabs, fg = colors.inactive_tabs },
+		TelescopePromptBorder = { bg = colors.inactive_tabs, fg = colors.inactive_tabs },
 		TelescopePromptTitle = { bg = colors.color18, fg = colors.foreground },
-		TelescopePreviewNormal = { bg = colors.inactive_tabs, fg = colors.foreground },
-		TelescopePreviewBorder = { bg = colors.inactive_tabs, fg = colors.inactive_tabs },
+		TelescopePreviewNormal = { bg = colors.contrast, fg = colors.foreground },
+		TelescopePreviewBorder = { bg = colors.contrast, fg = colors.contrast },
 		TelescopePreviewTitle = { bg = colors.color17, fg = colors.foreground },
-        TelescopePreviewMatch = { bg = colors.contrast },
-        TelescopePreviewLine = { bg = colors.background_dark },
-		TelescopeSelection = { bg = colors.contrast },
+        TelescopePreviewMatch = { bg = colors.background_dark },
+        TelescopePreviewLine = { bg = colors.contrast },
+		TelescopeSelection = { bg = colors.background_dark },
 		-- Indent Blank Line
 		IndentBlanklineChar = { fg = colors.color8, bg = colors.background },
 

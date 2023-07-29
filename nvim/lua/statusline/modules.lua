@@ -25,6 +25,7 @@ local modes = {
     ["r?"] = {"CONFIRM", "StatusLineModeCmd"},
     ["!"] = {"SHELL", "StatusLineModeTerminal"},
     ["t"] = {"TERMINAL", "StatusLineModeTerminal"},
+    ["nt"] = {"TERMINAL", "StatusLineModeTerminal"},
 }
 
 m.mode = function()
