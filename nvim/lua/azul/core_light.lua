@@ -21,7 +21,7 @@ function M.get_colors()
 	colors.color6 = "#0c3a3a"
 	colors.color7 = "#333938"
     -- medium
-	colors.color8 = colors.inactive_tabs 
+	colors.color8 = colors.inactive_tabs
 	colors.color9 = "#6f4d4d"
 	colors.color10 = "#4b7548"
 	colors.color11 = "#88862a"

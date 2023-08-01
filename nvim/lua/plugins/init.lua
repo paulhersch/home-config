@@ -11,8 +11,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-local nvimtree = require "plugins.confs.nvimtree"
---local barbar = require "plugins.confs.barbar"
+-- local nvimtree = require "plugins.confs.nvimtree"
+local neotree = require "plugins.confs.neotree"
 local gitsigns = require "plugins.confs.gitsigns"
 local lspc = require "plugins.confs.lspconfs"
 local cmp = require "plugins.confs.cmp"
@@ -24,8 +24,8 @@ local notify = require "plugins.confs.notify"
 
 require"lazy".setup({
     notify,
-    nvimtree,
-    --barbar,
+    neotree,
+    -- nvimtree,
     gitsigns,
     lspc,
     cmp,
@@ -92,7 +92,7 @@ require"lazy".setup({
                 pattern = "DirenvLoaded",
                 group = augroup,
                 callback = function ()
-                    vim.notify({"Direnv Loaded"}, vim.log.levels.INFO, {title = "direnv.vim"})
+                    vim.notify("Direnv Loaded", vim.log.levels.INFO, {title = "direnv.vim"})
                 end
             })
             a.nvim_create_autocmd("User", {
@@ -118,6 +118,7 @@ require"lazy".setup({
         lazy = true,
         --hacky way of lazy loading telscope ui-select
         init = function()
+            ---@diagnostic disable-next-line: duplicate-set-field
             vim.ui.select = function (...)
                 require("telescope").load_extension("ui-select")
                 vim.ui.select(...)
@@ -189,18 +190,23 @@ require"lazy".setup({
         'glepnir/lspsaga.nvim',
         branch = 'main',
         lazy = true,
+        event = "LspAttach",
         config = function ()
             require('lspsaga').setup{
                 diagnostic_header = { "✋", "👆", "👉", "🤏" },
                 symbol_in_winbar = {
-                    enable = false,
-                    separator = '  '
+                    enable = true,
+                    separator = '  ',
+                    show_file = false,
                 },
                 lightbulb = {
                     enable = true,
                     enable_in_insert = false,
                     virtual_text = false
                 },
+                ui = {
+                    border = "solid"
+                }
             }
         end,
         keys = {
@@ -211,6 +217,15 @@ require"lazy".setup({
             { "D", "<cmd>Lspsaga hover_doc <CR>" },
             { "<C-D>", "<cmd>Lspsaga diagnostic_jump_next <CR>", mode = {"i", "n"}}
         }
+    },
+    {
+        'https://git.sr.ht/%7Ewhynothugo/lsp_lines.nvim',
+        lazy = true,
+        event = "LspAttach",
+        name = "lsp_lines",
+        config = function()
+            require("lsp_lines").setup()
+        end
     },
     {
         'akinsho/toggleterm.nvim',

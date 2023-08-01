@@ -45,6 +45,7 @@ local extra_buf_type_lines = {
 }
 -- mappings
 extra_buf_type_lines.terminal = extra_buf_type_lines.toggleterm
+extra_buf_type_lines["neo-tree"] = extra_buf_type_lines.NvimTree
 
 -----
 -- the idea of this bit is, that UI wants to update a little more often than the line

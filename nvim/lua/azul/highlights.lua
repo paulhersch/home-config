@@ -20,6 +20,7 @@ function M.highlight_all(colors, opts)
 		hl(0, 'NvimTreeVertSplit', { fg = colors.background_dark, bg = colors.background_dark })
 		hl(0, 'NvimTreeCursorLine', { bg = colors.background_dark, fg = colors.foreground })
 		hl(0, 'NvimTreeFolderIcon', { bg = colors.background_dark, fg = colors.color4 })
+        hl(0, 'NvimTreeIndentMarker', { bg = colors.background_dark, fg = colors.color0 })
 	end
 	local override = opts.override or {}
 	for group, properties in pairs(override) do

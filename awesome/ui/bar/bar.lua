@@ -75,6 +75,9 @@ local function popup_button(widget, popup_name, screen)
                 end
             }
         })
+        btn_sgnl_trigger:connect_signal(popup_name .. "::unclick", function ()
+            button:draw_released()
+        end)
     else
         button = {
             widget = wibox.container.background,

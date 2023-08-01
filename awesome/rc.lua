@@ -8,6 +8,9 @@ local dpi	= beautiful.xresources.apply_dpi
 local settings = require("settings")
 require("awful.autofocus")
 
+awful.mouse.snap.edge_enabled = false
+awful.mouse.snap.client_enabled = false
+
 awesome.set_preferred_icon_size(128)
 beautiful.init( gears.filesystem.get_configuration_dir() .. "theme.lua")
 

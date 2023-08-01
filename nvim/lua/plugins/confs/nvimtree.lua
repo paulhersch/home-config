@@ -25,6 +25,7 @@ return {
 			},
 			view = {
 				adaptive_size = true,
+                cursorline = false
 			},
             git = { ignore = false },
 			renderer = {

@@ -5,7 +5,6 @@ o.background = 'dark'
 o.clipboard = 'unnamedplus'
 o.mouse = 'a'
 o.cul = true
-o.number = true
 o.shiftwidth = 4
 o.tabstop = 4
 o.expandtab = true
@@ -39,7 +38,7 @@ end
 
 --remove diagnostics at end of line
 vim.diagnostic.config({
-	virtual_text = true
+	virtual_text = false
 })
 
 local alternative_signs = {

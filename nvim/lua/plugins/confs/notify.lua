@@ -5,10 +5,12 @@ return {
     },
     lazy = true,
     init = function()
+        ---@diagnostic disable-next-line: duplicate-set-field
         vim.notify = function(...)
             require("notify")
             vim.notify(...)
         end
+        ---@diagnostic disable-next-line: duplicate-set-field
         vim.api.nvim_echo = function(...)
             require("notify")
             vim.api.nvim_echo(...)
@@ -23,7 +25,8 @@ return {
         })
         vim.notify = notif
         -- redirect echo to use notify, doesnt work with builtin vim cmd rn
-        vim.api.nvim_echo = function(chunks, history, opts)
+        ---@diagnostic disable-next-line: duplicate-set-field
+        vim.api.nvim_echo = function(chunks, history, _)
             local notif_text = ""
             for _, chunk in pairs(chunks) do
                 if not chunk[1] then
