@@ -4,6 +4,7 @@ local dpi = beautiful.xresources.apply_dpi
 local lgi = require "lgi"
 local Gio = lgi.Gio
 local Gtk = lgi.require("Gtk", "3.0")
+local min = math.min
 local gears = require "gears"
 local awful = require "awful"
 local helpers = require "helpers"
@@ -132,8 +133,8 @@ local function get_entries()
 			local cmd = app:get_commandline()
 
 			widget.appinfo = app
+            -- search by display appname and cmd
 			widget.search_params = { string.lower(name) }
-			--if desc then table.insert(widget.search_params, string.lower(desc)) end
 			if cmd then table.insert(widget.search_params, string.lower(cmd)) end
 
 			LAUNCHER_CACHED_ENTRIES[#LAUNCHER_CACHED_ENTRIES+1] = widget
@@ -292,18 +293,20 @@ local function init(s)
 			return a.match_score > b.match_score
 		end)
 
-		-- this would usually done via reset, but the prompt is part of the grid so not possible
+		-- this would usually be done via reset (in a layout container),
+        -- but the prompt is part of the grid so not possible
 		for i = 1, 9, 1 do
 			entry_grid:remove_widgets_at(i, 1, 1, 1)
 		end
-		for i, entry in ipairs(filtered) do
-			if i == 10 then break end
-			entry_grid:add_widget_at(entry, 10-i, 1, 1, 1)
-		end
-		if #filtered > 0 then
-			filtered[1].bg = beautiful.bg_focus
-			self.selected_entry = 9
-		end
+
+        for i = 1, min(#filtered, 9), 1 do
+            entry_grid:add_widget_at(filtered[i], 10-i, 1, 1, 1)
+            if i == 1 then
+                filtered[1].bg = beautiful.bg_focus
+    			self.selected_entry = 9
+            end
+        end
+
 	end
 
 	---@param hide_after_search boolean if the launcher wibox should be hidden after running the applauncher
