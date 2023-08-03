@@ -21,8 +21,8 @@ return {
                     },
                     {
                         icon = '   ',
-                        desc = 'Open Nvim Tree               ',
-                        action = 'NvimTreeToggle',
+                        desc = 'Open Tree                    ',
+                        action = 'Neotree toggle',
                         key = 'SPC f'
                     },
                     {

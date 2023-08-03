@@ -42,7 +42,8 @@ require"lazy".setup({
             require("azul").setup{
                 nvim_tree = {
                     contrast = true
-                }
+                },
+                dark = false
             }
         end,
     },

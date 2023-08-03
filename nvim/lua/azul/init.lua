@@ -1,12 +1,20 @@
 local M = {}
-local core = require('azul.core_light')
 local highlights = require('azul.highlights')
 
 function M.setup (opts)
 	if opts == nil then
-		opts = {}
+		opts = {
+            dark = false
+        }
 	end
-	local colors = core.get_colors()
+
+    local colors
+    if opts.dark then
+     	colors = require('azul.core').get_colors()
+    else
+        colors = require('azul.core_light').get_colors()
+    end
+
 	vim.opt.termguicolors = true
 	highlights.highlight_all(colors, opts)
 end
