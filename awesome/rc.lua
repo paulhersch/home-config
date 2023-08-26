@@ -1,4 +1,3 @@
--- awesome_mode: api-level=5:screen=on
 local gears = require("gears")
 local awful = require("awful")
 local beautiful = require("beautiful")
@@ -65,9 +64,11 @@ client.connect_signal("request::manage", function(c)
 	if c.floating then
 		awful.placement.centered(c)
 		c:raise()
-	else c:to_secondary_section() end
+	else
+        c:to_secondary_section()
+    end
     c:activate{raise = true}
-    --if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
+    if not c.requests_no_titlebar then c:emit_signal("request::titlebars", c) end
 end)
 --}}}
 

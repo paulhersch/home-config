@@ -18,7 +18,17 @@ awful.mouse.append_global_mousebindings {
 		modifiers = {},
 		button = 3,
 		on_press = function ()
-			menu:show()
+			menu:toggle()
+		end
+	}
+}
+
+awful.mouse.append_global_mousebindings {
+	awful.button {
+		modifiers = {},
+		button = 1,
+		on_press = function ()
+			menu:hide()
 		end
 	}
 }
