@@ -87,44 +87,24 @@ end
 --}}}
 local last_wibox
 
-local function pointer_on_focus(widget, wibox)
-    if wibox then
-	    widget:connect_signal("mouse::enter", function()
-    	    wibox.cursor = "hand1"
+local function cursor_focus(widget, wibox, cursor)
+        widget:connect_signal("mouse::enter", function()
+    	    wibox = wibox or mouse.current_wibox
+            wibox.cursor = cursor
 	    end)
 	    widget:connect_signal("mouse::leave", function()
+    	    wibox = wibox or mouse.current_wibox
 		    wibox.cursor = "left_ptr"
 	    end)
-    else
-        widget:connect_signal("mouse::enter", function ()
-            last_wibox = mouse.current_wibox
-            last_wibox.cursor = "hand1"
-        end)
-        widget:connect_signal("mouse::leave", function ()
-            last_wibox.cursor = "left_ptr"
-        end)
-    end
     return widget
 end
 
+local function pointer_on_focus(widget, wibox)
+    return cursor_focus(widget, wibox, "hand1")
+end
+
 local function textcursor_on_focus(widget, wibox)
-    if wibox then
-	    widget:connect_signal("mouse::enter", function()
-    	    wibox.cursor = "xterm"
-	    end)
-	    widget:connect_signal("mouse::leave", function()
-		    wibox.cursor = "left_ptr"
-	    end)
-    else
-        widget:connect_signal("mouse::enter", function()
-            last_wibox = mouse.current_wibox
-            last_wibox.cursor = "xterm"
-        end)
-        widget:connect_signal("mouse::leave", function()
-            last_wibox.cursor = "left_ptr"
-        end)
-    end
-    return widget
+    return cursor_focus(widget, wibox, "xterm")
 end
 
 ---@param ratio number desired aspect ratio (e.g. 16/9 for 16:9 (width/height))

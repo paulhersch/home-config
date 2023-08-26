@@ -18,6 +18,12 @@
         "prefix": "cheatdoc",
         "body": [
             "\\documentclass[9pt]{article}",
+            "\\makeatletter",
+            "\\renewcommand\\normalsize{\\@setfontsize\\large{7pt}{9}}",
+            "\\renewcommand\\large{\\@setfontsize\\large{8pt}{10}}",
+            "\\renewcommand\\Large{\\@setfontsize\\Large{9pt}{11}}",
+            "\\renewcommand\\LARGE{\\@setfontsize\\Large{11pt}{12}}",
+            "\\makeatother",
             "\\usepackage{amssymb}",
             "\\usepackage{amsmath}",
             "\\usepackage[ngerman]{babel}",
@@ -26,9 +32,8 @@
             "\\usepackage{multicol}",
             "\\setlength{\\columnseprule}{0.4pt}",
             "\\geometry{a4paper,left=5mm,right=5mm,top=5mm,bottom=5mm}",
-            "\\let\\tempone\\itemize",
-            "\\let\\temptwo\\enditemize",
-            "\\renewenvironment{itemize}{\\tempone\\addtolength{\\itemsep}{\\dimexpr0pt-0.5\\baselineskip}}{\\temptwo}",
+            "\\usepackage{enumitem}",
+            "\\setlist[itemize]{noitemsep, topsep=0pt}",
             "\\begin{document}",
             "\\begin{multicols}{3}",
             "$1",
@@ -50,6 +55,20 @@
         "prefix": "itemizeconclusion",
         "body" : [
             "\\item[\\$\\Rightarrow\\$] $1"
+        ]
+    },
+    "InlineHeadingL5" : {
+        "prefix": "h5",
+        "body" : [
+            "\\textbf{\\large{$1}}\\newline",
+            "$2"
+        ]
+    },
+    "InlineHeadingL4" : {
+        "prefix": "h4",
+        "body" : [
+            "\\textbf{\\Large{$1}}\\newline",
+            "$2"
         ]
     }
 }
