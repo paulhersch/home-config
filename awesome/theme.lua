@@ -14,7 +14,7 @@ local homedir = os.getenv("HOME")
 
 local theme = {}
 
-theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/balconies.png"
+theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/pelicans.jpg"
 
 -- theme.font          = "Recursive Sn Lnr St"
 -- theme.font_thin     = "Recursive Sn Lnr St Lt"
@@ -25,8 +25,8 @@ theme.font_bold = theme.font .. " XBd"
 
 local xres = xresources.get_current_theme()
 
-local function is_dark(hexCol)
-    local re,gr,bl,op = gears.color.parse_color(hexCol)
+local function is_dark(hex)
+    local re,gr,bl,_ = gears.color.parse_color(hex)
     return (re+gr+bl)/3 <= 0.5
 end
 

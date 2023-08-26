@@ -59,7 +59,7 @@ M.set = function (key, value)
     for _, subkey in ipairs(pack(unpack(keys, 1, #keys-1))) do
         ret = ret[subkey]
         if type(ret) ~= "table" then
-            gears.debug.print_error("a setting that does not exist has been request to be changed")
+            gears.debug.print_error("a setting that does not exist has been requested to be changed")
             return
         end
     end

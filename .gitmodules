@@ -13,3 +13,12 @@
 [submodule "awesome/plugins/fzy"]
 	path = awesome/plugins/fzy
 	url = https://github.com/swarn/fzy-lua
+[submodule "awesome/lua-amalg"]
+	path = awesome/lua-amalg
+	url = https://github.com/siffiejoe/lua-amalg
+[submodule "awesome/plugins/lua-amalg"]
+	path = awesome/plugins/lua-amalg
+	url = https://github.com/siffiejoe/lua-amalg
+[submodule "awesome/plugins/minify"]
+	path = awesome/plugins/minify
+	url = https://github.com/stravant/lua-minify
