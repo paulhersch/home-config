@@ -8,7 +8,6 @@ local gears = require "gears"
 local helpers = require "helpers"
 
 local client = client
-local naughty = naughty
 
 local notifctl = require "ui.notifications"
 
@@ -24,11 +23,11 @@ local sound_enabled_icon = gears.color.recolor_image(mat_icons .. "volume_up.svg
 local sound_disabled_icon = gears.color.recolor_image(mat_icons .. "volume_off.svg", beautiful.fg_focus)
 
 local function bar_indic_notif()
-    require("ui.bar.bar").notifcenter_filled()
+    require "ui.bar.popups.quicksettings".show_notif()
 end
 
 local function bar_indic_no_notif()
-    require("ui.bar.bar").notifcenter_cleared()
+    require "ui.bar.popups.quicksettings".hide_notif()
 end
 
 local function cross_enter (self, _)

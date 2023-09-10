@@ -4,44 +4,13 @@ local dpi = beautiful.xresources.apply_dpi
 local helpers = require "helpers"
 local gears = require "gears"
 local awful = require "awful"
-local Gtk = require("lgi").require("Gtk", "3.0")
 local searchwidget = require "ui.bar.popups.launcher.search"
-local button = require("components.container").button
+local button = require("ui.components.container").button
+local PopupBase = require("ui.bar.popups.base").new
 
-local icon_theme = Gtk.IconTheme.get_default()
-
----@param icon_name string
----@return nil|userdata
-local function get_gtk_icon(icon_name)
-    local info = icon_theme:lookup_icon(icon_name, dpi(48), 0)
-    if info then
-        local path = info:get_filename()
-        return path
-    end
-    return nil
-end
+local m = {}
 
 local function create_power_button(imagename, on_press, color)
-    -- local widget = helpers.pointer_on_focus(wibox.widget {
-    --     widget = wibox.container.background,
-    --     bg = beautiful.bg_focus_dark,
-    --     shape = beautiful.theme_shape,
-    --     {
-    --         widget = wibox.container.margin,
-    --         margins = dpi(5),
-    --         {
-    --             widget = wibox.widget.imagebox,
-    --             image = color ~= nil and gears.color.recolor_image(
-    --                 gears.filesystem.get_configuration_dir() .. "/assets/materialicons/" .. imagename,
-    --             color) or imagename,
-    --             buttons = { awful.button {
-    --                 modifiers = {},
-    --                 button = 1,
-    --                 on_press = on_press
-    --             }}
-    --         }
-    --     }
-    -- })
     local widget = button({
         widget = {
             widget = wibox.widget.imagebox,
@@ -53,48 +22,57 @@ local function create_power_button(imagename, on_press, color)
             on_click = on_press
         }
     })
-    -- widget:connect_signal("mouse::enter", function ()
-    --     widget.bg = beautiful.bg_focus
-    -- end)
-    -- widget:connect_signal("mouse::leave", function ()
-    --     widget.bg = beautiful.bg_focus_dark
-    -- end)
     return widget
 end
 
-local function create_launcher_widgets(s)
-    return wibox.widget {
+local function create_launcher_widget(s)
+    local w = {
+        search = searchwidget.init(s)
+    }
+    w.widget = wibox.widget {
         widget = wibox.container.background,
         bg = beautiful.bg_focus_dark,
         shape = beautiful.theme_shape,
         {
             widget = wibox.container.margin,
             margins = dpi(5),
-            searchwidget.init(s)
+            setmetatable({}, {__index = w.search})
         }
     }
+    return w
 end
 
-local function init(s)
+---@return LauncherPopup
+m.init = function (bar)
+    local s = bar.screen
     local w, h = dpi(450), dpi(600)
+    local launcherWidget = create_launcher_widget(s)
 
-    s.launcher = wibox {
-        x = s.geometry.x + 2*beautiful.useless_gap,
-        y = s.geometry.y + beautiful.wibar_height + 2*beautiful.useless_gap,
-        ontop = true,
-        width = w,
-        height = h,
-        screen = s,
+    ---@class LauncherPopup : PopupWidget
+    ---@field show_and_run function Show Popup and Run prompt
+    ---@field hide function Hide Popup (used by widget)
+    ---@field launcherWidget any The real launcher Widget
+    local LauncherPopup = {
+        launcherWidget = launcherWidget
+    }
+    ---@type LauncherPopup
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    LauncherPopup = PopupBase {
+        anchor = "left",
+        trigger = gears.filesystem.get_configuration_dir() .. "assets/Nix.svg",
         widget = wibox.widget {
             widget = wibox.container.margin,
             margins = dpi(10),
+            forced_height = h,
+            forced_width = w,
             {
                 layout = wibox.layout.fixed.horizontal,
                 spacing = dpi(10),
                 {
+                    id = "launcherWidget",
                     widget = wibox.container.constraint,
                     width = w - dpi(90),
-                    create_launcher_widgets(s),
+                    setmetatable({}, {__index = LauncherPopup.launcherWidget.widget})
                 },
                 {
                     layout = wibox.layout.fixed.vertical,
@@ -156,34 +134,31 @@ local function init(s)
         }
     }
 
-    function s.launcher:show()
-        self.visible = true
+    -- reassign overriden value (TODO: find cleaner way)
+    -- gears.table.crush wont do the job here
+    LauncherPopup.launcherWidget = launcherWidget
+
+    -- register in screen
+    s.launcher = LauncherPopup
+    LauncherPopup:register_bar(bar)
+    LauncherPopup:show_trigger()
+
+    function LauncherPopup:show_and_run()
+        self:__show_popup()
+        -- reference the search widget thingy directly
+        self.launcherWidget.search:start_search(true, self)
     end
-    function s.launcher:hide()
-        self.visible = false
-        local searchwidget_instance = s.popup_launcher_widget
-        if searchwidget_instance:is_active() then
-            searchwidget_instance:stop_search()
-        end
+
+    function LauncherPopup:hide()
+        self:__hide_popup()
     end
+
+    return LauncherPopup
 end
 
-local function show(s)
-    s.launcher:show()
+m.run_applauncher = function()
+    local s = awful.screen.focused()
+    s.launcher:show_and_run()
 end
 
-local function run_applauncher(s)
-    s.launcher:show()
-    s.popup_launcher_widget:start_search(true)
-end
-
-local function hide(s)
-    s.launcher:hide()
-end
-
-return {
-    init = init,
-    show = show,
-    hide = hide,
-    run_applauncher = run_applauncher
-}
+return setmetatable(m, {__call = m.init})

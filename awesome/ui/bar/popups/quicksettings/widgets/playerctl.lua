@@ -5,7 +5,6 @@ local gfs = require "gears.filesystem"
 local gcl = require "gears.color"
 local awful = require "awful"
 local gears = require "gears"
-local naughty = require "naughty"
 local pctl = require("lgi").require("Playerctl")
 local cairo = require("lgi").cairo
 
@@ -32,10 +31,10 @@ widget:connect_signal("stop_updating", function ()
 end)
 
 local function show_icon()
-    require "ui.bar.bar".pctl_active()
+    require "ui.bar.popups.quicksettings".show_note()
 end
 local function hide_icon()
-    require "ui.bar.bar".pctl_inactive()
+    require "ui.bar.popups.quicksettings".hide_note()
 end
 
 --basewidth 440 (qs 450 - 2\*5 margin)

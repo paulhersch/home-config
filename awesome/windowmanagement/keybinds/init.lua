@@ -10,7 +10,7 @@ local terminal = "st"
 local filemanager = "nemo"
 local modkey = "Mod1"
 
-require ("keybinds.clients").init(modkey)
+require ("windowmanagement.keybinds.clients").init(modkey)
 
 -- mousebindings
 awful.mouse.append_global_mousebindings {

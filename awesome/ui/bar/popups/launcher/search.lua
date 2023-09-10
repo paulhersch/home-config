@@ -310,18 +310,13 @@ local function init(s)
 	end
 
 	---@param hide_after_search boolean if the launcher wibox should be hidden after running the applauncher
-	function s.popup_launcher_widget:start_search(hide_after_search)
+    ---@param popup? LauncherPopup Popup calling method if hide_after_search is set
+	function s.popup_launcher_widget:start_search(hide_after_search, popup)
 		promptwidget:get_children_by_id('bg')[1].bg = beautiful.bg_focus
 		self:__reset_highlight()
 		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_focus
-		--weird shit going on for no reason whatsoever when not focusing the wibox, so mouse will be moved
-		if mouse.current_wibox ~= s.launcher then
-			mouse.coords({
-				x = s.launcher.x + s.launcher.width/2,
-				y = s.launcher.y + s.launcher.height - dpi(30)
-			})
-		end
-		awful.prompt.run {
+
+        awful.prompt.run {
 			textbox = prompttext,
 			bg_cursor = beautiful.fg_normal,
 			font = beautiful.font,
@@ -353,7 +348,7 @@ local function init(s)
 				self:__reset_highlight()
 				promptwidget:get_children_by_id('bg')[1].bg = beautiful.bg_focus_dark
 				if hide_after_search then
-					s.launcher:hide()
+					if popup then popup:hide() end
 				end
 			end
 		}
@@ -363,7 +358,6 @@ local function init(s)
 		return prompttext.text ~= "search apps"
 	end
 
-	--s.popup_launcher_widget:get_children_by_id("promptbox")[1]
 	promptwidget:add_button(awful.button{
 		modifiers = {},
 		button = 1,
