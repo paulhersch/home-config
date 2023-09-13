@@ -25,7 +25,7 @@ local function abstract_show(name)
     if p[name .. "_shown"] then
         return
     end
-    p.trigger:add(p[name .. "_symbol"])
+    p.trigger:insert(1, p[name .. "_symbol"])
     p[name .. "_shown"] = true
 end
 

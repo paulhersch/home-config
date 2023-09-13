@@ -13,6 +13,12 @@ local settings = {
     notifications = {
         dnd = false,
         silent = false
+    },
+    weather = {
+        lon = 0,
+        len = 0,
+        units = "metric",
+        apikey = "123456"
     }
 }
 

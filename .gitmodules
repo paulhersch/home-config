@@ -22,3 +22,6 @@
 [submodule "awesome/plugins/minify"]
 	path = awesome/plugins/minify
 	url = https://github.com/stravant/lua-minify
+[submodule "awesome/plugins/pprint"]
+	path = awesome/plugins/pprint
+	url = https://github.com/jagt/pprint.lua

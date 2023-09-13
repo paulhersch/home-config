@@ -28,7 +28,7 @@ o.foldenable = false
 g.vsnip_snippet_dir = os.getenv("HOME") .. "/.config/nvim/snips"
 
 if g.neovide then
-	o.guifont = "Iosevka Comfy Motion:h10,Symbols Nerd Font:h10"
+	o.guifont = "Iosevka Comfy Motion:h9,Symbols Nerd Font:h9"
 	g.neovide_refresh_rate = 60
 	g.neovide_refresh_rate_idle = 1
 	g.neovide_scroll_animation_length = 0.1

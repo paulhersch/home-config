@@ -14,7 +14,6 @@
 local wibox = require("wibox")
 local gt = require("gears.table")
 local beautiful = require("beautiful")
-local dpi = beautiful.xresources.apply_dpi
 local awful = require("awful")
 
 local button = require("ui.components").container.button
@@ -75,11 +74,9 @@ function m.new(args)
 
     assert(_config.anchor == "left" or _config.anchor == "right", "PopupWidget Anchor value invalid")
     -- Generic Popup Widget class
-    -- bar needs functions "add_widget", "remove_widget" and "replace_widget".
+    -- bar needs functions "add_widget" and "remove_widget".
     -- add_widget and remove_widget need the following signature:
     -- (widget, anchor), where anchor is a string of "left" or "right"
-    -- replace widget has the signature (old, new, anchor) where old is the old
-    -- trigger widget and new is the new one. Ideally this should just be some
     -- layouts "add", ... functions with extra steps to determine which side of the bar
     -- the widget is gonna be on.
     --
@@ -106,6 +103,7 @@ function m.new(args)
         },
         bound = false,
         opened = false,
+        trigger_shown = false,
         screen = nil
     }
 
@@ -152,21 +150,19 @@ function m.new(args)
     ---@protected
     function PopupWidget:show_trigger()
         assert(self.bound, "cant show unbound widget")
-        self._private.bar:add_widget(self._private.trigger, _config.anchor)
+        if not self.trigger_shown then
+            self._private.bar:add_widget(self._private.trigger, _config.anchor)
+            self.trigger_shown = true
+        end
     end
 
     ---@protected
     function PopupWidget:hide_trigger()
         assert(self.bound, "cant hide unbound widget")
-        self._private.bar:remove_widget(self._private.trigger, _config.anchor)
-    end
-
-    ---@protected
-    function PopupWidget:set_trigger_widget(widget)
-        local pre = self._private.trigger
-        self._private.config.trigger = widget
-        self._private.trigger = update_trigger_widget(self)
-        self._private.bar:replace_widget(pre, self._private.trigger, self._private.config.anchor)
+        if self.trigger_shown then
+            self._private.bar:remove_widget(self._private.trigger, _config.anchor)
+            self.trigger_shown = false
+        end
     end
 
     -- The Popup needs the bar as anchor to be displayed properly

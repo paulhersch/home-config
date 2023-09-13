@@ -11,6 +11,7 @@ local buttonify = container.buttonify
 local LauncherPopup = require("ui.bar.popups.launcher")
 local DatePopup = require("ui.bar.popups.date")
 local QuicksettingsPopup = require("ui.bar.popups.quicksettings")
+local WeatherPopup = require("ui.bar.popups.weather")
 
 -- local pctl_indicator = wibox.widget
 -- {
@@ -101,22 +102,6 @@ local function init (s)
 	local bar_widget = wibox.widget {
         widget = wibox.container.margin,
         margins = dpi(5),
-        -- bgimage = function (_, cr, w, h)
-        -- local pattern = cairo.Pattern.create_linear(0, 0, 0, h)
-        -- pattern:add_color_stop_rgba(0, gears.color.parse_color(beautiful.bg_normal))
-        -- pattern:add_color_stop_rgba(0.9, gears.color.parse_color(beautiful.bg_normal))
-        -- pattern:add_color_stop_rgba(0.95, gears.color.parse_color(beautiful.bg_focus_dark))
-        -- pattern:add_color_stop_rgba(1, gears.color.parse_color(beautiful.bg_focus))
-        --
-        -- cr:rectangle(0, 0, w, h)
-        -- cr:set_source(pattern)
-        -- cr:fill()
-        -- cr:set_source_rgba(gears.color.parse_color(beautiful.bg_focus_dark))
-        -- cr:set_line_width(dpi(5))
-        -- cr:move_to(0,h)
-        -- cr:line_to(w,h)
-        -- cr:stroke()
-        -- end,
         {
             layout = wibox.layout.flex.horizontal,
             {
@@ -187,6 +172,7 @@ local function init (s)
     LauncherPopup.init(s.bar)
     QuicksettingsPopup.init(s.bar)
     DatePopup.init(s.bar)
+    WeatherPopup.init(s.bar)
 
 end
 
