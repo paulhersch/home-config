@@ -1,48 +1,20 @@
 local awful	= require "awful"
 local hotkeys_popup = require"awful.hotkeys_popup"
 local gears	= require "gears"
-
-local launcher = require "ui.bar.popups.launcher"
-local menu = require "ui.rightclickmenu"
+local settings = require("settings")
 
 local configdir	= gears.filesystem.get_configuration_dir()
-local terminal = "st"
-local filemanager = "nemo"
-local modkey = "Mod1"
-
+local modkey = settings.get("modkey")
 require ("windowmanagement.keybinds.clients").init(modkey)
-
--- mousebindings
-awful.mouse.append_global_mousebindings {
-	awful.button {
-		modifiers = {},
-		button = 3,
-		on_press = function ()
-			menu:toggle()
-		end
-	}
-}
-
-awful.mouse.append_global_mousebindings {
-	awful.button {
-		modifiers = {},
-		button = 1,
-		on_press = function ()
-			menu:hide()
-		end
-	}
-}
 
 -- General Awesome keys
 awful.keyboard.append_global_keybindings({
 	awful.key({ modkey, "Control" }, "r", awesome.restart,
 		{description = "reload awesome", group = "awesome"}),
-	awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
+	awful.key({ modkey,           }, "Return", function ()
+        awful.spawn(settings.get("terminal"))
+    end,
 		{description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey }, "d", function()
-            launcher.run_applauncher(awful.screen.focused())
-        end,
-		{description = "App launcher", group = "launcher"}),
 })
 
 -- Focus related keybindings
@@ -105,14 +77,11 @@ awful.keyboard.append_global_keybindings({
                             i = j
                         end
                     end
-                    print(i)
                     awful.screen.focus(i == #screens and screens[1] or screens[i+1])
                     awful.screen.focused().tags[index]:view_only()
-					--s.lasttag:view_only()
-				else --tag x, key for tag y
+				else
 					tag:view_only()
 				end
-				--s.lasttag = current
 			end
 			collectgarbage("collect")
 		end,
@@ -133,9 +102,11 @@ awful.keyboard.append_global_keybindings({
 
 -- Program shortcuts
 awful.keyboard.append_global_keybindings({
-	awful.key({ modkey }, "F3", function() awful.spawn.with_shell(filemanager) end, {
-        description = "Launch Filemanager", group = "launcher"
-    }),
+	awful.key({ modkey }, "F3", function()
+            awful.spawn(settings.get("filemanager"))
+        end,
+        {description = "Launch Filemanager", group = "launcher"}
+    ),
 	awful.key({}	, "Print", function() awful.spawn.with_shell(configdir .. "scripts/scrot") end, {
         description = "Screenshot", group = "extra"
     }),

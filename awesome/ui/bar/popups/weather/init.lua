@@ -5,36 +5,50 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 local dpi = beautiful.xresources.apply_dpi
 local cairo = require("lgi").cairo
-local math = math
-local settings = require("settings")
 local json = require("rapidjson")
-local pprint = require("plugins.pprint.pprint").pprint
+
+local math = math
+local table = table
+local unpack = unpack or table.unpack
+local settings = require("settings")
+local container = require("ui.components.container")
+local Group = container.description
+local Button = container.button
 
 local PopupBase = require("ui.bar.popups.base").new
 
-local icon_path = gears.filesystem.get_configuration_dir() .. "assets/weathericons/"
+local weathericon_path = gears.filesystem.get_configuration_dir() .. "assets/weathericons/"
+local materialicon_path = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
 local m = {}
 local p = {
     ---@type WeatherWidget[]
-    instances = {},
     current_data = {},
     trigger = wibox.widget {
         widget = wibox.container.background,
         {
+            id = "trigger_layout",
             layout = wibox.layout.fixed.horizontal,
-            spacing = dpi(10),
+            forced_height = dpi(20),
+            spacing = dpi(5),
             {
                 id = "icon",
                 widget = wibox.widget.imagebox,
-                image = gears.color.recolor_image(icon_path .. "01d.svg", beautiful.fg_normal),
-                forced_height = dpi(20),
+                image = gears.color.recolor_image(weathericon_path .. "01d.svg", beautiful.fg_normal),
                 forced_width = dpi(20),
             },
         }
     },
+    alert_symbol = wibox.widget {
+        widget = wibox.widget.imagebox,
+        image = gears.color.recolor_image(
+            weathericon_path .. "alert.svg",
+            beautiful.fg_normal
+        ),
+        forced_width = dpi(20)
+    },
     first_render_complete = false,
-    width = dpi(400),
+    width = dpi(450),
     current_weather = {
         height = dpi(75),
     },
@@ -51,14 +65,16 @@ local p = {
 p.draw_wind_arrow = function(cr, w, h, rotation)
     local dist_wings = math.floor(w/5)
     local w2, h2 = math.floor(w/2), math.floor(h/2)
+    local offset = math.ceil(h/7)
+    cr:set_line_width(dpi(1))
     cr:translate(w2, h2)
     cr:rotate(math.rad(rotation))
     cr:set_source_rgba(gears.color.parse_color(beautiful.fg_normal))
-    cr:move_to(1, -h2+1)
-    cr:line_to(dist_wings, h2-1)
-    cr:line_to(1, h2-dist_wings)
-    cr:line_to(-dist_wings, h2-1)
-    cr:line_to(1, -h2+1)
+    cr:move_to(0, -h2+offset)
+    cr:line_to(dist_wings, h2-offset)
+    cr:line_to(0, h2-dist_wings)
+    cr:line_to(-dist_wings, h2-offset)
+    cr:line_to(0, -h2+offset)
     cr:stroke()
 end
 
@@ -70,14 +86,13 @@ end
 p.render_current_weather = function ()
     local current_weather = p.current_data.current
     local layout = wibox.widget {
-        layout = wibox.layout.grid,
-        homogeneous = true,
-        expand = true,
-        spacing = dpi(5),
-        forced_num_cols = 4,
-        forced_num_rows = 2,
-        forced_height = p.current_weather.height,
-        forced_width = p.width
+            id = "inner_layout",
+            layout = wibox.layout.grid,
+            homogeneous = true,
+            expand = true,
+            spacing = dpi(5),
+            forced_num_cols = 4,
+            forced_num_rows = 2,
     }
     layout:add_widget_at(wibox.widget {
         widget = wibox.container.place,
@@ -86,7 +101,7 @@ p.render_current_weather = function ()
         {
             widget = wibox.widget.imagebox,
             image = gears.color.recolor_image(
-                icon_path .. current_weather.weather[1].icon .. ".svg",
+                weathericon_path .. current_weather.weather[1].icon .. ".svg",
                 beautiful.fg_normal
             ),
             forced_height = p.current_weather.height*4/5,
@@ -97,7 +112,7 @@ p.render_current_weather = function ()
         widget = wibox.widget.textbox,
         valign = "bottom",
         halign = "left",
-        text = string.format("%.1f°C", current_weather.temp),
+        text = string.format("%.1f °C", current_weather.temp),
         font = beautiful.font .. " 11"
     }, 1, 2, 1, 1)
     layout:add_widget_at(wibox.widget {
@@ -159,7 +174,28 @@ p.render_current_weather = function ()
         halign = "left",
     }, 2, 4, 1, 1)
 
-    return layout
+    return Group {
+        widget = layout,
+        description = "Current",
+        bg = beautiful.bg_focus_dark,
+        group_buttons = {
+            Button {
+                margins = dpi(1),
+                widget = {
+                    -- widget = wibox.widget.imagebox,
+                    -- image = materialicon_path .. "restart.svg",
+                    widget = wibox.widget.textbox,
+                    text = "update"
+                },
+                left = {
+                    on_release = function ()
+                        p.update_widget()
+                        p.update_timer:again()
+                    end
+                }
+            }
+        }
+    }
 end
 
 p.render_temp_graph = function (cr, w, h)
@@ -191,6 +227,7 @@ p.render_temp_graph = function (cr, w, h)
     -- needed later to determine size of text stuffs
     cr:select_font_face(beautiful.font, cairo.FontSlant.NORMAL, cairo.FontWeight.NORMAL)
     cr:set_font_size(font_height)
+    cr:set_line_width(dpi(1))
     local dash_pattern = {dpi(6), dpi(4)}
 
     local function calc_y(temp)
@@ -198,7 +235,7 @@ p.render_temp_graph = function (cr, w, h)
         -- + min_abs to shift values upwards (cant have negative pixel vals)
         -- + h_offset to put values in middle of target area (otherwise one line would
         -- touch the border)
-        return h_target - ((temp+mintemp_abs)*h_factor) + h_offset
+        return h_target - math.floor((temp+mintemp_abs)*h_factor) + h_offset
     end
 
     -- remove unnessecary points and normalize temps to fit graph well
@@ -216,16 +253,18 @@ p.render_temp_graph = function (cr, w, h)
         cr:text_extents(graph_datapoints[#graph_datapoints].time).width/2
     )
     local w_factor = w_range/#graph_datapoints
-
+    -- check if zero has already been added
+    local rendered_zero = false
     -- text
     for i = 0, 4, 1 do
         -- shift up because no <0, shift back down
         local temp = ((mintemp_abs+max)*(i/4))-mintemp_abs
+        rendered_zero = rendered_zero or temp == 0
         local y = calc_y(temp)
         cr:set_source_rgba(gears.color.parse_color(beautiful.fg_normal))
         cr:move_to(0, y+font_height/2) -- push down so mid is on line
         cr:show_text(string.format("%.1f°C", temp))
-        cr:set_source_rgba(gears.color.parse_color(beautiful.bg_focus))
+        cr:set_source_rgba(gears.color.parse_color(beautiful.gray))
         cr:set_dash(dash_pattern, 1, 0)
         cr:move_to(w_start, y)
         cr:line_to(w_start+w_range, y)
@@ -234,11 +273,13 @@ p.render_temp_graph = function (cr, w, h)
     end
 
     -- 0 line
-    cr:set_source_rgba(gears.color.parse_color(beautiful.bg_focus))
-    local h_0 = calc_y(0)
-    cr:move_to(w_start+1, h_0)
-    cr:line_to(w_start + w_range, h_0)
-    cr:stroke()
+    if not rendered_zero then
+        cr:set_source_rgba(gears.color.parse_color(beautiful.gray))
+        local h_0 = calc_y(0)
+        cr:move_to(w_start+1, h_0)
+        cr:line_to(w_start + w_range, h_0)
+        cr:stroke()
+    end
 
     for i = 0, 4, 1 do
         -- similar to how index above is calculated
@@ -246,17 +287,18 @@ p.render_temp_graph = function (cr, w, h)
         -- also 1 base index things
         local dp_index = math.floor(#graph_datapoints*(i/4))
         local text = graph_datapoints[dp_index == 0 and 1 or dp_index].time
-        local extents = cr:text_extents(text) --cairo.TextExtents(text)
-        local x_pos = w_start+w_factor*dp_index
+        local extents = cr:text_extents(text)
+        local x_pos = math.floor(w_start+w_factor*dp_index)
+        -- nibbly things + text
         cr:set_source_rgba(gears.color.parse_color(beautiful.fg_normal))
         cr:move_to(x_pos, h_max)
         cr:line_to(x_pos, h_max+dpi(4))
         cr:stroke()
         cr:move_to(x_pos-extents.width/2, h)
         cr:show_text(text)
-        -- draw funny dashed lines
+        -- dashed lines
         if i > 0 and i < 4 then
-            cr:set_source_rgba(gears.color.parse_color(beautiful.bg_focus))
+            cr:set_source_rgba(gears.color.parse_color(beautiful.gray))
             cr:set_dash(dash_pattern, 1, 0)
             cr:move_to(x_pos, h_max)
             cr:line_to(x_pos, 0)
@@ -265,6 +307,7 @@ p.render_temp_graph = function (cr, w, h)
         end
     end
 
+    cr:set_line_width(dpi(2))
     -- draw coord-system lines
     cr:set_source_rgba(gears.color.parse_color(beautiful.fg_normal))
     cr:move_to(w_start, 0)
@@ -282,23 +325,63 @@ p.render_temp_graph = function (cr, w, h)
 end
 
 p.render_forecast = function ()
-    local w = wibox.widget {
-        widget = wibox.container.background,
-        forced_height = p.forecast.height,
-        bgimage = function (_, cr, w, h)
-            p.render_temp_graph(cr, w, h)
-        end
+    return Group {
+        widget = {
+            widget = wibox.container.background,
+            forced_height = p.forecast.height,
+            bgimage = function (_, cr, w, h)
+                p.render_temp_graph(cr, w, h)
+            end
+        },
+        description = "Forecast",
     }
+end
 
-    return w
+p.render_alerts = function ()
+    local alerts = {}
+    for _, alert in ipairs(p.current_data.alerts) do
+        table.insert(alerts, {
+            layout = wibox.layout.fixed.vertical,
+            spacing = dpi(5),
+            {
+                widget = wibox.widget.textbox,
+                markup = string.format(
+                    "<b>%s</b> <i>%s - %s</i>",
+                    alert.event,
+                    os.date("%d.%m %H:%M", alert.start),
+                    -- end will even be recognized as control string when its part of the table
+                    os.date("%d.%m %H:%M", alert["end"])
+                ),
+                font = beautiful.font .. " 11",
+            },
+            {
+                widget = wibox.widget.textbox,
+                font = beautiful.font .. " 10",
+                markup = "<span>" .. alert.description .. "</span>",
+                wrap = "word"
+            }
+        })
+    end
+
+    local layout = wibox.widget {
+        id = "inner_layout",
+        layout = wibox.layout.fixed.vertical,
+        spacing = dpi(10),
+    }
+    layout:add(unpack(alerts))
+
+    return Group {
+        description = "Alerts",
+        widget = layout,
+        bg = beautiful.bg_focus_dark
+    }
 end
 
 p.widget = wibox.widget {
     layout = wibox.layout.fixed.vertical,
-    spacing = dpi(5),
+    spacing = dpi(10),
     {
         widget = wibox.container.background,
-        forced_width = p.width,
         forced_height = p.current_weather.height,
         bg = beautiful.bg_focus,
         {
@@ -314,7 +397,6 @@ p.widget = wibox.widget {
     {
         widget = wibox.container.background,
         bg = beautiful.bg_focus,
-        forced_width = p.width,
         forced_height = p.forecast.height,
         {
             widget = wibox.container.place,
@@ -331,38 +413,43 @@ p.widget = wibox.widget {
 p.render_widget = function ()
     p.widget:set(1, p.render_current_weather())
     p.widget:set(2, p.render_forecast())
+    if p.current_data.alerts then
+        if #p.widget.children == 3 then
+            p.widget:set(3, p.render_alerts())
+        end
+        if #p.widget.children == 2 then
+            p.widget:add(p.render_alerts())
+        end
+    else
+        if #p.widget.children == 3 then
+            p.widget:remove(3)
+        end
+    end
 end
 
 p.update_trigger = function ()
     local current_weather = p.current_data.current.weather[1]
-    p.trigger:get_children_by_id("icon")[1].image = gears.color.recolor_image(
-        icon_path .. current_weather.icon .. ".svg",
+    local trigger_layout = p.trigger:get_children_by_id("trigger_layout")[1]
+    local trigger_icon = p.trigger:get_children_by_id("icon")[1]
+
+    local alert_index = trigger_layout:index(p.alert_symbol)
+
+    trigger_icon.image = gears.color.recolor_image(
+        weathericon_path .. current_weather.icon .. ".svg",
         beautiful.fg_normal
     )
-end
-
-p.send_alerts = function ()
-    if not p.current_data.alerts then
-        return
-    end
-    for _, alert in ipairs(p.current_data.alerts) do
-        naughty.notification {
-            title = string.format(
-                "%s von %s bis %s",
-                alert.event,
-                os.date("%d.%m %H:%M", alert.start),
-                -- end will even be recognized as control string when its part of the table
-                os.date("%d.%m %H:%M", alert["end"])
-            ),
-            message = alert.description,
-            urgency = "critical",
-            app_name = "Awesome WeatherWidget",
-            icon = gears.color.recolor_image(icon_path .. "alert.svg", beautiful.fg_normal)
-        }
+    if p.current_data.alerts then
+        if not alert_index then
+            trigger_layout:add(p.alert_symbol)
+        end
+    else
+        if alert_index then
+            trigger_layout:remove_widgets(p.alert_symbol)
+        end
     end
 end
 
-p.start_render = function ()
+p.update_widget = function ()
     local cmd = "curl 'https://api.openweathermap.org/data/2.5/onecall?lat=".. settings.get("weather.lat")
         .. "&lon=" .. settings.get("weather.lon")
         .. "&appid=" .. settings.get("weather.apikey")
@@ -375,11 +462,7 @@ p.start_render = function ()
                 p.current_data = data
                 p.update_trigger()
                 p.render_widget()
-                p.send_alerts()
                 p.first_render_complete = true
-                for _, w in ipairs(p.instances) do
-                    w:show_trigger()
-                end
                 collectgarbage("collect")
             else
                 naughty.notification {
@@ -400,11 +483,9 @@ p.start_render = function ()
     end)
 end
 
-p.fetch_timer = gears.timer {
+p.update_timer = gears.timer {
     timeout = 900,
-    callback = function ()
-        p.start_render()
-    end
+    callback = p.update_widget
 }
 
 m.init = function (bar)
@@ -413,26 +494,26 @@ m.init = function (bar)
     local WeatherWidget = PopupBase{
         widget = wibox.widget {
             widget = wibox.container.margin,
-            margins = dpi(5),
-            setmetatable({}, {__index = p.widget}),
+            margins = dpi(10),
+            {
+                widget = wibox.container.constraint,
+                width = p.width,
+                strategy = "exact",
+                setmetatable({}, {__index = p.widget}),
+            }
         },
         trigger = p.trigger,
         anchor = "right"
     }
 
     WeatherWidget:register_bar(bar)
-    -- hold table of references for updates
-    table.insert(p.instances, setmetatable({}, {__index = WeatherWidget}))
+    WeatherWidget:show_trigger()
 
-    if not p.fetch_timer.started then
-        p.fetch_timer:start()
+    if not p.update_timer.started then
+        p.update_widget()
+        p.update_timer:start()
     end
 
-    if p.first_render_complete then
-        WeatherWidget:show_trigger()
-    else
-        p.start_render()
-    end
     return WeatherWidget
 end
 

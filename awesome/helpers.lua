@@ -20,13 +20,10 @@ local function overloaded()
         function mt:__index(key)
             local signature = {}
             local function __newindex(_, key, value)
-                print(key, type(key), value, type(value))
                 signature[#signature+1] = key
                 fns[table.concat(signature, ",")] = value
-                print("bind", table.concat(signature, ", "))
             end
             local function __index(_, key)
-                print("I", key, type(key))
                 signature[#signature+1] = key
                 return setmetatable({}, { __index = __index, __newindex = __newindex })
             end
@@ -85,7 +82,6 @@ color.col_mix = function(f, s)
     return color.col_shift(f,r*128,g*128,b*128,o*128)
 end
 --}}}
-local last_wibox
 
 local function cursor_focus(widget, wibox, cursor)
         widget:connect_signal("mouse::enter", function()

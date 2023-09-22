@@ -52,8 +52,18 @@ local m = {
     end,
     init = function (bar)
         -- cant require because loop -> set at init
-        p.notifwidget = require "ui.bar.popups.quicksettings.widgets.notifcenter"
-        p.pctlwidget = require "ui.bar.popups.quicksettings.widgets.playerctl"
+        p.notifwidget = p.notifwidget or wibox.widget {
+            widget = wibox.container.place,
+            content_fill_vertical = true,
+            valign = "top",
+            {
+                widget = wibox.container.background,
+                border_color = beautiful.bg_focus_dark,
+                border_width = dpi(2),
+                require "ui.bar.popups.quicksettings.widgets.notifcenter"
+            }
+        }
+        p.pctlwidget = p.pctlwidget or require "ui.bar.popups.quicksettings.widgets.playerctl"
 
         ---@class QuicksettingsPopup : PopupWidget
         local QuicksettingsPopup = PopupBase {
@@ -73,6 +83,17 @@ local m = {
             },
             trigger = p.trigger
         }
+
+        local old_show = QuicksettingsPopup.__show_popup
+        function QuicksettingsPopup:__show_popup()
+            p.pctlwidget:enable_updates()
+            old_show(self)
+        end
+        local old_hide = QuicksettingsPopup.__hide_popup
+        function QuicksettingsPopup:__hide_popup()
+            old_hide(self)
+            p.pctlwidget:disable_updates()
+        end
 
         QuicksettingsPopup:register_bar(bar)
         QuicksettingsPopup:show_trigger()

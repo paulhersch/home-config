@@ -2,10 +2,22 @@ local wibox = require "wibox"
 local dpi = require "beautiful.xresources".apply_dpi
 local beautiful = require "beautiful"
 local PopupBase = require("ui.bar.popups.base").new
+local Description = require("ui.components.container").description
 
-local calendar = require "ui.bar.popups.date.widgets.calendar"
-local layouts = require "ui.bar.popups.date.widgets.layout"
-local grindtimer = require "ui.bar.popups.date.widgets.grinder"
+local calendar = Description {
+    description = "Calendar",
+    widget = require "ui.bar.popups.date.widgets.calendar"
+}
+
+local layouts = Description {
+    description = "Layoutswitcher",
+    widget = require "ui.bar.popups.date.widgets.layout"
+}
+
+local grindtimer = Description {
+    description = "Timer",
+    widget = require "ui.bar.popups.date.widgets.grinder"
+}
 
 local m = {}
 local p = {}
@@ -13,7 +25,7 @@ local p = {}
 p.layout = wibox.widget {
     layout        = wibox.layout.grid,
     homogeneous   = true,
-    spacing       = dpi(5),
+    spacing = dpi(10),
 	horizontal_expand = true,
 	vertical_expand = true,
 	forced_num_cols = 5,
@@ -27,13 +39,9 @@ p.layout:add_widget_at(layouts, 1, 1, 1, 2)
 p.layout:add_widget_at(grindtimer,2,1,2,2)
 
 p.widget = wibox.widget {
-    widget = wibox.container.background,
-    bg = beautiful.bg_normal,
-    {
-        widget = wibox.container.margin,
-        margins = dpi(5),
-        p.layout
-    }
+    widget = wibox.container.margin,
+    margins = dpi(5),
+    p.layout
 }
 
 ---@param bar any The bar this widget connects to

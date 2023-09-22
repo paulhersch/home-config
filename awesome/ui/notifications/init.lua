@@ -7,33 +7,33 @@ local dpi = beautiful.xresources.apply_dpi
 local gears = require("gears")
 
 local notifobject = wibox.widget.base.make_widget()
-
-local function show_notifs ()
-    settings.set("notifications.dnd", false)
-    notifobject:emit_signal("display::enabled")
-    if not settings.get("notifications.silent") then
-        notifobject:emit_signal("sound::enabled")
-    else
-        notifobject:emit_signal("sound::disabled")
-    end
-end
-
-local function hide_notifs ()
-    settings.set("notifications.dnd", true)
-    notifobject:emit_signal("display::disabled")
-    notifobject:emit_signal("sound::disabled")
-end
-
-local function mute_notifs ()
-    settings.set("notifications.silent", true)
-    notifobject:emit_signal("sound::disabled")
-end
-
-local function unmute_notifs ()
-    settings.set("notifications.silent", false)
-    notifobject:emit_signal("sound::enabled")
-end
-
+--
+-- local function show_notifs ()
+--     settings.set("notifications.dnd", false)
+--     notifobject:emit_signal("display::enabled")
+--     -- if not settings.get("notifications.silent") then
+--     --     notifobject:emit_signal("sound::enabled")
+--     -- else
+--     --     notifobject:emit_signal("sound::disabled")
+--     -- end
+-- end
+--
+-- local function hide_notifs ()
+--     settings.set("notifications.dnd", true)
+--     -- notifobject:emit_signal("display::disabled")
+--     -- notifobject:emit_signal("sound::disabled")
+-- end
+--
+-- local function mute_notifs ()
+--     settings.set("notifications.silent", true)
+--     -- notifobject:emit_signal("sound::disabled")
+-- end
+--
+-- local function unmute_notifs ()
+--     settings.set("notifications.silent", false)
+--     -- notifobject:emit_signal("sound::enabled")
+-- end
+--
 --[[n.actions_template = wibox.widget {
     widget = wibox.container.background,
     bg = beautiful.bg_focus,
@@ -183,10 +183,10 @@ local function init ()
 end
 
 return {
-    enable_notifs = show_notifs,
-    disable_notifs = hide_notifs,
-    enable_sound = unmute_notifs,
-    disable_sound = mute_notifs,
+    -- enable_notifs = show_notifs,
+    -- disable_notifs = hide_notifs,
+    -- enable_sound = unmute_notifs,
+    -- disable_sound = mute_notifs,
     init = init,
     signals = notifobject
 }

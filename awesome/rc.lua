@@ -7,20 +7,35 @@ awful.mouse.snap.client_enabled = false
 
 awesome.set_preferred_icon_size(128)
 
+settings.set_defaults {
+    notifications = {
+        dnd = false,
+        silent = false
+    },
+    weather = {
+        lon = 0,
+        len = 0,
+        units = "metric",
+        apikey = "123456"
+    },
+    modkey = "Mod1",
+    terminal = "alacritty",
+    filemanager = "nemo"
+}
+
 settings.load()
 awesome.connect_signal("exit", function ()
     settings.save()
 end)
 
-require ("ui")
--- currently required due to windowmanagement loading keybinds that open
--- UI stuff (TODO: clean up and load open binds after init)
 require ("windowmanagement")
+require ("ui")
 
 -- Autostart {{{
 awful.spawn("nm-applet")
 awful.spawn("blueman-applet")
 awful.spawn("xfce4-clipman")
 awful.spawn("redshift -O 5300K -P")
-awful.spawn("picom --config " .. gears.filesystem.get_configuration_dir() .. "/configs/picom.conf")
+-- deamon flag makes picom not send some random xlib error messages
+awful.spawn("picom --config " .. gears.filesystem.get_configuration_dir() .. "/configs/picom.conf --daemon")
 -- }}}

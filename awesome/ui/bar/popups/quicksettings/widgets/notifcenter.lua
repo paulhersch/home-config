@@ -2,17 +2,12 @@ local wibox = require "wibox"
 local awful = require "awful"
 local naughty = require "naughty"
 local beautiful = require "beautiful"
-local settings  = require "settings"
 local dpi = beautiful.xresources.apply_dpi
 local gears = require "gears"
+local settings  = require "settings"
 local helpers = require "helpers"
-
+local container = require("ui.components.container")
 local client = client
-
-local notifctl = require "ui.notifications"
-
-local notifsignals = notifctl.signals
---local notifs_active, notifs_sound = true, true
 
 local iconsdir = gears.filesystem.get_configuration_dir() .. "assets/titlebarbuttons/"
 local mat_icons = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
@@ -272,99 +267,105 @@ end
 
 local notifbox
 notifbox = wibox.widget { --empty because it will be filled with the update function
-layout = wibox.layout.fixed.vertical,
-spacing = dpi(5),
-{
-    widget = wibox.container.background,
-    bg = beautiful.bg_focus_dark,
-    shape = beautiful.theme_shape,
+    layout = wibox.layout.fixed.vertical,
+    spacing = dpi(5),
     {
-        layout = wibox.layout.align.horizontal,
-        expand = 'inside',
+        widget = wibox.container.background,
+        bg = beautiful.bg_focus_dark,
+        shape = beautiful.theme_shape,
         {
-            id = 'toggle_dnd_bg',
-            widget = wibox.container.background,
-            forced_height = beautiful.get_font_height(beautiful.font .. " 11"),
-            bg = beautiful.bg_focus_dark,
-            shape = beautiful.theme_shape,
-            buttons = awful.button {
-                modifiers = {},
-                button = 1,
-                on_press = function ()
-                    if settings.get("notifications.dnd") then notifctl.enable_notifs() else notifctl.disable_notifs() end
-                end
-            },
+            layout = wibox.layout.align.horizontal,
+            expand = 'inside',
             {
-                widget = wibox.container.margin,
-                margins = dpi(5),
-                {
-                    id = 'toggle_dnd',
-                    widget = wibox.widget.imagebox,
-                    forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
-                    image = settings.get("notifications.dnd") and notif_disabled_icon or notif_enabled_icon,
-                    resize = true,
+                id = 'toggle_dnd_bg',
+                widget = wibox.container.background,
+                forced_height = beautiful.get_font_height(beautiful.font .. " 11"),
+                bg = beautiful.bg_focus_dark,
+                shape = beautiful.theme_shape,
+                buttons = awful.button {
+                    modifiers = {},
+                    button = 1,
+                    on_press = function ()
+                        if settings.get("notifications.dnd") then
+                            settings.set("notifications.dnd", false)
+                        else settings.set("notifications.dnd", false)
+                        end
+                    end
                 },
-            }
-        },
-        {
-            widget = wibox.container.margin,
-            margins = {
-                left = dpi(5),
-                right = dpi(5)
-            },
-            {
-                widget = wibox.container.constraint,
-                height = beautiful.get_font_height(beautiful.font_bold .. " 13") + dpi(10),
                 {
                     widget = wibox.container.margin,
                     margins = dpi(5),
                     {
-                        widget = wibox.container.place,
-                        halign = 'center',
-                        fill_horizontal = true,
-                        {
-                            widget = wibox.widget.textbox,
-                            text = "Notifications",
-                            font = beautiful.font_bold .. " 13"
-                        }
-                    }
+                        id = 'toggle_dnd',
+                        widget = wibox.widget.imagebox,
+                        forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
+                        image = settings.get("notifications.dnd") and notif_disabled_icon or notif_enabled_icon,
+                        resize = true,
+                    },
                 }
-            }
-        },
-        {
-            id = 'toggle_sound_bg',
-            widget = wibox.container.background,
-            forced_height = beautiful.get_font_height(beautiful.font .. " 13"),
-            bg = beautiful.bg_focus_dark,
-            shape = beautiful.theme_shape,
-            buttons = awful.button {
-                modifiers = {},
-                button = 1,
-                on_press = function ()
-                    if settings.get("notifications.silent") then notifctl.enable_sound() else notifctl.disable_sound() end
-                end
             },
             {
                 widget = wibox.container.margin,
-                margins = dpi(5),
-                {
-                    id = 'toggle_sound',
-                    widget = wibox.widget.imagebox,
-                    forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
-                    image = settings.get("notifications.silent") and sound_disabled_icon or sound_enabled_icon,
-                    resize = true,
+                margins = {
+                    left = dpi(5),
+                    right = dpi(5)
                 },
-            }
-        },
-    }
-},
+                {
+                    widget = wibox.container.constraint,
+                    height = beautiful.get_font_height(beautiful.font_bold .. " 13") + dpi(10),
+                    {
+                        widget = wibox.container.margin,
+                        margins = dpi(5),
+                        {
+                            widget = wibox.container.place,
+                            halign = 'center',
+                            fill_horizontal = true,
+                            {
+                                widget = wibox.widget.textbox,
+                                text = "Notifications",
+                                font = beautiful.font_bold .. " 13"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                id = 'toggle_sound_bg',
+                widget = wibox.container.background,
+                forced_height = beautiful.get_font_height(beautiful.font .. " 13"),
+                bg = beautiful.bg_focus_dark,
+                shape = beautiful.theme_shape,
+                buttons = awful.button {
+                    modifiers = {},
+                    button = 1,
+                    on_press = function ()
+                        if settings.get("notifications.silent") then
+                            settings.set("notifications.silent", false)
+                        else
+                            settings.set("notifications.silent", true)
+                        end
+                    end
+                },
+                {
+                    widget = wibox.container.margin,
+                    margins = dpi(5),
+                    {
+                        id = 'toggle_sound',
+                        widget = wibox.widget.imagebox,
+                        forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
+                        image = settings.get("notifications.silent") and sound_disabled_icon or sound_enabled_icon,
+                        resize = true,
+                    },
+                }
+            },
+        }
+    },
     main_widget
 }
 
 local toggle_dnd = notifbox:get_children_by_id('toggle_dnd_bg')[1]
 local toggle_sound = notifbox:get_children_by_id('toggle_sound_bg')[1]
 
---helpers.pointer_on_focus(notifbox:get_children_by_id('clear_button')[1])
 helpers.pointer_on_focus(toggle_dnd)
 helpers.pointer_on_focus(toggle_sound)
 
@@ -381,26 +382,22 @@ toggle_sound:connect_signal("mouse::leave",function ()
     toggle_sound.bg = beautiful.bg_focus_dark
 end)
 
-notifsignals:connect_signal("display::enabled", function ()
-    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(notif_enabled_icon)
+settings.on_value_changed("notifications.dnd", function (disabled)
+    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(
+        disabled and notif_disabled_icon or notif_enabled_icon
+    )
 end)
 
-notifsignals:connect_signal("display::disabled", function ()
-    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(notif_disabled_icon)
-end)
-
-notifsignals:connect_signal("sound::enabled", function ()
-    notifbox:get_children_by_id('toggle_sound')[1]:set_image(sound_enabled_icon)
-end)
-
-notifsignals:connect_signal("sound::disabled", function ()
-    notifbox:get_children_by_id('toggle_sound')[1]:set_image(sound_disabled_icon)
+settings.on_value_changed("notifications.silent", function (silent)
+    notifbox:get_children_by_id('toggle_sound')[1]:set_image(
+        silent and sound_disabled_icon or sound_enabled_icon
+    )
 end)
 
 local blacklisted_appnames = { "Spotify", "NetworkManager" }
-local blacklisted_titles = { "Launching Application", "battery low!" }
+local blacklisted_titles = { "battery low!" }
 
-local function check_list (n)
+local function shouldnt_add (n)
     for _, an in ipairs(blacklisted_appnames) do
         if an == n.app_name then return true end
     end
@@ -411,28 +408,29 @@ local function check_list (n)
 end
 
 naughty.connect_signal("request::display", function(n)
-	local client_focused
-	if client.focus then
-		client_focused = string.lower(client.focus.class) ~= (n.app_name or "")
-	end
-    if (not check_list(n)) and (client_focused) then --ignore some notifications
+    -- if notification is sent from currently focused client dont do anything
+    if client.focus and n.app_name and (string.lower(client.focus.class) == n.app_name) then
+        return
+    end
+
+    -- dont add if blacklists apply or sending client is currently focused
+    if (not shouldnt_add(n)) then
         add_notif_widget(n)
         bar_indic_notif()
     end
 end)
 
 client.connect_signal("property::active", function (c)
-    --most apps report their name via class so that should be alright
+    -- sometimes c is nil???
+    -- most apps report their name via class so that should be alright
     if c then
         local cname = string.lower(c.class) or nil
-        local drawer
         for _, entry in ipairs(main_widget:get_children()) do
             if string.lower(entry.app) == cname then
-                drawer = entry
+                main_widget:remove_widgets(entry)
+                if #main_widget:get_children() == 0 then bar_indic_no_notif() end
             end
         end
-        main_widget:remove_widgets(drawer)
-        if #main_widget:get_children() == 0 then bar_indic_no_notif() end
     end
 end)
 

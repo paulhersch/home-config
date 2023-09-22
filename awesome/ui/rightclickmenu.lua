@@ -38,4 +38,23 @@ local menu = awful.menu {
     auto_expand = true
 }
 
-return menu
+-- mousebindings
+awful.mouse.append_global_mousebindings {
+	awful.button {
+		modifiers = {},
+		button = 3,
+		on_press = function ()
+			menu:toggle()
+		end
+	}
+}
+
+awful.mouse.append_global_mousebindings {
+	awful.button {
+		modifiers = {},
+		button = 1,
+		on_press = function ()
+			menu:hide()
+		end
+	}
+}

@@ -4,6 +4,7 @@ local dpi = beautiful.xresources.apply_dpi
 local helpers = require "helpers"
 local gears = require "gears"
 local awful = require "awful"
+local settings = require "settings"
 local searchwidget = require "ui.bar.popups.launcher.search"
 local button = require("ui.components.container").button
 local PopupBase = require("ui.bar.popups.base").new
@@ -156,9 +157,17 @@ m.init = function (bar)
     return LauncherPopup
 end
 
-m.run_applauncher = function()
+m.use_launcher = function ()
     local s = awful.screen.focused()
     s.launcher:show_and_run()
 end
+
+awful.keyboard.append_global_keybinding(
+    awful.key {
+        modifiers = {settings.get("modkey")},
+        key = "d",
+        on_press = m.use_launcher
+    }
+)
 
 return setmetatable(m, {__call = m.init})

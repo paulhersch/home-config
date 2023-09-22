@@ -193,7 +193,6 @@ local function init (modkey)
 			awful.key({ modkey, "Shift" }, "space",  awful.client.floating.toggle,
 				{description = "toggle floating", group = "client"}),
             awful.key({ modkey          }, "r", function (c)
-                print(c.floating)
                 if not(c.floating or (c:tags()[1].layout.name == "floating")) then return end
                 c.in_resize_move = not c.in_resize_move
                 if c.in_resize_move then

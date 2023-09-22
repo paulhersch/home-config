@@ -52,10 +52,6 @@ return wibox.widget {
         halign = 'center',
         fill_vertical = true,
         fill_horizontal = true,
-        {
-            widget = wibox.container.margin,
-            margins = dpi(5),
-            widget
-        }
+        widget
     }
 }

@@ -22,10 +22,10 @@ start_btn = helpers.pointer_on_focus(wibox.widget {
         on_press = function ()
             if updater.started then
                 updater:stop()
-                start_btn:get_children_by_id('text')[1].text = 'start the grind'
+                start_btn:get_children_by_id('text')[1].text = 'Start'
             else
                 updater:start()
-                start_btn:get_children_by_id('text')[1].text = 'stop the grind'
+                start_btn:get_children_by_id('text')[1].text = 'Stop'
             end
         end
     },
@@ -36,7 +36,7 @@ start_btn = helpers.pointer_on_focus(wibox.widget {
             id = 'text',
             widget = wibox.widget.textbox,
             font = beautiful.font .. " 10",
-            text = 'start the grind',
+            text = 'Start',
         }
     }
 })
