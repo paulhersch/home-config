@@ -1,5 +1,4 @@
 local awful	= require "awful"
-local hotkeys_popup = require"awful.hotkeys_popup"
 local gears	= require "gears"
 local settings = require("settings")
 
@@ -49,9 +48,6 @@ awful.keyboard.append_global_keybindings({
 		{description = "increase the number of columns", group = "layout"}),
 	awful.key({ modkey, "Control" }, "Left",    function () awful.tag.incncol(-1, nil, true) end,
 		{description = "decrease the number of columns", group = "layout"}),
-    awful.key({ modkey            }, "h",       function () hotkeys_popup.widget.show_help() end, {
-        description = "show help", group = "extra"
-    })
 })
 
 -- Tag related keybindings

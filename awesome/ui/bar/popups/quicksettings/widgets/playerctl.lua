@@ -30,7 +30,7 @@ local function hide_icon()
     require "ui.bar.popups.quicksettings".hide_note()
 end
 
-local inactive_color, active_color = beautiful.bg_focus, beautiful.fg_normal
+local inactive_color, active_color = beautiful.bg_2, beautiful.fg_normal
 local template = {
     layout = wibox.layout.fixed.vertical,
     spacing = dpi(5),
@@ -132,11 +132,11 @@ local function image_with_gradient(image)
     cr:rectangle(0, 0, w, h)
 
     local pat_h = cairo.Pattern.create_linear(0, 0, w, 0)
-    pat_h:add_color_stop_rgba(0 ,gears.color.parse_color(beautiful.bg_focus_dark))
-    pat_h:add_color_stop_rgba(0.2 ,gears.color.parse_color(beautiful.bg_focus_dark))
-    pat_h:add_color_stop_rgba(0.6 ,gears.color.parse_color(beautiful.bg_focus_dark .. "BB"))
-    pat_h:add_color_stop_rgba(0.8 ,gears.color.parse_color(beautiful.bg_focus_dark .. "99"))
-    pat_h:add_color_stop_rgba(1 ,gears.color.parse_color(beautiful.bg_focus_dark .. "88"))
+    pat_h:add_color_stop_rgba(0 ,gears.color.parse_color(beautiful.bg_1))
+    pat_h:add_color_stop_rgba(0.2 ,gears.color.parse_color(beautiful.bg_1))
+    pat_h:add_color_stop_rgba(0.6 ,gears.color.parse_color(beautiful.bg_1 .. "BB"))
+    pat_h:add_color_stop_rgba(0.8 ,gears.color.parse_color(beautiful.bg_1 .. "99"))
+    pat_h:add_color_stop_rgba(1 ,gears.color.parse_color(beautiful.bg_1 .. "88"))
     cr:set_source(pat_h)
     cr:fill()
 

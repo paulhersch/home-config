@@ -180,12 +180,11 @@ function m.new(args)
         }
         self.bound = true
 
-        bar:connect_signal("property::visible", function (v)
+        bar:connect_signal("property::visible", function (_)
             if self.opened then
-                if v then
+                if not bar.visible then
                     self:__hide_popup()
                     self.opened = true -- hack our way around opened being false again
-                -- opened has been set and bar was not visible
                 else
                     self:__show_popup()
                 end

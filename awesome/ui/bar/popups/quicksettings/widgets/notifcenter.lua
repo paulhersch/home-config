@@ -36,7 +36,7 @@ local main_widget
 
 local entry_template = {
     widget = wibox.container.background,
-    bg = beautiful.bg_focus,
+    bg = beautiful.bg_2,
     shape = beautiful.theme_shape,
     {
         widget = wibox.container.constraint,
@@ -46,7 +46,7 @@ local entry_template = {
             layout = wibox.layout.fixed.vertical,
             {
                 widget = wibox.container.background,
-                bg = beautiful.bg_focus,
+                bg = beautiful.bg_2,
                 fg = beautiful.fg_focus,
                 forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11"),
                 {
@@ -119,7 +119,7 @@ local app_revealer_template = {
             id = 'revealer_top_bg',
             widget = wibox.container.background,
             forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11") + dpi(10),
-            bg = beautiful.bg_focus_dark,
+            bg = beautiful.bg_1,
             {
                 widget = wibox.container.margin,
                 margins = dpi(5),
@@ -151,7 +151,7 @@ local app_revealer_template = {
         },
         {
             widget = wibox.container.background,
-            bg = beautiful.bg_focus_dark,
+            bg = beautiful.bg_1,
             {
                 id = 'notifs_margin',
                 widget = wibox.container.margin,
@@ -271,7 +271,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
     spacing = dpi(5),
     {
         widget = wibox.container.background,
-        bg = beautiful.bg_focus_dark,
+        bg = beautiful.bg_1,
         shape = beautiful.theme_shape,
         {
             layout = wibox.layout.align.horizontal,
@@ -280,7 +280,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                 id = 'toggle_dnd_bg',
                 widget = wibox.container.background,
                 forced_height = beautiful.get_font_height(beautiful.font .. " 11"),
-                bg = beautiful.bg_focus_dark,
+                bg = beautiful.bg_1,
                 shape = beautiful.theme_shape,
                 buttons = awful.button {
                     modifiers = {},
@@ -333,7 +333,7 @@ notifbox = wibox.widget { --empty because it will be filled with the update func
                 id = 'toggle_sound_bg',
                 widget = wibox.container.background,
                 forced_height = beautiful.get_font_height(beautiful.font .. " 13"),
-                bg = beautiful.bg_focus_dark,
+                bg = beautiful.bg_1,
                 shape = beautiful.theme_shape,
                 buttons = awful.button {
                     modifiers = {},
@@ -370,25 +370,25 @@ helpers.pointer_on_focus(toggle_dnd)
 helpers.pointer_on_focus(toggle_sound)
 
 toggle_dnd:connect_signal("mouse::enter",function ()
-    toggle_dnd.bg = beautiful.bg_focus
+    toggle_dnd.bg = beautiful.bg_2
 end)
 toggle_dnd:connect_signal("mouse::leave",function ()
-    toggle_dnd.bg = beautiful.bg_focus_dark
+    toggle_dnd.bg = beautiful.bg_1
 end)
 toggle_sound:connect_signal("mouse::enter",function ()
-    toggle_sound.bg = beautiful.bg_focus
+    toggle_sound.bg = beautiful.bg_2
 end)
 toggle_sound:connect_signal("mouse::leave",function ()
-    toggle_sound.bg = beautiful.bg_focus_dark
+    toggle_sound.bg = beautiful.bg_1
 end)
 
-settings.on_value_changed("notifications.dnd", function (disabled)
+settings.register_callback("notifications.dnd", function (disabled)
     notifbox:get_children_by_id('toggle_dnd')[1]:set_image(
         disabled and notif_disabled_icon or notif_enabled_icon
     )
 end)
 
-settings.on_value_changed("notifications.silent", function (silent)
+settings.register_callback("notifications.silent", function (silent)
     notifbox:get_children_by_id('toggle_sound')[1]:set_image(
         silent and sound_disabled_icon or sound_enabled_icon
     )

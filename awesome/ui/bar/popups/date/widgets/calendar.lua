@@ -17,7 +17,7 @@ local styles = {
 
 local cal = wibox.widget {
 	widget = wibox.container.background,
-	bg = beautiful.bg_focus_dark,
+	bg = beautiful.bg_1,
 	shape = beautiful.theme_shape,
 	{
 		widget = wibox.container.margin,

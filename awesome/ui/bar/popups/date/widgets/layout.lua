@@ -23,7 +23,7 @@ local widget = awful.widget.layoutlist {
                 shape = beautiful.theme_shape,
                 {
                     id = 'background_role',
-                    bg = beautiful.bg_focus,
+                    bg = beautiful.bg_2,
                     widget = wibox.container.background,
                     {
                         widget = wibox.container.margin,
@@ -45,7 +45,7 @@ local widget = awful.widget.layoutlist {
 return wibox.widget {
     widget = wibox.container.background,
     shape = beautiful.theme_shape,
-    bg = beautiful.bg_focus_dark,
+    bg = beautiful.bg_1,
     {
         widget = wibox.container.place,
         valign = 'center',

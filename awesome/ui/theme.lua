@@ -16,9 +16,6 @@ local theme = {}
 
 theme.wallpaper = homedir .. "/Bilder/Hintergrundbilder/pelicans.jpg"
 
--- theme.font          = "Recursive Sn Lnr St"
--- theme.font_thin     = "Recursive Sn Lnr St Lt"
--- theme.font_bold     = "Recursive Sn Lnr St Med"
 theme.font = "Iosevka Comfy Motion Duo"
 theme.font_thin = theme.font .. " Light"
 theme.font_bold = theme.font .. " XBd"
@@ -43,12 +40,19 @@ theme.gray          = xres.color15
 local bg = color.color { hex = xres.background }
 
 theme.bg_normal     = bg.hex
-theme.bg_focus_dark = (dark_theme
-            and bg + "10r" + "10g" + "10b"
-            or bg - "10r" - "10g" - "10b").hex
-theme.bg_focus      = (dark_theme
-            and bg + "20r" + "20g" + "20b"
-            or bg - "20r" - "20g" - "20b").hex
+
+-- bg steps
+for i = 1, 3, 1 do
+    local calc
+    if dark_theme then
+        calc = bg + (i*10 .. "r") + (i*10 .. "g") + (i*10 .. "b")
+    else
+        calc = bg - (i*10 .. "r") - (i*10 .. "g") - (i*10 .. "b")
+    end
+    theme["bg_" .. i] = calc.hex
+end
+
+theme.bg_focus = theme.bg_2
 theme.bg_urgent     = xres.color1
 theme.bg_minimize   = theme.bg_normal
 theme.bg_light_edge = (bg + "20r" + "20g" + "20b").hex
@@ -67,7 +71,7 @@ theme.useless_gap = dpi(5)
 theme.gap_single_client = false
 
 theme.systray_icon_spacing = dpi(8)
-theme.bg_systray = theme.bg_focus_dark
+theme.bg_systray = theme.bg_1
 
 --theme.border_width        = dpi(2)
 theme.border_color_urgent = theme.bg_urgent
@@ -119,8 +123,8 @@ theme.theme_shape = gears.shape.rectangle --[[function (c, w, h)
 end]]
 theme.notification_shape = theme.shape
 
-theme.tabbed_spawn_in_tab = true  -- whether a new client should spawn into the focused tabbing container
-
+-- theme.tabbed_spawn_in_tab = true  -- whether a new client should spawn into the focused tabbing container
+--
 -- some length parameters
 theme.wibar_height  = dpi(40)
 theme.titlebar_height = dpi(30)

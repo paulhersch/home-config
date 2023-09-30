@@ -54,32 +54,32 @@ local function init(args)
             },
 			bg = args.colors.bg and {
 				normal	= args.colors.bg.normal or beautiful.bg_normal,
-				focus	= args.colors.bg.focus or beautiful.bg_focus,
-				hover	= args.colors.bg.hover or beautiful.bg_focus,
+				focus	= args.colors.bg.focus or beautiful.bg_2,
+				hover	= args.colors.bg.hover or beautiful.bg_2,
 			} or {
 				normal	= beautiful.bg_normal,
-				focus	= beautiful.bg_focus,
-				hover	= beautiful.bg_focus,
+				focus	= beautiful.bg_2,
+				hover	= beautiful.bg_2,
 			},
 			status = args.colors.status and {
-				normal	= args.colors.status.normal or beautiful.bg_focus,
+				normal	= args.colors.status.normal or beautiful.bg_2,
 				focus	= args.colors.status.focus or beautiful.fg_normal,
-				hover	= args.colors.status.hover or beautiful.bg_focus,
+				hover	= args.colors.status.hover or beautiful.bg_2,
 			} or {
-				normal	= beautiful.bg_focus,
+				normal	= beautiful.bg_2,
 				focus	= beautiful.fg_normal,
-				hover	= beautiful.bg_focus,
+				hover	= beautiful.bg_2,
 			}
 		} or {
 		status = {
-			normal	= beautiful.bg_focus,
+			normal	= beautiful.bg_2,
 			focus	= beautiful.fg_normal,
-			hover	= beautiful.bg_focus,
+			hover	= beautiful.bg_2,
 		},
 		bg = {
 			normal	= beautiful.bg_normal,
-			focus	= beautiful.bg_focus,
-			hover	= beautiful.bg_focus,
+			focus	= beautiful.bg_2,
+			hover	= beautiful.bg_2,
 		},
         dock = {
             bg = beautiful.bg_normal

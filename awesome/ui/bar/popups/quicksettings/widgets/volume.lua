@@ -39,10 +39,10 @@ local entry_template = {
 		handle_width = dpi(20),
 		handle_border_width = dpi(2),
 		handle_border_color = beautiful.bg_normal,
-		handle_color = beautiful.bg_focus_dark,
+		handle_color = beautiful.bg_1,
 		bar_shape = gears.shape.rounded_bar,
 		bar_height = dpi(5),
-		bar_color = beautiful.bg_focus_dark,
+		bar_color = beautiful.bg_1,
 		bar_active_color = beautiful.blue,
 		maximum = 100,
 		minimum = 0,
@@ -57,7 +57,7 @@ slider:connect_signal("mouse::enter", function()
 	slider.handle_color = beautiful.gray
 end)
 slider:connect_signal("mouse::leave", function()
-	slider.handle_color = beautiful.bg_focus_dark
+	slider.handle_color = beautiful.bg_1
 end)
 
  update_on_master = function()

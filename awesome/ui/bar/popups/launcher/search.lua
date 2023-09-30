@@ -7,24 +7,26 @@ local Gtk = lgi.require("Gtk", "3.0")
 local min = math.min
 local gears = require "gears"
 local awful = require "awful"
-local helpers = require "helpers"
 -- this requires you to use the following plugin
 -- https://github.com/swarn/fzy-lua
 -- i have it installed via nix, so this would have to be edited to make it work on other distros
 local fzy = require "fzy"
+local helpers = require "helpers"
+-- widget wrapper for unified ui
+local Description = require("ui.components.container").description
 
 local app_info = Gio.AppInfo
 local icon_theme = Gtk.IconTheme.get_default()
 
 local entry_template = {
-	id = "bg",
-	widget = wibox.container.background,
-	bg = beautiful.bg_focus_dark,
-	shape = beautiful.theme_shape,
-	{
-		widget = wibox.container.margin,
-		margins = dpi(5),
-		{
+	-- id = "bg",
+	-- widget = wibox.container.background,
+	-- bg = beautiful.bg_1,
+	-- shape = beautiful.theme_shape,
+	-- {
+	-- 	widget = wibox.container.margin,
+	-- 	margins = dpi(5),
+	-- 	{
 			layout = wibox.layout.align.horizontal,
 			{
 				widget = wibox.container.margin,
@@ -53,9 +55,9 @@ local entry_template = {
 					},
 				}
 			},
-			wibox.widget.base.make_widget()
-		}
-	}
+			wibox.widget.base.empty_widget()
+	-- 	}
+	-- }
 }
 
 local function replace_with_escapes(text)
@@ -73,7 +75,12 @@ local function get_entries()
 	for _, app in ipairs(app_info.get_all()) do
 		if app:should_show() then
 			--widget instance
-			local widget = wibox.widget(entry_template)
+			local widget = Description {
+                margin = dpi(5),
+                widget = entry_template,
+                bg = beautiful.bg_1,
+                border_width = 0
+            }
 			local icon_widget = widget:get_children_by_id("icon")[1]
 
 			-- fetch data
@@ -111,14 +118,14 @@ local function get_entries()
 			end
 
 			-- connect signals
-			local bg = widget:get_children_by_id("bg")[1]
 			widget:connect_signal("mouse::enter", function ()
 				local s = awful.screen.focused()
 				s.popup_launcher_widget:__reset_highlight()
-				bg.bg = beautiful.bg_focus
-				--hacky-ish way of retriving current widget position
-				s.popup_launcher_widget.selected_entry = s.popup_launcher_widget:get_children_by_id("grid")[1]
-				:get_widget_position(widget).row
+				widget.bg = beautiful.bg_2
+				--hacky way of retriving current widget position
+				s.popup_launcher_widget.selected_entry = s.popup_launcher_widget
+                    :get_children_by_id("grid")[1]
+				    :get_widget_position(widget).row
 			end)
 			widget:add_button( awful.button {
 				modifiers = {},
@@ -162,52 +169,44 @@ local function init(s)
 	s.popup_launcher_widget = wibox.widget(widget_template)
 	local entry_grid = s.popup_launcher_widget --"legacy" naming
 
-	local promptwidget = wibox.widget {
-		id = 'bg',
-		widget = wibox.container.background,
-		bg = beautiful.bg_focus_dark,
-		shape = beautiful.theme_shape,
-		{
-			widget = wibox.container.margin,
-			margins = dpi(5),
-			{
-				layout = wibox.layout.align.horizontal,
-				expand = "inside",
-				{
-					widget = wibox.container.margin,
-					margins = dpi(5),
-					{
-						widget = wibox.widget.imagebox,
-						image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "/assets/materialicons/search.svg", beautiful.fg_normal),
-						valign = 'center',
-						halign = 'center',
-					}
-				},
-				{
-					id = "promptbox",
-					widget = wibox.container.place,
-					valign = 'center',
-					halign = 'left',
-					fill_content_horizontal = true,
-					{
-						id = 'prompttext',
-						font = beautiful.font .. " 12",
-						halign = 'left',
-						markup = "<span font_style='italic'>search apps</span>",
-						widget = wibox.widget.textbox,
-						forced_width = dpi(1000),
-					}
-				},
-				wibox.widget.base.make_widget()
-			}
-		}
-	}
+    local promptwidget = Description {
+        margin = dpi(5),
+        widget = {
+            layout = wibox.layout.align.horizontal,
+            expand = "inside",
+            {
+                widget = wibox.container.margin,
+                margins = dpi(5),
+                {
+                    widget = wibox.widget.imagebox,
+                    image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "/assets/materialicons/search.svg", beautiful.fg_normal),
+                    valign = 'center',
+                    halign = 'center',
+                }
+            },
+            {
+                id = "promptbox",
+                widget = wibox.container.place,
+                valign = 'center',
+                halign = 'left',
+                fill_content_horizontal = true,
+                {
+                    id = 'prompttext',
+                    font = beautiful.font .. " 12",
+                    halign = 'left',
+                    markup = "<span font_style='italic'>search apps</span>",
+                    widget = wibox.widget.textbox,
+                    forced_width = dpi(1000),
+                }
+            },
+            wibox.widget.base.make_widget()
+        },
+        bg = beautiful.bg_2
+    }
 	entry_grid:add_widget_at(promptwidget, 10, 1, 1, 1)
 
 	local prompttext = promptwidget:get_children_by_id("prompttext")[1]
 	helpers.textcursor_on_focus(prompttext)
-	--local entry_grid = s.popup_launcher_widget:get_children_by_id("grid")[1]
-
 	s.popup_launcher_widget.selected_entry = 9
 
 	function s.popup_launcher_widget:stop_search()
@@ -217,12 +216,12 @@ local function init(s)
 
 	function s.popup_launcher_widget:__reset_highlight()
 		local prev_hl = entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)
-		if prev_hl then prev_hl[1].bg = beautiful.bg_focus_dark end
+		if prev_hl then prev_hl[1].bg = beautiful.bg_1 end
 	end
 
 	function s.popup_launcher_widget:__reset_all_highlights()
 		for _, widget in ipairs(launcher_entries) do
-			widget.bg = beautiful.bg_focus_dark
+			widget.bg = beautiful.bg_1
 		end
 	end
 
@@ -234,7 +233,7 @@ local function init(s)
 			if new_hl then
 				self:__reset_highlight()
 				self.selected_entry = self.selected_entry + diff
-				new_hl[1]:get_children_by_id('bg')[1].bg = beautiful.bg_focus
+				new_hl[1].bg = beautiful.bg_2
 			end
 		end
 	end
@@ -258,7 +257,7 @@ local function init(s)
 			entry_grid:add_widget_at(launcher_entries[i], 10-i, 1, 1, 1)
 		end
 		self.selected_entry = 9
-		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_focus
+		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_2
 	end
 
 	function s.popup_launcher_widget:search_entries(filter)
@@ -302,7 +301,7 @@ local function init(s)
         for i = 1, min(#filtered, 9), 1 do
             entry_grid:add_widget_at(filtered[i], 10-i, 1, 1, 1)
             if i == 1 then
-                filtered[1].bg = beautiful.bg_focus
+                filtered[1].bg = beautiful.bg_2
     			self.selected_entry = 9
             end
         end
@@ -312,9 +311,9 @@ local function init(s)
 	---@param hide_after_search boolean if the launcher wibox should be hidden after running the applauncher
     ---@param popup? LauncherPopup Popup calling method if hide_after_search is set
 	function s.popup_launcher_widget:start_search(hide_after_search, popup)
-		promptwidget:get_children_by_id('bg')[1].bg = beautiful.bg_focus
+		promptwidget.bg = beautiful.bg_3
 		self:__reset_highlight()
-		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_focus
+		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_2
 
         awful.prompt.run {
 			textbox = prompttext,
@@ -346,7 +345,7 @@ local function init(s)
 				--resetting only the current highlight can cause buggy behaviour here
 				--self:__reset_all_highlights()
 				self:__reset_highlight()
-				promptwidget:get_children_by_id('bg')[1].bg = beautiful.bg_focus_dark
+				promptwidget.bg = beautiful.bg_2
 				if hide_after_search then
 					if popup then popup:hide() end
 				end

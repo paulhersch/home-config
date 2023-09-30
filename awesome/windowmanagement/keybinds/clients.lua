@@ -120,7 +120,7 @@ local resize_indicator = awful.popup {
     visible = false,
     widget = {
         widget = wibox.container.background,
-        bg = beautiful.bg_focus_dark,
+        bg = beautiful.bg_1,
         {
             widget = wibox.container.margin,
             margins = dpi(10),

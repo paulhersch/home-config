@@ -58,7 +58,7 @@ local m = {
             valign = "top",
             {
                 widget = wibox.container.background,
-                border_color = beautiful.bg_focus_dark,
+                border_color = beautiful.bg_1,
                 border_width = dpi(2),
                 require "ui.bar.popups.quicksettings.widgets.notifcenter"
             }

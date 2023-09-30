@@ -1,26 +1,96 @@
+------
+-- PERISTENT STORAGE FOR LOCAL SETTINGS INDEPENDENT OF THE CONFIG
+--
+-- usage (if you want to use it yourself):
+-- local settings = require "settings"
+-- settings.set_defaults {...} -- sets default
+-- settings.load()             -- loads settings.json from cache dir
+--
+-- settings.get(key)           -- fetch value of key
+-- settings.set(key, value)    -- set value of key and call registeres callbacks
+-- settings.register_callback(key, func) -- register callback to be called when key changes
+-- settings.save()             -- save the changed settings on disk, wont save if nothing changed
+--
+-- the save function can easily be connected to awesomes exit signal, so that settings
+-- are always written to disk when awesome is reloaded/exits
+--
+-- When the settings are loaded the nested tables get unnested and can be reached by the
+-- string representation of their search path, so indexes
+-- {
+--   setting = {
+--     value1 = ...
+--     value2 = ...
+--   }
+-- }
+-- will be internally transformed to
+-- {
+--   ['setting.value1']
+--   ['setting.value2']
+-- }
+-- which is precisely what the key on get and set will be
+-- you can always load the "settings.json" file, but IT WILL OVERWRITE the current settings
+------
+
 local gears = require "gears"
 local json = require "rapidjson"
----@diagnostic disable-next-line: deprecated
-local unpack = table.unpack or unpack
-local pack = table.pack or function (...)
-    return {...}
-end
+local table = table
 local settings_path = gears.filesystem.get_cache_dir() .. "settings.json"
-
-local settings_changed = false
 
 local M = { }
 -- private data
 local P = {
     change_callbacks = {},
     settings_changed = false,
-    settings = {}
+    settings = {},
+    -- create a map from a nested table, value at foo.bar.bat will be indexed by
+    -- foo['bar.bat'].value, as the callbacks that should be called on change for each
+    -- value also exist
+    map_from_table = function (tbl)
+        local map = {}
+
+        -- recursively run over table and create hashes
+        local function rec_table(pre, t)
+            for key, value in pairs(t) do
+                local full_key = (pre and (pre .. ".") or "") .. key
+                if type(value) == "table" then
+                    rec_table(full_key, value)
+                else
+                    map[full_key] = {
+                        value = value,
+                        callbacks = {}
+                    }
+                end
+            end
+        end
+        rec_table(nil, tbl)
+
+        return map
+    end,
+    -- we dont need the callbacks in the nested table (version to save settings to disk)
+    table_from_map = function (map)
+        local tbl = {}
+        for key, entry in pairs(map) do
+            local keysplit = gears.string.split(key, ".")
+            local current = tbl
+            for i=1, #keysplit-1 do
+                -- if we dont have an existing subtable create it
+                local next_key = keysplit[i]
+                if not current[next_key] then
+                    current[next_key] = {}
+                end
+                current = current[next_key]
+            end
+            -- last part of the key is the variable name
+            current[keysplit[#keysplit]] = entry.value
+        end
+        return tbl
+    end
 }
 
 --- init settings with default values
 --- @param defaults table the table of default settings, has to contain every setting used
 M.set_defaults = function (defaults)
-    P.settings = defaults
+    P.settings = P.map_from_table(defaults)
 end
 
 --- load settings from disk, overwrite defaults
@@ -29,13 +99,20 @@ M.load = function ()
     if gears.filesystem.file_readable(settings_path) then
         loaded = json.load(settings_path)
     end
-    gears.table.crush(P.settings, loaded)
+    gears.table.crush(P.settings, P.map_from_table(loaded))
 end
 
---- save options to disk
+--- save options to disk, skip if no changes have been made
 M.save = function ()
-    if settings_changed then
-        json.dump(P.settings, settings_path)
+    if P.settings_changed then
+        xpcall(
+            json.dump,
+            function ()
+                gears.debug.print_error("couldn't save changed settings to disk, does the folder ~/.cache/awesome exist?")
+            end,
+            P.table_from_map(P.settings),
+            settings_path
+        )
     end
 end
 
@@ -43,12 +120,8 @@ end
 ---@param key string the key of the settings that should be read
 ---@return any
 M.get = function (key)
-    local ret = P.settings
-    for _, subkey in ipairs(gears.string.split(key, ".")) do
-        ret = ret[subkey]
-    end
-    if ret ~= nil then
-        return ret
+    if P.settings[key] then
+        return P.settings[key].value
     end
 
     gears.debug.print_error(string.format("setting %s does not exist!", key))
@@ -58,39 +131,32 @@ end
 ---@param key string
 ---@param value any
 M.set = function (key, value)
-    --i dont exactly know why, but it works
-    --not sure wether i could leave out the whole "one key before val" stuff, because not sure
-    --if lua just passes around references
-    local keys = gears.string.split(key, ".")
-    local ret = P.settings
-    for _, subkey in ipairs(pack(unpack(keys, 1, #keys-1))) do
-        ret = ret[subkey]
-        if type(ret) ~= "table" then
-            gears.debug.print_error("a setting that does not exist has been requested to be changed")
-            return
-        end
+    if not P.settings[key] then
+        gears.debug.print_error("a setting that does not exist has been requested to be changed")
+        return
     end
+    local entry = P.settings[key]
 
-    if type(ret[keys[#keys]]) == type(value) then
-        ret[keys[#keys]] = value
-        settings_changed = true
-        -- call subscribed callbacks
-        for _, func in ipairs(P.change_callbacks[key]) do
-            func(value)
-        end
-    else
+    if not type(entry.value) == type(value) then
         gears.debug.print_error(string.format(
             "the types of the value \"%s\" and settings key \"%s\" do not match",
             value or "(bool)",
-            key
-        ))
+            key))
+        return
     end
+
+    entry.value = value
+    -- execute callbacks
+    for _, func in pairs(entry.callbacks) do
+        func(value)
+    end
+    P.settings_changed = true
 end
 
 --- subscribe to a value in the settings changing
 ---@param key string the setting identified via its key string
 ---@param func function executed function, gets new value as first argument
-M.on_value_changed = function (key, func)
+M.register_callback = function (key, func)
     -- check if there is a value for key
     -- return is not captured as we only care about whether an error is thrown
     local success, _ = xpcall(M.get, function()
@@ -105,10 +171,7 @@ M.on_value_changed = function (key, func)
         return
     end
     -- if no callbacks registered, no table exists for key
-    if not P.change_callbacks[key] then
-        P.change_callbacks[key] = {}
-    end
-    table.insert(P.change_callbacks[key], func)
+    table.insert(P.settings[key].callbacks, func)
 end
 
 return M

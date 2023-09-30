@@ -40,7 +40,7 @@ p.layout:add_widget_at(grindtimer,2,1,2,2)
 
 p.widget = wibox.widget {
     widget = wibox.container.margin,
-    margins = dpi(5),
+    margins = dpi(10),
     p.layout
 }
 

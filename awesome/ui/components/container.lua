@@ -29,31 +29,49 @@ local function is_in(table, elem)
     return false
 end
 
-Button.draw_template = function (cr, w, h, fill, tl, br)
+Button.draw_template = function (cr, w, h, clicked, args)
     w = math.floor(w)
     h = math.floor(h)
-    cr:set_source_rgba(gc.parse_color(fill))
-    cr:rectangle(0,0,w,h)
+    -- radius - dist as radius (basically to have expected outcomes when knowing height of widget)
+    local rad = args.border_radius and args.border_radius - dpi(2) or dpi(2)
+    local lw_1 = clicked and dpi(2) or dpi(1)
+    local lw_2 = clicked and dpi(1) or dpi(2)
+    local dist = dpi(2)
+    local rad_offset = dist+rad
+    cr:set_source_rgba(gc.parse_color(beautiful.fg_normal))
+    cr:new_sub_path()
+
+    cr:set_line_width(lw_1)
+    cr:move_to(rad_offset, h-dist)
+    cr:arc(rad_offset, h-rad_offset, rad, math.rad(90), math.rad(180))
+    cr:line_to(dist, dist+rad)
+    cr:arc(rad_offset, rad_offset, rad, math.rad(180), math.rad(270))
+    cr:line_to(w-rad-dist, dist)
+    local part_path = cr:copy_path()
+    cr:stroke()
+
+    cr:set_line_width(lw_2)
+    -- create new subpath
+    cr:new_sub_path()
+    cr:arc(w-rad_offset, rad_offset, rad, math.rad(270), math.rad(0))
+    cr:line_to(w-dist, h-rad_offset)
+    cr:arc(w-rad_offset, h-rad_offset, rad, math.rad(0), math.rad(90))
+    cr:line_to(rad_offset, h-dist)
+    cr:stroke_preserve()
+
+    -- append path from above to be able to fill the inside area properly
+    cr:append_path(part_path)
+    cr:set_source_rgba(gc.parse_color(clicked and beautiful.bg_1 or beautiful.bg_normal))
     cr:fill()
-    cr:set_line_width(dpi(2))
-    cr:set_source_rgba(gc.parse_color(tl))
-    cr:move_to(w-dpi(1),dpi(1))
-    cr:line_to(w-dpi(1),h-dpi(1))
-    cr:line_to(dpi(1),h-dpi(1))
-    cr:stroke()
-    cr:set_source_rgba(gc.parse_color(br))
-    cr:move_to(dpi(1),h-dpi(1))
-    cr:line_to(dpi(1),dpi(1))
-    cr:line_to(w-dpi(1),dpi(1))
-    cr:stroke()
+
 end
 
-Button.draw_release = function(_, cr, w, h)
-    Button.draw_template(cr, w, h, beautiful.bg_normal, beautiful.bg_dark_edge, beautiful.bg_light_edge)
+Button.draw_release = function(_, cr, w, h, args)
+    Button.draw_template(cr, w, h, false, args or {})
 end
 
-Button.draw_click = function(_, cr, w, h)
-    Button.draw_template(cr, w, h, beautiful.bg_normal, beautiful.bg_light_edge, beautiful.bg_dark_edge)
+Button.draw_click = function(_, cr, w, h, args)
+    Button.draw_template(cr, w, h, true, args or {})
 end
 
 ---@param bg any background container widget (has to be background container!!)
@@ -89,7 +107,7 @@ end
 ---@field on_click function The function called on click
 ---@field on_release function The function called on release
 
----@param args {manual_draw: boolean, widget: any, margins: integer, left: ButtonArgsClickArgs, right: ButtonArgsClickArgs} Arguments
+---@param args {manual_draw: boolean, widget: any, margins: integer, border_radius: integer, left: ButtonArgsClickArgs, right: ButtonArgsClickArgs} Arguments
 ---create a simple button wrapper for given widget
 Container.button = function(args)
     local widget = args.widget
@@ -101,8 +119,10 @@ Container.button = function(args)
     ---@field toggle_state boolean State wether button is drawn as clicked or released
     local button = wibox.widget {
         widget = wibox.container.background,
-        border_color = beautiful.bg_focus_dark,
-        bgimage = Button.draw_release,
+        border_color = beautiful.bg_1,
+        bgimage = function (ctx, cr, w, h)
+            Button.draw_release(ctx, cr, w, h, args)
+        end,
         {
             widget = wibox.container.margin,
             margins = args.margins or dpi(5),
@@ -110,6 +130,14 @@ Container.button = function(args)
         }
     }
     button._buttonargs = args
+
+    local function released_with_args (ctx, cr, w, h)
+        Button.draw_release(ctx, cr, w, h, button._buttonargs)
+    end
+
+    local function clicked_with_args (ctx, cr, w, h)
+        Button.draw_click(ctx, cr, w, h, button._buttonargs)
+    end
 
     -- cycle through buttons
     for _, btn in ipairs({"left", "right"}) do
@@ -146,22 +174,25 @@ Container.button = function(args)
         self.border_width = 0
     end
 
-    -- toggle button draw state
-    function button:toggle()
-        self.bgimage = self.toggle_state and Button.draw_release or Button.draw_click
-        self.toggle_state = not self.toggle_state
-    end
-
     -- explicitly draw button as clicked
     function button:draw_clicked()
         self.toggle_state = true
-        self.bgimage = Button.draw_click
+        self.bgimage = clicked_with_args
     end
 
     -- explicitly draw button as not clicked
     function button:draw_released()
         self.toggle_state = false
-        self.bgimage = Button.draw_release
+        self.bgimage = released_with_args
+    end
+
+    -- toggle button draw state
+    function button:toggle()
+        if self.toggle_state then
+            self:draw_released()
+        else
+            self:draw_clicked()
+        end
     end
 
     helpers.pointer_on_focus(button)
@@ -171,7 +202,7 @@ end
 
 Description.draw_border = function (_, cr, w, h, args)
     local gap_half = args.margin/2
-    local line_width = dpi(1)
+    local line_width = args.border_width
     cr:set_line_width(line_width)
     local top = args.description and gap_half or line_width
 
@@ -189,8 +220,10 @@ Description.draw_border = function (_, cr, w, h, args)
     cr:line_to(line_width, top+gap_half)
     cr:arc(gap_half+line_width, top+gap_half, gap_half, math.rad(180), math.rad(270))
 
-    cr:set_source_rgba(gc.parse_color(args.border_color))
-    cr:stroke_preserve()
+    if args.border_width ~= 0 then
+        cr:set_source_rgba(gc.parse_color(args.border_color))
+        cr:stroke_preserve()
+    end
     if args.bgimage then
         -- crop and scale image to fit target size
         -- using w and h although they are not the "real" size but you usually
@@ -246,8 +279,10 @@ Description.draw_border = function (_, cr, w, h, args)
         cr:arc(left_anchor, gap_half, gap_half-1, math.rad(90), math.rad(270))
         cr:line_to(right_anchor, 1)
 
-        cr:set_source_rgba(gc.parse_color(args.border_color))
-        cr:stroke_preserve()
+        if args.border_width ~= 0 then
+            cr:set_source_rgba(gc.parse_color(args.border_color))
+            cr:stroke_preserve()
+        end
         cr:set_source_rgba(gc.parse_color(args.text_bg))
         cr:fill()
 
@@ -270,11 +305,13 @@ end
 --     text_bg = beautiful.bg_normal,
 --     text_fg = beautiful.fg_normal,
 --     border_color = beautiful.fg_normal,
+--     border_width = dpi(1),
 --     group_buttons = {}
 -- }
 -- group_buttons should be a table of widgets that are already buttons
 -- bgimage has to be a cairo imagesurface and can be overwritten with another surface
 -- description and group_buttons are optional, if not supplied the top margin will be smaller
+---@return wibox.widget
 Container.description = function (args)
     local _args = {
         widget = nil,
@@ -282,31 +319,34 @@ Container.description = function (args)
         margin = dpi(18),
         font = beautiful.font,
         fg = beautiful.fg_normal,
-        bg = beautiful.bg_focus_dark,
+        bg = beautiful.bg_1,
         text_bg = beautiful.bg_normal,
         text_fg = beautiful.fg_normal,
         border_color = beautiful.fg_normal,
+        border_width = dpi(1),
         group_buttons = {}
     }
 
     gt.crush(_args, args)
 
-    local reserve_top_space = (#_args.group_buttons > 0 or args.description)
-    DescriptionWidget = wibox.widget {
+    _args.reserve_top_space = (#_args.group_buttons > 0 or args.description)
+    local DescriptionWidget = wibox.widget {
         widget = wibox.container.background,
         bgimage = function (surf, cr, w, h)
             Description.draw_border(surf, cr, w, h, _args)
         end,
         {
+            id = "outside_margins",
             widget = wibox.container.margin,
             margins = {
                 left = _args.margin/2,
                 bottom = _args.margin/2,
                 right = _args.margin/2,
-                -- "reverse" logic, spacing is missing if no top render needed
-                top = reserve_top_space and 0 or _args.margin/2
+                -- "reverse" logic, spacing has to be missing if no top render of buttons is needed
+                top = _args.reserve_top_space and 0 or _args.margin/2
             },
-            reserve_top_space and {
+            _args.reserve_top_space and {
+                id = "buttons_and_widget",
                 layout = wibox.layout.fixed.vertical,
                 spacing = _args.margin/2,
                 {
@@ -334,6 +374,25 @@ Container.description = function (args)
         _args.bgimage = image
         self:emit_signal("widget::redraw_needed")
         self:emit_signal("property::bgimage", image)
+    end
+
+    -- same here
+    function DescriptionWidget:set_bg (color)
+        _args.bg = color
+        self:emit_signal("widget::redraw_needed")
+        self:emit_signal("property::bg", color)
+    end
+
+    -- override set_children
+    -- only uses the first table element, but still uses a table to be compatible with
+    -- awm widget system
+    function DescriptionWidget:set_children(tbl)
+        if _args.reserve_top_space then
+            local layout = self:get_children_by_id("buttons_and_widget")[1]
+            layout:set(2, tbl[1])
+        else
+            self.outside_margin:set_children(tbl)
+        end
     end
 
     return DescriptionWidget

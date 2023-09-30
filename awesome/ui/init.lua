@@ -40,8 +40,8 @@ screen.connect_signal("request::desktop_decoration", function(s)
  --            },
  --            bg = {
  --                normal = beautiful.bg_normal,
- --                focus = beautiful.bg_focus,
- --                hover = beautiful.bg_focus_dark,
+ --                focus = beautiful.bg_2,
+ --                hover = beautiful.bg_1,
  --            },
  --            dock = {
  --                bg = beautiful.bg_normal .. "60"

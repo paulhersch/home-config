@@ -6,13 +6,15 @@ local gears = require "gears"
 local awful = require "awful"
 local settings = require "settings"
 local searchwidget = require "ui.bar.popups.launcher.search"
-local button = require("ui.components.container").button
+local container = require("ui.components.container")
+local button = container.button
+local description = container.description
 local PopupBase = require("ui.bar.popups.base").new
 
 local m = {}
 
 local function create_power_button(imagename, on_press, color)
-    local widget = button({
+    local widget = button {
         widget = {
             widget = wibox.widget.imagebox,
             image = color ~= nil and gears.color.recolor_image(
@@ -22,41 +24,24 @@ local function create_power_button(imagename, on_press, color)
         left = {
             on_click = on_press
         }
-    })
+    }
     return widget
 end
 
 local function create_launcher_widget(s)
-    local w = {
-        search = searchwidget.init(s)
-    }
-    w.widget = wibox.widget {
-        widget = wibox.container.background,
-        bg = beautiful.bg_focus_dark,
-        shape = beautiful.theme_shape,
-        {
-            widget = wibox.container.margin,
-            margins = dpi(5),
-            setmetatable({}, {__index = w.search})
-        }
-    }
-    return w
+    return searchwidget.init(s)
 end
 
 ---@return LauncherPopup
 m.init = function (bar)
     local s = bar.screen
     local w, h = dpi(450), dpi(600)
-    local launcherWidget = create_launcher_widget(s)
+    s.searchWidget = create_launcher_widget(s)
 
     ---@class LauncherPopup : PopupWidget
     ---@field show_and_run function Show Popup and Run prompt
     ---@field hide function Hide Popup (used by widget)
     ---@field launcherWidget any The real launcher Widget
-    local LauncherPopup = {
-        launcherWidget = launcherWidget
-    }
-    ---@type LauncherPopup
     ---@diagnostic disable-next-line: assign-type-mismatch
     LauncherPopup = PopupBase {
         anchor = "left",
@@ -70,10 +55,12 @@ m.init = function (bar)
                 layout = wibox.layout.fixed.horizontal,
                 spacing = dpi(10),
                 {
-                    id = "launcherWidget",
                     widget = wibox.container.constraint,
                     width = w - dpi(90),
-                    setmetatable({}, {__index = LauncherPopup.launcherWidget.widget})
+                    description {
+                        widget = setmetatable({}, {__index = s.searchWidget}),
+                        margin = dpi(10),
+                    }
                 },
                 {
                     layout = wibox.layout.fixed.vertical,
@@ -135,10 +122,6 @@ m.init = function (bar)
         }
     }
 
-    -- reassign overriden value (TODO: find cleaner way)
-    -- gears.table.crush wont do the job here
-    LauncherPopup.launcherWidget = launcherWidget
-
     -- register in screen
     s.launcher = LauncherPopup
     LauncherPopup:register_bar(bar)
@@ -146,11 +129,11 @@ m.init = function (bar)
 
     function LauncherPopup:show_and_run()
         self:__show_popup()
-        -- reference the search widget thingy directly
-        self.launcherWidget.search:start_search(true, self)
+        s.searchWidget:start_search(true, self)
     end
 
     function LauncherPopup:hide()
+        s.searchWidget:stop_search()
         self:__hide_popup()
     end
 

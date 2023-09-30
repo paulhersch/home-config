@@ -174,28 +174,7 @@ p.render_current_weather = function ()
         halign = "left",
     }, 2, 4, 1, 1)
 
-    return Group {
-        widget = layout,
-        description = "Current",
-        bg = beautiful.bg_focus_dark,
-        group_buttons = {
-            Button {
-                margins = dpi(1),
-                widget = {
-                    -- widget = wibox.widget.imagebox,
-                    -- image = materialicon_path .. "restart.svg",
-                    widget = wibox.widget.textbox,
-                    text = "update"
-                },
-                left = {
-                    on_release = function ()
-                        p.update_widget()
-                        p.update_timer:again()
-                    end
-                }
-            }
-        }
-    }
+    return layout
 end
 
 p.render_temp_graph = function (cr, w, h)
@@ -325,15 +304,12 @@ p.render_temp_graph = function (cr, w, h)
 end
 
 p.render_forecast = function ()
-    return Group {
-        widget = {
-            widget = wibox.container.background,
-            forced_height = p.forecast.height,
-            bgimage = function (_, cr, w, h)
-                p.render_temp_graph(cr, w, h)
-            end
-        },
-        description = "Forecast",
+    return wibox.widget {
+        widget = wibox.container.background,
+        forced_height = p.forecast.height,
+        bgimage = function (_, cr, w, h)
+            p.render_temp_graph(cr, w, h)
+        end
     }
 end
 
@@ -373,17 +349,15 @@ p.render_alerts = function ()
     return Group {
         description = "Alerts",
         widget = layout,
-        bg = beautiful.bg_focus_dark
+        bg = beautiful.bg_1
     }
 end
 
-p.widget = wibox.widget {
-    layout = wibox.layout.fixed.vertical,
-    spacing = dpi(10),
-    {
+p.current_group = Group {
+    widget = {
         widget = wibox.container.background,
         forced_height = p.current_weather.height,
-        bg = beautiful.bg_focus,
+        bg = beautiful.bg_2,
         {
             widget = wibox.container.place,
             fill_vertical = true,
@@ -394,9 +368,33 @@ p.widget = wibox.widget {
             }
         }
     },
-    {
+    description = "Current",
+    group_buttons = {
+        Button {
+            margins = dpi(2),
+            border_radius = dpi(9), -- default group margin thingy
+            widget = {
+                widget = wibox.container.margin,
+                margins = {left=dpi(10), right=dpi(10)},
+                {
+                    widget = wibox.widget.textbox,
+                    text = "update"
+                }
+            },
+            left = {
+                on_release = function ()
+                    p.update_widget()
+                    p.update_timer:again()
+                end
+            }
+        }
+    }
+}
+
+p.forecast_group = Group {
+    widget = {
         widget = wibox.container.background,
-        bg = beautiful.bg_focus,
+        bg = beautiful.bg_2,
         forced_height = p.forecast.height,
         {
             widget = wibox.container.place,
@@ -407,12 +405,21 @@ p.widget = wibox.widget {
                 text = "no data"
             }
         }
-    }
+    },
+    description = "Forecast"
+}
+
+
+p.widget = wibox.widget {
+    layout = wibox.layout.fixed.vertical,
+    spacing = dpi(10),
+    p.current_group,
+    p.forecast_group
 }
 
 p.render_widget = function ()
-    p.widget:set(1, p.render_current_weather())
-    p.widget:set(2, p.render_forecast())
+    p.current_group.children = {p.render_current_weather()}
+    p.forecast_group.children = {p.render_forecast()}
     if p.current_data.alerts then
         if #p.widget.children == 3 then
             p.widget:set(3, p.render_alerts())

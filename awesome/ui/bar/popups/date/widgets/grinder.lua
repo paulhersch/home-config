@@ -14,7 +14,7 @@ local start_btn
 start_btn = helpers.pointer_on_focus(wibox.widget {
     id = 'button_bg',
     widget = wibox.container.background,
-    bg = beautiful.bg_focus_dark,
+    bg = beautiful.bg_1,
     shape = beautiful.theme_shape,
     buttons = awful.button {
         modifiers = {},
@@ -42,15 +42,15 @@ start_btn = helpers.pointer_on_focus(wibox.widget {
 })
 
 start_btn:connect_signal("mouse::enter",function ()
-    start_btn.bg = beautiful.bg_focus
+    start_btn.bg = beautiful.bg_2
 end)
 start_btn:connect_signal("mouse::leave",function ()
-    start_btn.bg = beautiful.bg_focus_dark
+    start_btn.bg = beautiful.bg_1
 end)
 
 widget = wibox.widget {
     widget = wibox.container.background,
-    bg = beautiful.bg_focus_dark,
+    bg = beautiful.bg_1,
     shape = beautiful.theme_shape,
     {
         widget = wibox.container.margin,
@@ -88,7 +88,7 @@ widget = wibox.widget {
                         id = 'hour',
                         widget = wibox.container.arcchart,
                         paddings = dpi(5),
-                        colors = { beautiful.bg_focus },
+                        colors = { beautiful.bg_2 },
                         max_value = 24,
                         thickness = dpi(4),
                         wibox.widget.base.make_widget()

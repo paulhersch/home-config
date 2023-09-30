@@ -36,7 +36,7 @@ local notifobject = wibox.widget.base.make_widget()
 --
 --[[n.actions_template = wibox.widget {
     widget = wibox.container.background,
-    bg = beautiful.bg_focus,
+    bg = beautiful.bg_2,
     shape = beautiful.shape,
     {
         widget = wibox.container.margin,
@@ -50,10 +50,10 @@ local notifobject = wibox.widget.base.make_widget()
 }
 
 n.actions_template:connect_signal("mouse::enter",function ()
-    n.actions_template.bg = beautiful.bg_focus_dark
+    n.actions_template.bg = beautiful.bg_1
 end)
 n.actions_template:connect_signal("mouse::leave",function ()
-    n.actions_template.bg = beautiful.bg_focus
+    n.actions_template.bg = beautiful.bg_2
 end)
 helpers.pointer_on_focus(n.actions_template)
 ]]
@@ -119,7 +119,7 @@ local template = {
             layout  = wibox.layout.fixed.vertical,
         },
         widget = wibox.container.background,
-        bg = beautiful.bg_focus_dark
+        bg = beautiful.bg_1
     },
     widget = wibox.container.constraint,
     strategy = 'exact',

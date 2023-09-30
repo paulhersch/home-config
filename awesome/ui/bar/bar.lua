@@ -1,10 +1,9 @@
 local wibox	= require "wibox"
 local awful	= require "awful"
-local gears	= require "gears"
 local beautiful = require "beautiful"
-local cairo = require "lgi".cairo
 local dpi	= beautiful.xresources.apply_dpi
 local helpers	= require "helpers"
+
 local container = require "ui.components.container"
 local buttonify = container.buttonify
 
@@ -13,29 +12,14 @@ local DatePopup = require("ui.bar.popups.date")
 local QuicksettingsPopup = require("ui.bar.popups.quicksettings")
 local WeatherPopup = require("ui.bar.popups.weather")
 
--- local pctl_indicator = wibox.widget
--- {
---     widget = wibox.widget.imagebox,
---     image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/music_note.svg", beautiful.fg_normal),
--- }
---
--- local notif_indicator = wibox.widget
--- {
--- 	id = 'notif_icon',
--- 	widget = wibox.widget.imagebox,
--- 	resize = true,
--- 	halign = 'center',
--- 	image = gears.color.recolor_image(gears.filesystem.get_configuration_dir() .. "assets/materialicons/forum.svg", beautiful.fg_normal),
--- }
-
 local function init (s)
-	local tagged_tag_col = beautiful.gray
-    local default_tag_col = helpers.color.col_mix(beautiful.bg_focus_dark, beautiful.gray)
+    local tagged_tag_col = beautiful.gray
+    local default_tag_col = helpers.color.col_mix(beautiful.bg_1, beautiful.gray)
     local tagnames = { "०", "१", "२", "३", "४", "५", "६", "७", "८", "९" }
     s.taglist = awful.widget.taglist {
         screen		= s,
-		filter		= awful.widget.taglist.filter.all,
-		layout 		= {
+        filter		= awful.widget.taglist.filter.all,
+        layout 		= {
             layout = wibox.layout.flex.horizontal,
             spacing = dpi(5)
         },
@@ -43,8 +27,8 @@ local function init (s)
             widget = wibox.container.background,
             id = 'bg',
             shape = beautiful.theme_shape,
-            fg = beautiful.bg_focus,
-            bg = beautiful.bg_focus_dark,
+            fg = beautiful.bg_2,
+            bg = beautiful.bg_1,
             forced_width = dpi(20),
             forced_height = dpi(20),
             {
@@ -68,26 +52,29 @@ local function init (s)
                         t:view_only()
                         self:draw_clicked()
                     end,
-                    -- on_release = function ()
-                    --     self:draw_released()
-                    -- end
                 })
-                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or default_tag_col)
-			end,
+                if t.selected then
+                    self:get_children_by_id('bg')[1].fg = beautiful.blue
+                    self:draw_clicked()
+                else
+                    self:get_children_by_id('bg')[1].fg = #t:clients() > 0 and tagged_tag_col or default_tag_col
+                end
+            end,
             update_callback = function (self, t, _, _)
                 if t.selected then
                     self:draw_clicked()
+                    self:get_children_by_id('bg')[1].fg = beautiful.blue
                 else
                     self:draw_released()
+                    self:get_children_by_id('bg')[1].fg = #t:clients() > 0 and tagged_tag_col or default_tag_col
                 end
-                self:get_children_by_id('bg')[1].fg = t.selected and beautiful.blue or (#t:clients() > 0 and tagged_tag_col or default_tag_col)
             end
-		}
-	}
+        }
+    }
 
     local systray = s == screen.primary and wibox.widget {
         widget = wibox.container.background,
-        bg = beautiful.bg_focus_dark,
+        bg = beautiful.bg_1,
         {
             widget = wibox.container.margin,
             margins = dpi(5),
@@ -99,7 +86,7 @@ local function init (s)
     } or nil
 
 
-	local bar_widget = wibox.widget {
+    local bar_widget = wibox.widget {
         widget = wibox.container.margin,
         margins = dpi(5),
         {
@@ -140,7 +127,7 @@ local function init (s)
         }
     }
 
-   s.bar = awful.wibar {
+    s.bar = awful.wibar {
         screen = s,
         position = "top",
         stretch = true,
@@ -177,39 +164,15 @@ local function init (s)
 end
 
 local function hide(s)
-	s.bar.visible = false
+    s.bar.visible = false
 end
 
 local function show(s)
-	s.bar.visible = true
+    s.bar.visible = true
 end
 
--- local function display_pending_notifs()
--- 	if not quicksettings_trigger:index(notif_indicator) then
--- 		quicksettings_trigger:insert(1, notif_indicator)
--- 	end
--- end
---
--- local function no_pending_notifs()
--- 	if quicksettings_trigger:index(notif_indicator) then
--- 		quicksettings_trigger:remove_widgets(notif_indicator)
--- 	end
--- end
---
--- local function pctl_song_active()
---     quicksettings_trigger:insert(1, pctl_indicator)
--- end
---
--- local function pctl_song_inactive()
---     quicksettings_trigger:remove_widgets(pctl_indicator)
--- end
-
 return {
-	init	= init,
-	hide	= hide,
-	show	= show,
-    -- notifcenter_filled = display_pending_notifs,
-    -- notifcenter_cleared = no_pending_notifs,
-    -- pctl_active = pctl_song_active,
-    -- pctl_inactive = pctl_song_inactive
+    init	= init,
+    hide	= hide,
+    show	= show,
 }
