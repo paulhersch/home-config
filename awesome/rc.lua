@@ -14,7 +14,7 @@ settings.set_defaults {
     },
     weather = {
         lon = 0,
-        len = 0,
+        lat = 0,
         units = "metric",
         apikey = "123456"
     },
