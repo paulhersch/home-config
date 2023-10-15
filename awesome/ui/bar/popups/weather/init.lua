@@ -323,7 +323,7 @@ p.render_alerts = function ()
                 widget = wibox.widget.textbox,
                 markup = string.format(
                     "<b>%s</b> <i>%s - %s</i>",
-                    alert.event,
+                    gears.string.xml_escape(alert.event),
                     os.date("%d.%m %H:%M", alert.start),
                     -- end will even be recognized as control string when its part of the table
                     os.date("%d.%m %H:%M", alert["end"])
@@ -333,7 +333,7 @@ p.render_alerts = function ()
             {
                 widget = wibox.widget.textbox,
                 font = beautiful.font .. " 10",
-                markup = "<span>" .. alert.description .. "</span>",
+                markup = "<span>" .. gears.string.xml_escape(alert.description) .. "</span>",
                 wrap = "word"
             }
         })

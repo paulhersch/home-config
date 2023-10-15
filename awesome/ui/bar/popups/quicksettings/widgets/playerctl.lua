@@ -217,6 +217,11 @@ local function timer_run(timer)
     end
 end
 
+local function update_pos(p, w)
+    local pos = math.floor(p.position / 1000000)
+    w:get_children_by_id("progress")[1].value = pos
+end
+
 local function widget_from_player (player)
     local w = Description {
         widget = template,
@@ -228,16 +233,23 @@ local function widget_from_player (player)
         return nil
     end
 
-    local function update_pos()
-        local pos = math.floor(player.position / 1000000)
-        w:get_children_by_id("progress")[1].value = pos
-    end
-
     local progresstimer = gears.timer {
         timeout = 1,
-        callback = update_pos
+        callback = function ()
+            update_pos(player, w)
+        end
     }
 
+    w.start_updating = function()
+        if player.playback_status == "PLAYING" then
+            update_pos(player, w)
+            timer_run(progresstimer)
+        end
+    end
+
+    w.stop_updating = function()
+        progresstimer:stop()
+    end
     ----
 	-- signal connect
 	----
@@ -276,16 +288,9 @@ local function widget_from_player (player)
 	func_on_click(w:get_children_by_id("shuffle")[1], function() player:set_shuffle(not player.shuffle) end)
 	func_on_click(w:get_children_by_id("repeat")[1], function () player:set_loop_status(player.loop_status == "NONE" and "PLAYLIST" or "NONE") end)
 
-    widget:connect_signal("start_updating", function ()
-        if player.playback_status == "PLAYING" then
-            update_pos()
-            timer_run(progresstimer)
-        end
-    end)
+    widget:connect_signal("start_updating", w.start_updating)
 
-    widget:connect_signal("stop_updating", function ()
-        progresstimer:stop()
-    end)
+    widget:connect_signal("stop_updating", w.stop_updating)
 
     ----
     -- deconstruct
@@ -293,6 +298,8 @@ local function widget_from_player (player)
 
     player.on_exit = function (_, _)
 		widget:remove_widgets(w)
+        widget:disconnect_signal("start_updating", w.start_updating)
+        widget:disconnect_signal("stop_updating", w.stop_updating)
 		w = nil
         if #widget:get_children() == 0 then hide_icon() end
         collectgarbage("collect")
@@ -309,7 +316,7 @@ local function widget_from_player (player)
 		gcl.recolor_image(maticons .. "shuffle.svg", player.shuffle and active_color or inactive_color))
 
     if player.position then
-        update_pos()
+        update_pos(player, w)
     end
 
     if currently_updating then
