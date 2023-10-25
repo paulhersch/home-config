@@ -1,6 +1,6 @@
 return {
 	'nvim-telescope/telescope.nvim',
-	version = '0.1.0',
+	branch = '0.1.x',
 	dependencies = {
 		'nvim-lua/plenary.nvim',
 	},
@@ -9,15 +9,15 @@ return {
 		local t = require ("telescope")
         t.setup {
 			defaults = {
-				vimgrep_arguments = {
-					"rg",
-					"--color=never",
-					"--no-heading",
-					"--with-filename",
-					"--line-number",
-					"--column",
-					"--smart-case",
-				},
+				-- vimgrep_arguments = {
+				-- 	"rg",
+				-- 	"--color=never",
+				-- 	"--no-heading",
+				-- 	"--with-filename",
+				-- 	"--line-number",
+				-- 	"--column",
+				-- 	"--smart-case",
+				-- },
 				prompt_prefix = "   ",
 				selection_caret = "  ",
 				entry_prefix = "  ",
@@ -38,26 +38,26 @@ return {
 					height = 0.80,
 					preview_cutoff = 120,
 				},
-				file_sorter = require("telescope.sorters").get_fuzzy_file,
-				file_ignore_patterns = { "node_modules" },
-				generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
+				-- file_sorter = require("telescope.sorters").get_fuzzy_file,
+				-- file_ignore_patterns = { "node_modules" },
+				-- generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
 				path_display = { "truncate" },
 				winblend = 0,
 				border = {},
 				color_devicons = true,
 				set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
-				file_previewer = require("telescope.previewers").vim_buffer_cat.new,
-				grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
-				qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
+				-- file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+				-- grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+				-- qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 				-- Developer configurations: Not meant for general override
-				buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
+				-- buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
 			},
 			extensions_list = { "themes", "terms" },
 		}
         t.load_extension("notify")
 	end,
     keys = {
-        { "gf", "<cmd>Telescope live_grep<CR>" },
+        { "gf", "lua require('telescope.builtin').find_files()" },
         { "ff", "<cmd>Telescope find_files<CR>" },
         { "fb", "<cmd>Telescope buffers<CR>" },
         { "gt", "<cmd>Telescope lsp_references<CR>" }

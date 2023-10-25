@@ -291,7 +291,7 @@ M.highlights_base = function (colors)
         TelescopePreviewLine = { bg = colors.contrast },
 		TelescopeSelection = { bg = colors.background_dark },
 		-- Indent Blank Line
-		IndentBlanklineChar = { fg = colors.color8, bg = colors.background },
+		IblIndent = { fg = colors.color8, bg = colors.background },
 
 		--gleipnir Dashboard highlights
 		DashboardHeader = { fg = colors.color7 },

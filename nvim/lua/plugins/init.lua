@@ -11,7 +11,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- local nvimtree = require "plugins.confs.nvimtree"
 local neotree = require "plugins.confs.neotree"
 local gitsigns = require "plugins.confs.gitsigns"
 local lspc = require "plugins.confs.lspconfs"
@@ -25,7 +24,6 @@ local notify = require "plugins.confs.notify"
 require"lazy".setup({
     notify,
     neotree,
-    -- nvimtree,
     gitsigns,
     lspc,
     cmp,
@@ -167,18 +165,25 @@ require"lazy".setup({
         'lukas-reineke/indent-blankline.nvim',
         dependencies = 'nvim-treesitter/nvim-treesitter',
         event = "BufEnter",
-        config = function()
-            require("indent_blankline").setup {
-                show_first_indent_level = false,
-                space_char_blankline = " ",
-                show_current_context = true,
-                filetype_exclude = {
-                    "bffrmgr",
-                    "dashboard"
-                }
-            }
-
-        end
+        main = "ibl",
+        opts = {
+            -- show_first_indent_level = false,
+            indent = {
+                char = {" ", "│" }
+            },
+            whitespace = {
+                remove_blankline_trail = true,
+            },
+            scope = {
+                enabled = true,
+                show_start = true,
+                show_end = true
+            },
+            exclude = { filetypes = {
+                "bffrmgr",
+                "dashboard"
+            }}
+        }
     },
     {
         'NvChad/nvim-colorizer.lua',
@@ -269,6 +274,7 @@ require"lazy".setup({
     },
     {
         'j-hui/fidget.nvim',
+        tag = "legacy",
         event = "LspAttach",
         config = function ()
             require('fidget').setup{
