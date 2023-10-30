@@ -1,6 +1,5 @@
 local wibox = require "wibox"
 local beautiful = require "beautiful"
---local shape = require "gears.shape"
 local awful = require "awful"
 local lgi = require "lgi"
 local cairo = lgi.cairo
@@ -15,13 +14,16 @@ local math = math
 local table = table
 local unpack = unpack or table.unpack
 
+materialicons = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
+
 local Container = {}
 -- "private" Fields for Container Widgets
 local Button = {}
 local Description = {}
+local Details = {}
 
-local function is_in(table, elem)
-    for _, v in ipairs(table) do
+local function is_in(tbl, elem)
+    for _, v in ipairs(tbl) do
         if v == elem then
             return true
         end
@@ -139,31 +141,6 @@ Container.button = function(args)
         Button.draw_click(ctx, cr, w, h, button._buttonargs)
     end
 
-    -- cycle through buttons
-    for _, btn in ipairs({"left", "right"}) do
-        if button._buttonargs[btn] then
-            local bargs = button._buttonargs[btn]
-            bargs.on_click = bargs.on_click or function () end
-            bargs.on_release = bargs.on_release or function () end
-            button:add_button(
-                awful.button {
-                    mod = {"Any"},
-                    button = awful.button.names[string.upper(btn)],
-                    on_press = args.manual_draw and
-                        bargs.on_click or function ()
-                            button.bgimage = Button.draw_click
-                            bargs.on_click()
-                        end,
-                    on_release = args.manual_draw and
-                        bargs.on_release or function()
-                            button.bgimage = Button.draw_release
-                            bargs.on_release()
-                        end
-                }
-            )
-        end
-    end
-
     -- highlight the button
     function button:highlight()
         self.border_width = dpi(2)
@@ -195,6 +172,31 @@ Container.button = function(args)
         end
     end
 
+    -- cycle through buttons
+    for _, btn in ipairs({"left", "right"}) do
+        if button._buttonargs[btn] then
+            local bargs = button._buttonargs[btn]
+            bargs.on_click = bargs.on_click or function () end
+            bargs.on_release = bargs.on_release or function () end
+            button:add_button(
+                awful.button {
+                    mod = {"Any"},
+                    button = awful.button.names[string.upper(btn)],
+                    on_press = args.manual_draw and
+                        bargs.on_click or function ()
+                            button:draw_clicked()
+                            bargs.on_click()
+                        end,
+                    on_release = args.manual_draw and
+                        bargs.on_release or function()
+                            button:draw_released()
+                            bargs.on_release()
+                        end
+                }
+            )
+        end
+    end
+
     helpers.pointer_on_focus(button)
 
     return button
@@ -222,7 +224,9 @@ Description.draw_border = function (_, cr, w, h, args)
 
     if args.border_width ~= 0 then
         cr:set_source_rgba(gc.parse_color(args.border_color))
+        cr:set_line_width(dpi(2))
         cr:stroke_preserve()
+        cr:set_line_width(dpi(1))
     end
     if args.bgimage then
         -- crop and scale image to fit target size
@@ -357,6 +361,7 @@ Container.description = function (args)
                         widget = wibox.container.margin,
                         right = _args.margin,
                         {
+                            id = "buttons_layout",
                             layout = wibox.layout.fixed.horizontal,
                             spacing = _args.margin,
                             forced_height = _args.margin,
@@ -374,6 +379,7 @@ Container.description = function (args)
         _args.bgimage = image
         self:emit_signal("widget::redraw_needed")
         self:emit_signal("property::bgimage", image)
+        collectgarbage("collect")
     end
 
     -- same here
@@ -395,7 +401,164 @@ Container.description = function (args)
         end
     end
 
+    function DescriptionWidget:add_button(btn_widget)
+        if _args.reserve_top_space then
+            local layout = self:get_children_by_id("buttons_layout")[1]
+            layout:add(btn_widget)
+        end
+    end
+
     return DescriptionWidget
+end
+
+Details.shape = function (cr, w, h)
+    return gears.shape.rounded_rect(cr, w, h, dpi(9))
+end
+
+-- Args:
+-- {
+--   widget = nil,
+--   open = false,
+--   deletable = false,
+--   delete_callback = function() end,
+--   title = "",
+--   bg = beautiful.bg_normal
+-- }
+--
+--The returned container will also have the functions collapse and expand
+--with the instance as the first function argument
+Container.details = function (args)
+    local _args = {
+        widget = nil,
+        open = false,
+        deletable = false,
+        delete_callback = function () end,
+        title = "",
+        bg = beautiful.bg_normal,
+    }
+
+    gears.table.crush(_args, args)
+
+    local DetailsWidget = wibox.widget {
+        widget = wibox.container.background,
+        border_width = dpi(1),
+        bg = _args.bg,
+        shape = Details.shape,
+        {
+            widget = wibox.container.margin,
+            margins = dpi(7),
+            {
+                id = "details_layout",
+                layout = wibox.layout.fixed.vertical,
+                spacing = dpi(6),
+                {
+                    layout = wibox.layout.align.horizontal,
+                    spacing = dpi(7),
+                    {
+                        id = "expandbutton",
+                        widget = wibox.widget.imagebox,
+                        image = materialicons .. "expand_more.svg",
+                        forced_height = beautiful.get_font_height(beautiful.font)
+                    },
+                    {
+                        id = "titletext",
+                        widget = wibox.widget.textbox,
+                        text = _args.title,
+                        font = beautiful.font
+                    },
+                    {
+                        id = "deletebutton",
+                        widget = wibox.widget.imagebox,
+                        image = materialicons .. "clear_all.svg",
+                        forced_height = beautiful.get_font_height(beautiful.font)
+                    },
+                },
+            }
+        }
+    }
+
+    DetailsWidget._det_args = _args
+    DetailsWidget._det_args.expander = DetailsWidget:get_children_by_id('expandbutton')[1]
+    DetailsWidget._det_args.deleter = DetailsWidget:get_children_by_id('deletebutton')[1]
+
+    ---
+    -- Object functions
+    ---
+
+    function DetailsWidget:set_children(children)
+        self._det_args.widget = children
+    end
+
+    function DetailsWidget:get_children()
+        return { self._det_args.widget }
+    end
+
+    function DetailsWidget:set_title(title)
+        DetailsWidget:get_children_by_id('titletext')[1].text = title
+    end
+
+    function DetailsWidget:get_title()
+        return DetailsWidget:get_children_by_id('titletext')[1].text
+    end
+
+    function DetailsWidget:expand()
+        if not self._det_args.widget then return end
+        local layout = self:get_children_by_id('details_layout')[1]
+        if #layout.children == 1 then
+            layout:insert(2, self._det_args.widget)
+            self._det_args.expander.image = materialicons .. "expand_less.svg"
+            DetailsWidget._det_args.open = true
+        end
+    end
+
+    function DetailsWidget:collapse()
+        local layout = self:get_children_by_id('details_layout')[1]
+        if #layout.children == 2 then
+            layout:remove(2)
+            self._det_args.expander.image = materialicons .. "expand_more.svg"
+            DetailsWidget._det_args.open = false
+        end
+    end
+
+    function DetailsWidget:toggle()
+        if self._det_args.open then
+            self:collapse()
+        else
+            self:expand()
+        end
+    end
+
+    ---
+    -- signal stuffs
+    ---
+
+    DetailsWidget._det_args.expander:add_button(awful.button {
+        modifiers = {},
+        button = awful.button.names.LEFT,
+        on_press = function ()
+            DetailsWidget:toggle()
+        end
+    })
+
+    DetailsWidget._det_args.deleter:add_button(awful.button {
+        modifiers = {},
+        button = awful.button.names.LEFT,
+        on_press = DetailsWidget._det_args.delete_callback
+    })
+
+    helpers.pointer_on_focus(DetailsWidget._det_args.expander)
+    helpers.pointer_on_focus(DetailsWidget._det_args.deleter)
+
+    ---
+    -- set initial state
+    ---
+    if DetailsWidget._det_args.open then
+        DetailsWidget:expand()
+    end
+
+    print(DetailsWidget.title)
+
+    return DetailsWidget
 end
 
 return Container

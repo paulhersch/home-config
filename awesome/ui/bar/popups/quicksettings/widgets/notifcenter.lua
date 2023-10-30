@@ -25,145 +25,9 @@ local function bar_indic_no_notif()
     require "ui.bar.popups.quicksettings".hide_notif()
 end
 
-local function cross_enter (self, _)
-    self:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.red))
-end
-local function cross_leave (self, _)
-    self:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal))
-end
-
-local main_widget
-
-local entry_template = {
-    widget = wibox.container.background,
-    bg = beautiful.bg_2,
-    shape = beautiful.theme_shape,
-    {
-        widget = wibox.container.constraint,
-        width = dpi(400),
-        strategy = 'max',
-        {
-            layout = wibox.layout.fixed.vertical,
-            {
-                widget = wibox.container.background,
-                bg = beautiful.bg_2,
-                fg = beautiful.fg_focus,
-                forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11"),
-                {
-                    widget = wibox.container.place,
-                    fill_horizontal = true,
-                    halign = 'right',
-                    valign = 'bottom',
-                    {
-                        id = 'remove',
-                        widget = wibox.widget.imagebox,
-                        forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11")/2,
-                        forced_width = beautiful.get_font_height(beautiful.font_bold .. " 11"),
-                    }
-                }
-            },
-            {
-                widget = wibox.container.margin,
-                margins = { left = dpi(5), right = dpi(5), bottom = dpi(5) },
-                {
-                    layout = wibox.layout.fixed.horizontal,
-                    spacing = dpi(5),
-                    {
-                        widget = wibox.container.place,
-                        valign = 'center',
-                        {
-                            id = 'icon',
-                            widget = wibox.widget.imagebox,
-                            resize = true,
-                            forced_width = 0,
-                            forced_height = 0,
-                            clip_shape = beautiful.theme_shape
-                        }
-                    },
-                    {
-                        widget = wibox.container.place,
-                        valign = 'top',
-                        {
-                            layout = wibox.layout.fixed.vertical,
-                            spacing = dpi(5),
-                            {
-                                id = 'title',
-                                widget = wibox.widget.textbox,
-                                font = beautiful.font_bold .. " 11",
-                            },
-                            {
-                                id = 'text',
-                                widget = wibox.widget.textbox,
-                                font = beautiful.font .. " 10",
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-main_widget = wibox.widget {
+local main_widget = wibox.widget {
     layout = wibox.layout.fixed.vertical,
     spacing = dpi(5)
-}
-
---this is basically just a simple header + layout to hold notifs
-local app_revealer_template = {
-    widget = wibox.container.background,
-    shape = beautiful.theme_shape,
-    {
-        layout = wibox.layout.fixed.vertical,
-        {
-            id = 'revealer_top_bg',
-            widget = wibox.container.background,
-            forced_height = beautiful.get_font_height(beautiful.font_bold .. " 11") + dpi(10),
-            bg = beautiful.bg_1,
-            {
-                widget = wibox.container.margin,
-                margins = dpi(5),
-                {
-                    layout = wibox.layout.align.horizontal,
-                    expand = 'inside',
-                    {
-                        id = 'reveal_button',
-                        widget = wibox.widget.imagebox,
-                        image = gears.color.recolor_image(mat_icons .. "expand_more.svg", beautiful.fg_normal)
-                    },
-                    {
-                        widget = wibox.container.place,
-                        halign = 'center',
-                        fill_horizontal = true,
-                        {
-                            id = 'appname',
-                            widget = wibox.widget.textbox,
-                            font = beautiful.font .. " 10"
-                        }
-                    },
-                    {
-                        id = 'clear_button',
-                        widget = wibox.widget.imagebox,
-                        image = gears.color.recolor_image(mat_icons .. "clear_all.svg", beautiful.fg_normal)
-                    }
-                },
-            }
-        },
-        {
-            widget = wibox.container.background,
-            bg = beautiful.bg_1,
-            {
-                id = 'notifs_margin',
-                widget = wibox.container.margin,
-                margins = { left = dpi(5), right = dpi(5) },
-                {
-                    id = 'notifs',
-                    layout = wibox.layout.fixed.vertical,
-                    spacing = dpi(3)
-                }
-            }
-        }
-    }
 }
 
 -- some programs have a different Window Class then what they report for
@@ -174,13 +38,12 @@ local app_name_replacements = {
 }
 
 local function add_notif_widget(n)
-    local w = wibox.widget(entry_template)
-    w.app = n.app_name and (app_name_replacements[n.app_name] or n.app_name) or 'undefined'
+    local appname = n.app_name ~= "" and (app_name_replacements[n.app_name] or n.app_name) or 'undefined'
 
     local drawer
     --check if the app already has a drawer thingy
     for _, d in ipairs(main_widget:get_children()) do
-        if d.app == w.app then
+        if d.title == appname then
             drawer = d
             --move currently used drawer to the top
             main_widget:remove_widgets(drawer)
@@ -191,208 +54,85 @@ local function add_notif_widget(n)
 
     --if there are no recent notifications from the app we create a new drawer for them and add button magic
     if not drawer then
-        drawer = wibox.widget(app_revealer_template)
-        drawer:get_children_by_id('appname')[1].text = w.app
-        drawer.app = w.app
-        drawer.collapsed = true
-        drawer.attached_notifs = {}
-        drawer:get_children_by_id('reveal_button')[1]:add_button(awful.button {
-            modifiers = {},
-            button = 1,
-            on_press = function ()
-                if drawer.collapsed then
-                    drawer:get_children_by_id('notifs')[1]:set_children(drawer.attached_notifs)
-                    drawer:get_children_by_id('notifs_margin')[1].margins = dpi(5)
-                    drawer:get_children_by_id('reveal_button')[1]:set_image(gears.color.recolor_image(mat_icons .. "expand_less.svg", beautiful.fg_normal))
-                else
-                    drawer:get_children_by_id('notifs')[1]:reset()
-                    drawer:get_children_by_id('notifs_margin')[1].margins = 0
-                    drawer:get_children_by_id('reveal_button')[1]:set_image(gears.color.recolor_image(mat_icons .. "expand_more.svg", beautiful.fg_normal))
+        drawer = container.details {
+            title = appname,
+            open = false,
+            deleteable = true,
+            delete_callback = function ()
+                for _, c in ipairs(main_widget:get_children()) do
+                    if c.title == appname then
+                        main_widget:remove_widgets(c)
+                        break
+                    end
                 end
-                drawer.collapsed = not drawer.collapsed
+            end,
+            bg = beautiful.bg_1,
+            widget = wibox.widget {
+                    layout = wibox.layout.fixed.vertical,
+                    spacing = dpi(2)
+            }
+        }
+
+        function drawer:add_notif(widget)
+            self:get_children()[1]:add(widget)
+        end
+
+        function drawer:remove_notif(widget)
+            self:get_children()[1]:remove_widgets(widget)
+            if #self:get_children()[1].children == 0 then
+                main_widget:remove_widgets(self)
             end
-        })
-        helpers.pointer_on_focus(drawer:get_children_by_id('reveal_button')[1])
-        drawer:get_children_by_id('clear_button')[1]:add_button(awful.button {
-            modifiers = {},
-            button = 1,
-            on_press = function ()
-                main_widget:remove_widgets(drawer)
-                drawer = nil
-                if #main_widget:get_children() == 0 then bar_indic_no_notif() end
-                collectgarbage("collect")
+            if #main_widget:get_children() == 0 then
+                bar_indic_no_notif()
             end
-        })
-        helpers.pointer_on_focus(drawer:get_children_by_id('clear_button')[1])
+        end
+
         main_widget:insert(1, drawer)
     end
 
-    --create notification widget and add it to its apps' drawer
-    w:get_children_by_id('remove')[1]:set_image(gears.color.recolor_image(iconsdir .. "close.svg", beautiful.fg_normal))
-    w:get_children_by_id('remove')[1]:connect_signal("mouse::enter", function() cross_enter(w) end)
-    w:get_children_by_id('remove')[1]:connect_signal("mouse::leave", function() cross_leave(w) end)
-    w:get_children_by_id('title')[1]:set_markup_silently(n.title)
-    w:get_children_by_id('text')[1]:set_markup_silently(n.message)
-    if n.icon then
-        w:get_children_by_id('icon')[1]:set_image(n.icon)
-        w:get_children_by_id('icon')[1].forced_height = dpi(40)
-        w:get_children_by_id('icon')[1].forced_width = dpi(40)
+    local title = n.title
+    if #title >= 40 then
+        title = string.gsub(title, title:sub(40, #title), "...")
     end
-    w:get_children_by_id('remove')[1]:add_button(
-        awful.button {
-            modifiers = {},
-            button = 1,
-            on_press = function ()
-                w:get_children_by_id('remove')[1]:disconnect_signal("mouse::enter", cross_enter)
-                w:get_children_by_id('remove')[1]:disconnect_signal("mouse::leave", cross_leave)
-                --app_notifs[w.app]:get_children_by_id('notifs'):remove_widgets(w)
-                drawer:get_children_by_id('notifs')[1]:remove_widgets(w)
-                for i, e in ipairs(drawer.attached_notifs) do
-                    if e == w then table.remove(drawer.attached_notifs, i); break end
+
+    local w = container.description {
+        description = title,
+        bg = beautiful.bg_2,
+        widget = wibox.widget {
+            layout = wibox.layout.fixed.horizontal,
+            spacing = dpi(5),
+            n.icon and {
+                widget = wibox.container.constraint,
+                width = dpi(40),
+                {
+                    widget = wibox.widget.imagebox,
+                    image = n.icon
+                }
+            },
+            {
+                widget = wibox.widget.textbox,
+                markup = string.format("<i>%s</i>", gears.string.xml_escape(n.message))
+            }
+        }
+    }
+
+    w:add_button(
+        container.button {
+            widget = {
+                widget = wibox.widget.textbox,
+                text = "x"
+            },
+            left = {
+                on_release = function ()
+                    drawer:remove_notif(w)
+                    collectgarbage("collect")
                 end
-                drawer:get_children_by_id('appname')[1].text = drawer.app .. " (" .. #drawer.attached_notifs .. ")"
-                if #drawer:get_children_by_id('notifs')[1]:get_children() == 0 then main_widget:remove_widgets(drawer) end
-                if #main_widget:get_children() == 0 then bar_indic_no_notif() end
-                collectgarbage("collect")
-            end
+            }
         }
     )
 
-    table.insert(drawer.attached_notifs, 1, w)
-    drawer:get_children_by_id('appname')[1].text = drawer.app .. " (" .. #drawer.attached_notifs .. ")"
-    if not drawer.collapsed then
-        drawer:get_children_by_id('notifs')[1]:insert(1, w)
-    end
+    drawer:add_notif(w)
 end
-
-local notifbox
-notifbox = wibox.widget { --empty because it will be filled with the update function
-    layout = wibox.layout.fixed.vertical,
-    spacing = dpi(5),
-    {
-        widget = wibox.container.background,
-        bg = beautiful.bg_1,
-        shape = beautiful.theme_shape,
-        {
-            layout = wibox.layout.align.horizontal,
-            expand = 'inside',
-            {
-                id = 'toggle_dnd_bg',
-                widget = wibox.container.background,
-                forced_height = beautiful.get_font_height(beautiful.font .. " 11"),
-                bg = beautiful.bg_1,
-                shape = beautiful.theme_shape,
-                buttons = awful.button {
-                    modifiers = {},
-                    button = 1,
-                    on_press = function ()
-                        if settings.get("notifications.dnd") then
-                            settings.set("notifications.dnd", false)
-                        else settings.set("notifications.dnd", false)
-                        end
-                    end
-                },
-                {
-                    widget = wibox.container.margin,
-                    margins = dpi(5),
-                    {
-                        id = 'toggle_dnd',
-                        widget = wibox.widget.imagebox,
-                        forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
-                        image = settings.get("notifications.dnd") and notif_disabled_icon or notif_enabled_icon,
-                        resize = true,
-                    },
-                }
-            },
-            {
-                widget = wibox.container.margin,
-                margins = {
-                    left = dpi(5),
-                    right = dpi(5)
-                },
-                {
-                    widget = wibox.container.constraint,
-                    height = beautiful.get_font_height(beautiful.font_bold .. " 13") + dpi(10),
-                    {
-                        widget = wibox.container.margin,
-                        margins = dpi(5),
-                        {
-                            widget = wibox.container.place,
-                            halign = 'center',
-                            fill_horizontal = true,
-                            {
-                                widget = wibox.widget.textbox,
-                                text = "Notifications",
-                                font = beautiful.font_bold .. " 13"
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                id = 'toggle_sound_bg',
-                widget = wibox.container.background,
-                forced_height = beautiful.get_font_height(beautiful.font .. " 13"),
-                bg = beautiful.bg_1,
-                shape = beautiful.theme_shape,
-                buttons = awful.button {
-                    modifiers = {},
-                    button = 1,
-                    on_press = function ()
-                        if settings.get("notifications.silent") then
-                            settings.set("notifications.silent", false)
-                        else
-                            settings.set("notifications.silent", true)
-                        end
-                    end
-                },
-                {
-                    widget = wibox.container.margin,
-                    margins = dpi(5),
-                    {
-                        id = 'toggle_sound',
-                        widget = wibox.widget.imagebox,
-                        forced_width = beautiful.get_font_height(beautiful.font .. " 13"),
-                        image = settings.get("notifications.silent") and sound_disabled_icon or sound_enabled_icon,
-                        resize = true,
-                    },
-                }
-            },
-        }
-    },
-    main_widget
-}
-
-local toggle_dnd = notifbox:get_children_by_id('toggle_dnd_bg')[1]
-local toggle_sound = notifbox:get_children_by_id('toggle_sound_bg')[1]
-
-helpers.pointer_on_focus(toggle_dnd)
-helpers.pointer_on_focus(toggle_sound)
-
-toggle_dnd:connect_signal("mouse::enter",function ()
-    toggle_dnd.bg = beautiful.bg_2
-end)
-toggle_dnd:connect_signal("mouse::leave",function ()
-    toggle_dnd.bg = beautiful.bg_1
-end)
-toggle_sound:connect_signal("mouse::enter",function ()
-    toggle_sound.bg = beautiful.bg_2
-end)
-toggle_sound:connect_signal("mouse::leave",function ()
-    toggle_sound.bg = beautiful.bg_1
-end)
-
-settings.register_callback("notifications.dnd", function (disabled)
-    notifbox:get_children_by_id('toggle_dnd')[1]:set_image(
-        disabled and notif_disabled_icon or notif_enabled_icon
-    )
-end)
-
-settings.register_callback("notifications.silent", function (silent)
-    notifbox:get_children_by_id('toggle_sound')[1]:set_image(
-        silent and sound_disabled_icon or sound_enabled_icon
-    )
-end)
 
 local blacklisted_appnames = { "Spotify", "NetworkManager" }
 local blacklisted_titles = { "battery low!" }
@@ -426,7 +166,7 @@ client.connect_signal("property::active", function (c)
     if c then
         local cname = string.lower(c.class) or nil
         for _, entry in ipairs(main_widget:get_children()) do
-            if string.lower(entry.app) == cname then
+            if string.lower(entry.title) == cname then
                 main_widget:remove_widgets(entry)
                 if #main_widget:get_children() == 0 then bar_indic_no_notif() end
             end
@@ -434,4 +174,4 @@ client.connect_signal("property::active", function (c)
     end
 end)
 
-return notifbox
+return main_widget -- notifbox

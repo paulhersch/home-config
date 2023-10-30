@@ -8,6 +8,7 @@ local dock = require "ui.dock"
 require "ui.wallpaper"
 require "ui.bar"
 require "ui.notifications".init()
+require "ui.resize"
 
 screen.connect_signal("request::desktop_decoration", function(s)
 	-- dock.init({

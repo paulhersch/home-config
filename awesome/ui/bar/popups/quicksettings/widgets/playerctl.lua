@@ -33,17 +33,26 @@ end
 local inactive_color, active_color = beautiful.bg_2, beautiful.fg_normal
 local template = {
     layout = wibox.layout.fixed.vertical,
-    spacing = dpi(5),
+    spacing = dpi(3),
     {
         id = "title",
         markup = "nothing playing",
         widget = wibox.widget.textbox,
-        font = beautiful.font .. " 11",
+        font = beautiful.font .. " 12",
         ellipsize = 'end',
     },
     {
         widget = wibox.container.constraint,
-        bottom = dpi(5),
+        {
+            id = "album",
+            markup = "nothing playing",
+            widget = wibox.widget.textbox,
+            font = beautiful.font .. " 10",
+            ellipsize = 'end',
+        }
+    },
+    {
+        widget = wibox.container.constraint,
         {
             id = "artist",
             markup = "nothing playing",
@@ -53,54 +62,58 @@ local template = {
         }
     },
     {
-        widget = wibox.container.constraint,
-        height = dpi(20),
+        widget = wibox.container.margin,
+        bottom = dpi(5),
         {
-            layout = wibox.layout.align.horizontal,
+            widget = wibox.container.constraint,
+            height = dpi(20),
             {
-                layout = wibox.layout.fixed.horizontal,
-                spacing = dpi(10),
+                layout = wibox.layout.align.horizontal,
                 {
-                    id = "playpause",
-                    image = gcl.recolor_image(maticons .. "play.svg", beautiful.bg_normal),
-                    widget = wibox.widget.imagebox
+                    layout = wibox.layout.fixed.horizontal,
+                    spacing = dpi(10),
+                    {
+                        id = "playpause",
+                        image = gcl.recolor_image(maticons .. "play.svg", beautiful.bg_normal),
+                        widget = wibox.widget.imagebox
+                    },
+                    {
+                        id = "prev",
+                        image = gcl.recolor_image(maticons .. "previous.svg", beautiful.fg_normal),
+                        widget = wibox.widget.imagebox
+                    }
                 },
                 {
-                    id = "prev",
-                    image = gcl.recolor_image(maticons .. "previous.svg", beautiful.fg_normal),
-                    widget = wibox.widget.imagebox
-                }
-            },
-            {
-                widget = wibox.container.place,
-                valign = "center",
-                {
-                    id = "progress",
-                    widget = wibox.widget.progressbar,
-                    forced_height = dpi(2),
-                    max_value = 100,
-                    border_width = 0,
-                    color = beautiful.fg_normal,
-                    background_color = inactive_color,
-                }
-            },
-            {
-                layout = wibox.layout.fixed.horizontal,
-                spacing = dpi(10),
-                {
-                    id = "next",
-                    image = gcl.recolor_image(maticons .. "next.svg", beautiful.fg_normal),
-                    widget = wibox.widget.imagebox
+                    widget = wibox.container.place,
+                    valign = "center",
+                    {
+                        id = "progress",
+                        widget = wibox.widget.progressbar,
+                        forced_height = dpi(2),
+                        max_value = 100,
+                        border_width = 0,
+                        color = beautiful.fg_normal,
+                        background_color = inactive_color,
+                    }
                 },
                 {
-                    id = "shuffle",
-                    image = gcl.recolor_image(maticons .. "shuffle.svg", inactive_color),
-                    widget = wibox.widget.imagebox
-                },
-                {
-                    id = "repeat",
-                    image = gcl.recolor_image(maticons .. "repeat.svg", inactive_color),
-                    widget = wibox.widget.imagebox
+                    layout = wibox.layout.fixed.horizontal,
+                    spacing = dpi(10),
+                    {
+                        id = "next",
+                        image = gcl.recolor_image(maticons .. "next.svg", beautiful.fg_normal),
+                        widget = wibox.widget.imagebox
+                    },
+                    {
+                        id = "shuffle",
+                        image = gcl.recolor_image(maticons .. "shuffle.svg", inactive_color),
+                        widget = wibox.widget.imagebox
+                    },
+                    {
+                        id = "repeat",
+                        image = gcl.recolor_image(maticons .. "repeat.svg", inactive_color),
+                        widget = wibox.widget.imagebox
+                    }
                 }
             }
         }
@@ -157,12 +170,20 @@ local function update_widget_meta(w, meta, player)
         title = "no title metadata"
     end
 
+    local album = val["xesam:album"]
+    if album then
+        album = gears.string.xml_escape(album)
+    else
+        album = "no album"
+    end
+
 	local artists, artist_string = val["xesam:artist"], "no artist metadata"
     if artists then
         artist_string = artists[1]
 	    for i = 2, #artists do
 		    artist_string  = artist_string .. ", " .. artists[i]
 	    end
+        ---@diagnostic disable-next-line: cast-local-type
         artist_string = gears.string.xml_escape(artist_string)
     end
 
@@ -172,6 +193,7 @@ local function update_widget_meta(w, meta, player)
     end
 
 	w:get_children_by_id("title")[1]:set_markup_silently(title)
+	w:get_children_by_id("album")[1]:set_markup_silently(album)
 	w:get_children_by_id("artist")[1]:set_markup_silently(artist_string)
 
     local art = val["mpris:artUrl"]

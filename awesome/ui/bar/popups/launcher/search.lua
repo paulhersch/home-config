@@ -19,155 +19,155 @@ local app_info = Gio.AppInfo
 local icon_theme = Gtk.IconTheme.get_default()
 
 local entry_template = {
-	-- id = "bg",
-	-- widget = wibox.container.background,
-	-- bg = beautiful.bg_1,
-	-- shape = beautiful.theme_shape,
-	-- {
-	-- 	widget = wibox.container.margin,
-	-- 	margins = dpi(5),
-	-- 	{
-			layout = wibox.layout.align.horizontal,
-			{
-				widget = wibox.container.margin,
-				margins = dpi(5),
-				{
-					id = "icon",
-					widget = wibox.widget.imagebox,
-					shape = beautiful.theme_shape,
-					valign = 'center',
-					halign = 'center',
-				}
-			},
-			{
-				widget = wibox.container.place,
-				valign = 'center',
-				halign = 'left',
-				{
-					id = "nameanddesc",
-					layout = wibox.layout.fixed.vertical,
-					spacing = dpi(3),
-					{
-						id = "appname",
-						widget = wibox.widget.textbox,
-						font = beautiful.font .. " 12",
-						forced_height = beautiful.get_font_height(beautiful.font .. " 12")
-					},
-				}
-			},
-			wibox.widget.base.empty_widget()
-	-- 	}
-	-- }
+    -- id = "bg",
+    -- widget = wibox.container.background,
+    -- bg = beautiful.bg_1,
+    -- shape = beautiful.theme_shape,
+    -- {
+    --  widget = wibox.container.margin,
+    --  margins = dpi(5),
+    --  {
+            layout = wibox.layout.align.horizontal,
+            {
+                widget = wibox.container.margin,
+                margins = dpi(5),
+                {
+                    id = "icon",
+                    widget = wibox.widget.imagebox,
+                    shape = beautiful.theme_shape,
+                    valign = 'center',
+                    halign = 'center',
+                }
+            },
+            {
+                widget = wibox.container.place,
+                valign = 'center',
+                halign = 'left',
+                {
+                    id = "nameanddesc",
+                    layout = wibox.layout.fixed.vertical,
+                    spacing = dpi(3),
+                    {
+                        id = "appname",
+                        widget = wibox.widget.textbox,
+                        font = beautiful.font .. " 12",
+                        forced_height = beautiful.get_font_height(beautiful.font .. " 12")
+                    },
+                }
+            },
+            wibox.widget.base.empty_widget()
+    --  }
+    -- }
 }
 
 local function replace_with_escapes(text)
-	if text then
-		text = text:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub("'", "&#39;")
-	end
-	return text
+    if text then
+        text = text:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub("'", "&#39;")
+    end
+    return text
 end
 
 --entries need to be cached for every widget instance or highlights will be messy
 ---Entries of the launcher
 ---@return table Entries every entry is a table with widget, appinfo and appname
 local function get_entries()
-	local LAUNCHER_CACHED_ENTRIES = {}
-	for _, app in ipairs(app_info.get_all()) do
-		if app:should_show() then
-			--widget instance
-			local widget = Description {
+    local LAUNCHER_CACHED_ENTRIES = {}
+    for _, app in ipairs(app_info.get_all()) do
+        if app:should_show() then
+            --widget instance
+            local widget = Description {
                 margin = dpi(5),
                 widget = entry_template,
                 bg = beautiful.bg_1,
                 border_width = 0
             }
-			local icon_widget = widget:get_children_by_id("icon")[1]
+            local icon_widget = widget:get_children_by_id("icon")[1]
 
-			-- fetch data
-			local name = replace_with_escapes(app:get_name())
-			local desc = app:get_description()
+            -- fetch data
+            local name = replace_with_escapes(app:get_name())
+            local desc = app:get_description()
 
-			-- set info
-			widget:get_children_by_id("appname")[1]:set_markup_silently("<span>" .. name .. "</span>")
-			local app_icon = app:get_icon()
-			if app_icon then
-				local pathorname = app_icon:to_string()
-				if pathorname then
-					if string.find(pathorname, "/") then --Icon names dont contain slashes
-						icon_widget:set_image(pathorname)
-					else
-						local icon_info = icon_theme:lookup_icon(pathorname, dpi(48), 0)
-						if icon_info then
-							local path = icon_info:get_filename()
-							if path then
-								icon_widget:set_image(path)
-							end
-						end
-					end
-				end
-			end
+            -- set info
+            widget:get_children_by_id("appname")[1]:set_markup_silently("<span>" .. name .. "</span>")
+            local app_icon = app:get_icon()
+            if app_icon then
+                local pathorname = app_icon:to_string()
+                if pathorname then
+                    if string.find(pathorname, "/") then --Icon names dont contain slashes
+                        icon_widget:set_image(pathorname)
+                    else
+                        local icon_info = icon_theme:lookup_icon(pathorname, dpi(48), 0)
+                        if icon_info then
+                            local path = icon_info:get_filename()
+                            if path then
+                                icon_widget:set_image(path)
+                            end
+                        end
+                    end
+                end
+            end
 
-			if desc then
-				local desc_wid = wibox.widget {
-					id = "description",
-					widget = wibox.widget.textbox,
-					font = beautiful.font .. " 10",
-					markup = "<span font_style='italic' foreground='" .. beautiful.gray .. "'>" .. replace_with_escapes(desc) .. "</span>"
-				}
-				widget:get_children_by_id("nameanddesc")[1]:add(desc_wid)
-			end
+            if desc then
+                local desc_wid = wibox.widget {
+                    id = "description",
+                    widget = wibox.widget.textbox,
+                    font = beautiful.font .. " 10",
+                    markup = "<span font_style='italic' foreground='" .. beautiful.gray .. "'>" .. replace_with_escapes(desc) .. "</span>"
+                }
+                widget:get_children_by_id("nameanddesc")[1]:add(desc_wid)
+            end
 
-			-- connect signals
-			widget:connect_signal("mouse::enter", function ()
-				local s = awful.screen.focused()
-				s.popup_launcher_widget:__reset_highlight()
-				widget.bg = beautiful.bg_2
-				--hacky way of retriving current widget position
-				s.popup_launcher_widget.selected_entry = s.popup_launcher_widget
+            -- connect signals
+            widget:connect_signal("mouse::enter", function ()
+                local s = awful.screen.focused()
+                s.popup_launcher_widget:__reset_highlight()
+                widget.bg = beautiful.bg_2
+                --hacky way of retriving current widget position
+                s.popup_launcher_widget.selected_entry = s.popup_launcher_widget
                     :get_children_by_id("grid")[1]
-				    :get_widget_position(widget).row
-			end)
-			widget:add_button( awful.button {
-				modifiers = {},
-				button = 1,
-				on_press = function ()
-					awful.screen.focused().popup_launcher_widget:stop_search()
-					app:launch()
-				end
-			})
-			helpers.pointer_on_focus(widget)
+                    :get_widget_position(widget).row
+            end)
+            widget:add_button( awful.button {
+                modifiers = {},
+                button = 1,
+                on_press = function ()
+                    awful.screen.focused().popup_launcher_widget:stop_search()
+                    app:launch()
+                end
+            })
+            helpers.pointer_on_focus(widget)
 
-			local cmd = app:get_commandline()
+            local cmd = app:get_commandline()
 
-			widget.appinfo = app
+            widget.appinfo = app
             -- search by display appname and cmd
-			widget.search_params = { string.lower(name) }
-			if cmd then table.insert(widget.search_params, string.lower(cmd)) end
+            widget.search_params = { string.lower(name) }
+            if cmd then table.insert(widget.search_params, string.lower(cmd)) end
 
-			LAUNCHER_CACHED_ENTRIES[#LAUNCHER_CACHED_ENTRIES+1] = widget
-		end
-	end
-	table.sort(LAUNCHER_CACHED_ENTRIES, function (a,b)
-		--search param 1 is always the name
-		return a.search_params[1] < b.search_params[1]
-	end)
-	return LAUNCHER_CACHED_ENTRIES
+            LAUNCHER_CACHED_ENTRIES[#LAUNCHER_CACHED_ENTRIES+1] = widget
+        end
+    end
+    table.sort(LAUNCHER_CACHED_ENTRIES, function (a,b)
+        --search param 1 is always the name
+        return a.search_params[1] < b.search_params[1]
+    end)
+    return LAUNCHER_CACHED_ENTRIES
 end
 
 local widget_template = {
-	id = 'grid',
-	layout = wibox.layout.grid,
-	homogeneous = true,
-	forced_num_cols = 1,
-	forced_num_rows = 10,
-	expand = true,
-	vertical_spacing = dpi(5),
+    id = 'grid',
+    layout = wibox.layout.grid,
+    homogeneous = true,
+    forced_num_cols = 1,
+    forced_num_rows = 10,
+    expand = true,
+    vertical_spacing = dpi(5),
 }
 
 local function init(s)
-	local launcher_entries = get_entries()
-	s.popup_launcher_widget = wibox.widget(widget_template)
-	local entry_grid = s.popup_launcher_widget --"legacy" naming
+    local launcher_entries = get_entries()
+    s.popup_launcher_widget = wibox.widget(widget_template)
+    local entry_grid = s.popup_launcher_widget --"legacy" naming
 
     local promptwidget = Description {
         margin = dpi(5),
@@ -203,173 +203,173 @@ local function init(s)
         },
         bg = beautiful.bg_2
     }
-	entry_grid:add_widget_at(promptwidget, 10, 1, 1, 1)
+    entry_grid:add_widget_at(promptwidget, 10, 1, 1, 1)
 
-	local prompttext = promptwidget:get_children_by_id("prompttext")[1]
-	helpers.textcursor_on_focus(prompttext)
-	s.popup_launcher_widget.selected_entry = 9
+    local prompttext = promptwidget:get_children_by_id("prompttext")[1]
+    helpers.textcursor_on_focus(prompttext)
+    s.popup_launcher_widget.selected_entry = 9
 
-	function s.popup_launcher_widget:stop_search()
-		awful.keyboard.emulate_key_combination({}, "Escape")
-		self:__reset_highlight()
-	end
+    function s.popup_launcher_widget:stop_search()
+        awful.keyboard.emulate_key_combination({}, "Escape")
+        self:__reset_highlight()
+    end
 
-	function s.popup_launcher_widget:__reset_highlight()
-		local prev_hl = entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)
-		if prev_hl then prev_hl[1].bg = beautiful.bg_1 end
-	end
+    function s.popup_launcher_widget:__reset_highlight()
+        local prev_hl = entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)
+        if prev_hl then prev_hl[1].bg = beautiful.bg_1 end
+    end
 
-	function s.popup_launcher_widget:__reset_all_highlights()
-		for _, widget in ipairs(launcher_entries) do
-			widget.bg = beautiful.bg_1
-		end
-	end
+    function s.popup_launcher_widget:__reset_all_highlights()
+        for _, widget in ipairs(launcher_entries) do
+            widget.bg = beautiful.bg_1
+        end
+    end
 
-	---@param check_valid function function to check if select function can be run
-	---@param diff integer the selected_entry diff upon running select
-	function s.popup_launcher_widget:__select_helper(check_valid, diff)
-		if check_valid(s.popup_launcher_widget.selected_entry) then
-			local new_hl = entry_grid:get_widgets_at(self.selected_entry + diff, 1, 1, 1)
-			if new_hl then
-				self:__reset_highlight()
-				self.selected_entry = self.selected_entry + diff
-				new_hl[1].bg = beautiful.bg_2
-			end
-		end
-	end
+    ---@param check_valid function function to check if select function can be run
+    ---@param diff integer the selected_entry diff upon running select
+    function s.popup_launcher_widget:__select_helper(check_valid, diff)
+        if check_valid(s.popup_launcher_widget.selected_entry) then
+            local new_hl = entry_grid:get_widgets_at(self.selected_entry + diff, 1, 1, 1)
+            if new_hl then
+                self:__reset_highlight()
+                self.selected_entry = self.selected_entry + diff
+                new_hl[1].bg = beautiful.bg_2
+            end
+        end
+    end
 
-	function s.popup_launcher_widget:select_down()
-		self:__select_helper(function (index)
-			return index < 9
-		end, 1)
-	end
+    function s.popup_launcher_widget:select_down()
+        self:__select_helper(function (index)
+            return index < 9
+        end, 1)
+    end
 
-	function s.popup_launcher_widget:select_up()
-		self:__select_helper(function (index)
-			return index > 1
-		end, -1)
-	end
+    function s.popup_launcher_widget:select_up()
+        self:__select_helper(function (index)
+            return index > 1
+        end, -1)
+    end
 
-	function s.popup_launcher_widget:__reset_search()
-		prompttext:set_markup_silently("<span font_style='italic'>search apps</span>")
-		for i = 1, 9, 1 do
-			entry_grid:remove_widgets_at(10-i, 1, 1, 1)
-			entry_grid:add_widget_at(launcher_entries[i], 10-i, 1, 1, 1)
-		end
-		self.selected_entry = 9
-		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_2
-	end
+    function s.popup_launcher_widget:__reset_search()
+        prompttext:set_markup_silently("<span font_style='italic'>search apps</span>")
+        for i = 1, 9, 1 do
+            entry_grid:remove_widgets_at(10-i, 1, 1, 1)
+            entry_grid:add_widget_at(launcher_entries[i], 10-i, 1, 1, 1)
+        end
+        self.selected_entry = 9
+        entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_2
+    end
 
-	function s.popup_launcher_widget:search_entries(filter)
-		self:__reset_highlight()
+    function s.popup_launcher_widget:search_entries(filter)
+        self:__reset_highlight()
 
-		local filtered = {}
-		for _, entry in ipairs(launcher_entries) do
-			for _, attr in ipairs(entry.search_params) do
-				if fzy.has_match(filter, attr, false) then
-					table.insert(filtered, entry)
-					break
-				end
-			end
-		end
-		-- some weighting on the match results (to sort matches) 
-		local function calc_filter_score(entry)
-			local filter_res = fzy.filter(filter, entry.search_params, false)
-				local sum = 0.0
-				for _, scoring in ipairs(filter_res) do
-					sum = sum + scoring[3]
-				end
-			return sum
-		end
+        local filtered = {}
+        for _, entry in ipairs(launcher_entries) do
+            for _, attr in ipairs(entry.search_params) do
+                if fzy.has_match(filter, attr, false) then
+                    table.insert(filtered, entry)
+                    break
+                end
+            end
+        end
+        -- some weighting on the match results (to sort matches) 
+        local function calc_filter_score(entry)
+            local filter_res = fzy.filter(filter, entry.search_params, false)
+                local sum = 0.0
+                for _, scoring in ipairs(filter_res) do
+                    sum = sum + scoring[3]
+                end
+            return sum
+        end
 
-		-- save the score to not call this all the time
-		for _, entry in ipairs(filtered) do
-			entry.match_score = calc_filter_score(entry)
-		end
+        -- save the score to not call this all the time
+        for _, entry in ipairs(filtered) do
+            entry.match_score = calc_filter_score(entry)
+        end
 
-		-- sort the filtered entries
-		table.sort(filtered, function (a, b)
-			return a.match_score > b.match_score
-		end)
+        -- sort the filtered entries
+        table.sort(filtered, function (a, b)
+            return a.match_score > b.match_score
+        end)
 
-		-- this would usually be done via reset (in a layout container),
+        -- this would usually be done via reset (in a layout container),
         -- but the prompt is part of the grid so not possible
-		for i = 1, 9, 1 do
-			entry_grid:remove_widgets_at(i, 1, 1, 1)
-		end
+        for i = 1, 9, 1 do
+            entry_grid:remove_widgets_at(i, 1, 1, 1)
+        end
 
         for i = 1, min(#filtered, 9), 1 do
             entry_grid:add_widget_at(filtered[i], 10-i, 1, 1, 1)
             if i == 1 then
                 filtered[1].bg = beautiful.bg_2
-    			self.selected_entry = 9
+                self.selected_entry = 9
             end
         end
 
-	end
+    end
 
-	---@param hide_after_search boolean if the launcher wibox should be hidden after running the applauncher
+    ---@param hide_after_search boolean if the launcher wibox should be hidden after running the applauncher
     ---@param popup? LauncherPopup Popup calling method if hide_after_search is set
-	function s.popup_launcher_widget:start_search(hide_after_search, popup)
-		promptwidget.bg = beautiful.bg_3
-		self:__reset_highlight()
-		entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_2
+    function s.popup_launcher_widget:start_search(hide_after_search, popup)
+        promptwidget.bg = beautiful.bg_3
+        self:__reset_highlight()
+        entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)[1].bg = beautiful.bg_2
 
         awful.prompt.run {
-			textbox = prompttext,
-			bg_cursor = beautiful.fg_normal,
-			font = beautiful.font,
-			hooks = {
-				{{}, "Up", function (cmd)
-					self:select_up()
-					return cmd, true
-				end},
-				{{}, "Down", function (cmd)
-					self:select_down()
-					return cmd, true
-				end},
-				{{}, "Return",function ()
-					local sel = entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)
-					if sel then
-						self:__reset_highlight()
-						sel[1].appinfo:launch()
-					end
-				end}
-			},
-			changed_callback = function (cmd)
-				s.popup_launcher_widget:search_entries(cmd)
-				collectgarbage("collect")
-			end,
-			done_callback = function ()
-				self:__reset_search()
-				--resetting only the current highlight can cause buggy behaviour here
-				--self:__reset_all_highlights()
-				self:__reset_highlight()
-				promptwidget.bg = beautiful.bg_2
-				if hide_after_search then
-					if popup then popup:hide() end
-				end
-			end
-		}
-	end
+            textbox = prompttext,
+            bg_cursor = beautiful.fg_normal,
+            font = beautiful.font,
+            hooks = {
+                {{}, "Up", function (cmd)
+                    self:select_up()
+                    return cmd, true
+                end},
+                {{}, "Down", function (cmd)
+                    self:select_down()
+                    return cmd, true
+                end},
+                {{}, "Return",function ()
+                    local sel = entry_grid:get_widgets_at(self.selected_entry, 1, 1, 1)
+                    if sel then
+                        self:__reset_highlight()
+                        sel[1].appinfo:launch()
+                    end
+                end}
+            },
+            changed_callback = function (cmd)
+                s.popup_launcher_widget:search_entries(cmd)
+                collectgarbage("collect")
+            end,
+            done_callback = function ()
+                self:__reset_search()
+                --resetting only the current highlight can cause buggy behaviour here
+                --self:__reset_all_highlights()
+                self:__reset_highlight()
+                promptwidget.bg = beautiful.bg_2
+                if hide_after_search then
+                    if popup then popup:hide() end
+                end
+            end
+        }
+    end
 
-	function s.popup_launcher_widget:is_active()
-		return prompttext.text ~= "search apps"
-	end
+    function s.popup_launcher_widget:is_active()
+        return prompttext.text ~= "search apps"
+    end
 
-	promptwidget:add_button(awful.button{
-		modifiers = {},
-		button = 1,
-		on_press = function ()
-			s.popup_launcher_widget:start_search(false)
-		end
-	})
+    promptwidget:add_button(awful.button{
+        modifiers = {},
+        button = 1,
+        on_press = function ()
+            s.popup_launcher_widget:start_search(false)
+        end
+    })
 
-	-- initial fill
-	s.popup_launcher_widget:__reset_search()
-	return s.popup_launcher_widget
+    -- initial fill
+    s.popup_launcher_widget:__reset_search()
+    return s.popup_launcher_widget
 end
 
 return {
-	init = init
+    init = init
 }

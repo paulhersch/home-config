@@ -2,6 +2,7 @@ local wibox = require "wibox"
 local beautiful = require "beautiful"
 local dpi = beautiful.xresources.apply_dpi
 local PopupBase = require("ui.bar.popups.base").new
+local Details = require("ui.components.container").details
 local gfs = require("gears.filesystem")
 
 local materialicons = gfs.get_configuration_dir() .. "assets/materialicons/"
@@ -21,7 +22,7 @@ local p = {
     pctlwidget = nil,
 }
 
-local function abstract_show(name)
+p.abstract_show = function(name)
     if p[name .. "_shown"] then
         return
     end
@@ -29,7 +30,7 @@ local function abstract_show(name)
     p[name .. "_shown"] = true
 end
 
-local function abstract_hide(name)
+p.abstract_hide = function(name)
     if not p[name .. "_shown"] then
         return
     end
@@ -39,30 +40,20 @@ end
 
 local m = {
     show_note = function ()
-        abstract_show("pctl")
+        p.abstract_show("pctl")
     end,
     hide_note = function ()
-        abstract_hide("pctl")
+        p.abstract_hide("pctl")
     end,
     show_notif = function ()
-        abstract_show("notif")
+        p.abstract_show("notif")
     end,
     hide_notif = function ()
-        abstract_hide("notif")
+        p.abstract_hide("notif")
     end,
     init = function (bar)
         -- cant require because loop -> set at init
-        p.notifwidget = p.notifwidget or wibox.widget {
-            widget = wibox.container.place,
-            content_fill_vertical = true,
-            valign = "top",
-            {
-                widget = wibox.container.background,
-                border_color = beautiful.bg_1,
-                border_width = dpi(2),
-                require "ui.bar.popups.quicksettings.widgets.notifcenter"
-            }
-        }
+        p.notifwidget = p.notifwidget or require "ui.bar.popups.quicksettings.widgets.notifcenter"
         p.pctlwidget = p.pctlwidget or require "ui.bar.popups.quicksettings.widgets.playerctl"
 
         ---@class QuicksettingsPopup : PopupWidget
@@ -77,8 +68,10 @@ local m = {
                     layout = wibox.layout.fixed.vertical,
                     spacing = dpi(10),
                     -- volumewidget,
-                    setmetatable({}, {__index = p.pctlwidget}),
-                    setmetatable({}, {__index = p.notifwidget}),
+                    -- setmetatable({}, {__index = p.pctlwidget}),
+                    -- setmetatable({}, {__index = p.notifwidget}),
+                    p.pctlwidget,
+                    p.notifwidget
                 }
             },
             trigger = p.trigger
