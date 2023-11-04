@@ -20,8 +20,8 @@ local PopupBase = require("ui.bar.popups.base").new
 local weathericon_path = gears.filesystem.get_configuration_dir() .. "assets/weathericons/"
 local materialicon_path = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
-local m = {}
-local p = {
+local M = {}
+local P = {
     ---@type WeatherWidget[]
     current_data = {},
     trigger = wibox.widget {
@@ -62,7 +62,7 @@ local p = {
 ---@param w integer width
 ---@param h integer height
 ---@return any drawing of an arrow rotated to the direction given in degrees
-p.draw_wind_arrow = function(cr, w, h, rotation)
+P.draw_wind_arrow = function(cr, w, h, rotation)
     local dist_wings = math.floor(w/5)
     local w2, h2 = math.floor(w/2), math.floor(h/2)
     local offset = math.ceil(h/7)
@@ -78,13 +78,13 @@ p.draw_wind_arrow = function(cr, w, h, rotation)
     cr:stroke()
 end
 
-p.gradient = function (x1, x2, y1, y2)
+P.gradient = function (x1, x2, y1, y2)
     return (y2-y1)/(x2-x1)
 end
 
 ---@return any widget displaying the current weather
-p.render_current_weather = function ()
-    local current_weather = p.current_data.current
+P.render_current_weather = function ()
+    local current_weather = P.current_data.current
     local layout = wibox.widget {
             id = "inner_layout",
             layout = wibox.layout.grid,
@@ -104,8 +104,8 @@ p.render_current_weather = function ()
                 weathericon_path .. current_weather.weather[1].icon .. ".svg",
                 beautiful.fg_normal
             ),
-            forced_height = p.current_weather.height*4/5,
-            forced_width = p.current_weather.height*4/5
+            forced_height = P.current_weather.height*4/5,
+            forced_width = P.current_weather.height*4/5
         }
     }, 1, 1, 2, 1)
     layout:add_widget_at(wibox.widget {
@@ -138,7 +138,7 @@ p.render_current_weather = function ()
                     forced_width = dpi(20),
                     forced_height = dpi(20),
                     bgimage = function(_, cr, w, h)
-                        p.draw_wind_arrow(cr, w, h, current_weather.wind_deg)
+                        P.draw_wind_arrow(cr, w, h, current_weather.wind_deg)
                     end,
                     wibox.widget.base.make_widget()
                 }
@@ -177,9 +177,9 @@ p.render_current_weather = function ()
     return layout
 end
 
-p.render_temp_graph = function (cr, w, h)
+P.render_temp_graph = function (cr, w, h)
     local datapoints = {}
-    for _, hour in ipairs(p.current_data.hourly) do
+    for _, hour in ipairs(P.current_data.hourly) do
         table.insert(datapoints, {
             temp = hour.temp,
             time = hour.dt
@@ -303,19 +303,19 @@ p.render_temp_graph = function (cr, w, h)
     cr:stroke()
 end
 
-p.render_forecast = function ()
+P.render_forecast = function ()
     return wibox.widget {
         widget = wibox.container.background,
-        forced_height = p.forecast.height,
+        forced_height = P.forecast.height,
         bgimage = function (_, cr, w, h)
-            p.render_temp_graph(cr, w, h)
+            P.render_temp_graph(cr, w, h)
         end
     }
 end
 
-p.render_alerts = function ()
+P.render_alerts = function ()
     local alerts = {}
-    for _, alert in ipairs(p.current_data.alerts) do
+    for _, alert in ipairs(P.current_data.alerts) do
         table.insert(alerts, {
             layout = wibox.layout.fixed.vertical,
             spacing = dpi(5),
@@ -353,10 +353,10 @@ p.render_alerts = function ()
     }
 end
 
-p.current_group = Group {
+P.current_group = Group {
     widget = {
         widget = wibox.container.background,
-        forced_height = p.current_weather.height,
+        forced_height = P.current_weather.height,
         bg = beautiful.bg_2,
         {
             widget = wibox.container.place,
@@ -383,19 +383,19 @@ p.current_group = Group {
             },
             left = {
                 on_release = function ()
-                    p.update_widget()
-                    p.update_timer:again()
+                    P.update_widget()
+                    P.update_timer:again()
                 end
             }
         }
     }
 }
 
-p.forecast_group = Group {
+P.forecast_group = Group {
     widget = {
         widget = wibox.container.background,
         bg = beautiful.bg_2,
-        forced_height = p.forecast.height,
+        forced_height = P.forecast.height,
         {
             widget = wibox.container.place,
             fill_vertical = true,
@@ -410,53 +410,53 @@ p.forecast_group = Group {
 }
 
 
-p.widget = wibox.widget {
+P.widget = wibox.widget {
     layout = wibox.layout.fixed.vertical,
     spacing = dpi(10),
-    p.current_group,
-    p.forecast_group
+    P.current_group,
+    P.forecast_group
 }
 
-p.render_widget = function ()
-    p.current_group.children = {p.render_current_weather()}
-    p.forecast_group.children = {p.render_forecast()}
-    if p.current_data.alerts then
-        if #p.widget.children == 3 then
-            p.widget:set(3, p.render_alerts())
+P.render_widget = function ()
+    P.current_group.children = {P.render_current_weather()}
+    P.forecast_group.children = {P.render_forecast()}
+    if P.current_data.alerts then
+        if #P.widget.children == 3 then
+            P.widget:set(3, P.render_alerts())
         end
-        if #p.widget.children == 2 then
-            p.widget:add(p.render_alerts())
+        if #P.widget.children == 2 then
+            P.widget:add(P.render_alerts())
         end
     else
-        if #p.widget.children == 3 then
-            p.widget:remove(3)
+        if #P.widget.children == 3 then
+            P.widget:remove(3)
         end
     end
 end
 
-p.update_trigger = function ()
-    local current_weather = p.current_data.current.weather[1]
-    local trigger_layout = p.trigger:get_children_by_id("trigger_layout")[1]
-    local trigger_icon = p.trigger:get_children_by_id("icon")[1]
+P.update_trigger = function ()
+    local current_weather = P.current_data.current.weather[1]
+    local trigger_layout = P.trigger:get_children_by_id("trigger_layout")[1]
+    local trigger_icon = P.trigger:get_children_by_id("icon")[1]
 
-    local alert_index = trigger_layout:index(p.alert_symbol)
+    local alert_index = trigger_layout:index(P.alert_symbol)
 
     trigger_icon.image = gears.color.recolor_image(
         weathericon_path .. current_weather.icon .. ".svg",
         beautiful.fg_normal
     )
-    if p.current_data.alerts then
+    if P.current_data.alerts then
         if not alert_index then
-            trigger_layout:add(p.alert_symbol)
+            trigger_layout:add(P.alert_symbol)
         end
     else
         if alert_index then
-            trigger_layout:remove_widgets(p.alert_symbol)
+            trigger_layout:remove_widgets(P.alert_symbol)
         end
     end
 end
 
-p.update_widget = function ()
+P.update_widget = function ()
     local cmd = "curl 'https://api.openweathermap.org/data/2.5/onecall?lat=".. settings.get("weather.lat")
         .. "&lon=" .. settings.get("weather.lon")
         .. "&appid=" .. settings.get("weather.apikey")
@@ -466,10 +466,10 @@ p.update_widget = function ()
         if exitcode == 0 then
             local success, data = pcall(json.decode, out)
             if success then
-                p.current_data = data
-                p.update_trigger()
-                p.render_widget()
-                p.first_render_complete = true
+                P.current_data = data
+                P.update_trigger()
+                P.render_widget()
+                P.first_render_complete = true
                 collectgarbage("collect")
             else
                 naughty.notification {
@@ -490,12 +490,12 @@ p.update_widget = function ()
     end)
 end
 
-p.update_timer = gears.timer {
+P.update_timer = gears.timer {
     timeout = 900,
-    callback = p.update_widget
+    callback = P.update_widget
 }
 
-m.init = function (bar)
+M.init = function (bar)
     ---@class WeatherWidget : PopupWidget
     ---@field public show_trigger function
     local WeatherWidget = PopupBase{
@@ -504,24 +504,24 @@ m.init = function (bar)
             margins = dpi(10),
             {
                 widget = wibox.container.constraint,
-                width = p.width,
+                width = P.width,
                 strategy = "exact",
-                setmetatable({}, {__index = p.widget}),
+                setmetatable({}, {__index = P.widget}),
             }
         },
-        trigger = p.trigger,
+        trigger = P.trigger,
         anchor = "right"
     }
 
     WeatherWidget:register_bar(bar)
     WeatherWidget:show_trigger()
 
-    if not p.update_timer.started then
-        p.update_widget()
-        p.update_timer:start()
+    if not P.update_timer.started then
+        P.update_widget()
+        P.update_timer:start()
     end
 
     return WeatherWidget
 end
 
-return setmetatable(m, {__call = m.init})
+return setmetatable(M, {__call = M.init})

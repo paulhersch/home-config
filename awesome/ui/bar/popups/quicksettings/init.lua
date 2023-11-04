@@ -10,7 +10,7 @@ local materialicons = gfs.get_configuration_dir() .. "assets/materialicons/"
 local battery = require("ui.bar.popups.quicksettings.widgets.battery").widget
 
 -- display stuff interactively, statekeeping
-local p = {
+local P = {
     trigger = wibox.widget {
         widget = wibox.layout.fixed.horizontal,
         spacing = dpi(5),
@@ -22,39 +22,39 @@ local p = {
     pctlwidget = nil,
 }
 
-p.abstract_show = function(name)
-    if p[name .. "_shown"] then
+P.abstract_show = function(name)
+    if P[name .. "_shown"] then
         return
     end
-    p.trigger:insert(1, p[name .. "_symbol"])
-    p[name .. "_shown"] = true
+    P.trigger:insert(1, P[name .. "_symbol"])
+    P[name .. "_shown"] = true
 end
 
-p.abstract_hide = function(name)
-    if not p[name .. "_shown"] then
+P.abstract_hide = function(name)
+    if not P[name .. "_shown"] then
         return
     end
-    p.trigger:remove_widgets(p[name .. "_symbol"])
-    p[name .. "_shown"] = false
+    P.trigger:remove_widgets(P[name .. "_symbol"])
+    P[name .. "_shown"] = false
 end
 
-local m = {
+local M = {
     show_note = function ()
-        p.abstract_show("pctl")
+        P.abstract_show("pctl")
     end,
     hide_note = function ()
-        p.abstract_hide("pctl")
+        P.abstract_hide("pctl")
     end,
     show_notif = function ()
-        p.abstract_show("notif")
+        P.abstract_show("notif")
     end,
     hide_notif = function ()
-        p.abstract_hide("notif")
+        P.abstract_hide("notif")
     end,
     init = function (bar)
         -- cant require because loop -> set at init
-        p.notifwidget = p.notifwidget or require "ui.bar.popups.quicksettings.widgets.notifcenter"
-        p.pctlwidget = p.pctlwidget or require "ui.bar.popups.quicksettings.widgets.playerctl"
+        P.notifwidget = P.notifwidget or require "ui.bar.popups.quicksettings.widgets.notifcenter"
+        P.pctlwidget = P.pctlwidget or require "ui.bar.popups.quicksettings.widgets.playerctl"
 
         ---@class QuicksettingsPopup : PopupWidget
         local QuicksettingsPopup = PopupBase {
@@ -70,22 +70,22 @@ local m = {
                     -- volumewidget,
                     -- setmetatable({}, {__index = p.pctlwidget}),
                     -- setmetatable({}, {__index = p.notifwidget}),
-                    p.pctlwidget,
-                    p.notifwidget
+                    P.pctlwidget,
+                    P.notifwidget
                 }
             },
-            trigger = p.trigger
+            trigger = P.trigger
         }
 
         local old_show = QuicksettingsPopup.__show_popup
         function QuicksettingsPopup:__show_popup()
-            p.pctlwidget:enable_updates()
+            P.pctlwidget:enable_updates()
             old_show(self)
         end
         local old_hide = QuicksettingsPopup.__hide_popup
         function QuicksettingsPopup:__hide_popup()
             old_hide(self)
-            p.pctlwidget:disable_updates()
+            P.pctlwidget:disable_updates()
         end
 
         QuicksettingsPopup:register_bar(bar)
@@ -95,4 +95,4 @@ local m = {
     end
 }
 
-return setmetatable(m, {__call = m.init})
+return setmetatable(M, {__call = M.init})

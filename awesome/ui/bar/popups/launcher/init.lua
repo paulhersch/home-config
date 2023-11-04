@@ -11,7 +11,7 @@ local button = container.button
 local description = container.description
 local PopupBase = require("ui.bar.popups.base").new
 
-local m = {}
+local M = {}
 
 local function create_power_button(imagename, on_press, color)
     local widget = button.new {
@@ -33,7 +33,7 @@ local function create_launcher_widget(s)
 end
 
 ---@return LauncherPopup
-m.init = function (bar)
+M.init = function (bar)
     local s = bar.screen
     local w, h = dpi(450), dpi(600)
     s.searchWidget = create_launcher_widget(s)
@@ -140,7 +140,7 @@ m.init = function (bar)
     return LauncherPopup
 end
 
-m.use_launcher = function ()
+M.use_launcher = function ()
     local s = awful.screen.focused()
     s.launcher:show_and_run()
 end
@@ -149,8 +149,8 @@ awful.keyboard.append_global_keybinding(
     awful.key {
         modifiers = {settings.get("modkey")},
         key = "d",
-        on_press = m.use_launcher
+        on_press = M.use_launcher
     }
 )
 
-return setmetatable(m, {__call = m.init})
+return setmetatable(M, {__call = M.init})

@@ -18,13 +18,13 @@ local awful = require("awful")
 
 local button = require("ui.components").container.button
 
-local m = {}
+local M = {}
 
 -- collection of currently opened popups, to prevent double opening
 -- on the same screen
 -- every bar element with popup needs to subclass this generic version
 -- to make use of this synchronisation
-m.opened_popups = {}
+M.opened_popups = {}
 
 -- replace the currently used trigger widget with the new one set in the
 -- object table, similar to a manual draw call on drawables
@@ -63,7 +63,7 @@ end
 
 ---@param args PopupWidgetArgs Argument Table
 ---@return PopupWidget
-function m.new(args)
+function M.new(args)
     -- crush into default config
     local _config = {
         trigger = wibox.widget.imagebox(beautiful.awesome_icon),
@@ -124,12 +124,12 @@ function m.new(args)
                 self.screen.geometry.width - 2 * beautiful.useless_gap - popup.width
         ))
         self._private.trigger:draw_clicked()
-        for _, p in ipairs(m.opened_popups) do
+        for _, p in ipairs(M.opened_popups) do
             if p.screen == self.screen then
                 p:__hide_popup()
             end
         end
-        table.insert(m.opened_popups, self)
+        table.insert(M.opened_popups, self)
     end
 
     ---@private
@@ -139,9 +139,9 @@ function m.new(args)
         popup.visible = false
         self.opened = false
         self._private.trigger:draw_released()
-        for i, p in ipairs(m.opened_popups) do
+        for i, p in ipairs(M.opened_popups) do
             if p == self then
-                table.remove(m.opened_popups, i)
+                table.remove(M.opened_popups, i)
                 break
             end
         end
@@ -195,4 +195,4 @@ function m.new(args)
     return PopupWidget
 end
 
-return setmetatable(m, {__call = m.new})
+return setmetatable(M, {__call = M.new})

@@ -12,7 +12,9 @@ local DatePopup = require("ui.bar.popups.date")
 local QuicksettingsPopup = require("ui.bar.popups.quicksettings")
 local WeatherPopup = require("ui.bar.popups.weather")
 
-local function init (s)
+local M = {}
+
+M.init = function(s)
     local tagged_tag_col = beautiful.gray
     local default_tag_col = helpers.color.col_mix(beautiful.bg_1, beautiful.gray)
     local tagnames = { "०", "१", "२", "३", "४", "५", "६", "७", "८", "९" }
@@ -163,16 +165,12 @@ local function init (s)
 
 end
 
-local function hide(s)
+M.hide = function(s)
     s.bar.visible = false
 end
 
-local function show(s)
+M.show = function(s)
     s.bar.visible = true
 end
 
-return {
-    init	= init,
-    hide	= hide,
-    show	= show,
-}
+return M

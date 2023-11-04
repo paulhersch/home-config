@@ -1,10 +1,11 @@
 local awful = require "awful"
 local wibox = require "wibox"
 local beautiful = require "beautiful"
-local helpers   = require "helpers"
 local dpi = beautiful.xresources.apply_dpi
 
-local widget = awful.widget.layoutlist {
+local P = {}
+
+P.widget = awful.widget.layoutlist {
     base_layout = wibox.widget {
         forced_num_cols = 4,
         layout          = wibox.layout.grid.vertical,
@@ -42,7 +43,7 @@ local widget = awful.widget.layoutlist {
     }
 }
 
-return wibox.widget {
+P.ret = wibox.widget {
     widget = wibox.container.background,
     shape = beautiful.theme_shape,
     bg = beautiful.bg_1,
@@ -52,6 +53,8 @@ return wibox.widget {
         halign = 'center',
         fill_vertical = true,
         fill_horizontal = true,
-        widget
+        P.widget
     }
 }
+
+return P.ret

@@ -10,28 +10,31 @@ local cairo = require("lgi").cairo
 local Description = require("ui.components.container").description
 
 local helpers = require "helpers"
-
 local maticons = gfs.get_configuration_dir() .. "/assets/materialicons/"
+
+local P = {}
+local M = {}
 
 --janky statekeeping, true if widget is currently shown, so that
 --the progressbar does not have to update when it is not seen
-local currently_updating = false
+P.currently_updating = false
 
-local widget = wibox.widget {
+P.widget = wibox.widget {
 	id = "list",
 	layout = wibox.layout.fixed.vertical,
 	spacing = dpi(5)
 }
 
-local function show_icon()
+P.show_icon = function()
     require "ui.bar.popups.quicksettings".show_note()
 end
-local function hide_icon()
+P.hide_icon = function()
     require "ui.bar.popups.quicksettings".hide_note()
 end
 
-local inactive_color, active_color = beautiful.bg_2, beautiful.fg_normal
-local template = {
+P.inactive_color, P.active_color = beautiful.bg_2, beautiful.fg_normal
+
+P.template = {
     layout = wibox.layout.fixed.vertical,
     spacing = dpi(3),
     {
@@ -93,7 +96,7 @@ local template = {
                         max_value = 100,
                         border_width = 0,
                         color = beautiful.fg_normal,
-                        background_color = inactive_color,
+                        background_color = P.inactive_color,
                     }
                 },
                 {
@@ -106,12 +109,12 @@ local template = {
                     },
                     {
                         id = "shuffle",
-                        image = gcl.recolor_image(maticons .. "shuffle.svg", inactive_color),
+                        image = gcl.recolor_image(maticons .. "shuffle.svg", P.inactive_color),
                         widget = wibox.widget.imagebox
                     },
                     {
                         id = "repeat",
-                        image = gcl.recolor_image(maticons .. "repeat.svg", inactive_color),
+                        image = gcl.recolor_image(maticons .. "repeat.svg", P.inactive_color),
                         widget = wibox.widget.imagebox
                     }
                 }
@@ -120,7 +123,7 @@ local template = {
     }
 }
 
-local function func_on_click(w, on_press)
+P.func_on_click = function(w, on_press)
     w:add_button(awful.button {
         modifiers = {},
         button = 1,
@@ -129,15 +132,15 @@ local function func_on_click(w, on_press)
     helpers.pointer_on_focus(w)
 end
 
-local hex_to_char = function(x)
+P.hex_to_char = function(x)
   return string.char(tonumber(x, 16))
 end
 
-local unescape = function(url)
-  return url:gsub("%%(%x%x)", hex_to_char)
+P.unescape = function(url)
+  return url:gsub("%%(%x%x)", P.hex_to_char)
 end
 
-local function image_with_gradient(image)
+P.image_with_gradient = function(image)
     local surf = gears.surface.load_uncached(image)
 
     local cr = cairo.Context(surf)
@@ -156,11 +159,11 @@ local function image_with_gradient(image)
     return surf
 end
 
-local function set_bg_with_gradient(player_widget, path)
-    player_widget.bgimage = image_with_gradient(path)
+P.set_bg_with_gradient = function(player_widget, path)
+    player_widget.bgimage = P.image_with_gradient(path)
 end
 
-local function update_widget_meta(w, meta, player)
+P.update_widget_meta = function(w, meta, player)
 	local val = meta.value
 
     local title = val["xesam:title"]
@@ -205,9 +208,9 @@ local function update_widget_meta(w, meta, player)
         if string.match(art, "file://") then
             -- hacks ahead: remove file://
             local path = string.sub(art, 7, string.len(art))
-            path = unescape(path)
+            path = P.unescape(path)
             if gears.filesystem.file_readable(path) then
-                set_bg_with_gradient(w, path)
+                P.set_bg_with_gradient(w, path)
             end
         -- spotify spits out a random id that can be used on some cdn
         elseif player.player_name == "spotify" then
@@ -216,13 +219,13 @@ local function update_widget_meta(w, meta, player)
             -- check for cached image
             local path = gears.filesystem.get_cache_dir() .. filename
             if gears.filesystem.file_readable(path) then
-                set_bg_with_gradient(w, path)
+                P.set_bg_with_gradient(w, path)
             else
                 awful.spawn.easy_async("curl -L -s " .. art .. " -o " .. path,
                     function (_, _, _, code)
                         -- check if download was successful
                         if code == 0 then
-                            set_bg_with_gradient(w, path)
+                            P.set_bg_with_gradient(w, path)
                         end
                     end
                 )
@@ -231,7 +234,7 @@ local function update_widget_meta(w, meta, player)
     end
 end
 
-local function timer_run(timer)
+P.timer_run = function(timer)
     if timer.started then
         timer:again()
     else
@@ -239,14 +242,14 @@ local function timer_run(timer)
     end
 end
 
-local function update_pos(p, w)
+P.update_pos = function(p, w)
     local pos = math.floor(p.position / 1000000)
     w:get_children_by_id("progress")[1].value = pos
 end
 
-local function widget_from_player (player)
+P.widget_from_player = function(player)
     local w = Description {
-        widget = template,
+        widget = P.template,
         description = player.player_name:gsub("^%l", string.upper),
     }
 
@@ -258,14 +261,14 @@ local function widget_from_player (player)
     local progresstimer = gears.timer {
         timeout = 1,
         callback = function ()
-            update_pos(player, w)
+            P.update_pos(player, w)
         end
     }
 
     w.start_updating = function()
         if player.playback_status == "PLAYING" then
-            update_pos(player, w)
-            timer_run(progresstimer)
+            P.update_pos(player, w)
+            P.timer_run(progresstimer)
         end
     end
 
@@ -285,45 +288,45 @@ local function widget_from_player (player)
 	player.on_play = function (_, _)
 		w:get_children_by_id("playpause")[1]:set_image(
 			gcl.recolor_image(maticons .. "pause.svg", beautiful.fg_normal))
-        if currently_updating then
-            timer_run(progresstimer)
+        if P.currently_updating then
+            P.timer_run(progresstimer)
         end
 	end
 
 	player.on_metadata = function (_, meta, _)
-		update_widget_meta(w, meta, player)
+		P.update_widget_meta(w, meta, player)
 	end
 
 	player.on_shuffle = function (_, shuffle, _)
 		w:get_children_by_id("shuffle")[1]:set_image(
-			gcl.recolor_image(maticons .. "shuffle.svg", shuffle and active_color or inactive_color))
+			gcl.recolor_image(maticons .. "shuffle.svg", shuffle and P.active_color or P.inactive_color))
 	end
 
 	player.on_loop_status = function(_, status, _)
 		w:get_children_by_id("repeat")[1]:set_image(
-			gcl.recolor_image(maticons .. "repeat.svg", status == "NONE" and inactive_color or active_color))
+			gcl.recolor_image(maticons .. "repeat.svg", status == "NONE" and P.inactive_color or P.active_color))
 	end
 
-	func_on_click(w:get_children_by_id("prev")[1], function() player:previous() end)
-	func_on_click(w:get_children_by_id("playpause")[1], function() player:play_pause() end)
-	func_on_click(w:get_children_by_id("next")[1], function() player:next() end)
-	func_on_click(w:get_children_by_id("shuffle")[1], function() player:set_shuffle(not player.shuffle) end)
-	func_on_click(w:get_children_by_id("repeat")[1], function () player:set_loop_status(player.loop_status == "NONE" and "PLAYLIST" or "NONE") end)
+	P.func_on_click(w:get_children_by_id("prev")[1], function() player:previous() end)
+	P.func_on_click(w:get_children_by_id("playpause")[1], function() player:play_pause() end)
+	P.func_on_click(w:get_children_by_id("next")[1], function() player:next() end)
+	P.func_on_click(w:get_children_by_id("shuffle")[1], function() player:set_shuffle(not player.shuffle) end)
+	P.func_on_click(w:get_children_by_id("repeat")[1], function () player:set_loop_status(player.loop_status == "NONE" and "PLAYLIST" or "NONE") end)
 
-    widget:connect_signal("start_updating", w.start_updating)
+    P.widget:connect_signal("start_updating", w.start_updating)
 
-    widget:connect_signal("stop_updating", w.stop_updating)
+    P.widget:connect_signal("stop_updating", w.stop_updating)
 
     ----
     -- deconstruct
     ----
 
     player.on_exit = function (_, _)
-		widget:remove_widgets(w)
-        widget:disconnect_signal("start_updating", w.start_updating)
-        widget:disconnect_signal("stop_updating", w.stop_updating)
+		P.widget:remove_widgets(w)
+        P.widget:disconnect_signal("start_updating", w.start_updating)
+        P.widget:disconnect_signal("stop_updating", w.stop_updating)
 		w = nil
-        if #widget:get_children() == 0 then hide_icon() end
+        if #P.widget:get_children() == 0 then P.hide_icon() end
         collectgarbage("collect")
 	end
 
@@ -333,50 +336,50 @@ local function widget_from_player (player)
 	w:get_children_by_id("playpause")[1]:set_image(gcl.recolor_image(maticons ..
 		(player.playback_status == "PLAYING" and "pause.svg" or "play.svg"), beautiful.fg_normal))
 	w:get_children_by_id("repeat")[1]:set_image(
-		gcl.recolor_image(maticons .. "repeat.svg", player.loop_status == "NONE" and inactive_color or active_color))
+		gcl.recolor_image(maticons .. "repeat.svg", player.loop_status == "NONE" and P.inactive_color or P.active_color))
 	w:get_children_by_id("shuffle")[1]:set_image(
-		gcl.recolor_image(maticons .. "shuffle.svg", player.shuffle and active_color or inactive_color))
+		gcl.recolor_image(maticons .. "shuffle.svg", player.shuffle and P.active_color or P.inactive_color))
 
     if player.position then
-        update_pos(player, w)
+        P.update_pos(player, w)
     end
 
-    if currently_updating then
-        timer_run()
+    if P.currently_updating then
+        P.timer_run()
     end
 
 	return w
 end
 
-local manager = pctl.PlayerManager()
+P.manager = pctl.PlayerManager()
 
-local function start_managing(name, just_added)
+P.start_managing = function(name, just_added)
 	local player = pctl.Player.new_from_name(name)
 	--needs to be done for the controls to work
-	manager:manage_player(player)
-	local new_widget = widget_from_player(player)
+	P.manager:manage_player(player)
+	local new_widget = P.widget_from_player(player)
 	-- initial update of metadata (doing it in the "add" function somehow kills the construction process)
-	if not just_added then update_widget_meta(new_widget, player.metadata, player) end
-    if #widget:get_children() == 0 then show_icon() end
-	widget:insert(1, new_widget)
+	if not just_added then P.update_widget_meta(new_widget, player.metadata, player) end
+    if #P.widget:get_children() == 0 then P.show_icon() end
+	P.widget:insert(1, new_widget)
 end
 
-function manager:on_name_appeared (name, _)
-	start_managing(name, true)
+function P.manager:on_name_appeared (name, _)
+	P.start_managing(name, true)
 end
 
-for _, name in ipairs(manager.player_names) do
-	start_managing(name, false)
+function P.widget:disable_updates()
+    P.currently_updating = false
+    P.widget:emit_signal("stop_updating")
 end
 
-function widget:disable_updates()
-    currently_updating = false
-    widget:emit_signal("stop_updating")
+function P.widget:enable_updates()
+    P.currently_updating = true
+    P.widget:emit_signal("start_updating")
 end
 
-function widget:enable_updates()
-    currently_updating = true
-    widget:emit_signal("start_updating")
+for _, name in ipairs(P.manager.player_names) do
+	P.start_managing(name, false)
 end
 
-return widget
+return P.widget

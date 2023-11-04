@@ -4,25 +4,25 @@ local beautiful = require "beautiful"
 local PopupBase = require("ui.bar.popups.base").new
 local Description = require("ui.components.container").description
 
-local calendar = Description {
+local M = {}
+local P = {}
+
+P.calendar = Description {
     description = "Calendar",
     widget = require "ui.bar.popups.date.widgets.calendar"
 }
 
-local layouts = Description {
+P.layouts = Description {
     description = "Layoutswitcher",
     widget = require "ui.bar.popups.date.widgets.layout"
 }
 
-local grindtimer = Description {
+P.grindtimer = Description {
     description = "Timer",
     widget = require "ui.bar.popups.date.widgets.grinder"
 }
 
-local m = {}
-local p = {}
-
-p.layout = wibox.widget {
+P.layout = wibox.widget {
     layout        = wibox.layout.grid,
     homogeneous   = true,
     spacing = dpi(10),
@@ -34,19 +34,19 @@ p.layout = wibox.widget {
     forced_width = dpi(500),
 }
 
-p.layout:add_widget_at(calendar, 1, 3, 3, 3)
-p.layout:add_widget_at(layouts, 1, 1, 1, 2)
-p.layout:add_widget_at(grindtimer,2,1,2,2)
+P.layout:add_widget_at(P.calendar, 1, 3, 3, 3)
+P.layout:add_widget_at(P.layouts, 1, 1, 1, 2)
+P.layout:add_widget_at(P.grindtimer,2,1,2,2)
 
-p.widget = wibox.widget {
+P.widget = wibox.widget {
     widget = wibox.container.margin,
     margins = dpi(10),
-    p.layout
+    P.layout
 }
 
 ---@param bar any The bar this widget connects to
 ---@return PopupWidget
-m.init = function (bar)
+M.init = function (bar)
     ---@class DatePopup : PopupWidget
     local ret = PopupBase {
         trigger = wibox.widget {
@@ -76,7 +76,7 @@ m.init = function (bar)
                 format = "%A"
             }
         },
-        widget = p.widget,
+        widget = P.widget,
         anchor = "right"
     }
     ret:register_bar(bar)
@@ -85,4 +85,4 @@ m.init = function (bar)
     return ret
 end
 
-return setmetatable(m, {__call = m.init})
+return setmetatable(M, {__call = M.init})

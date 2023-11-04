@@ -6,12 +6,10 @@ local awful = require "awful"
 
 local helpers = require "helpers"
 
-local time = 0
-local updater
-local widget
+local P = {}
 
-local start_btn
-start_btn = helpers.pointer_on_focus(wibox.widget {
+P.time = 0
+P.start_btn = helpers.pointer_on_focus(wibox.widget {
     id = 'button_bg',
     widget = wibox.container.background,
     bg = beautiful.bg_1,
@@ -20,12 +18,12 @@ start_btn = helpers.pointer_on_focus(wibox.widget {
         modifiers = {},
         button = 1,
         on_press = function ()
-            if updater.started then
-                updater:stop()
-                start_btn:get_children_by_id('text')[1].text = 'Start'
+            if P.updater.started then
+                P.updater:stop()
+                P.start_btn:get_children_by_id('text')[1].text = 'Start'
             else
-                updater:start()
-                start_btn:get_children_by_id('text')[1].text = 'Stop'
+                P.updater:start()
+                P.start_btn:get_children_by_id('text')[1].text = 'Stop'
             end
         end
     },
@@ -41,14 +39,14 @@ start_btn = helpers.pointer_on_focus(wibox.widget {
     }
 })
 
-start_btn:connect_signal("mouse::enter",function ()
-    start_btn.bg = beautiful.bg_2
+P.start_btn:connect_signal("mouse::enter",function ()
+    P.start_btn.bg = beautiful.bg_2
 end)
-start_btn:connect_signal("mouse::leave",function ()
-    start_btn.bg = beautiful.bg_1
+P.start_btn:connect_signal("mouse::leave",function ()
+    P.start_btn.bg = beautiful.bg_1
 end)
 
-widget = wibox.widget {
+P.widget = wibox.widget {
     widget = wibox.container.background,
     bg = beautiful.bg_1,
     shape = beautiful.theme_shape,
@@ -66,7 +64,7 @@ widget = wibox.widget {
                     widget = wibox.container.place,
                     halign = 'center',
                     valign = 'center',
-                    start_btn
+                    P.start_btn
                 }
             },
             {
@@ -115,20 +113,20 @@ widget = wibox.widget {
     }
 }
 
-local function update ()
-    local h,m,s = math.floor(time/3600), math.floor(time/60) % 60, time % 60
-    widget:get_children_by_id('hour')[1].values = { h }
-    widget:get_children_by_id('minute')[1].values = { m }
-    widget:get_children_by_id('second')[1].values = { s }
-    widget:get_children_by_id('time')[1].text = (h ~= 0 and h .. "h " or "") .. m .. "m " .. s .. "s"
+P.update = function()
+    local h,m,s = math.floor(P.time/3600), math.floor(P.time/60) % 60, P.time % 60
+    P.widget:get_children_by_id('hour')[1].values = { h }
+    P.widget:get_children_by_id('minute')[1].values = { m }
+    P.widget:get_children_by_id('second')[1].values = { s }
+    P.widget:get_children_by_id('time')[1].text = (h ~= 0 and h .. "h " or "") .. m .. "m " .. s .. "s"
 end
 
-updater = gears.timer {
+P.updater = gears.timer {
     timeout = 1,
     callback = function ()
-        time = time + 1
-        update()
+        P.time = P.time + 1
+        P.update()
     end
 }
 
-return widget
+return P.widget
