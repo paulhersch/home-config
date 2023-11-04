@@ -30,7 +30,7 @@ m.opened_popups = {}
 -- object table, similar to a manual draw call on drawables
 local function update_trigger_widget(self)
     local config = self._private.config
-    local ret = button({
+    local ret = button {
         widget = (type(config.trigger) == "string") and wibox.widget {
             widget = wibox.widget.imagebox,
             image = config.trigger
@@ -48,7 +48,7 @@ local function update_trigger_widget(self)
                 end
             end
         }
-    })
+    }
     if self.opened then
         ---@diagnostic disable-next-line: undefined-field
         ret:draw_clicked()

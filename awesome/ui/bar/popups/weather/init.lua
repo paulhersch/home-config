@@ -370,7 +370,7 @@ p.current_group = Group {
     },
     description = "Current",
     group_buttons = {
-        Button {
+        Button.new {
             margins = dpi(2),
             border_radius = dpi(9), -- default group margin thingy
             widget = {

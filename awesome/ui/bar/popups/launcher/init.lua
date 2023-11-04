@@ -14,7 +14,7 @@ local PopupBase = require("ui.bar.popups.base").new
 local m = {}
 
 local function create_power_button(imagename, on_press, color)
-    local widget = button {
+    local widget = button.new {
         widget = {
             widget = wibox.widget.imagebox,
             image = color ~= nil and gears.color.recolor_image(

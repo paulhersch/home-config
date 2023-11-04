@@ -5,7 +5,7 @@ local dpi	= beautiful.xresources.apply_dpi
 local helpers	= require "helpers"
 
 local container = require "ui.components.container"
-local buttonify = container.buttonify
+local buttonify = container.button.buttonify
 
 local LauncherPopup = require("ui.bar.popups.launcher")
 local DatePopup = require("ui.bar.popups.date")

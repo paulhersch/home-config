@@ -181,7 +181,7 @@ local function update_widget_meta(w, meta, player)
     if artists then
         artist_string = artists[1]
 	    for i = 2, #artists do
-		    artist_string  = artist_string .. ", " .. artists[i]
+		    artist_string = string.format("%s, %s", artist_string, artists[i])
 	    end
         ---@diagnostic disable-next-line: cast-local-type
         artist_string = gears.string.xml_escape(artist_string)

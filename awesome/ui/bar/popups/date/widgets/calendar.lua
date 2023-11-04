@@ -2,18 +2,18 @@ local wibox = require "wibox"
 local beautiful = require "beautiful"
 local dpi = beautiful.xresources.apply_dpi
 
-local styles = {
-	month = {
-	},
-	normal = {
-	},
-	focus = {
-	},
-	monthheader = {
-	},
-	weekday = {
-	}
-}
+-- local styles = {
+-- 	month = {
+-- 	},
+-- 	normal = {
+-- 	},
+-- 	focus = {
+-- 	},
+-- 	monthheader = {
+-- 	},
+-- 	weekday = {
+-- 	}
+-- }
 
 local cal = wibox.widget {
 	widget = wibox.container.background,
