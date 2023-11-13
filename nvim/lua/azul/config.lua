@@ -287,8 +287,8 @@ M.highlights_base = function (colors)
 		TelescopePreviewNormal = { bg = colors.contrast, fg = colors.foreground },
 		TelescopePreviewBorder = { bg = colors.contrast, fg = colors.contrast },
 		TelescopePreviewTitle = { bg = colors.color17, fg = colors.foreground },
-        TelescopePreviewMatch = { bg = colors.background_dark },
-        TelescopePreviewLine = { bg = colors.contrast },
+        TelescopePreviewMatch = { bg = colors.inactive_tabs },
+        TelescopePreviewLine = { bg = colors.inactive_tabs },
 		TelescopeSelection = { bg = colors.background_dark },
 		-- Indent Blank Line
 		IblIndent = { fg = colors.color8, bg = colors.background },

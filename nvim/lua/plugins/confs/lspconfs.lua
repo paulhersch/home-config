@@ -105,6 +105,7 @@ return {
         lc.rust_analyzer.setup{}
         lc.nimls.setup{}
         lc.hls.setup{}
+        lc.ccls.setup{}
     end,
     keys = {
         { "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>" },
