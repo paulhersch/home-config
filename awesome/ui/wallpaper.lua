@@ -8,10 +8,10 @@ screen.connect_signal("request::wallpaper", function(s)
 	awful.wallpaper {
 		screen = s,
 		widget = wibox.widget {
-			image		= helpers.crop_surface(
-                s.geometry.width/s.geometry.height,
-                gears.surface.load(beautiful.wallpaper)
-            ),
+			image = helpers.crop_surface {
+                surface = gears.surface.load(beautiful.wallpaper),
+                ratio = s.geometry.width/s.geometry.height,
+            },
 			widget		= wibox.widget.imagebox,
 			resize		= true,
 			scaling_quality	= 'best',

@@ -103,33 +103,75 @@ local function textcursor_on_focus(widget, wibox)
     return cursor_focus(widget, wibox, "xterm")
 end
 
----@param ratio number desired aspect ratio (e.g. 16/9 for 16:9 (width/height))
----@param surf Cairo.Surface the input surface
----@return Cairo.Surface New surface with applied ratio
-local function crop_surface(ratio, surf)
-    local old_w, old_h = gears.surface.get_size(surf)
-    local old_ratio = old_w/old_h
-    if old_ratio == ratio then return surf end
 
-    local new_h = old_h
-    local new_w = old_w
-    local offset_h, offset_w = 0, 0
-    -- quick mafs
-    if (old_ratio < ratio) then
-        new_h = math.ceil(old_w * (1/ratio))
-        offset_h = math.ceil((old_h - new_h)/2)
-    else
-        new_w = math.ceil(old_h * ratio)
-        offset_w = math.ceil((old_w - new_w)/2)
+local ceil = math.ceil
+-- copied from PR 3776
+---crops surface with offsets or target ratio (or both)
+---@diagnostic disable-next-line: undefined-doc-name
+---@param args {surface: surface, ratio: number, left: number, right: number, top: number, bottom: number}
+---@diagnostic disable-next-line: undefined-doc-name
+---@return surface|nil
+local function crop_surface(args)
+    args = args or {}
+
+    if not args.surface then
+        error("No surface to crop_surface supplied")
+        return nil
     end
 
-    local out_surf = cairo.ImageSurface(cairo.Format.ARGB32, new_w, new_h)
-    local cr = cairo.Context(out_surf)
-    cr:set_source_surface(surf, -offset_w, -offset_h)
+    local surf = args.surface
+    local target_ratio = args.ratio
+
+    local w, h = gears.surface.get_size(surf)
+    local offset_w, offset_h =  0, 0
+
+    if (args.top or args.right or args.bottom or args.left) then
+        local left = args.left or 0
+        local right = args.right or 0
+        local top = args.top or 0
+        local bottom = args.bottom or 0
+
+        if (top < 0 or right < 0 or bottom < 0 or left < 0) then
+            error("negative offsets are not supported for crop_surface")
+        end
+
+        w = w - left - right
+        h = h - top - bottom
+
+        -- the offset needs to be negative
+        offset_w = - left
+        offset_h = - top
+
+        -- breaking stuff with cairo crashes awesome with no way to restart in place
+        -- so here are checks for user error
+        if w <= 0 or h <= 0 then
+            error("Area to remove cannot be larger than the image size")
+            return nil
+        end
+    end
+
+    if target_ratio and target_ratio > 0 then
+        local prev_ratio = w/h
+        if prev_ratio ~= target_ratio then
+            if (prev_ratio < target_ratio) then
+                local old_h = h
+                h = ceil(w * (1/target_ratio))
+                offset_h = offset_h - ceil((old_h - h)/2)
+            else
+                local old_w = w
+                w = ceil(h * target_ratio)
+                offset_w = offset_w - ceil((old_w - w)/2)
+            end
+        end
+    end
+
+    local ret = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
+    local cr = cairo.Context(ret)
+    cr:set_source_surface(surf, offset_w, offset_h)
     cr.operator = cairo.Operator.SOURCE
     cr:paint()
 
-    return out_surf
+    return ret
 end
 
 return {

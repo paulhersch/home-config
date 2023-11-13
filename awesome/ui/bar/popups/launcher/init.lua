@@ -70,7 +70,10 @@ M.init = function (bar)
                         margin = dpi(5),
                         {
                             widget = wibox.widget.imagebox,
-                            image = helpers.crop_surface(1, gears.surface.load(os.getenv("HOME") .. "/.face")),
+                            image = helpers.crop_surface {
+                                ratio = 1,
+                                surface = gears.surface.load(os.getenv("HOME") .. "/.face")
+                            },
                         }
                     },
                     -- {
@@ -110,7 +113,7 @@ M.init = function (bar)
                                 awful.spawn("systemctl suspend")
                             end, beautiful.cyan),
                             create_power_button("lock.svg", function ()
-                                awful.spawn("i3lock-color -c " .. string.sub(beautiful.bg_normal,2,7) .. "60 --greeter-text='enter password' -efk --time-pos='x+w-100:y+h-50'")
+                                awful.spawn("light-locker-command -l")
                             end, beautiful.yellow),
                             create_power_button("logout.svg", function ()
                                 awful.spawn("pkill awesome")

@@ -45,7 +45,9 @@ M.init = function(s)
                 halign = 'center',
             },
             create_callback = function(self, t, _, _)
-                buttonify(self, {})
+                buttonify({
+                    widget = self
+                })
                 self:get_children_by_id("index")[1].text = tagnames[t.index]
                 self:add_button(awful.button {
                     modifier = {},
@@ -72,6 +74,63 @@ M.init = function(s)
                 end
             end
         }
+    }
+
+    s.tasklist = awful.widget.tasklist {
+        screen = s,
+        filter = awful.widget.tasklist.filter.currenttags,
+        widget_template = {
+            widget = wibox.container.background,
+            {
+                widget = wibox.container.constraint,
+                width = dpi(120),
+                strategy = "exact",
+                {
+                    widget = wibox.container.place,
+                    halign = "center",
+                    {
+                        widget = wibox.container.margin,
+                        margins = dpi(5),
+                        {
+                            id = "text_role",
+                            widget = wibox.widget.textbox,
+                        }
+                    }
+                }
+            },
+            create_callback = function (self, c)
+                container.button.buttonify {
+                    widget = self
+                }
+                self:add_button (
+                    awful.button {
+                        modifiers = {},
+                        button = awful.button.names.LEFT,
+                        on_press = c:activate{}
+                    }
+                )
+                c:connect_signal("property::active", function ()
+                    if c.active then
+                        self:draw_clicked()
+                    else
+                        self:draw_released()
+                    end
+                end)
+
+                -- initial state
+
+                if c.active then
+                    self:draw_clicked()
+                else
+                    self:draw_released()
+                end
+            end
+        },
+        layout = {
+            layout = wibox.layout.fixed.horizontal,
+            spacing = dpi(5)
+        },
+
     }
 
     local systray = s == screen.primary and wibox.widget {
@@ -108,6 +167,11 @@ M.init = function(s)
                     fill_vertical = true,
                     s.taglist,
                 },
+            },
+            {
+                widget = wibox.container.place,
+                halign = "center",
+                s.tasklist
             },
             {
                 widget = wibox.container.place,

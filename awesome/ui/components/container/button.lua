@@ -12,9 +12,9 @@ Private.draw_template = function (cr, w, h, clicked, args)
     w = math.floor(w)
     h = math.floor(h)
     -- radius - dist as radius (basically to have expected outcomes when knowing height of widget)
-    local rad = args.border_radius and args.border_radius - dpi(2) or dpi(2)
-    local lw_1 = clicked and dpi(2) or dpi(1)
-    local lw_2 = clicked and dpi(1) or dpi(2)
+    local rad = args.border_radius and args.border_radius - dpi(3) or dpi(3)
+    local lw_1 = clicked and dpi(3) or dpi(2)
+    local lw_2 = clicked and dpi(2) or dpi(3)
     local dist = dpi(2)
     local rad_offset = dist+rad
     cr:set_source_rgba(gc.parse_color(beautiful.fg_normal))
@@ -62,11 +62,13 @@ Private.is_in = function(tbl, elem)
     return false
 end
 
----@param bg any background container widget (has to be background container!!)
----@param buttons table buttons that should be considered clicks. If none supplied this function
 -- wont connect to the buttons press and release signals
 -- the manual draw functions draw_clicked and draw_released are also available here
-Button.buttonify = function (bg, buttons)
+Button.buttonify = function (args)
+    local bg = args.widget or error("no widget supplied")
+    local buttons = args.buttons or {}
+    local manual = args.manual
+
     function bg:draw_clicked()
         bg.bgimage = Private.draw_click
     end
@@ -77,13 +79,15 @@ Button.buttonify = function (bg, buttons)
 
     if #buttons > 0 then
         bg:connect_signal("button::press", function (_, _, _, b)
-            if Private.is_in(buttons, b) then
+            if not manual and Private.is_in(buttons, b) then
                 bg:draw_clicked()
             end
         end)
 
-        bg:connect_signal("button::release", function ()
-            bg:draw_released()
+        bg:connect_signal("button::release", function (_, _, _, b)
+            if not manual and Private.is_in(buttons, b) then
+                bg:draw_released()
+            end
         end)
     end
 
