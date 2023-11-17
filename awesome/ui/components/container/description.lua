@@ -46,7 +46,10 @@ Private.draw_border = function (_, cr, w, h, args)
         -- crop and scale image to fit target size
         -- using w and h although they are not the "real" size but you usually
         -- wont see much of the image anyways
-        local img_surf = helpers.crop_surface(w/h, args.bgimage)
+        local img_surf = helpers.crop_surface{
+            ratio = w/h,
+            surface = args.bgimage
+        }
         local img_w, img_h = gears.surface.get_size(img_surf)
         -- create temp surface to scale to desired output size
         local target_surf = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
