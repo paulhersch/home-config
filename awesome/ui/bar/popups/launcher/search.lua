@@ -44,7 +44,8 @@ end
 P.entry_callbacks = {}
 P.entry_callbacks.onclick = function (self, _, _, b)
     if b == awful.button.names.LEFT then
-        awful.screen.focused().popup_launcher_widget:stop_search()
+        local s = awful.screen.focused()
+        P.data[s].widget:stop_search()
         self:launch()
     end
 end
@@ -143,7 +144,7 @@ P.get_entries = function()
             helpers.pointer_on_focus(widget)
             -- connect signals
             widget:connect_signal("mouse::enter", P.entry_callbacks.on_hover)
-            widget:connect_signal("button::click", P.entry_callbacks.onclick)
+            widget:connect_signal("button::press", P.entry_callbacks.onclick)
 
             local cmd = app:get_commandline()
 
