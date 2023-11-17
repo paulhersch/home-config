@@ -1,27 +1,33 @@
 local modules = require("statusline.modules")
+local utf8 = utf8 or require("utf8")
 local concat = table.concat
 local a = vim.api
 local o = vim.opt
 local fn = vim.fn
 
--- function _G.statusline()
---     return statusline
--- end
--- o.statusline = "%!v:lua.statusline()"
+local P = {}
+local M = {}
+
 o.laststatus = 3
 
--- NO UNICODE ESCAPE SUPPORT IN LUAJIT :(((((
 -- format every character as char with overline
--- local function overlineify(str)
---     local ret = ""
---     for i=1,string.len(str) do
---         ret = ret .. string.sub(str,i,i) .. "̅̅̅\u80\uBE"
---     end
---     return ret
--- end
+-- for some reason the statusline shits itself when i try to
+-- concat strings with overlines
+-- they also look funny
+M.overlineify = function(in_str)
+    local ret = ""
+    -- not how the spec describes how this is supposed
+    -- to work but if it works it works
+    for _, char in utf8.codes(in_str) do
+        ---@diagnostic disable-next-line: param-type-mismatch
+        local codepoint = utf8.codepoint(char)
+        ret = ret .. utf8.char(codepoint, 9620)
+    end
+    return ret
+end
 
 -- initial state
-local default_line = {
+P.default_line = {
     "%#StatusLine#",
     modules.mode(),
     "%#StatusLine# ",
@@ -34,7 +40,7 @@ local default_line = {
     " "
 }
 
-local extra_buf_type_lines = {
+P.extra_buf_type_lines = {
     toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL ", -- %#StatusLineNC#",
     NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES ", --%#StatusLineNC#",
     TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE ", --%#StatusLineNC#",
@@ -44,8 +50,8 @@ local extra_buf_type_lines = {
     aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# SYMBOLS ",-- %#StatusLineNC#"
 }
 -- mappings
-extra_buf_type_lines.terminal = extra_buf_type_lines.toggleterm
-extra_buf_type_lines["neo-tree"] = extra_buf_type_lines.NvimTree
+P.extra_buf_type_lines.terminal = P.extra_buf_type_lines.toggleterm
+P.extra_buf_type_lines["neo-tree"] = P.extra_buf_type_lines.NvimTree
 
 -----
 -- the idea of this bit is, that UI wants to update a little more often than the line
@@ -61,54 +67,51 @@ extra_buf_type_lines["neo-tree"] = extra_buf_type_lines.NvimTree
 -- something like telescope, but the cost of registering aucmds is pretty high compared to just ignoring
 -- like 3 updates while being in this buffer
 
-
-local function update_line()
+P.update_line = function()
     local buf_type = fn.getbufvar(a.nvim_get_current_buf(), '&filetype')
-    if extra_buf_type_lines[buf_type] then
-        o.statusline = extra_buf_type_lines[buf_type]
+    if P.extra_buf_type_lines[buf_type] then
+        o.statusline = P.extra_buf_type_lines[buf_type]
     else
-        o.statusline = concat(default_line)
+        o.statusline = concat(P.default_line)
     end
 end
 
+-- autogroup
+-- if module is reloaded the autocmds will be reloaded as well
+P.autogroup = a.nvim_create_augroup("StatuslineAG", {clear = true})
+
 -- update individual modules
 a.nvim_create_autocmd({"DiagnosticChanged"}, {
+    group = P.autogroup,
     callback = function ()
-        default_line[6] = modules.lsp_info()
-        update_line()
+        P.default_line[6] = modules.lsp_info()
+        P.update_line()
     end
 })
 
 a.nvim_create_autocmd({"FileChangedShellPost", "TextChangedI", "TextChanged", "BufWritePost", "BufEnter"}, {
+    group = P.autogroup,
     callback = function ()
-        default_line[4] = modules.file_edited()
-        update_line()
+        P.default_line[4] = modules.file_edited()
+        P.update_line()
     end
 })
 
-a.nvim_create_autocmd({"BufEnter", "WinEnter"}, {
+a.nvim_create_autocmd({"BufEnter", "BufLeave", "WinEnter", "WinLeave"}, {
+    group = P.autogroup,
     callback = function ()
-        default_line[5] = modules.fileinfo()
-        default_line[9] = modules.git_branch()
-        update_line()
+        P.default_line[5] = modules.fileinfo()
+        P.default_line[9] = modules.git_branch()
+        P.update_line()
     end
 })
 
 a.nvim_create_autocmd("ModeChanged", {
+    group = P.autogroup,
     callback = function ()
-        default_line[2] = modules.mode()
-        update_line()
+        P.default_line[2] = modules.mode()
+        P.update_line()
     end
 })
 
--- local function get()
---     local buf_type = fn.getbufvar(a.nvim_get_current_buf(), '&filetype')
---     if extra_buf_type_lines[buf_type] then
---         return extra_buf_type_lines[buf_type]
---     end
---     return concat(default_line)
--- end
-
--- return {
---     get = get
--- }
+return M

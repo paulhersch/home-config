@@ -20,26 +20,49 @@ Private.draw_template = function (cr, w, h, clicked, args)
     cr:set_source_rgba(gc.parse_color(beautiful.fg_normal))
     cr:new_sub_path()
 
-    cr:set_line_width(lw_1)
-    cr:move_to(rad_offset, h-dist)
-    cr:arc(rad_offset, h-rad_offset, rad, math.rad(90), math.rad(180))
+    -- logic explained
+    -- draw calls are put there so that the bottom left and top right
+    -- are always drawn with the thin lines
+
+    if not clicked then
+        cr:move_to(rad_offset, h-dist)
+        cr:arc(rad_offset, h-rad_offset, rad, math.rad(90), math.rad(180))
+    else
+        cr:move_to(dist, h-rad_offset)
+    end
     cr:line_to(dist, dist+rad)
     cr:arc(rad_offset, rad_offset, rad, math.rad(180), math.rad(270))
     cr:line_to(w-rad-dist, dist)
-    local part_path = cr:copy_path()
+    if not clicked then
+        cr:arc(w-rad_offset, rad_offset, rad, math.rad(270), math.rad(0))
+    end
+
+    local part_path_1 = cr:copy_path()
+    cr:set_line_width(lw_1)
     cr:stroke()
 
-    cr:set_line_width(lw_2)
     -- create new subpath
     cr:new_sub_path()
-    cr:arc(w-rad_offset, rad_offset, rad, math.rad(270), math.rad(0))
+    if clicked then
+        cr:move_to(w-rad_offset, dist)
+        cr:arc(w-rad_offset, rad_offset, rad, math.rad(270), math.rad(0))
+    else
+        cr:move_to(w-dist, rad_offset)
+    end
     cr:line_to(w-dist, h-rad_offset)
     cr:arc(w-rad_offset, h-rad_offset, rad, math.rad(0), math.rad(90))
     cr:line_to(rad_offset, h-dist)
-    cr:stroke_preserve()
+    if clicked then
+        cr:arc(rad_offset, h-rad_offset, rad, math.rad(90), math.rad(180))
+    end
+
+    local part_path_2 = cr:copy_path()
+    cr:set_line_width(lw_2)
+    cr:stroke()
 
     -- append path from above to be able to fill the inside area properly
-    cr:append_path(part_path)
+    cr:append_path(part_path_1)
+    cr:append_path(part_path_2)
     cr:set_source_rgba(gc.parse_color(clicked and beautiful.bg_1 or beautiful.bg_normal))
     cr:fill()
 
@@ -92,7 +115,7 @@ Button.buttonify = function (args)
     end
 
     helpers.pointer_on_focus(bg)
-    bg.bgimage = Button.draw_release
+    bg:draw_released()
 end
 
 ---@class ButtonArgsClickArgs

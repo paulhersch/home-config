@@ -113,7 +113,7 @@ M.add_notif_widget = function (n)
         }
     }
 
-    w:add_button(
+    w:add_button_widget(
         container.button {
             widget = {
                 widget = wibox.widget.textbox,
@@ -131,7 +131,8 @@ M.add_notif_widget = function (n)
     drawer:add_notif(w)
 end
 
-M.blacklisted_appnames = { "Spotify", "NetworkManager", "Netzwerk-Manager-Applet" }
+-- Telegram does weird stuff with their notification strings and it causes issues???
+M.blacklisted_appnames = { "Spotify", "NetworkManager", "Netzwerk-Manager-Applet", "Telegram Desktop" }
 M.blacklisted_titles = { "battery low!" }
 
 M.shouldnt_add = function (n)
@@ -171,7 +172,7 @@ end)
 -- autodelete notifications of clients that are now being focused
 client.connect_signal("property::active", function (c)
     -- most apps report their name via class so that should be alright
-    if c then
+    if c and c.class then
         local cname = string.lower(c.class) or nil
         for _, entry in ipairs(M.main_widget:get_children()) do
             if string.lower(entry.title) == cname or string.lower(entry.title) == M.app_class_nappname_map[cname] then

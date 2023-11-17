@@ -12,13 +12,12 @@ local table = table
 local unpack = unpack or table.unpack
 local settings = require("settings")
 local container = require("ui.components.container")
-local Group = container.description
+local Description = container.description
 local Button = container.button
 
 local PopupBase = require("ui.bar.popups.base").new
 
 local weathericon_path = gears.filesystem.get_configuration_dir() .. "assets/weathericons/"
-local materialicon_path = gears.filesystem.get_configuration_dir() .. "assets/materialicons/"
 
 local M = {}
 local P = {
@@ -346,14 +345,14 @@ P.render_alerts = function ()
     }
     layout:add(unpack(alerts))
 
-    return Group {
+    return Description {
         description = "Alerts",
         widget = layout,
         bg = beautiful.bg_1
     }
 end
 
-P.current_group = Group {
+P.current_group = Description {
     widget = {
         widget = wibox.container.background,
         forced_height = P.current_weather.height,
@@ -391,7 +390,7 @@ P.current_group = Group {
     }
 }
 
-P.forecast_group = Group {
+P.forecast_group = Description {
     widget = {
         widget = wibox.container.background,
         bg = beautiful.bg_2,

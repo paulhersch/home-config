@@ -48,7 +48,7 @@ require"lazy".setup({
     {
         dir = '~/.config/nvim/lua/statusline',
         dependencies = {
-            'nvim-tree/nvim-web-devicons',
+            'uga-rosa/utf8.nvim',
             'azul'
         },
         name = "statusline",

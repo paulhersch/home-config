@@ -1,4 +1,3 @@
-local devicons = require("nvim-web-devicons")
 local a = vim.api
 local fn = vim.fn
 
@@ -64,32 +63,14 @@ m.lsp_info = function()
     return e_str .. w_str .. i_str
 end
 
--- the ww depends on one of my keybinds
--- _G.__feedww = function ()
---     vim.api.nvim_input('ww')
--- end
-
 m.file_edited = function ()
     local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@write@ %T " or ""
     return "%#StatusLineFileModified#" .. edited
 end
 
--- this requires the colorscheme to be loaded first
--- local statuslinehl = a.nvim_get_hl_by_name("StatusLine", true)
--- for _, dat in pairs(devicons.get_icons()) do
---     a.nvim_set_hl(0, "StatusLineDevIcon" .. dat.name, {
---         bg = string.format("#%06x",statuslinehl["background"]),
---         fg = dat.color
---     })
--- end
--- hacky workaround: devicons set hl groups with DevIcon<defname>
--- so above i set hl groups like this with the StatusLine prefix
--- and then i can use the hl names from devicons directly in the line
 m.fileinfo = function()
-    local fname = (fn.expand "%" == "" and "unnamed") or fn.expand "%:t"
-    --local icon, icon_hl = devicons.get_icon(fname)
-    -- icon = icon and "%#StatusLine" .. icon_hl .. "#" .. icon .. "  " or ""
-    return --[[icon .. ]] "%#StatusLineFileName#" .. string.upper(fname)
+    local fname = (fn.expand "%:t" == "" and "unnamed") or fn.expand "%:t"
+    return "%#StatusLineFileName#" .. string.upper(fname)
 end
 
 m.git_branch = function ()

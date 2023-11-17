@@ -28,15 +28,11 @@ local function create_power_button(imagename, on_press, color)
     return widget
 end
 
-local function create_launcher_widget(s)
-    return searchwidget.init(s)
-end
-
 ---@return LauncherPopup
 M.init = function (bar)
     local s = bar.screen
     local w, h = dpi(450), dpi(600)
-    s.searchWidget = create_launcher_widget(s)
+    s.searchWidget = searchwidget.init(s)
 
     ---@class LauncherPopup : PopupWidget
     ---@field show_and_run function Show Popup and Run prompt
@@ -100,6 +96,7 @@ M.init = function (bar)
                         widget = wibox.container.place,
                         valign = 'bottom',
                         halign = 'center',
+                        fill_vertical = true,
                         {
                             layout = wibox.layout.fixed.vertical,
                             spacing = dpi(5),

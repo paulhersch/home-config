@@ -12,13 +12,14 @@ local DatePopup = require("ui.bar.popups.date")
 local QuicksettingsPopup = require("ui.bar.popups.quicksettings")
 local WeatherPopup = require("ui.bar.popups.weather")
 
-local M = {}
+local P = {
+    tagged_tag_col = beautiful.gray,
+    default_tag_col = helpers.color.col_mix(beautiful.bg_1, beautiful.gray),
+    tagnames = { "०", "१", "२", "३", "४", "५", "६", "७", "८", "९" },
+}
 
-M.init = function(s)
-    local tagged_tag_col = beautiful.gray
-    local default_tag_col = helpers.color.col_mix(beautiful.bg_1, beautiful.gray)
-    local tagnames = { "०", "१", "२", "३", "४", "५", "६", "७", "८", "९" }
-    s.taglist = awful.widget.taglist {
+P.init_taglist = function (s)
+    return awful.widget.taglist {
         screen		= s,
         filter		= awful.widget.taglist.filter.all,
         layout 		= {
@@ -48,7 +49,7 @@ M.init = function(s)
                 buttonify({
                     widget = self
                 })
-                self:get_children_by_id("index")[1].text = tagnames[t.index]
+                self:get_children_by_id("index")[1].text = P.tagnames[t.index]
                 self:add_button(awful.button {
                     modifier = {},
                     button = awful.button.names.LEFT,
@@ -61,7 +62,8 @@ M.init = function(s)
                     self:get_children_by_id('bg')[1].fg = beautiful.blue
                     self:draw_clicked()
                 else
-                    self:get_children_by_id('bg')[1].fg = #t:clients() > 0 and tagged_tag_col or default_tag_col
+                    self:get_children_by_id('bg')[1].fg = #t:clients() > 0 and P.tagged_tag_col or P.default_tag_col
+                    self:draw_released()
                 end
             end,
             update_callback = function (self, t, _, _)
@@ -70,15 +72,22 @@ M.init = function(s)
                     self:get_children_by_id('bg')[1].fg = beautiful.blue
                 else
                     self:draw_released()
-                    self:get_children_by_id('bg')[1].fg = #t:clients() > 0 and tagged_tag_col or default_tag_col
+                    self:get_children_by_id('bg')[1].fg = #t:clients() > 0 and P.tagged_tag_col or P.default_tag_col
                 end
             end
         }
     }
+end
 
-    s.tasklist = awful.widget.tasklist {
+P.init_tasklist = function (s)
+    return awful.widget.tasklist {
         screen = s,
         filter = awful.widget.tasklist.filter.currenttags,
+        buttons = {
+            awful.button({ }, 1, function (c)
+                c:activate { context = "tasklist", action = "toggle_minimization" }
+            end),
+        },
         widget_template = {
             widget = wibox.container.background,
             {
@@ -92,7 +101,7 @@ M.init = function(s)
                         widget = wibox.container.margin,
                         margins = dpi(5),
                         {
-                            id = "text_role",
+                            id = "client_name",
                             widget = wibox.widget.textbox,
                         }
                     }
@@ -102,13 +111,6 @@ M.init = function(s)
                 container.button.buttonify {
                     widget = self
                 }
-                self:add_button (
-                    awful.button {
-                        modifiers = {},
-                        button = awful.button.names.LEFT,
-                        on_press = c:activate{}
-                    }
-                )
                 c:connect_signal("property::active", function ()
                     if c.active then
                         self:draw_clicked()
@@ -117,7 +119,15 @@ M.init = function(s)
                     end
                 end)
 
+                c:connect_signal("property::name", function ()
+                    if c.name then
+                        self:get_children_by_id('client_name')[1].text = c.name
+                    end
+                end)
                 -- initial state
+                if c.name then
+                    self:get_children_by_id('client_name')[1].text = c.name
+                end
 
                 if c.active then
                     self:draw_clicked()
@@ -130,9 +140,15 @@ M.init = function(s)
             layout = wibox.layout.fixed.horizontal,
             spacing = dpi(5)
         },
-
     }
+end
 
+local M = {}
+
+M.init = function(s)
+
+    s.taglist = P.init_taglist(s)
+    s.tasklist = P.init_tasklist(s)
     local systray = s == screen.primary and wibox.widget {
         widget = wibox.container.background,
         bg = beautiful.bg_1,

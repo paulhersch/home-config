@@ -70,7 +70,7 @@ Private.draw_border = function (_, cr, w, h, args)
         -- parse text, if it can be parsed pango will render
         local attr, parsed = pango.parse_markup(args.description, -1, 0)
         if not attr then
-            gears.debug.print_error(debug.traceback("Error parsing markup " .. parsed .. " for " .. args.description))
+            gears.debug.print_error(debug.traceback("Error parsing markup for " .. args.description))
             return
         end
 
@@ -215,7 +215,7 @@ Description.new = function (args)
         end
     end
 
-    function DescriptionWidget:add_button(btn_widget)
+    function DescriptionWidget:add_button_widget(btn_widget)
         if _args.reserve_top_space then
             local layout = self:get_children_by_id("buttons_layout")[1]
             layout:add(btn_widget)
