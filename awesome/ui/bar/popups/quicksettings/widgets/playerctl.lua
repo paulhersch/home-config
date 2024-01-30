@@ -13,7 +13,6 @@ local helpers = require "helpers"
 local maticons = gfs.get_configuration_dir() .. "/assets/materialicons/"
 
 local P = {}
-local M = {}
 
 --janky statekeeping, true if widget is currently shown, so that
 --the progressbar does not have to update when it is not seen

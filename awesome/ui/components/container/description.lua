@@ -46,7 +46,7 @@ Private.draw_border = function (_, cr, w, h, args)
         -- crop and scale image to fit target size
         -- using w and h although they are not the "real" size but you usually
         -- wont see much of the image anyways
-        local img_surf = helpers.crop_surface{
+        local img_surf = gears.surface.crop_surface{
             ratio = w/h,
             surface = args.bgimage
         }

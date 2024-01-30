@@ -370,7 +370,9 @@ M.highlights_base = function (colors)
 		BufferInactiveMod = { fg = colors.color15, bg = colors.inactive_tabs, bold = true },
 		BufferInactiveSign = { fg = colors.background_dark, bg = colors.inactive_tabs, bold = false },
 		BufferTabpageFill = { fg = colors.background_dark, bg = colors.background_dark },
-		BufferOffset = { fg = colors.background, bg = colors.background }
+		BufferOffset = { fg = colors.background, bg = colors.background },
+        
+        ToggleTerm1Normal = { bg = colors.background, fg = colors.foreground},
 	}
 end
 

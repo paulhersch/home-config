@@ -2,13 +2,12 @@ local beautiful = require "beautiful"
 local wibox = require "wibox"
 local awful = require "awful"
 local gears = require "gears"
-local helpers = require("helpers")
 
 screen.connect_signal("request::wallpaper", function(s)
 	awful.wallpaper {
 		screen = s,
 		widget = wibox.widget {
-			image = helpers.crop_surface {
+			image = gears.surface.crop_surface {
                 surface = gears.surface.load(beautiful.wallpaper),
                 ratio = s.geometry.width/s.geometry.height,
             },

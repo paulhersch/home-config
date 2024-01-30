@@ -5,6 +5,7 @@ return {
         "nvim-lua/plenary.nvim",
         "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
         "MunifTanjim/nui.nvim",
+        "miversen33/netman.nvim"
     },
     cmd = { "Neotree" },
     keys = {
@@ -12,6 +13,11 @@ return {
     },
     config = function ()
         require("neo-tree").setup({
+            sources = {
+                "netman.ui.neo-tree",
+                "filesystem",
+                "git_status"
+            },
             close_if_last_window = true,
             add_blank_line_at_top = true,
             hide_root_node = true,
@@ -29,8 +35,12 @@ return {
                     },
                     {
                         source = "git_status",
-                        display_name = "󰊢 "
+                        display_name = " "
                     },
+                    {
+                        source = "remote",
+                        display_name = " "
+                    }
                 },
                 -- this gives the tabline a padded look (vert split is colored by neotree via hl)
                 separator = { left = " ", right = "" },
