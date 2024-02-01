@@ -1,3 +1,8 @@
+--[[
+Custom statusline, personal use only. I do not recommend
+using any of this, i do not know what i am doing
+--]]
+
 local modules = require("statusline.modules")
 local utf8 = utf8 or require("utf8")
 local concat = table.concat
@@ -41,13 +46,13 @@ P.default_line = {
 }
 
 P.extra_buf_type_lines = {
-    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL ", -- %#StatusLineNC#",
-    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES ", --%#StatusLineNC#",
-    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE ", --%#StatusLineNC#",
-    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY ", --%#StatusLineNC#",
-    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD ",-- %#StatusLineNC#",
-    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS ",-- %#StatusLineNC#",
-    aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# SYMBOLS ",-- %#StatusLineNC#"
+    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL ",
+    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES ",
+    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE ",
+    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY ",
+    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD ",
+    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS ",
+    aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# SYMBOLS ",
 }
 -- mappings
 P.extra_buf_type_lines.terminal = P.extra_buf_type_lines.toggleterm

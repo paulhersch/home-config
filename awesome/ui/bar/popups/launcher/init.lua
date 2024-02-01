@@ -22,7 +22,7 @@ local function create_power_button(imagename, on_press, color)
                 color) or imagename,
         },
         left = {
-            on_click = on_press
+            on_click = on_press,
         }
     }
     return widget
@@ -66,7 +66,7 @@ M.init = function (bar)
                         margin = dpi(5),
                         {
                             widget = wibox.widget.imagebox,
-                            image = helpers.crop_surface {
+                            image = gears.surface.crop_surface {
                                 ratio = 1,
                                 surface = gears.surface.load(os.getenv("HOME") .. "/.face")
                             },

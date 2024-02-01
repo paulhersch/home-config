@@ -1,3 +1,11 @@
+--[[
+bffrmgr plugin. Basically like gleipnirs flybuf.nvim but simplified UI
+and also limits amount of open buffers (autocloses)
+
+Copyright: Paul H. Schneider, 2024
+Do not distribute this file, the code in it is horrible
+--]]
+
 local a = vim.api
 
 local m = {}

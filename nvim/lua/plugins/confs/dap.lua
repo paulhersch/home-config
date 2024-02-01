@@ -10,27 +10,48 @@ return {
     config = function ()
         local dap = require("dap")
 
-        dap.adapters.dotnet = {
-            type = 'executable',
-            command = 'netcoredbg',
-            args = {'--interpreter=vscode'}
+        dap.adapters = {
+            -- dotnet = {
+            --     type = 'executable',
+            --     command = 'netcoredbg',
+            --     args = {'--interpreter=vscode'}
+            -- },
+            -- needs gdb >=14
+            gdb = {
+                type = "executable",
+                command = "gdb",
+                args = { "-i", "dap" }
+            }
         }
 
-        dap.configurations.cs = {
-            {
-                type = "dotnet",
-                name = "launch - netcoredbg",
-                request = "launch",
-                program = function()
-                    local ret
-                    vim.ui.select(vim.split(vim.fn.system("ls ".. vim.fn.getcwd() .. '/bin/Debug/net$(dotnet --version | cut -d "." -f 1,2)'), "\n"),{
-                        prompt = 'Select Program to Debug',
-                    }, function (path)
-                        ret = path
-                    end)
-                    return ret
-                end,
+        dap.configurations = {
+            cs = {
+                {
+                    type = "dotnet",
+                    name = "launch - netcoredbg",
+                    request = "launch",
+                    program = function()
+                        local ret
+                        vim.ui.select(vim.split(vim.fn.system("ls ".. vim.fn.getcwd() .. '/bin/Debug/net$(dotnet --version | cut -d "." -f 1,2)'), "\n"),{
+                            prompt = 'Select Program to Debug',
+                        }, function (path)
+                                ret = path
+                            end)
+                        return ret
+                    end,
+                },
             },
+            c = {
+                {
+                    name = "Launch",
+                    type = "gdb",
+                    request = "launch",
+                    program = function()
+                        return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+                    end,
+                    cwd = "${workspaceFolder}",
+                },
+            }
         }
 
         vim.fn.sign_define("DapBreakpoint", { text = '●', texthl='DapBreakpointSymbol'})

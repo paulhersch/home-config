@@ -1,13 +1,13 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  })
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -31,10 +31,6 @@ require"lazy".setup({
     dashboard,
     dap,
     comment,
-    {
-        'Biscuit-Colorscheme/nvim',
-        colorscheme=true
-    },
     {
         dir = '~/.config/nvim/lua/azul',
         priority = 1000,
@@ -73,7 +69,7 @@ require"lazy".setup({
         lazy = false,
         config = function()
             require("bffrmgr").setup({
-                max_bufs = 7
+                s = 7
             })
         end,
         keys = {
@@ -97,6 +93,15 @@ require"lazy".setup({
             }
             vim.g.knap_settings = settings
         end
+    },
+    {
+        dir = '~/.config/nvim/lua/evaluator',
+        lazy = false,
+        config = function()
+            require("evaluator").setup({
+                evalkey = "<C-x><C-e>"
+            })
+        end,
     },
     {
         'direnv/direnv.vim',
@@ -153,35 +158,42 @@ require"lazy".setup({
             require("nvim-autopairs").setup{}
         end
     },
+    -- {
+    --     'Shatur/neovim-session-manager',
+    --     dependencies = {
+    --         'nvim-lua/plenary.nvim'
+    --     },
+    --     cmd = "SessionManager",
+    --     config = function ()
+    --         local Path = require('plenary.path')
+    --         require('session_manager').setup ({
+    --             sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
+    --             path_replacer = '__',
+    --             colon_replacer = '++',
+    --             autoload_mode = require('session_manager.config').AutoloadMode.Disabled,
+    --             autosave_last_session = true,
+    --             autosave_ignore_not_normal = true,
+    --             autosave_ignore_dirs = {},
+    --             autosave_ignore_filetypes = {
+    --                 'gitcommit',
+    --                 'NvimTree',
+    --                 'toggleterm',
+    --             },
+    --             autosave_only_in_session = false,
+    --             max_path_length = 80,
+    --         })
+    --     end,
+    --     keys = {
+    --         { "fs", "<cmd>SessionManager load_session<cr>" },
+    --         { "ds", "<cmd>SessionManager delete_session<cr>" }
+    --     }
+    -- },
     {
-        'Shatur/neovim-session-manager',
-        dependencies = {
-            'nvim-lua/plenary.nvim'
-        },
-        cmd = "SessionManager",
+        "miversen33/netman.nvim",
+        lazy = false,
         config = function ()
-            local Path = require('plenary.path')
-            require('session_manager').setup ({
-                sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
-                path_replacer = '__',
-                colon_replacer = '++',
-                autoload_mode = require('session_manager.config').AutoloadMode.Disabled,
-                autosave_last_session = true,
-                autosave_ignore_not_normal = true,
-                autosave_ignore_dirs = {},
-                autosave_ignore_filetypes = {
-                    'gitcommit',
-                    'NvimTree',
-                    'toggleterm',
-                },
-                autosave_only_in_session = false,
-                max_path_length = 80,
-            })
-        end,
-        keys = {
-            { "fs", "<cmd>SessionManager load_session<cr>" },
-            { "ds", "<cmd>SessionManager delete_session<cr>" }
-        }
+            require "netman"
+        end
     },
     {
         'lukas-reineke/indent-blankline.nvim',
@@ -189,17 +201,21 @@ require"lazy".setup({
         event = "BufEnter",
         main = "ibl",
         opts = {
-            -- show_first_indent_level = false,
             indent = {
-                char = {" ", "│" }
+                -- i dont want a marker on the first indent level
+                -- this is the dirtiest of the hacks
+                -- if there are any more indents than that needed at any
+                -- time, please sign up for the nuthouse
+                char = { "", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│" },
+                smart_indent_cap = true
             },
             whitespace = {
                 remove_blankline_trail = true,
             },
             scope = {
                 enabled = true,
-                show_start = true,
-                show_end = true
+                show_start = false,
+                show_end = false,
             },
             exclude = { filetypes = {
                 "bffrmgr",
@@ -209,7 +225,7 @@ require"lazy".setup({
     },
     {
         'NvChad/nvim-colorizer.lua',
-        ft = { "css", "lua" },
+        lazy = false,
         config = function ()
             require 'colorizer'.setup({})
         end
