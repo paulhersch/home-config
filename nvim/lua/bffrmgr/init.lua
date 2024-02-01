@@ -76,21 +76,6 @@ local function get_top_offset()
     return ret
 end
 
-m.open = function ()
-    create_buf()
-    fill_buf()
-    m.last_win = a.nvim_get_current_win()
-    m.buf_win = a.nvim_open_win(m.buf, true, {
-        relative = "editor",
-        row = get_top_offset(),
-        col = get_left_offset(),
-        width = m.width,
-        height = m.height,
-        style = "minimal"
-    })
-    set_keymap()
-end
-
 local function find_item(table, item)
     for index, val in ipairs(table) do
         if val == item then return index end
@@ -188,10 +173,38 @@ local function set_up_autocmds()
 end
 
 m.setup = function (opts)
+    m.__props.opts = opts
     m.__props.max_bufs = opts.max_bufs or 7
     m.__props.keys = opts.keys or "asdfghjkl"
     m.__props.ext_mark_ns = a.nvim_create_namespace("bffmgr.highlights")
     set_up_autocmds()
+end
+
+local function open_filled_buf()
+    m.last_win = a.nvim_get_current_win()
+    m.buf_win = a.nvim_open_win(m.buf, true, {
+        relative = "editor",
+        row = get_top_offset(),
+        col = get_left_offset(),
+        width = m.width,
+        height = m.height,
+        style = "minimal"
+    })
+    set_keymap()
+end
+
+m.open = function ()
+    create_buf()
+    -- sometimes an invalid buffer still sneaks into the list
+    -- thats why i check for errors first and then try to run
+    -- open again
+    local success = pcall(fill_buf)
+    if not success then
+        filter_invalid()
+        m.open()
+    else
+        open_filled_buf()
+    end
 end
 
 return m

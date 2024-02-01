@@ -32,6 +32,10 @@ require"lazy".setup({
     dap,
     comment,
     {
+        'Biscuit-Colorscheme/nvim',
+        colorscheme=true
+    },
+    {
         dir = '~/.config/nvim/lua/azul',
         priority = 1000,
         name = "azul",
@@ -75,6 +79,24 @@ require"lazy".setup({
         keys = {
             { "bb", "<cmd>lua require('bffrmgr').open()<cr>", noremap=true }
         }
+    },
+    {
+        'frabjous/knap',
+        keys = {
+            { "sp", function() require("knap").toggle_autopreviewing() end }
+        },
+        config = function ()
+            local settings = {
+                delay = 500,
+                texoutputext = "pdf",
+                textopdfbufferasstdin = true,
+                textopdf = "lualatex --synctex=1 --halt-on-error --jobname \"$(basename -s .pdf %outputfile%)\"",
+                textopdfviewerlaunch = "zathura --synctex-editor-command 'nvim --headless -es --cmd \"lua require('\"'\"'knaphelper'\"'\"').relayjump('\"'\"'%servername%'\"'\"','\"'\"'%{input}'\"'\"',%{line},0)\"' %outputfile%",
+                textopdfviewerrefresh = "none",
+                textopdfforwardjump = "zathura --synctex-forward=%line%:%column%:%srcfile% %outputfile%"
+            }
+            vim.g.knap_settings = settings
+        end
     },
     {
         'direnv/direnv.vim',

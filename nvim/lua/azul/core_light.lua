@@ -2,14 +2,14 @@ local M = {}
 
 function M.get_colors()
 	local colors = {}
-	colors.comment = "#6C6F85"
-	colors.background = "#E8EAE3"
-    colors.inactive_tabs = "#D6D9D4" --"#BCC0BA"
-	colors.background_dark = "#DCE0DA"
-	colors.contrast = "#CCD0CA" -- "#D5D5D2"
-	colors.foreground = "#2b2f2f"
-	colors.cursorline = "#515757"
-	colors.cursor = colors.foreground
+    colors.background       = "#E8EAE3"
+    colors.background_dark  = "#DCE0DA"
+    colors.inactive_tabs    = "#D6D9D4"
+    colors.contrast         = "#CCD0CA"
+    colors.foreground       = "#2b2f2f"
+    colors.cursorline       = "#515757"
+    colors.comment          = "#6C6F85"
+    colors.cursor = colors.foreground
 
     -- dark
     colors.color0 = "#6b6767"

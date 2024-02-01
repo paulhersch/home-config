@@ -89,7 +89,8 @@ M.add_notif_widget = function (n)
     local title = gears.string.xml_escape(n.title)
     if #title > 40 then
         ---@diagnostic disable-next-line: param-type-mismatch, need-check-nil
-        title = string.gsub(title, title:sub(40, #title), "...")
+        title = string.sub(title, 1, 40)
+        title = title .. "..."
     end
 
     local w = container.description {

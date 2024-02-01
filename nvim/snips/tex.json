@@ -70,5 +70,19 @@
             "\\textbf{\\Large{$1}}\\newline",
             "$2"
         ]
+    },
+    "DefinitionBlock" : {
+        "prefix": "block",
+        "body": [
+            "\\begin{block}{$1}",
+            "$2",
+            "\\end{block}"
+        ]
+    },
+    "BigO" : {
+        "prefix" : "bigOof",
+        "body" : [
+            "\\$\\mathcal{O}($1)\\$"
+        ]
     }
 }
