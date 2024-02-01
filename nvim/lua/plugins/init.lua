@@ -77,6 +77,15 @@ require"lazy".setup({
         }
     },
     {
+        dir = '~/.config/nvim/lua/evaluator',
+        lazy = false,
+        config = function()
+            require("evaluator").setup({
+                evalkey = "<C-x><C-e>"
+            })
+        end,
+    },
+    {
         'direnv/direnv.vim',
         lazy = false,
         init = function ()
