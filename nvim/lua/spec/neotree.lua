@@ -5,8 +5,13 @@ return {
         "nvim-lua/plenary.nvim",
         "nvim-tree/nvim-web-devicons",
         "MunifTanjim/nui.nvim",
+        -- external sources
         "miversen33/netman.nvim",
-        "prncss-xyz/neo-tree-zk.nvim",
+        {
+            -- fix for neotree api changes weren't merged (repo dead?)
+            "idanarye/neo-tree-zk.nvim",
+            branch = "fix-modified_buffers_changes-to-opened_buffers_changed"
+        },
     },
     cmd = { "Neotree" },
     keys = {
@@ -18,7 +23,7 @@ return {
                 "netman.ui.neo-tree",
                 "filesystem",
                 "git_status",
-                "neo-tree.sources.zk"
+                "zk"
             },
             close_if_last_window = true,
             add_blank_line_at_top = true,

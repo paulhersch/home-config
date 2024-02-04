@@ -7,7 +7,8 @@ return {
         local util = require('lspconfig.util')
 
         local short_root_dir = vim.fn.substitute(vim.fn.getcwd(), '^.*/', '', '')
-        --somehow the sumneko setup with workspaces only works properly when i run stuff at startup not at runtime, so this has to do for now
+        -- NixOS doesn't expose AWMs library path, so i have to read that one from an env var (which is not possible
+        -- to do with the luarc.json -> ugly hack depending on root folder)
         local lua_conf = {
                 Lua = {
                     runtime = "Lua5.2",
