@@ -3,9 +3,10 @@ return {
     branch = "v3.x",
     dependencies = {
         "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+        "nvim-tree/nvim-web-devicons",
         "MunifTanjim/nui.nvim",
-        "miversen33/netman.nvim"
+        "miversen33/netman.nvim",
+        "prncss-xyz/neo-tree-zk.nvim",
     },
     cmd = { "Neotree" },
     keys = {
@@ -16,7 +17,8 @@ return {
             sources = {
                 "netman.ui.neo-tree",
                 "filesystem",
-                "git_status"
+                "git_status",
+                "neo-tree.sources.zk"
             },
             close_if_last_window = true,
             add_blank_line_at_top = true,
@@ -40,6 +42,10 @@ return {
                     {
                         source = "remote",
                         display_name = " "
+                    },
+                    {
+                        source = "zk",
+                        display_name = " "
                     }
                 },
                 -- this gives the tabline a padded look (vert split is colored by neotree via hl)
@@ -89,10 +95,10 @@ return {
                     hide_dotfiles = false,
                     hide_gitignored = false,
                     show_hidden_count = false,
-                    use_libuv_file_watcher = true,
+                    -- use_libuv_file_watcher = true,
                     hijack_netrw_behaviour = "open_default"
                 }
-            }
+            },
         })
     end
 }

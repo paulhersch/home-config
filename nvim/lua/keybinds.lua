@@ -1,5 +1,5 @@
--- german layout things, rebinding movement to home row
-Map({"n", "x"}, "ö", "l", {})
+-- rebinding movement to home row
+Map({"n", "x"}, ";", "l", {})
 Map({"n", "x"}, "l", "k", {})
 Map({"n", "x"}, "k", "j", {})
 Map({"n", "x"}, "j", "h", {})

@@ -1,36 +1,4 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
-end
-vim.opt.rtp:prepend(lazypath)
-
-local neotree = require "plugins.confs.neotree"
-local gitsigns = require "plugins.confs.gitsigns"
-local lspc = require "plugins.confs.lspconfs"
-local cmp = require "plugins.confs.cmp"
-local telescope = require "plugins.confs.telescope"
-local dashboard = require "plugins.confs.dashboard"
-local dap = require "plugins.confs.dap"
-local comment = require "plugins.confs.comment"
-local notify = require "plugins.confs.notify"
-
-require"lazy".setup({
-    notify,
-    neotree,
-    gitsigns,
-    lspc,
-    cmp,
-    telescope,
-    dashboard,
-    dap,
-    comment,
+return {
     {
         dir = '~/.config/nvim/lua/azul',
         priority = 1000,
@@ -77,6 +45,27 @@ require"lazy".setup({
         }
     },
     {
+        dir = '~/.config/nvim/lua/evaluator',
+        lazy = false,
+        config = function()
+            require("evaluator").setup({
+                evalkey = "<C-x><C-e>"
+            })
+        end,
+    },
+    {
+        'zk-org/zk-nvim',
+        lazy = false,
+        config = function()
+            require("zk").setup{
+                picker = "select",
+                lsp = {
+                    auto_attach = { enabled = false }
+                }
+            }
+        end
+    },
+    {
         'frabjous/knap',
         keys = {
             { "sp", function() require("knap").toggle_autopreviewing() end }
@@ -93,15 +82,6 @@ require"lazy".setup({
             }
             vim.g.knap_settings = settings
         end
-    },
-    {
-        dir = '~/.config/nvim/lua/evaluator',
-        lazy = false,
-        config = function()
-            require("evaluator").setup({
-                evalkey = "<C-x><C-e>"
-            })
-        end,
     },
     {
         'direnv/direnv.vim',
@@ -192,7 +172,7 @@ require"lazy".setup({
         "miversen33/netman.nvim",
         lazy = false,
         config = function ()
-            require "netman"
+            require("netman")
         end
     },
     {
@@ -244,7 +224,7 @@ require"lazy".setup({
                     show_file = false,
                 },
                 lightbulb = {
-                    enable = true,
+                    enable = false,
                     enable_in_insert = false,
                     virtual_text = false
                 },
@@ -347,9 +327,4 @@ require"lazy".setup({
             { "<Space>t", "<cmd>TroubleToggle<cr>" }
         }
     }
-}, {
-        change_detection = {
-            enabled = true,
-            notify = true
-        }
-    })
+}

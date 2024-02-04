@@ -95,7 +95,11 @@ return {
         --     end,
         -- }
 
-        lc.ltex.setup{}
+        lc.ltex.setup{
+            settings = { ltex = {
+                language = "de-DE"
+            }}
+        }
         lc.texlab.setup{
             settings = { texlab = { build = {
                 executable = "lualatex"
