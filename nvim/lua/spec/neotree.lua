@@ -50,7 +50,7 @@ return {
                     },
                     {
                         source = "zk",
-                        display_name = " "
+                        display_name = " "
                     }
                 },
                 -- this gives the tabline a padded look (vert split is colored by neotree via hl)

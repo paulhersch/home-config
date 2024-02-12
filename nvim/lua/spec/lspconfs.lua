@@ -1,53 +1,75 @@
+local extend = vim.tbl_extend
+
+local cwd_confs = {
+    lua = {
+        base = {
+            Lua = {
+                runtime = "Lua5.2",
+                workspace = {
+                    checkThirdParty = false,
+                },
+                completion = {
+                    callSnippet = { Both = true },
+                    keywordSnippet = { Both = true }
+                },
+                telemetry = { enable = false },
+            }
+        },
+        -- NixOS doesn't expose AWMs library path, so i have to read that one from an env var (which is not possible
+        -- to do with the luarc.json -> ugly hack depending on root folder)
+        awesome = {
+            Lua = {
+                runtime = "5.2",
+                diagnostics = { globals = {
+                    "root", "awesome", "tag", "screen", "client",
+                    "modkey", "altkey", "mouse", "mousegrabber",
+                }},
+                workspace = { library = { os.getenv("AWM_LIB_PATH") }}
+            }
+        },
+        nvim = {
+            Lua = {
+                runtime = "LuaJIT",
+                diagnostics = { globals = { "vim" }},
+                workspace = { library = vim.api.nvim_get_runtime_file("", true)}
+            }
+        }
+    }
+}
+
+local function dir_specific_settings(cwd, lc)
+    local cwd_toplevel = vim.fn.substitute(cwd, '^.*/', '', '')
+    -- lua
+    lc.lua_ls.setup ({
+        on_attach = function (client, _)
+            client.server_capabilities.semanticTokensProvider = nil
+        end,
+        settings=extend(
+            "force",
+            cwd_confs.lua.base,
+            cwd_confs.lua[cwd_toplevel] or {}
+        )
+    })
+end
+
+
 return {
     'neovim/nvim-lspconfig',
     --dependencies = 'hrsh7th/cmp-nvim-lsp', --to set capabilities
     lazy = false, --is "lazy loaded" anyways
     config = function()
         local lc = require('lspconfig')
-        local util = require('lspconfig.util')
+        --local util = require('lspconfig.util')
 
-        local short_root_dir = vim.fn.substitute(vim.fn.getcwd(), '^.*/', '', '')
-        -- NixOS doesn't expose AWMs library path, so i have to read that one from an env var (which is not possible
-        -- to do with the luarc.json -> ugly hack depending on root folder)
-        local lua_conf = {
-                Lua = {
-                    runtime = "Lua5.2",
-                    workspace = {
-                        checkThirdParty = false,
-                    },
-                    completion = {
-                        callSnippet = { Both = true },
-                        keywordSnippet = { Both = true }
-                    },
-                    telemetry = { enable = false },
-                }
-            }
-        if short_root_dir == "awesome" then
-            lua_conf = vim.tbl_deep_extend("force", lua_conf, {
-                Lua = {
-                    runtime = "5.2",
-                    diagnostics = { globals = {
-                        "root", "awesome", "tag", "screen", "client",
-                        "modkey", "altkey", "mouse", "mousegrabber",
-                    }},
-                    workspace = { library = { os.getenv("AWM_LIB_PATH") }}
-                }
-            })
-        end
-        if short_root_dir == "nvim" then
-            lua_conf = vim.tbl_deep_extend("force", lua_conf, {
-                Lua = {
-                    runtime = "LuaJIT",
-                    diagnostics = { globals = { "vim" }},
-                    workspace = { library = vim.api.nvim_get_runtime_file("", true)}
-                }
-            })
-        end
-        lc.lua_ls.setup ({
-            on_attach = function (client, buf)
-                client.server_capabilities.semanticTokensProvider = nil
-            end,
-            settings=lua_conf
+        -- if we switch cwd: reload dir specific stuff
+        local aug = vim.api.nvim_create_augroup("lspconf_extra", {clear = true})
+        vim.api.nvim_create_autocmd("DirChangedPre", {
+            group = aug,
+            callback = function (event)
+                if not event.match == "global" then return end
+                vim.notify("reloading directory dependent lsp settings, this might take a while")
+                dir_specific_settings(event.file, lc)
+            end
         })
 
         lc.omnisharp.setup ({

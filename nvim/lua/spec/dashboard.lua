@@ -14,24 +14,29 @@ return {
             config = {
                 center = {
                     {
-                        icon = '   ',
+                        icon = '   ',
+                        desc = 'Open Zettelkasten               ',
+                        action = 'Neotree toggle source=zk'
+                    },
+                    {
+                        icon = '   ',
+                        desc = 'Edit config                     ',
+                        action = 'cd ' .. os.getenv('HOME') .. "/.config/nvim | e " .. os.getenv('HOME') .. "/.config/nvim/init.lua"
+                    },
+                    {
+                        icon = '   ',
                         desc = 'Open Tree                    ',
                         action = 'Neotree toggle',
                         key = 'SPC f'
                     },
                     {
-                        icon = '   ',
-                        desc = 'Open Zettelkasten               ',
-                        action = 'Neotree toggle source=zk'
-                    },
-                    {
-                        icon = '   ',
+                        icon = '   ',
                         desc = 'Find file in cwd                ',
                         action = 'Telescope find_files',
                         key = 'ff'
                     },
                     {
-                        icon = '   ',
+                        icon = '   ',
                         desc = 'Live Grep in cwd                ',
                         action = 'Telescope live_grep',
                         key = 'gf'
