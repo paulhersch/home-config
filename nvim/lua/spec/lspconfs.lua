@@ -104,7 +104,7 @@ return {
                 }
             }
         }
-    --shit server
+        --shit server
         -- lc.jdtls.setup {
         --     cmd = { "jdt-language-server", "-configuration", os.getenv('HOME') .. "/.cache/jdtls/config", "-data", os.getenv('HOME') .. "/.cache/jdtls/workspace"}
         -- }
@@ -118,9 +118,12 @@ return {
         --     end,
         -- }
 
+        -- annoying for notes
         lc.ltex.setup{
+            filetypes = { "bib", "context", "tex" },
             settings = { ltex = {
-                language = "de-DE"
+                language = "de-DE",
+                --enabled = { "bibtex", "context", "context.tex", "latex" }
             }}
         }
         lc.texlab.setup{
