@@ -1,14 +1,11 @@
 return {
     {
-        dir = '~/.config/nvim/lua/azul',
+        dir = '~/.config/nvim/lua/color',
         priority = 1000,
-        name = "azul",
+        name = "colors",
         lazy = false,
         config = function()
-            require("azul").setup{
-                nvim_tree = {
-                    contrast = true
-                },
+            require("color").setup {
                 dark = false
             }
         end,
@@ -17,20 +14,14 @@ return {
         dir = '~/.config/nvim/lua/statusline',
         dependencies = {
             'uga-rosa/utf8.nvim',
-            'azul'
+            'colors'
         },
         name = "statusline",
         lazy = true,
         config = function ()
-            require("statusline")
+            require("statusline").setup()
         end,
-        init = function()
-            vim.api.nvim_create_autocmd({"UIEnter"}, {
-                callback = function ()
-                    require("statusline")
-                end
-            })
-        end
+        event = "UIEnter"
     },
     {
         dir = '~/.config/nvim/lua/bffrmgr',
@@ -170,7 +161,6 @@ return {
     -- },
     {
         "miversen33/netman.nvim",
-        lazy = false,
         config = function ()
             require("netman")
         end
@@ -182,11 +172,7 @@ return {
         main = "ibl",
         opts = {
             indent = {
-                -- i dont want a marker on the first indent level
-                -- this is the dirtiest of the hacks
-                -- if there are any more indents than that needed at any
-                -- time, please sign up for the nuthouse
-                char = { "", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│", "│" },
+                char = "│",
                 smart_indent_cap = true
             },
             whitespace = {
@@ -202,6 +188,36 @@ return {
                 "dashboard"
             }}
         }
+    },
+    {
+        "luukvbaal/statuscol.nvim", config = function()
+            -- fold settings, only relevant with this plugin
+            vim.opt.foldcolumn = "1"
+            _G.custom_foldtext = function ()
+                local lstart, lend = vim.v.foldstart, vim.v.foldend
+                local bufnr = vim.api.nvim_get_current_buf()
+                local sline = vim.api.nvim_buf_get_lines(bufnr, lstart-1, lstart, false)
+                local eline = vim.api.nvim_buf_get_lines(bufnr, lend-1, lend, false)
+                -- remove whitespace at begin of string
+                local eline_removed_ws, _ = string.gsub(eline[1], "^[%s]*", "")
+                return sline[1] .. " ... " .. eline_removed_ws .. "    " .. lend - lstart
+            end
+            vim.opt.foldtext = "v:lua.custom_foldtext()"
+
+            -- actual plugin settings
+            local builtin = require("statuscol.builtin")
+            require("statuscol").setup({
+                -- configuration goes here, for example:
+                -- relculright = true,
+                segments = {
+                    { text = { "%s " }, click = "v:lua.ScSa" },
+                    { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
+                    { text = { " %l" } }
+                },
+                ft_ignore = { "bffrmgr" },
+                bt_ignore = { "nofile" }
+            })
+        end,
     },
     {
         'NvChad/nvim-colorizer.lua',
@@ -248,6 +264,10 @@ return {
         event = "LspAttach",
         name = "lsp_lines",
         config = function()
+            --remove diagnostics at end of line
+            vim.diagnostic.config({
+                virtual_text = false
+            })
             require("lsp_lines").setup()
         end
     },
@@ -291,18 +311,6 @@ return {
         end
     },
     {
-        'j-hui/fidget.nvim',
-        tag = "legacy",
-        event = "LspAttach",
-        config = function ()
-            require('fidget').setup{
-                text = {
-                    spinner = {"", "", "", "", "", ""}
-                }
-            }
-        end
-    },
-    {
         'stevearc/aerial.nvim',
         dependencies = {
             'nvim-treesitter/nvim-treesitter'
@@ -314,17 +322,4 @@ return {
             { "<Space>a", "<cmd>AerialToggle<cr>" }
         }
     },
-    {
-        'folke/trouble.nvim',
-        dependencies = 'folke/lsp-colors.nvim',
-        config = function()
-            require("trouble").setup{}
-            vim.diagnostic.config({
-                virtual_text = false
-            })
-        end,
-        keys = {
-            { "<Space>t", "<cmd>TroubleToggle<cr>" }
-        }
-    }
 }

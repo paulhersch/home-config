@@ -1,7 +1,7 @@
 local M = {}
 local g = vim.g
 
-M.highlights_base = function (colors)
+M.get_config = function (colors)
     -- vim.g.terminal_color_x sets colors in the builtin Terminal
     for i = 1, 15 do
         g["terminal_color_" .. i] = colors["color" .. i+8]
@@ -21,7 +21,7 @@ M.highlights_base = function (colors)
 		PmenuSel = { fg = "NONE", bg = colors.contrast },
 		WildMenu = { fg = colors.color7, bg = colors.color4 },
 		Folded = { fg = colors.color4, bg = colors.background },
-		FoldColumn = { fg = colors.color4, bg = colors.background },
+		FoldColumn = { fg = colors.comment, bg = colors.background },
 		LineNr = { fg = colors.contrast, bg = colors.background },
 		FloatBorder = { fg = colors.background_dark, bg = colors.background_dark },
 		Whitespace = { fg = colors.color1 },
@@ -159,8 +159,8 @@ M.highlights_base = function (colors)
 		["@variable"] = { link = "Variable" },
 		["@variable.builtin"] = { link = "Special" },
 
-		StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
 		StatusLine = { bg = colors.inactive_tabs, fg = colors.foreground },
+		StatusLineNC = { bg = colors.inactive_tabs, fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
         StatusLineModeNormal = { bg = colors.inactive_tabs, fg = colors.color18 },
         StatusLineModeInsert = { bg = colors.inactive_tabs, fg = colors.color20 },
         StatusLineModeVisual = { bg = colors.inactive_tabs, fg = colors.color21 },
@@ -303,17 +303,22 @@ M.highlights_base = function (colors)
 		DashboardFooter = { fg = colors.comment },
 
 		-- NvimTree
-		NvimTreeNormal = { fg = colors.foreground, bg = colors.background },
-		NvimTreeNormalNC = { fg = colors.foreground, bg = colors.background },
+		NvimTreeNormal = { fg = colors.foreground, bg = colors.background_dark },
+		NvimTreeNormalNC = { fg = colors.foreground, bg = colors.background_dark },
+		NvimTreeEndOfBuffer = { bg = colors.background_dark, fg = colors.background_dark },
+		NvimTreeEndOfBufferNC = { bg = colors.background_dark, fg = colors.background_dark },
+		NvimTreeWinSeparator = { fg = colors.background_dark, bg = colors.background_dark },
+		NvimTreeVertSplit = { fg = colors.background_dark, bg = colors.background_dark },
+		NvimTreeCursorLine = { bg = colors.background_dark, fg = colors.foreground },
 		NvimTreeRootFolder = { fg = colors.color1 },
 		NvimTreeGitDirty = { fg = colors.color11 },
 		NvimTreeGitNew = { fg = colors.color14 },
 		NvimTreeGitDeleted = { fg = colors.color9 },
 		NvimTreeSpecialFile = { fg = colors.color5 },
-		NvimTreeIndentMarker = { fg = colors.color8 },
+		NvimTreeIndentMarker = { fg = colors.color8, bg = colors.background_dark },
 		NvimTreeImageFile = { fg = colors.foreground },
 		NvimTreeSymlink = { fg = colors.color15 },
-		NvimTreeFolderIcon = { fg = colors.color4, bg = colors.background },
+		NvimTreeFolderIcon = { fg = colors.color4, bg = colors.background_dark },
 		NvimTreeFolderName = { fg = colors.foreground },
 		NvimTreeOpenedFolderName = { fg = colors.color4 },
 		NvimTreeEmptyFolderName = { fg = colors.color2 },
@@ -371,7 +376,7 @@ M.highlights_base = function (colors)
 		BufferInactiveSign = { fg = colors.background_dark, bg = colors.inactive_tabs, bold = false },
 		BufferTabpageFill = { fg = colors.background_dark, bg = colors.background_dark },
 		BufferOffset = { fg = colors.background, bg = colors.background },
-        
+
         ToggleTerm1Normal = { bg = colors.background, fg = colors.foreground},
 	}
 end

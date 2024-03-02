@@ -4,7 +4,6 @@
 --                      - Programmers are also Human
 --
 -- This is trying to allow you to edit the state of the art
--- (your internal lua vm state)
 ---
 local v = vim
 local a = v.api

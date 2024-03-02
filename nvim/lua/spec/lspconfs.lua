@@ -71,6 +71,7 @@ return {
                 dir_specific_settings(event.file, lc)
             end
         })
+        dir_specific_settings(vim.fn.getcwd(), lc)
 
         lc.omnisharp.setup ({
             cmd = { "OmniSharp" },

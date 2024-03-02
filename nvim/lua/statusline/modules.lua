@@ -54,8 +54,12 @@ local function update_lsp()
     end
 end
 
+a.nvim_create_autocmd("DiagnosticChanged", {
+    callback = update_lsp,
+    desc = "update diagnostics bar info"
+})
+
 m.lsp_info = function()
-    update_lsp()
     local e, w, i = err_cnt(), warn_cnt(), inf_cnt()
     local e_str = e > 0 and ("%#StatusLineDiagnosticError#" .. "   " .. e) or ""
     local w_str = w > 0 and ("%#StatusLineDiagnosticWarn#" .. "   " .. w) or ""
@@ -63,18 +67,23 @@ m.lsp_info = function()
     return e_str .. w_str .. i_str
 end
 
-m.file_edited = function ()
-    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1 and "%2@write@ %T " or ""
-    return "%#StatusLineFileModified#" .. edited
+m.file_edited = function (buf)
+    local edited = fn.getbufinfo(buf)[1].changed == 1
+    if edited then
+        return "%#StatusLineFileModified#  "
+    end
+    return ""
 end
 
-m.fileinfo = function()
-    local fname = (fn.expand "%:t" == "" and "unnamed") or fn.expand "%:t"
-    return "%#StatusLineFileName#" .. string.upper(fname)
+m.fileinfo = function(buf)
+    local fname = a.nvim_buf_get_name(buf)
+    local status, result = pcall(string.match, fname, "[%w%.]+$")
+    -- match word before str end that doesnt contain / (filename only)
+    return "%#StatusLineFileName#" .. string.upper(status and result or fname)
 end
 
 m.git_branch = function ()
-    local branch = vim.fn.system("git branch --show-current 2> /dev/null | tr -d '\n'")
+    local branch = fn.system("git branch --show-current 2> /dev/null | tr -d '\n'")
     if branch ~= "" then
         return " " .. branch
     else
