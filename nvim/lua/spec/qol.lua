@@ -1,0 +1,100 @@
+return {
+    {
+        'direnv/direnv.vim',
+        lazy = false,
+        init = function ()
+            local g = vim.g
+            g.direnv_auto = 0
+            g.direnv_silent_load = 1
+        end,
+        config = function ()
+            local a = vim.api
+            local augroup = a.nvim_create_augroup("DirenvLoadAucmds", {clear=true})
+            a.nvim_create_autocmd("User", {
+                pattern = "DirenvLoaded",
+                group = augroup,
+                callback = function ()
+                    vim.notify("Direnv Loaded", vim.log.levels.INFO, {title = "direnv.vim"})
+                end
+            })
+            a.nvim_create_autocmd("User", {
+                pattern = "SessionLoadPost",
+                group = augroup,
+                command = ":DirenvExport"
+            })
+        end
+    },
+    {
+        "phaazon/hop.nvim",
+        lazy = true,
+        branch = "v2",
+        config = function ()
+            require("hop").setup { keys = 'etovxqpdygfblzhckisuran' }
+        end,
+        keys = {
+            { "h", "<cmd>HopWord<cr>", noremap = true, mode = {"n", "x"}}
+        }
+    },
+    {
+        'windwp/nvim-autopairs',
+        event = "BufEnter",
+        config = function()
+            require("nvim-autopairs").setup{}
+        end
+    },
+    {
+        'akinsho/toggleterm.nvim',
+        config = function ()
+            require("toggleterm").setup {
+                autochdir = true,
+                direction = 'float',
+                float_opts = {
+                    border = 'single'
+                },
+            }
+        end,
+        keys = {
+            { "tt", "<cmd>ToggleTerm<CR>" },
+            { "<C-T>", "<cmd>ToggleTerm<CR>", mode = "t" }
+        }
+    },
+    {
+        'frabjous/knap',
+        keys = {
+            { "sp", function() require("knap").toggle_autopreviewing() end }
+        },
+        config = function ()
+            local settings = {
+                delay = 500,
+                texoutputext = "pdf",
+                textopdfbufferasstdin = true,
+                textopdf = "lualatex --synctex=1 --halt-on-error --jobname \"$(basename -s .pdf %outputfile%)\"",
+                textopdfviewerlaunch = "zathura --synctex-editor-command 'nvim --headless -es --cmd \"lua require('\"'\"'knaphelper'\"'\"').relayjump('\"'\"'%servername%'\"'\"','\"'\"'%{input}'\"'\"',%{line},0)\"' %outputfile%",
+                textopdfviewerrefresh = "none",
+                textopdfforwardjump = "zathura --synctex-forward=%line%:%column%:%srcfile% %outputfile%"
+            }
+            vim.g.knap_settings = settings
+        end
+    },
+    {
+        'numToStr/Comment.nvim',
+        config = function()
+            require("Comment").setup({
+                mappings = { basic = true, extra = false },
+                opleader = {
+                    line = "c"
+                },
+            })
+        end,
+        keys = {
+            {"c", nil, mode = {"x", "n"}},
+        }
+    },
+    -- {
+    --     'ahmedkhalf/project.nvim',
+    --     config = function ()
+    --         require("project_nvim").setup {}
+    --         -- require('telescope').load_extension('projects')
+    --     end
+    -- }
+}

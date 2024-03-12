@@ -1,5 +1,6 @@
 local a = vim.api
 local fn = vim.fn
+local zklist = require("zk").list
 
 local m = {}
 
@@ -30,7 +31,7 @@ local modes = {
 m.mode = function()
     local current_mode = a.nvim_get_mode().mode
     if modes[current_mode] ~= nil then
-        return string.format("%%#%s#%s", modes[current_mode][2],"  ")
+        return string.format("%%#%s#%s", modes[current_mode][2],"  ")
     end
 end
 
@@ -59,11 +60,16 @@ a.nvim_create_autocmd("DiagnosticChanged", {
     desc = "update diagnostics bar info"
 })
 
+local signs = {}
+for _, level in pairs({"Error", "Warn", "Info"}) do
+    signs[level] = vim.fn.sign_getdefined("DiagnosticSign" .. level)[1].text
+end
+
 m.lsp_info = function()
     local e, w, i = err_cnt(), warn_cnt(), inf_cnt()
-    local e_str = e > 0 and ("%#StatusLineDiagnosticError#" .. "   " .. e) or ""
-    local w_str = w > 0 and ("%#StatusLineDiagnosticWarn#" .. "   " .. w) or ""
-    local i_str = i > 0 and ("%#StatusLineDiagnosticInfo#" .. "   " .. i) or ""
+    local e_str = e > 0 and ("%#StatusLineDiagnosticError# " .. signs.Error .. e) or ""
+    local w_str = w > 0 and ("%#StatusLineDiagnosticWarn# " .. signs.Warn .. w) or ""
+    local i_str = i > 0 and ("%#StatusLineDiagnosticInfo# " .. signs.Info .. i) or ""
     return e_str .. w_str .. i_str
 end
 
@@ -77,9 +83,9 @@ end
 
 m.fileinfo = function(buf)
     local fname = a.nvim_buf_get_name(buf)
-    local status, result = pcall(string.match, fname, "[%w%.]+$")
     -- match word before str end that doesnt contain / (filename only)
-    return "%#StatusLineFileName#" .. string.upper(status and result or fname)
+    local status, result = pcall(string.match, fname, "[^/]+$")
+    return "%#StatusLineFileName#" .. (status and result or fname)
 end
 
 m.git_branch = function ()

@@ -1,6 +1,8 @@
 --[[
+
 Custom statusline, personal use only. I do not recommend
 using any of this, i do not know what i am doing
+
 --]]
 
 local modules = require("statusline.modules")
@@ -38,9 +40,9 @@ P.active = function(buf)
         "%#StatusLine# ",
         modules.file_edited(buf),
         modules.fileinfo(buf),
-        modules.lsp_info(),
         "%=",
-        "%#StatusLine#",
+        modules.lsp_info(),
+        " %#StatusLine#",
         modules.git_branch(),
         " "
     }

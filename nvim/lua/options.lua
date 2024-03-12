@@ -1,6 +1,8 @@
 local o = vim.opt
 local g = vim.g
 
+-- idk why i have to set this but it seems like colors are handled differently if
+-- background = 'dark' is not set
 o.background = 'dark'
 o.clipboard = 'unnamedplus'
 o.mouse = 'a'
@@ -11,16 +13,9 @@ o.expandtab = true
 o.termguicolors = true
 o.showmode = false
 o.linebreak = true
-o.fillchars = "vert:┃,horiz:━,stl: ,stlnc: ,fold: ,foldopen:,foldclose:,foldsep: "
+o.fillchars = "vert:┃,horiz:━,stl: ,stlnc: ,fold: ,foldopen:,foldclose:,foldsep: "
 o.cmdheight = 0
 o.updatetime = 1000
-
--- useful and pretty folds
-o.foldmethod = "expr"
-o.foldexpr = "nvim_treesitter#foldexpr()"
-o.foldenable = true
--- should keep folds open while still having the identifiers in signcolumn
-vim.opt.foldlevel = 50
 
 if g.neovide then
 	vim.opt.guifont = "Iosevka With Fallback:h11.5"
