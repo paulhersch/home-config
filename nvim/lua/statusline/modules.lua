@@ -60,23 +60,24 @@ a.nvim_create_autocmd("DiagnosticChanged", {
     desc = "update diagnostics bar info"
 })
 
-local signs = {}
-for _, level in pairs({"Error", "Warn", "Info"}) do
-    signs[level] = vim.fn.sign_getdefined("DiagnosticSign" .. level)[1].text
-end
+--
+-- local signs = {}
+-- for _, level in pairs({"Error", "Warn", "Info"}) do
+--     signs[level] = vim.fn.sign_getdefined("DiagnosticSign" .. level)[1].text
+-- end
 
 m.lsp_info = function()
     local e, w, i = err_cnt(), warn_cnt(), inf_cnt()
-    local e_str = e > 0 and ("%#StatusLineDiagnosticError# " .. signs.Error .. e) or ""
-    local w_str = w > 0 and ("%#StatusLineDiagnosticWarn# " .. signs.Warn .. w) or ""
-    local i_str = i > 0 and ("%#StatusLineDiagnosticInfo# " .. signs.Info .. i) or ""
-    return e_str .. w_str .. i_str
+    local e_str = e > 0 and ("%#StatusLineDiagnosticError#" ..  e) or ""
+    local w_str = w > 0 and ("%#StatusLineDiagnosticWarn#" .. w) or ""
+    local i_str = i > 0 and ("%#StatusLineDiagnosticInfo#" .. i) or ""
+    return table.concat({e_str, w_str, i_str}, " ")
 end
 
 m.file_edited = function (buf)
     local edited = fn.getbufinfo(buf)[1].changed == 1
     if edited then
-        return "%#StatusLineFileModified#  "
+        return "%#StatusLineFileModified# [+]"
     end
     return ""
 end
@@ -85,16 +86,13 @@ m.fileinfo = function(buf)
     local fname = a.nvim_buf_get_name(buf)
     -- match word before str end that doesnt contain / (filename only)
     local status, result = pcall(string.match, fname, "[^/]+$")
+
     return "%#StatusLineFileName#" .. (status and result or fname)
 end
 
 m.git_branch = function ()
     local branch = fn.system("git branch --show-current 2> /dev/null | tr -d '\n'")
-    if branch ~= "" then
-        return " " .. branch
-    else
-        return ""
-    end
+    return "%#StatusLineGitBranch#" .. branch
 end
 
 return m

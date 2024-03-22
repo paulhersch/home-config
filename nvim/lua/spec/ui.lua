@@ -211,6 +211,7 @@ return {
                             key = 'gf'
                         },
                     },
+                    footer = {},
                     header = {
                         [[       ,                              ]],
                         [[       \`-._           __             ]],

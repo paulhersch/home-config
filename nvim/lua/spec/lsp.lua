@@ -133,7 +133,7 @@ return {
                 filetypes = { "bib", "context", "tex" },
                 settings = { ltex = {
                     language = "de-DE",
-                    --enabled = { "bibtex", "context", "context.tex", "latex" }
+                    enabled = { "bibtex", "context", "context.tex", "latex" }
                 }}
             }
             lc.nil_ls.setup{}

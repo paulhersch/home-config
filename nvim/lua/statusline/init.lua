@@ -38,8 +38,8 @@ P.active = function(buf)
         "%#StatusLine#",
         modules.mode(),
         "%#StatusLine# ",
-        modules.file_edited(buf),
         modules.fileinfo(buf),
+        modules.file_edited(buf),
         "%=",
         modules.lsp_info(),
         " %#StatusLine#",
@@ -57,13 +57,13 @@ P.inactive = function(buf)
 end
 
 P.special_lines = {
-    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# TERMINAL ",
-    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# FILES ",
-    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# TELESCOPE ",
-    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# LAZY ",
-    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# DASHBOARD ",
-    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# BUFFERS ",
-    aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# SYMBOLS ",
+    toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# term ",
+    NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# files ",
+    TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# telescope ",
+    lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# lazy ",
+    dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# dash ",
+    bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# buffers ",
+    aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# symbols ",
 }
 -- mappings
 P.special_lines.terminal = P.special_lines.toggleterm
@@ -73,7 +73,7 @@ M.get = function()
     local win = g.statusline_winid
     -- check if buf in win has special class for overrides
     local buf = a.nvim_win_get_buf(win)
-    local ft = fn.getbufvar(buf, '&filetype')
+    local ft = a.nvim_buf_get_option(buf, 'filetype')
 
     local replacement = P.special_lines[ft]
     if replacement then
