@@ -44,15 +44,4 @@ return {
             })
         end,
     },
-    -- {
-    --     dir = '~/.config/nvim/lua/dash',
-    --     dependencies = {
-    --         --'ahmedkhalf/project.nvim',
-    --         --'nvim-lua/plenary.nvim'
-    --     },
-    --     lazy = false,
-    --     config = function ()
-    --         require("dash").setup()
-    --     end
-    -- }
 }
