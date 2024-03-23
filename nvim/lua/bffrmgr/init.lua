@@ -50,10 +50,9 @@ P.fill_buf = function()
         table.insert(lines, "  Setup not run, or no/too little textbuffers opened  ")
     else
         local buf_cnt = #P.buffers
-        for i=buf_cnt-1,1,-1 do
+        for i=2,buf_cnt do
             local b = P.buffers[i]
-            local entry_index = buf_cnt - i
-            local line = "  " .. P.props.keys.sub(P.props.keys, entry_index, entry_index) ..  " " .. a.nvim_buf_get_name(b) .. "  "
+            local line = "  " .. P.props.keys.sub(P.props.keys, i-1, i-1) ..  " " .. a.nvim_buf_get_name(b) .. "  "
             table.insert(lines, line)
             if string.len(line) > P.buf_width then
                 P.buf_width = string.len(line)
@@ -78,16 +77,18 @@ P.set_keymap = function()
 
     local buf_cnt = #P.buffers
     -- traverse from last to first elem, because AutoCmds just append
-    for i = buf_cnt-1,1,-1 do
+    for i = 2, buf_cnt do
         local b = P.buffers[i]
-        local entry_index = buf_cnt - i
-        vim.keymap.set("n", P.props.keys.sub(P.props.keys, entry_index, entry_index), function ()
+        vim.keymap.set("n", P.props.keys.sub(P.props.keys, i-1, i-1), function ()
             a.nvim_win_set_buf(M.last_win, b)
             close_win()
         end, {buffer = P.buf, nowait=true})
     end
 
     vim.keymap.set("n", "q", function ()
+        close_win()
+    end, {buffer = P.buf})
+    vim.keymap.set("n", "<esc>", function ()
         close_win()
     end, {buffer = P.buf})
 end
@@ -101,9 +102,7 @@ P.notify_bufs_state = function()
     vim.notify({notif}, true, {})
 end
 
-
--- sometimes buffers become invalid over time, so i am filtering the invalid ones out
-P.filter_invalid = function()
+P.filter_invalid = function ()
     tbl_extra.filter_inplace(P.buffers, function (val, _)
         return a.nvim_buf_is_valid(val)
     end)
@@ -111,57 +110,37 @@ end
 
 P.set_up_autocmds = function()
     P.props.augroup = a.nvim_create_augroup("BuffrMgrGroup", {clear=true})
-    a.nvim_create_autocmd("BufAdd", {
+    a.nvim_create_autocmd({"BufAdd", "BufEnter"}, {
         callback = function ()
+            -- filter out buffers that might have become invalid
             P.filter_invalid()
-            local abuf = tonumber(vim.fn.expand('<abuf>'))
-            if a.nvim_buf_get_option(abuf, 'buflisted') --[[ and a.nvim_buf_is_valid(abuf) ]] then
-                -- if max number of bufs reached: save least recent changed (index 1)
-                -- and delete buffer, or just drop if invalid
-                if #P.buffers >= P.props.max_bufs then
-                    if a.nvim_buf_is_valid(P.buffers[1]) then
-                        -- write changes if the buffer has been edited before
-                        if vim.fn.getbufinfo(P.buffers[1])[1].changed == 1 then
-                            a.nvim_buf_call(P.buffers[1], function()
-                                vim.cmd("silent! write")
+            local added_buf = tonumber(vim.fn.expand('<abuf>'))
+            if a.nvim_buf_get_option(added_buf, 'buflisted') then
+                tbl_extra.push_or_move_up(P.buffers, added_buf, P.props.max_bufs, function (buf)
+                    if a.nvim_buf_is_valid(buf) then
+                        if vim.fn.getbufinfo(buf)[1].changed == 1 then
+                            a.nvim_buf_call(buf, function ()
+                                vim.cmd "silent! write"
                             end)
                         end
-                        a.nvim_buf_delete(P.buffers[1], {unload=false, force=true})
+                        a.nvim_buf_delete(buf, {
+                            unload = false,
+                            force = true
+                        })
                     end
-                    -- move up
-                    for i = 2, #P.buffers do
-                        P.buffers[i-1]=P.buffers[i]
-                    end
-                    P.buffers[#P.buffers] = abuf
-                else
-                    P.buffers[#P.buffers+1] = abuf
-                end
+                end)
             end
         end,
         group = P.props.augroup
     })
-    -- put recently used buffer in front
-    a.nvim_create_autocmd("BufEnter", {
-        callback = function ()
-            local buf = a.nvim_get_current_buf()
-            local pos = tbl_extra.find_item(P.buffers, buf)
-            if pos then
-                for i = pos, #P.buffers-1 do
-                    P.buffers[i] = P.buffers[i+1]
-                end
-                P.buffers[#P.buffers] = buf
-            end
-        end
-    })
     a.nvim_create_autocmd("BufDelete", {
         callback = function ()
             local abuf = tonumber(vim.fn.expand('<abuf>'))
-            tbl_extra.filter_inplace(P.buffers, function (val, _)
-                return val ~= abuf
-            end)
+            table.remove(P.buffers, tbl_extra.find_item(P.buffers, abuf))
         end
     })
-    -- Session Loading creates invalid buffers
+    -- Session Loading sometimes creates invalid buffers, filter
+    -- immediately in case this happens
     a.nvim_create_autocmd("SessionLoadPost", {
         callback = function ()
             P.filter_invalid()

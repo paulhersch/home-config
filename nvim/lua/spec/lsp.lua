@@ -285,19 +285,19 @@ return {
             { "<Space>a", "<cmd>AerialToggle<cr>" }
         }
     },
-    {
-        'https://git.sr.ht/%7Ewhynothugo/lsp_lines.nvim',
-        lazy = true,
-        event = "LspAttach",
-        name = "lsp_lines",
-        config = function()
-            --remove diagnostics at end of line
-            vim.diagnostic.config({
-                virtual_text = false
-            })
-            require("lsp_lines").setup()
-        end
-    },
+    -- {
+    --     'https://git.sr.ht/%7Ewhynothugo/lsp_lines.nvim',
+    --     lazy = true,
+    --     event = "LspAttach",
+    --     name = "lsp_lines",
+    --     config = function()
+    --         --remove diagnostics at end of line
+    --         vim.diagnostic.config({
+    --             virtual_text = false
+    --         })
+    --         require("lsp_lines").setup()
+    --     end
+    -- },
     {
         'glepnir/lspsaga.nvim',
         branch = 'main',
@@ -307,7 +307,7 @@ return {
             require('lspsaga').setup{
                 diagnostic_header = { "✋", "👆", "👉", "🤏" },
                 symbol_in_winbar = {
-                    enable = true,
+                    enable = false,
                     separator = '  ',
                     show_file = false,
                 },

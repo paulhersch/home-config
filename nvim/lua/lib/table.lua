@@ -37,13 +37,17 @@ end
 ---@param tbl table
 ---@param item any
 ---@param max_index number? Delete last item in case len > max_index
-function M.push_or_move_up(tbl, item, max_index)
+---@param pre_remove function? Function to execute on item before deleting it
+function M.push_or_move_up(tbl, item, max_index, pre_remove)
     local old_index = M.find_item(tbl, item)
     if old_index then
         table.remove(tbl, old_index)
     end
     table.insert(tbl, 1, item)
     if max_index and #tbl > max_index then
+        if pre_remove then
+            pre_remove(tbl[#tbl])
+        end
         table.remove(tbl, #tbl)
     end
 end
