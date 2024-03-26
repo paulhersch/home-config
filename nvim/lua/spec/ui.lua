@@ -109,7 +109,6 @@ return {
             local builtin = require("statuscol.builtin")
             require("statuscol").setup({
                 -- configuration goes here, for example:
-                -- relculright = true,
                 segments = {
                     { text = { "%s " }, click = "v:lua.ScSa" },
                     { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
@@ -380,16 +379,16 @@ return {
                 }
             }
 
-            vim.opt.foldmethod = "expr"
             vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-            vim.opt.foldenable = true
+            vim.opt.foldmethod = "expr"
             -- should keep folds open while still having the identifiers in signcolumn
             vim.opt.foldlevel = 50
+            vim.opt.foldenable = true
 
             -- update folds when Insert is left
             vim.api.nvim_create_autocmd({"InsertLeave"}, {
                 callback = function ()
-                    vim.opt.foldexpr = "expr"
+                    vim.opt.foldmethod = "expr"
                 end,
                 desc = "InsertLeave treesitter foldexpr update"
             })

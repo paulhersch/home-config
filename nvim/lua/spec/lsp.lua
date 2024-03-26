@@ -19,7 +19,7 @@ local cwd_confs = {
         -- to do with the luarc.json -> ugly hack depending on root folder)
         awesome = {
             Lua = {
-                runtime = "5.2",
+                runtime = "LuaJIT",
                 diagnostics = { globals = {
                     "root", "awesome", "tag", "screen", "client",
                     "modkey", "altkey", "mouse", "mousegrabber",
@@ -37,23 +37,19 @@ local cwd_confs = {
     }
 }
 
-local function dir_specific_settings(cwd, lc, on_attach_extra)
+local function dir_specific_lsps(cwd, lc, defaults)
     local cwd_toplevel = vim.fn.substitute(cwd, '^.*/', '', '')
-    on_attach_extra = on_attach_extra or function (_, _) end
     -- lua
-    lc.lua_ls.setup ({
-        on_attach = function (client, buf)
-            on_attach_extra(client, buf)
-            client.server_capabilities.semanticTokensProvider = nil
-        end,
-        settings=extend(
-            "force",
-            cwd_confs.lua.base,
-            cwd_confs.lua[cwd_toplevel] or {}
-        )
-    })
+    lc.lua_ls.setup (
+        extend("force", defaults, {
+            settings=extend(
+                "force",
+                cwd_confs.lua.base,
+                cwd_confs.lua[cwd_toplevel] or {}
+            )
+        })
+    )
 end
-
 
 return {
     {
@@ -64,12 +60,26 @@ return {
         lazy = false,
         config = function()
             local lc = require('lspconfig')
-            local lf = require("lsp-format")
 
+            local lf = require("lsp-format")
             lf.setup {}
+
             local function format_attach(client, buf)
                 lf.on_attach(client, buf)
             end
+
+            local default_lsp = {
+                capabilities = {
+                    textDocument = {
+                        completion = {
+                            completionItem = {
+                                snippetSupport = false
+                            }
+                        }
+                    },
+                    semanticTokensProvider = nil
+                }
+            }
 
             -- if we switch cwd: reload dir specific stuff
             local aug = vim.api.nvim_create_augroup("lspconf_extra", {clear = true})
@@ -78,69 +88,56 @@ return {
                 callback = function (event)
                     if not event.match == "global" then return end
                     vim.notify("reloading directory dependent lsp settings, this might take a while")
-                    dir_specific_settings(event.file, lc)
+                    dir_specific_lsps(event.file, lc, default_lsp)
                 end
             })
-            dir_specific_settings(vim.fn.getcwd(), lc)
+            dir_specific_lsps(vim.fn.getcwd(), lc, default_lsp)
 
-            lc.omnisharp.setup ({
-                cmd = { "OmniSharp" },
-                on_attach = function (client, _)
-                    client.server_capabilities.semanticTokensProvider = nil
-                end,
-                flags = {
-                    debounce_text_changes = 150,
-                }
-            })
-
-            -- ignore stupid "line too long" warning in python
-            lc.pylsp.setup {
-                on_attach = format_attach,
-                settings = {
-                    pylsp = {
-                        plugins = {
-                            jedi_completion = {
-                                enabled = true,
-                                include_params = true
-                            },
-                            ruff = {
-                                enabled = true,
-                                formatEnabled = false
-                            },
-                            black = {
-                                enabled = true
+            local confs = {
+                nil_ls = {},
+                rust_analyzer = {},
+                hls = {},
+                ccls = {},
+                quick_lint_js = {},
+                pylsp = {
+                    on_attach = format_attach,
+                    settings = {
+                        pylsp = {
+                            plugins = {
+                                jedi_completion = {
+                                    enabled = true,
+                                    include_params = true
+                                },
+                                ruff = {
+                                    enabled = true,
+                                    formatEnabled = false
+                                },
+                                black = {
+                                    enabled = true
+                                }
                             }
                         }
                     }
-                }
+                },
+                ltex = {
+                    -- annoying for notes, disabling md
+                    filetypes = { "context", "tex" },
+                    settings = { ltex = {
+                        language = "de-DE",
+                        enabled = { "context", "context.tex", "latex" }
+                    }}
+                },
+                -- omnisharp = {
+                --     cmd = { "OmniSharp" },
+                --     flags = {
+                --         debounce_text_changes = 150,
+                --     }
+                -- }
             }
-            --shit server
-            -- lc.jdtls.setup {
-            --     cmd = { "jdt-language-server", "-configuration", os.getenv('HOME') .. "/.cache/jdtls/config", "-data", os.getenv('HOME') .. "/.cache/jdtls/workspace"}
-            -- }
-            --
-            -- lc.java_language_server.setup {
-            --     cmd = { "java-language-server" },
-            --     root_dir = function(fname)
-            --         local root = util.root_pattern('build.gradle', 'pom.xml', '.git', '.')(fname)
-            --         if root then return root end
-            --         return vim.fn.getcwd()
-            --     end,
-            -- }
 
-            -- annoying for notes
-            lc.ltex.setup{
-                filetypes = { "bib", "context", "tex" },
-                settings = { ltex = {
-                    language = "de-DE",
-                    enabled = { "bibtex", "context", "context.tex", "latex" }
-                }}
-            }
-            lc.nil_ls.setup{}
-            lc.rust_analyzer.setup{}
-            lc.nimls.setup{}
-            lc.hls.setup{}
-            lc.ccls.setup{}
+            for lang, conf in pairs(confs) do
+                lc[lang].setup(extend("force", default_lsp, conf))
+            end
         end,
         keys = {
             { "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>" },
@@ -148,23 +145,33 @@ return {
         }
     },
     {
+        'L3MON4D3/LuaSnip',
+        dependencies = {
+            'rafamadriz/friendly-snippets',
+        },
+        config = function ()
+            require('luasnip.loaders.from_vscode').lazy_load()
+        end
+    },
+    {
         'hrsh7th/nvim-cmp',
         dependencies = {
+            -- sources and functionality
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-buffer',
-            'hrsh7th/vim-vsnip',
-            'hrsh7th/cmp-vsnip',
-            'rafamadriz/friendly-snippets',
-            'ray-x/cmp-treesitter',
-            'hrsh7th/cmp-nvim-lsp-signature-help',
             'hrsh7th/cmp-cmdline',
+            'hrsh7th/cmp-nvim-lsp-signature-help',
+            -- snippets
+            'L3MON4D3/LuaSnip',
+            'saadparwaiz1/cmp_luasnip',
+            -- for bracket completion
             'windwp/nvim-autopairs'
         },
         event = "LspAttach",
         config = function()
-            vim.g.vsnip_snippet_dir = os.getenv("HOME") .. "/.config/nvim/snips"
             local cmp = require("cmp")
+            local luasnip = require("luasnip")
             local cmp_autopair = require ("nvim-autopairs.completion.cmp")
 
             local cmp_kinds = {
@@ -204,26 +211,20 @@ return {
 
             cmp.setup.cmdline(':', {
                 mapping = cmp.mapping.preset.cmdline(),
-                sources = cmp.config.sources({
-                    { name = 'path' }
-                }, {
-                        {
-                            name = 'cmdline',
-                            option = {
-                                ignore_cmds = { 'Man' }
-                            }
+                sources = cmp.config.sources({{ name = 'path' }}, {
+                    {
+                        name = 'cmdline',
+                        option = {
+                            ignore_cmds = { 'Man' }
                         }
-                    })
+                    }
+                })
             })
-
-            local feedkey = function(key, mode)
-                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
-            end
 
             cmp.setup({
                 snippet = {
                     expand = function(args)
-                        vim.fn["vsnip#anonymous"](args.body)
+                        luasnip.lsp_expand(args.body)
                     end,
                 },
                 window = {
@@ -237,7 +238,7 @@ return {
                     format = function(_, vim_item)
                         if vim_item.kind ~= nil then
                             vim_item.menu = "    (" .. vim_item.kind .. ")"
-                            vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " ") .. " "
+                            vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
                         else
                             -- backup in case kind just doesnt exist
                             vim_item.kind = " _ "
@@ -249,8 +250,8 @@ return {
                     ["<Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
-                        elseif vim.fn["vsnip#available"](1) == 1 then
-                            feedkey("<Plug>(vsnip-expand-or-jump)", "")
+                        elseif luasnip.expandable() or luasnip.jumpable() then
+                            luasnip.expand_or_jump()
                         else
                             fallback()
                         end
@@ -260,12 +261,20 @@ return {
                     ['<CR>'] = cmp.mapping.confirm({ select = false }),
                 }),
                 sources = {
-                    { name = 'nvim_lsp' },
-                    { name = 'vsnip' },
-                    { name = 'treesitter' },
+                    {
+                        name = 'nvim_lsp',
+                        entry_filter = function (entry)
+                            -- ignore Text and Snippet suggestions from LSPs
+                            -- Text = 1, Snippet = 15
+                            -- simpler than overwriting every single lspconfig setup call
+                            local type = entry:get_kind()
+                            return type ~= 1 and type ~= 15
+                        end
+                    },
                     { name = 'path' },
+                    { name = 'luasnip' },
                     { name = 'nvim_lsp_signature_help' }
-                }
+                },
             })
             cmp.event:on (
                 'confirm_done',
@@ -285,19 +294,6 @@ return {
             { "<Space>a", "<cmd>AerialToggle<cr>" }
         }
     },
-    -- {
-    --     'https://git.sr.ht/%7Ewhynothugo/lsp_lines.nvim',
-    --     lazy = true,
-    --     event = "LspAttach",
-    --     name = "lsp_lines",
-    --     config = function()
-    --         --remove diagnostics at end of line
-    --         vim.diagnostic.config({
-    --             virtual_text = false
-    --         })
-    --         require("lsp_lines").setup()
-    --     end
-    -- },
     {
         'glepnir/lspsaga.nvim',
         branch = 'main',
@@ -305,11 +301,8 @@ return {
         event = "LspAttach",
         config = function ()
             require('lspsaga').setup{
-                diagnostic_header = { "✋", "👆", "👉", "🤏" },
                 symbol_in_winbar = {
                     enable = false,
-                    separator = '  ',
-                    show_file = false,
                 },
                 lightbulb = {
                     enable = false,

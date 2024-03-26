@@ -65,7 +65,7 @@ return {
         },
         config = function ()
             local settings = {
-                delay = 500,
+                delay = 2000,
                 texoutputext = "pdf",
                 textopdfbufferasstdin = true,
                 textopdf = "lualatex --synctex=1 --halt-on-error --jobname \"$(basename -s .pdf %outputfile%)\"",

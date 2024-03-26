@@ -18,7 +18,7 @@ o.cmdheight = 0
 o.updatetime = 1000
 
 if g.neovide then
-	vim.opt.guifont = "Iosevka With Fallback:h11.5"
+	vim.opt.guifont = "Iosevka Comfy Motion Fixed:h12"
     g.neovide_padding_top = 5
     g.neovide_padding_left = 5
     g.neovide_padding_bottom = 5
