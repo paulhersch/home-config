@@ -4,26 +4,26 @@ local hl = vim.api.nvim_set_hl
 
 function P.dark()
 	local colors = {}
-	colors.comment = "#6C6F85"
-	colors.background = "#2b2f2f"
-	colors.background_dark = "#343737"
-    colors.inactive_tabs = "#3b3f3f"
-	colors.contrast = "#444747"
-	colors.foreground = "#E8EAE3"
-	colors.cursorline = "#515757"
+	colors.comment =        "#6C6F85"
+	colors.background =     "#2b2f2f"
+	colors.background_dark ="#343737"
+    colors.inactive_tabs =  "#3b3f3f"
+	colors.contrast =       "#444747"
+	colors.foreground =     "#E8EAE3"
+	colors.cursorline =     "#515757"
 	colors.cursor = colors.foreground
 
-    colors.color0 = "#222828"
-	colors.color1 = "#cf7767"
-	colors.color2 = "#7caf6e"
-	colors.color3 = "#cac76b"
-	colors.color4 = "#67a0d8"
-	colors.color5 = "#b47fc5"
-	colors.color6 = "#6cbaba"
-	colors.color7 = "#939998"
+    colors.color0  = "#222828"
+	colors.color1  = "#cf7767"
+	colors.color2  = "#7caf6e"
+	colors.color3  = "#cac76b"
+	colors.color4  = "#67a0d8"
+	colors.color5  = "#b47fc5"
+	colors.color6  = "#6cbaba"
+	colors.color7  = "#939998"
 
-    colors.color8 = "#3b4244"
-	colors.color9 = "#cf7d7d"
+    colors.color8  = "#3b4244"
+	colors.color9  = "#cf7d7d"
 	colors.color10 = "#7bc578"
 	colors.color11 = "#c8c67a"
 	colors.color12 = "#71bae2"
@@ -56,17 +56,17 @@ function P.light()
     colors.cursor = colors.foreground
 
     -- dark
-    colors.color0 = "#6b6767"
-	colors.color1 = "#3f1a1a"
-	colors.color2 = "#2c3f1e"
-	colors.color3 = "#3a371b"
-	colors.color4 = "#072548"
-	colors.color5 = "#241f45"
-	colors.color6 = "#0c3a3a"
-	colors.color7 = "#333938"
+    colors.color0  = "#6b6767"
+	colors.color1  = "#3f1a1a"
+	colors.color2  = "#2c3f1e"
+	colors.color3  = "#3a371b"
+	colors.color4  = "#072548"
+	colors.color5  = "#241f45"
+	colors.color6  = "#0c3a3a"
+	colors.color7  = "#333938"
     -- medium
-	colors.color8 = colors.inactive_tabs
-	colors.color9 = "#6f4d4d"
+	colors.color8  = colors.inactive_tabs
+	colors.color9  = "#6f4d4d"
 	colors.color10 = "#4b7548"
 	colors.color11 = "#88862a"
 	colors.color12 = "#316a92"

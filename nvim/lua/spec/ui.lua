@@ -91,7 +91,9 @@ return {
         }
     },
     {
-        "luukvbaal/statuscol.nvim", config = function()
+        "luukvbaal/statuscol.nvim",
+        event = "VeryLazy",
+        config = function()
             -- fold settings, only relevant with this plugin
             vim.opt.foldcolumn = "1"
             _G.custom_foldtext = function ()
@@ -122,13 +124,14 @@ return {
     {
         "lewis6991/gitsigns.nvim",
         name = "gitsigns",
-        event = "BufEnter",
+        event = "VeryLazy",
         config = function()
             local gs = require("gitsigns")
             gs.setup()
         end,
         keys = {
-            { "<leader>gb", "<cmd>lua require('gitsigns').toggle_current_line_blame()<cr>" }
+            { "gb", function() require('gitsigns').toggle_current_line_blame() end },
+            { "fh", function() require('gitsigns').preview_hunk() end }
         }
     },
     {
@@ -164,6 +167,15 @@ return {
             vim.ui.select = function (...)
                 require("telescope").load_extension("ui-select")
                 vim.ui.select(...)
+            end
+        end
+    },
+    {
+        'liangxianzhe/floating-input.nvim',
+        lazy = false,
+        init = function ()
+            vim.ui.input = function(opts, confirm)
+                require("floating-input").input(opts, confirm, { border = 'double' })
             end
         end
     },
@@ -210,7 +222,6 @@ return {
                             key = 'gf'
                         },
                     },
-                    footer = {},
                     header = {
                         [[       ,                              ]],
                         [[       \`-._           __             ]],
@@ -258,7 +269,7 @@ return {
         },
         cmd = { "Neotree" },
         keys = {
-            { "<Space>f", "<cmd>Neotree toggle source=last<CR>" }
+            { "<Space>f", "<cmd>Neotree toggle position=float source=last<CR>" }
         },
         config = function ()
             require("neo-tree").setup({
@@ -352,10 +363,24 @@ return {
     },
     {
         'NvChad/nvim-colorizer.lua',
-        lazy = false,
         config = function ()
-            require 'colorizer'.setup({})
-        end
+            require 'colorizer'.setup({
+                user_default_options = {
+                    mode = "virtualtext",
+                    virtualtext = "██"
+                }
+            })
+        end,
+        keys = {
+            { "<Space>c", function()
+                local c = require "colorizer"
+                if c.is_buffer_attached(0) then
+                    c.detach_from_buffer(0)
+                else
+                    c.attach_to_buffer(0)
+                end
+            end }
+        }
     },
     {
         'nvim-treesitter/nvim-treesitter',
