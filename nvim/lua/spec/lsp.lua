@@ -4,7 +4,7 @@ local cwd_confs = {
     lua = {
         base = {
             Lua = {
-                runtime = "Lua5.2",
+                runtime = { version = "LuaJIT" },
                 workspace = {
                     checkThirdParty = false,
                 },
@@ -29,7 +29,7 @@ local cwd_confs = {
         },
         nvim = {
             Lua = {
-                runtime = "LuaJIT",
+                runtime = { version = "LuaJIT" },
                 diagnostics = { globals = { "vim" }},
                 workspace = { library = vim.api.nvim_get_runtime_file("", true)}
             }
@@ -57,7 +57,7 @@ return {
         dependencies = {
             'lukas-reineke/lsp-format.nvim'
         },
-        lazy = false,
+        event = "VeryLazy",
         config = function()
             local lc = require('lspconfig')
 
@@ -99,6 +99,9 @@ return {
                 hls = {},
                 ccls = {},
                 quick_lint_js = {},
+                texlab = {
+                    on_attach = format_attach
+                },
                 pylsp = {
                     on_attach = format_attach,
                     settings = {
@@ -140,8 +143,23 @@ return {
             end
         end,
         keys = {
-            { "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>" },
-            { "sr", '<cmd> lua vim.lsp.buf.document_highlight() vim.api.nvim_create_autocmd("CursorMoved", { callback = vim.lsp.buf.clear_references, once = true }) <cr>' }
+            { "ss", vim.lsp.buf.signature_help },
+            -- highlight use and clear highlights after moving cursor
+            { "sr", function()
+                vim.lsp.buf.document_highlight()
+                vim.api.nvim_create_autocmd("CursorMoved", {
+                    callback = vim.lsp.buf.clear_references,
+                    once = true
+                })
+            end
+            },
+            { "D", vim.lsp.buf.hover },
+            { "gr", vim.lsp.buf.rename },
+            { "gd", function() require("telescope.builtin").lsp_definitions() end},
+            { "<C-R>", vim.lsp.buf.rename, {mode="i"} },
+            { "ca", vim.lsp.buf.code_action },
+            { "H", vim.diagnostic.open_float },
+            { "<C-D>", vim.diagnostic.goto_next }
         }
     },
     {
@@ -288,39 +306,11 @@ return {
             'nvim-treesitter/nvim-treesitter'
         },
         config = function ()
-            require('aerial').setup{}
+            require('aerial').setup()
+            require("telescope").load_extension("aerial")
         end,
         keys = {
-            { "<Space>a", "<cmd>AerialToggle<cr>" }
-        }
-    },
-    {
-        'glepnir/lspsaga.nvim',
-        branch = 'main',
-        lazy = true,
-        event = "LspAttach",
-        config = function ()
-            require('lspsaga').setup{
-                symbol_in_winbar = {
-                    enable = false,
-                },
-                lightbulb = {
-                    enable = false,
-                    enable_in_insert = false,
-                    virtual_text = false
-                },
-                ui = {
-                    border = "solid"
-                }
-            }
-        end,
-        keys = {
-            { "ca", "<cmd>Lspsaga code_action <CR>" },
-            { "gr", "<cmd>Lspsaga rename <CR>" },
-            { "<C-R>", "<cmd>Lspsaga rename <CR>", mode = "i" },
-            { "gd", "<cmd>Lspsaga peek_definition <CR>" },
-            { "D", "<cmd>Lspsaga hover_doc <CR>" },
-            { "<C-D>", "<cmd>Lspsaga diagnostic_jump_next <CR>", mode = {"i", "n"}}
+            { "<Space>a", function() require("telescope").extensions.aerial.aerial() end }
         }
     },
 }

@@ -25,17 +25,6 @@ return {
         end
     },
     {
-        "phaazon/hop.nvim",
-        lazy = true,
-        branch = "v2",
-        config = function ()
-            require("hop").setup { keys = 'etovxqpdygfblzhckisuran' }
-        end,
-        keys = {
-            { "h", "<cmd>HopWord<cr>", noremap = true, mode = {"n", "x"}}
-        }
-    },
-    {
         'windwp/nvim-autopairs',
         event = "BufEnter",
         config = function()

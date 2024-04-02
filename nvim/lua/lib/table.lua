@@ -78,4 +78,18 @@ function M.select(tbl, id)
     return ret
 end
 
+--- map func return val on each item in tbl
+---@param tbl table
+---@param func function
+--- function has to take one argument, which is the item in the table
+--- constructs and returns a new table
+---@return table
+function M.map(tbl, func)
+    local ret = {}
+    for i, x in pairs(tbl) do
+        ret[i] = func(x)
+    end
+    return ret
+end
+
 return M

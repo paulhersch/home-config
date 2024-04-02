@@ -32,7 +32,7 @@ return {
             })
         end,
         keys = {
-            { "bb", "<cmd>lua require('bffrmgr').open()<cr>", noremap=true }
+            { "bb", function() require('bffrmgr').open() end, noremap=true }
         }
     },
     {
