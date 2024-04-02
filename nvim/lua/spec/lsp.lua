@@ -99,6 +99,9 @@ return {
                 hls = {},
                 ccls = {},
                 quick_lint_js = {},
+                texlab = {
+                    on_attach = format_attach
+                },
                 pylsp = {
                     on_attach = format_attach,
                     settings = {
@@ -142,6 +145,14 @@ return {
         keys = {
             { "ss", "<cmd> lua vim.lsp.buf.signature_help()<cr>" },
             { "sr", '<cmd> lua vim.lsp.buf.document_highlight() vim.api.nvim_create_autocmd("CursorMoved", { callback = vim.lsp.buf.clear_references, once = true }) <cr>' }
+        }
+    },
+    {
+        "zeioth/garbage-day.nvim",
+        dependencies = "neovim/nvim-lspconfig",
+        event = "VeryLazy",
+        opts = {
+            grace_period = 60*20
         }
     },
     {
@@ -250,7 +261,7 @@ return {
                     ["<Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
-                        elseif luasnip.expandable() or luasnip.jumpable() then
+                        elseif luasnip.expand_or_jumpable() then
                             luasnip.expand_or_jump()
                         else
                             fallback()
