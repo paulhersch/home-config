@@ -44,6 +44,7 @@ return {
     },
     {
         'nvim-telescope/telescope.nvim',
+        lazy = true,
         branch = '0.1.x',
         dependencies = {
             'nvim-lua/plenary.nvim',
@@ -92,7 +93,7 @@ return {
     },
     {
         "luukvbaal/statuscol.nvim",
-        event = "VeryLazy",
+        event = "BufEnter",
         config = function()
             -- fold settings, only relevant with this plugin
             vim.opt.foldcolumn = "1"
@@ -124,14 +125,14 @@ return {
     {
         "lewis6991/gitsigns.nvim",
         name = "gitsigns",
-        event = "VeryLazy",
+        event = "BufEnter",
         config = function()
             local gs = require("gitsigns")
             gs.setup()
         end,
         keys = {
             { "gb", function() require('gitsigns').toggle_current_line_blame() end },
-            { "fh", function() require('gitsigns').preview_hunk() end }
+            { "gh", function() require('gitsigns').preview_hunk() end }
         }
     },
     {
@@ -172,16 +173,19 @@ return {
     },
     {
         'liangxianzhe/floating-input.nvim',
-        lazy = false,
+        lazy = true,
         init = function ()
+            local input = require("floating-input").input
+            ---@diagnostic disable-next-line: duplicate-set-field
             vim.ui.input = function(opts, confirm)
-                require("floating-input").input(opts, confirm, { border = 'double' })
+                input(opts, confirm, { border = 'double' })
             end
         end
     },
     {
         'glepnir/dashboard-nvim',
         branch = 'master',
+        event = "UIEnter",
         config = function ()
             require "dashboard".setup({
                 theme = 'doom',
@@ -254,6 +258,7 @@ return {
     },
     {
         "nvim-neo-tree/neo-tree.nvim",
+        lazy = true,
         branch = "v3.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
@@ -363,6 +368,7 @@ return {
     },
     {
         'NvChad/nvim-colorizer.lua',
+        lazy = true,
         config = function ()
             require 'colorizer'.setup({
                 user_default_options = {
@@ -387,6 +393,7 @@ return {
         dependencies = {
             'tree-sitter/tree-sitter',
         },
+        lazy = true,
         event = "BufEnter",
         build = function()
             require("nvim-treesitter").install.update()
@@ -401,6 +408,9 @@ return {
                 highlight = {
                     enable = true,
                     additional_vim_regex_highlighting = false,
+                },
+                incremental_selection = {
+                    enable = true
                 }
             }
 
@@ -410,7 +420,7 @@ return {
             vim.opt.foldlevel = 50
             vim.opt.foldenable = true
 
-            -- update folds when Insert is left
+            -- update folds when Insert is left, they sometimes appear in the wrong places
             vim.api.nvim_create_autocmd({"InsertLeave"}, {
                 callback = function ()
                     vim.opt.foldmethod = "expr"

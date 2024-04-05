@@ -42,6 +42,7 @@ end
 
 P.fill_buf = function()
     local lines = {}
+    local current_cwd = vim.fn.getcwd() .. "/"
     P.buf_width = 80
 
     table.insert(lines, "")
@@ -50,9 +51,12 @@ P.fill_buf = function()
         table.insert(lines, "  Setup not run, or no/too little textbuffers opened  ")
     else
         local buf_cnt = #P.buffers
-        for i=2,buf_cnt do
+        for i = 2, buf_cnt do
             local b = P.buffers[i]
-            local line = "  " .. P.props.keys.sub(P.props.keys, i-1, i-1) ..  " " .. a.nvim_buf_get_name(b) .. "  "
+            local relative_name = string.gsub(a.nvim_buf_get_name(b), current_cwd, "")
+            local key = P.props.keys.sub(P.props.keys, i-1, i-1)
+            local line = "  " .. key ..  " " .. relative_name .. "  "
+
             table.insert(lines, line)
             if string.len(line) > P.buf_width then
                 P.buf_width = string.len(line)

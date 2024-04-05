@@ -117,6 +117,11 @@ return {
                                 },
                                 black = {
                                     enabled = true
+                                },
+                                mypy = {
+                                    enabled = true,
+                                    live_mode = false,
+                                    dmypy = true,
                                 }
                             }
                         }
@@ -156,7 +161,7 @@ return {
             { "D", vim.lsp.buf.hover },
             { "gr", vim.lsp.buf.rename },
             { "gd", function() require("telescope.builtin").lsp_definitions() end},
-            { "<C-R>", vim.lsp.buf.rename, {mode="i"} },
+            { "<C-R>", vim.lsp.buf.rename, mode = "i" },
             { "ca", vim.lsp.buf.code_action },
             { "H", vim.diagnostic.open_float },
             { "<C-D>", vim.diagnostic.goto_next }
@@ -165,19 +170,21 @@ return {
     {
         "zeioth/garbage-day.nvim",
         dependencies = "neovim/nvim-lspconfig",
-        event = "VeryLazy",
+        event = "LspAttach",
         opts = {
             grace_period = 60*20
         }
     },
     {
         'L3MON4D3/LuaSnip',
+        lazy = true,
+        build = "make install_jsregexp",
         dependencies = {
             'rafamadriz/friendly-snippets',
         },
         config = function ()
             require('luasnip.loaders.from_vscode').lazy_load()
-        end
+        end,
     },
     {
         'hrsh7th/nvim-cmp',
@@ -310,6 +317,7 @@ return {
     },
     {
         'stevearc/aerial.nvim',
+        lazy = true,
         dependencies = {
             'nvim-treesitter/nvim-treesitter'
         },

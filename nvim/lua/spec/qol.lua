@@ -33,6 +33,7 @@ return {
     },
     {
         'akinsho/toggleterm.nvim',
+        lazy = true,
         config = function ()
             require("toggleterm").setup {
                 autochdir = true,
@@ -49,6 +50,7 @@ return {
     },
     {
         'frabjous/knap',
+        lazy = true,
         keys = {
             { "sp", function() require("knap").toggle_autopreviewing() end }
         },
@@ -67,6 +69,7 @@ return {
     },
     {
         'numToStr/Comment.nvim',
+        lazy = true,
         config = function()
             require("Comment").setup({
                 mappings = { basic = true, extra = false },

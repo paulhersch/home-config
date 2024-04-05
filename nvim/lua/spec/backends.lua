@@ -1,6 +1,7 @@
 return {
     {
         'zk-org/zk-nvim',
+        lazy = true,
         config = function()
             require("zk").setup{
                 picker = "select",
@@ -12,6 +13,7 @@ return {
     },
     {
         "miversen33/netman.nvim",
+        lazy = true,
         config = function ()
             require("netman")
         end
