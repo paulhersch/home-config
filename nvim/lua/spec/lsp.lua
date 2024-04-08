@@ -162,7 +162,7 @@ return {
             { "gr", vim.lsp.buf.rename },
             { "gd", function() require("telescope.builtin").lsp_definitions() end},
             { "<C-R>", vim.lsp.buf.rename, mode = "i" },
-            { "ca", vim.lsp.buf.code_action },
+            -- { "ca", vim.lsp.buf.code_action },
             { "H", vim.diagnostic.open_float },
             { "<C-D>", vim.diagnostic.goto_next }
         }
@@ -173,6 +173,13 @@ return {
         event = "LspAttach",
         opts = {
             grace_period = 60*20
+        }
+    },
+    {
+        'aznhe21/actions-preview.nvim',
+        dependencies = "neovim/nvim-lspconfig",
+        keys = {
+            { "ca", function() require("actions-preview").code_actions() end, mode={"n", "v"} }
         }
     },
     {

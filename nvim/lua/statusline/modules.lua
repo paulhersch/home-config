@@ -1,6 +1,5 @@
 local a = vim.api
 local fn = vim.fn
-local zklist = require("zk").list
 
 local m = {}
 
