@@ -160,7 +160,7 @@ M.get_config = function (colors)
 		["@variable.builtin"] = { link = "Special" },
 
 		StatusLine = { bg = colors.inactive_tabs, fg = colors.foreground },
-		StatusLineNC = { bg = colors.inactive_tabs, fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
+		StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
         StatusLineModeNormal = { bg = colors.inactive_tabs, fg = colors.color18 },
         StatusLineModeInsert = { bg = colors.inactive_tabs, fg = colors.color20 },
         StatusLineModeVisual = { bg = colors.inactive_tabs, fg = colors.color21 },

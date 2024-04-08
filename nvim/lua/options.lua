@@ -14,7 +14,7 @@ o.termguicolors = true
 o.showmode = false
 o.linebreak = true
 o.fillchars = "vert:┃,horiz:━,stl: ,stlnc: ,fold: ,foldopen:,foldclose:,foldsep: "
-o.cmdheight = 0
+o.cmdheight = 1
 o.updatetime = 1000
 
 if g.neovide then

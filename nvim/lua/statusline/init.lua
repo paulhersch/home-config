@@ -35,23 +35,15 @@ end
 -- initial state
 P.active = function(buf)
     return {
-        "%#StatusLine#",
         modules.mode(),
-        "%#StatusLine# ",
         modules.fileinfo(buf),
-        modules.file_edited(buf),
-        "%=",
         modules.lsp_info(),
-        " %#StatusLine#",
-        modules.git_branch(),
-        " "
+        "%#StatusLineNC#",
     }
 end
 
 P.inactive = function(buf)
     return {
-        "%#StatusLine#   ",
-        modules.file_edited(buf),
         modules.fileinfo(buf)
     }
 end
@@ -80,15 +72,14 @@ M.get = function()
         return replacement
     end
 
-    if win == a.nvim_get_current_win() then
-        return concat(P.active(buf))
-    end
-    return concat(P.inactive(buf))
+    return concat(P.active(buf), " ")
 end
 
 M.setup = function()
     o.laststatus = 3
-    o.statusline = "%!v:lua.require('statusline').get()"
+    _G.statusline = M.get
+
+    o.statusline = "%!v:lua.statusline()"
 end
 
 return M
