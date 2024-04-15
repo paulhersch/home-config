@@ -3,7 +3,7 @@ return {
         'zk-org/zk-nvim',
         lazy = true,
         config = function()
-            require("zk").setup{
+            require("zk").setup {
                 picker = "select",
                 lsp = {
                     auto_attach = { enabled = true }
@@ -14,9 +14,26 @@ return {
     {
         "miversen33/netman.nvim",
         lazy = true,
-        config = function ()
+        config = function()
             require("netman")
         end
+    },
+    {
+        'GCBallesteros/jupytext.nvim',
+        event = "VeryLazy",
+        opts = {
+            custom_language_formatting = {
+                python = {
+                    extension = "md",
+                    style = "markdown",
+                    force_ft = "markdown", -- you can set whatever filetype you want here
+                },
+            }
+        }
+    },
+    {
+        'Olical/conjure',
+        event = "VeryLazy"
     },
     {
         'Shatur/neovim-session-manager',
@@ -24,9 +41,9 @@ return {
             'nvim-lua/plenary.nvim'
         },
         cmd = "SessionManager",
-        config = function ()
+        config = function()
             local Path = require('plenary.path')
-            require('session_manager').setup ({
+            require('session_manager').setup({
                 sessions_dir = Path:new(vim.fn.stdpath('data'), 'sessions'),
                 path_replacer = '__',
                 colon_replacer = '++',

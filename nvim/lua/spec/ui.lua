@@ -17,7 +17,7 @@ return {
                 vim.api.nvim_echo(...)
             end
         end,
-        config = function ()
+        config = function()
             local notif = require("notify")
             notif.setup({
                 render = "default",
@@ -31,7 +31,7 @@ return {
                 local notif_text = ""
                 for _, chunk in pairs(chunks) do
                     if not chunk[1] then
-                        vim.api.nvim_echo({{"Did you try to put a string in a table?"}}, false, {})
+                        vim.api.nvim_echo({ { "Did you try to put a string in a table?" } }, false, {})
                     end
                     notif_text = notif_text .. chunk[1]
                 end
@@ -51,7 +51,7 @@ return {
         },
         cmd = { "Telescope" },
         config = function()
-            local t = require ("telescope")
+            local t = require("telescope")
             t.setup {
                 defaults = {
                     prompt_prefix = "   ",
@@ -97,11 +97,11 @@ return {
         config = function()
             -- fold settings, only relevant with this plugin
             vim.opt.foldcolumn = "1"
-            _G.custom_foldtext = function ()
+            _G.custom_foldtext = function()
                 local lstart, lend = vim.v.foldstart, vim.v.foldend
                 local bufnr = vim.api.nvim_get_current_buf()
-                local sline = vim.api.nvim_buf_get_lines(bufnr, lstart-1, lstart, false)
-                local eline = vim.api.nvim_buf_get_lines(bufnr, lend-1, lend, false)
+                local sline = vim.api.nvim_buf_get_lines(bufnr, lstart - 1, lstart, false)
+                local eline = vim.api.nvim_buf_get_lines(bufnr, lend - 1, lend, false)
                 -- remove whitespace at begin of string
                 local eline_removed_ws, _ = string.gsub(eline[1], "^[%s]*", "")
                 return sline[1] .. " ... " .. eline_removed_ws .. "    " .. lend - lstart
@@ -113,7 +113,7 @@ return {
             require("statuscol").setup({
                 -- configuration goes here, for example:
                 segments = {
-                    { text = { "%s " }, click = "v:lua.ScSa" },
+                    { text = { "%s " },            click = "v:lua.ScSa" },
                     { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
                     { text = { " %l" } }
                 },
@@ -153,10 +153,12 @@ return {
                 show_start = false,
                 show_end = false,
             },
-            exclude = { filetypes = {
-                "bffrmgr",
-                "dashboard"
-            }}
+            exclude = {
+                filetypes = {
+                    "bffrmgr",
+                    "dashboard"
+                }
+            }
         }
     },
     {
@@ -165,7 +167,7 @@ return {
         --hacky way of lazy loading telscope ui-select
         init = function()
             ---@diagnostic disable-next-line: duplicate-set-field
-            vim.ui.select = function (...)
+            vim.ui.select = function(...)
                 require("telescope").load_extension("ui-select")
                 vim.ui.select(...)
             end
@@ -174,7 +176,7 @@ return {
     {
         'liangxianzhe/floating-input.nvim',
         lazy = true,
-        init = function ()
+        init = function()
             local input = require("floating-input").input
             ---@diagnostic disable-next-line: duplicate-set-field
             vim.ui.input = function(opts, confirm)
@@ -186,7 +188,7 @@ return {
         'glepnir/dashboard-nvim',
         branch = 'master',
         event = "UIEnter",
-        config = function ()
+        config = function()
             require "dashboard".setup({
                 theme = 'doom',
                 hide = {
@@ -253,7 +255,8 @@ return {
                         [[`---'    `----'   ;      /    \,.,,,/ ]],
                         [[                   `----`             ]]
                     }
-                }})
+                }
+            })
         end
     },
     {
@@ -276,7 +279,7 @@ return {
         keys = {
             { "<Space>f", "<cmd>Neotree toggle position=float source=last<CR>" }
         },
-        config = function ()
+        config = function()
             require("neo-tree").setup({
                 sources = {
                     "netman.ui.neo-tree",
@@ -369,7 +372,7 @@ return {
     {
         'NvChad/nvim-colorizer.lua',
         lazy = true,
-        config = function ()
+        config = function()
             require 'colorizer'.setup({
                 user_default_options = {
                     mode = "virtualtext",
@@ -393,8 +396,6 @@ return {
         dependencies = {
             'tree-sitter/tree-sitter',
         },
-        lazy = true,
-        event = "BufEnter",
         build = function()
             require("nvim-treesitter").install.update()
         end,
@@ -421,12 +422,19 @@ return {
             vim.opt.foldenable = true
 
             -- update folds when Insert is left, they sometimes appear in the wrong places
-            vim.api.nvim_create_autocmd({"InsertLeave"}, {
-                callback = function ()
+            vim.api.nvim_create_autocmd({ "InsertLeave" }, {
+                callback = function()
                     vim.opt.foldmethod = "expr"
                 end,
                 desc = "InsertLeave treesitter foldexpr update"
             })
+
+            vim.api.nvim_create_user_command("VSelectNode", function()
+                local sline, scol, eline, ecol = vim.treesitter.get_node():range(false)
+                vim.fn.setpos(".", { 0, sline + 1, scol, 0 })
+                vim.cmd("normal! v")
+                vim.fn.setpos(".", { 0, eline + 1, ecol, 0 })
+            end, {})
         end
     },
 }

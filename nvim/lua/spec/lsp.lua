@@ -20,18 +20,20 @@ local cwd_confs = {
         awesome = {
             Lua = {
                 runtime = "LuaJIT",
-                diagnostics = { globals = {
-                    "root", "awesome", "tag", "screen", "client",
-                    "modkey", "altkey", "mouse", "mousegrabber",
-                }},
-                workspace = { library = { os.getenv("AWM_LIB_PATH") }}
+                diagnostics = {
+                    globals = {
+                        "root", "awesome", "tag", "screen", "client",
+                        "modkey", "altkey", "mouse", "mousegrabber",
+                    }
+                },
+                workspace = { library = { os.getenv("AWM_LIB_PATH") } }
             }
         },
         nvim = {
             Lua = {
                 runtime = { version = "LuaJIT" },
-                diagnostics = { globals = { "vim" }},
-                workspace = { library = vim.api.nvim_get_runtime_file("", true)}
+                diagnostics = { globals = { "vim" } },
+                workspace = { library = vim.api.nvim_get_runtime_file("", true) }
             }
         }
     }
@@ -40,9 +42,9 @@ local cwd_confs = {
 local function dir_specific_lsps(cwd, lc, defaults)
     local cwd_toplevel = vim.fn.substitute(cwd, '^.*/', '', '')
     -- lua
-    lc.lua_ls.setup (
+    lc.lua_ls.setup(
         extend("force", defaults, {
-            settings=extend(
+            settings = extend(
                 "force",
                 cwd_confs.lua.base,
                 cwd_confs.lua[cwd_toplevel] or {}
@@ -64,11 +66,39 @@ return {
             local lf = require("lsp-format")
             lf.setup {}
 
-            local function format_attach(client, buf)
+            local function default_attach(client, buf)
+                for _, bind in ipairs({
+                    { "ss",    vim.lsp.buf.signature_help },
+                    -- highlight use and clear highlights after moving cursor
+                    { "sr", function()
+                        vim.lsp.buf.document_highlight()
+                        vim.api.nvim_create_autocmd("CursorMoved", {
+                            callback = vim.lsp.buf.clear_references,
+                            once = true
+                        })
+                    end
+                    },
+                    { "D",     vim.lsp.buf.hover },
+                    { "gr",    vim.lsp.buf.rename },
+                    { "gq",    vim.lsp.buf.format },
+                    { "gd",    function() require("telescope.builtin").lsp_definitions() end },
+                    { "<C-R>", vim.lsp.buf.rename,                                           mode = "i" },
+                    { "H",     vim.diagnostic.open_float },
+                    { "<C-D>", vim.diagnostic.goto_next }
+
+                }) do
+                    vim.keymap.set(
+                        bind["mode"] or "n",
+                        bind[1],
+                        bind[2],
+                        { buffer = buf }
+                    )
+                end
                 lf.on_attach(client, buf)
             end
 
             local default_lsp = {
+                on_attach = default_attach,
                 capabilities = {
                     textDocument = {
                         completion = {
@@ -82,10 +112,10 @@ return {
             }
 
             -- if we switch cwd: reload dir specific stuff
-            local aug = vim.api.nvim_create_augroup("lspconf_extra", {clear = true})
+            local aug = vim.api.nvim_create_augroup("lspconf_extra", { clear = true })
             vim.api.nvim_create_autocmd("DirChangedPre", {
                 group = aug,
-                callback = function (event)
+                callback = function(event)
                     if not event.match == "global" then return end
                     vim.notify("reloading directory dependent lsp settings, this might take a while")
                     dir_specific_lsps(event.file, lc, default_lsp)
@@ -98,12 +128,10 @@ return {
                 rust_analyzer = {},
                 hls = {},
                 ccls = {},
-                quick_lint_js = {},
-                texlab = {
-                    on_attach = format_attach
-                },
+                tsserver = {},
+                bashls = {},
+                texlab = {},
                 pylsp = {
-                    on_attach = format_attach,
                     settings = {
                         pylsp = {
                             plugins = {
@@ -130,10 +158,12 @@ return {
                 ltex = {
                     -- annoying for notes, disabling md
                     filetypes = { "context", "tex" },
-                    settings = { ltex = {
-                        language = "de-DE",
-                        enabled = { "context", "context.tex", "latex" }
-                    }}
+                    settings = {
+                        ltex = {
+                            language = "de-DE",
+                            enabled = { "context", "context.tex", "latex" }
+                        }
+                    }
                 },
                 -- omnisharp = {
                 --     cmd = { "OmniSharp" },
@@ -147,39 +177,58 @@ return {
                 lc[lang].setup(extend("force", default_lsp, conf))
             end
         end,
-        keys = {
-            { "ss", vim.lsp.buf.signature_help },
-            -- highlight use and clear highlights after moving cursor
-            { "sr", function()
-                vim.lsp.buf.document_highlight()
-                vim.api.nvim_create_autocmd("CursorMoved", {
-                    callback = vim.lsp.buf.clear_references,
-                    once = true
-                })
-            end
-            },
-            { "D", vim.lsp.buf.hover },
-            { "gr", vim.lsp.buf.rename },
-            { "gd", function() require("telescope.builtin").lsp_definitions() end},
-            { "<C-R>", vim.lsp.buf.rename, mode = "i" },
-            -- { "ca", vim.lsp.buf.code_action },
-            { "H", vim.diagnostic.open_float },
-            { "<C-D>", vim.diagnostic.goto_next }
-        }
+    },
+    {
+        "jmbuhr/otter.nvim",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "neovim/nvim-lspconfig",
+            'jmbuhr/otter.nvim',
+        },
+        cmd = "OtterActivate",
+        init = function()
+            vim.api.nvim_create_user_command("OtterActivate", function()
+                local otter = require("otter")
+                otter.activate()
+                for _, bind in ipairs({
+                    -- highlight use and clear highlights after moving cursor
+                    { "D",     otter.ask_hover },
+                    { "gr",    otter.ask_rename },
+                    { "gq",    otter.ask_format },
+                    { "<C-R>", otter.ask_rename, mode = "i" },
+                }) do
+                    vim.keymap.set(
+                        bind["mode"] or "n",
+                        bind[1],
+                        bind[2],
+                        { buffer = 0 }
+                    )
+                end
+            end, { desc = "Activate Otter for this buffer" })
+        end,
+        config = function()
+            require("otter").setup {}
+            require("cmp").setup(
+                table.insert(
+                    require("cmp").get_config().sources,
+                    { name = 'otter' }
+                )
+            )
+        end
     },
     {
         "zeioth/garbage-day.nvim",
         dependencies = "neovim/nvim-lspconfig",
         event = "LspAttach",
         opts = {
-            grace_period = 60*20
+            grace_period = 60 * 20
         }
     },
     {
         'aznhe21/actions-preview.nvim',
         dependencies = "neovim/nvim-lspconfig",
         keys = {
-            { "ca", function() require("actions-preview").code_actions() end, mode={"n", "v"} }
+            { "<leader>ca", function() require("actions-preview").code_actions() end, mode = { "n", "v" } }
         }
     },
     {
@@ -189,7 +238,7 @@ return {
         dependencies = {
             'rafamadriz/friendly-snippets',
         },
-        config = function ()
+        config = function()
             require('luasnip.loaders.from_vscode').lazy_load()
         end,
     },
@@ -212,7 +261,7 @@ return {
         config = function()
             local cmp = require("cmp")
             local luasnip = require("luasnip")
-            local cmp_autopair = require ("nvim-autopairs.completion.cmp")
+            local cmp_autopair = require("nvim-autopairs.completion.cmp")
 
             local cmp_kinds = {
                 Text = " ",
@@ -251,7 +300,7 @@ return {
 
             cmp.setup.cmdline(':', {
                 mapping = cmp.mapping.preset.cmdline(),
-                sources = cmp.config.sources({{ name = 'path' }}, {
+                sources = cmp.config.sources({ { name = 'path' } }, {
                     {
                         name = 'cmdline',
                         option = {
@@ -303,7 +352,7 @@ return {
                 sources = {
                     {
                         name = 'nvim_lsp',
-                        entry_filter = function (entry)
+                        entry_filter = function(entry)
                             -- ignore Text and Snippet suggestions from LSPs
                             -- Text = 1, Snippet = 15
                             -- simpler than overwriting every single lspconfig setup call
@@ -313,10 +362,10 @@ return {
                     },
                     { name = 'path' },
                     { name = 'luasnip' },
-                    { name = 'nvim_lsp_signature_help' }
+                    { name = 'nvim_lsp_signature_help' },
                 },
             })
-            cmp.event:on (
+            cmp.event:on(
                 'confirm_done',
                 cmp_autopair.on_confirm_done()
             )
@@ -328,7 +377,7 @@ return {
         dependencies = {
             'nvim-treesitter/nvim-treesitter'
         },
-        config = function ()
+        config = function()
             require('aerial').setup()
             require("telescope").load_extension("aerial")
         end,
