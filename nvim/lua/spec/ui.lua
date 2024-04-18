@@ -338,7 +338,7 @@ return {
                     },
                     name = {
                         use_git_status_colors = false,
-                        highlight_opened_files = true
+                        highlight_opened_files = true;
                     },
                     git_status = {
                         symbols = {
@@ -428,13 +428,21 @@ return {
                 end,
                 desc = "InsertLeave treesitter foldexpr update"
             })
-
-            vim.api.nvim_create_user_command("VSelectNode", function()
-                local sline, scol, eline, ecol = vim.treesitter.get_node():range(false)
-                vim.fn.setpos(".", { 0, sline + 1, scol, 0 })
-                vim.cmd("normal! v")
-                vim.fn.setpos(".", { 0, eline + 1, ecol, 0 })
-            end, {})
         end
     },
+    {
+        "ziontee113/syntax-tree-surfer",
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter',
+        },
+        event = "VeryLazy",
+        opts = {},
+        keys = {
+            { "<S-Left>",  '<cmd>STSSelectParentNode<cr>',      mode = "x" },
+            { "<S-Right>", '<cmd>STSSelectChildNode<cr>',       mode = "x" },
+            { "<S-Up>",    '<cmd>STSSelectPrevSiblingNode<cr>', mode = "x" },
+            { "<S-Down>",  '<cmd>STSSelectNextSiblingNode<cr>', mode = "x" },
+            { "sv",        '<cmd>STSSelectCurrentNode<cr>' }
+        }
+    }
 }

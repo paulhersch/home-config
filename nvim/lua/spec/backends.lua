@@ -32,10 +32,6 @@ return {
         }
     },
     {
-        'Olical/conjure',
-        event = "VeryLazy"
-    },
-    {
         'Shatur/neovim-session-manager',
         dependencies = {
             'nvim-lua/plenary.nvim'

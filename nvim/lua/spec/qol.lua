@@ -2,6 +2,7 @@ return {
     {
         'direnv/direnv.vim',
         lazy = false,
+        priority = 1000,
         init = function()
             local g = vim.g
             g.direnv_auto = 0
@@ -17,8 +18,7 @@ return {
                     vim.notify("Direnv Loaded", vim.log.levels.INFO, { title = "direnv.vim" })
                 end
             })
-            a.nvim_create_autocmd("User", {
-                pattern = "SessionLoadPost",
+            a.nvim_create_autocmd("DirChanged", {
                 group = augroup,
                 command = ":DirenvExport"
             })
@@ -33,7 +33,6 @@ return {
     },
     {
         'akinsho/toggleterm.nvim',
-        lazy = true,
         config = function()
             require("toggleterm").setup {
                 autochdir = true,

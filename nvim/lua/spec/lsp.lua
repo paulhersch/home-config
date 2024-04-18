@@ -97,7 +97,7 @@ return {
                 lf.on_attach(client, buf)
             end
 
-            local default_lsp = {
+            local default_settings = {
                 on_attach = default_attach,
                 capabilities = {
                     textDocument = {
@@ -111,71 +111,77 @@ return {
                 }
             }
 
-            -- if we switch cwd: reload dir specific stuff
-            local aug = vim.api.nvim_create_augroup("lspconf_extra", { clear = true })
-            vim.api.nvim_create_autocmd("DirChangedPre", {
-                group = aug,
-                callback = function(event)
-                    if not event.match == "global" then return end
-                    vim.notify("reloading directory dependent lsp settings, this might take a while")
-                    dir_specific_lsps(event.file, lc, default_lsp)
-                end
-            })
-            dir_specific_lsps(vim.fn.getcwd(), lc, default_lsp)
-
-            local confs = {
-                nil_ls = {},
-                rust_analyzer = {},
-                hls = {},
-                ccls = {},
-                tsserver = {},
-                bashls = {},
-                texlab = {},
-                pylsp = {
-                    settings = {
-                        pylsp = {
-                            plugins = {
-                                jedi_completion = {
-                                    enabled = true,
-                                    include_params = true
-                                },
-                                ruff = {
-                                    enabled = true,
-                                    formatEnabled = false
-                                },
-                                black = {
-                                    enabled = true
-                                },
-                                mypy = {
-                                    enabled = true,
-                                    live_mode = false,
-                                    dmypy = true,
+            -- extend table with activated servers
+            local configs = (function()
+                local confs = {
+                    nil_ls = {},
+                    rust_analyzer = {},
+                    hls = {},
+                    ccls = {},
+                    tsserver = {},
+                    bashls = {},
+                    texlab = {},
+                    pylsp = {
+                        settings = {
+                            pylsp = {
+                                plugins = {
+                                    jedi_completion = {
+                                        enabled = true,
+                                        include_params = true
+                                    },
+                                    ruff = {
+                                        enabled = true,
+                                        formatEnabled = false
+                                    },
+                                    black = {
+                                        enabled = true
+                                    },
+                                    mypy = {
+                                        enabled = true,
+                                        live_mode = false,
+                                        dmypy = true,
+                                    }
                                 }
                             }
                         }
-                    }
-                },
-                ltex = {
-                    -- annoying for notes, disabling md
-                    filetypes = { "context", "tex" },
-                    settings = {
-                        ltex = {
-                            language = "de-DE",
-                            enabled = { "context", "context.tex", "latex" }
+                    },
+                    ltex = {
+                        -- annoying for notes, disabling md
+                        filetypes = { "context", "tex" },
+                        settings = {
+                            ltex = {
+                                language = "de-DE",
+                                enabled = { "context", "context.tex", "latex" }
+                            }
                         }
-                    }
-                },
-                -- omnisharp = {
-                --     cmd = { "OmniSharp" },
-                --     flags = {
-                --         debounce_text_changes = 150,
-                --     }
-                -- }
-            }
+                    },
+                    -- omnisharp = {
+                    --     cmd = { "OmniSharp" },
+                    --     flags = {
+                    --         debounce_text_changes = 150,
+                    --     }
+                    -- }
+                }
 
-            for lang, conf in pairs(confs) do
-                lc[lang].setup(extend("force", default_lsp, conf))
-            end
+                for lang, conf in pairs(confs) do
+                    confs[lang] = extend("force", default_settings, conf)
+                end
+                return confs
+            end)()
+
+            -- if we switch cwd: reload dir specific stuff
+            -- lsps need libs from projects, so if direnv isn't loaded they are practically useless
+            local aug = vim.api.nvim_create_augroup("lspconf_extra", { clear = true })
+            vim.api.nvim_create_autocmd("User", {
+                group = aug,
+                pattern = "DirenvLoaded",
+                callback = function(_)
+                    dir_specific_lsps(vim.fn.getcwd(), lc, default_settings)
+                    for lang, conf in pairs(configs) do
+                        lc[lang].setup(conf)
+                    end
+                end
+            })
         end,
     },
     {
@@ -215,14 +221,6 @@ return {
                 )
             )
         end
-    },
-    {
-        "zeioth/garbage-day.nvim",
-        dependencies = "neovim/nvim-lspconfig",
-        event = "LspAttach",
-        opts = {
-            grace_period = 60 * 20
-        }
     },
     {
         'aznhe21/actions-preview.nvim',
