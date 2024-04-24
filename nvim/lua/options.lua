@@ -21,7 +21,7 @@ o.updatetime = 1000
 if g.neovide then
     -- w-0.1 is a hack to get full character height, somehow the font rendering
     -- in neovide makes the glyphs smaller otherwise
-    vim.opt.guifont = "Iosevka Comfy Motion Fixed:#e-subpixelantialias:h12:w-0.1"
+    vim.opt.guifont = "Iosevka Comfy Motion Fixed,Symbols Nerd Font:#e-subpixelantialias:h12:w-0.1"
     g.neovide_padding_top = 5
     g.neovide_padding_left = 5
     g.neovide_padding_bottom = 5
@@ -34,14 +34,8 @@ if g.neovide then
     g.neovide_confirm_quit = true
 end
 
-local alternative_signs = {
-    Error = '',
-    Warn = '',
-    Hint = '',
-    Info = ''
+vim.diagnostic.config {
+    signs = {
+        text = { '', '', '', '' }
+    }
 }
-
-for type, icon in pairs(alternative_signs) do
-    local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-end

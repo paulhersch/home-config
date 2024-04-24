@@ -13,7 +13,7 @@ return {
     },
     {
         "miversen33/netman.nvim",
-        lazy = true,
+        event = "VeryLazy",
         config = function()
             require("netman")
         end

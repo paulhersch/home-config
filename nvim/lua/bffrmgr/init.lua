@@ -18,26 +18,26 @@ local P = {
 
 
 P.get_left_offset = function()
-    local ret = math.ceil((vim.o.columns - P.buf_width)/2)
+    local ret = math.ceil((vim.o.columns - P.buf_width) / 2)
     return ret
 end
 
 P.get_top_offset = function()
-    local ret = math.ceil((vim.o.lines - P.buf_height)/2)
+    local ret = math.ceil((vim.o.lines - P.buf_height) / 2)
     return ret
 end
 
 P.create_buf = function()
     P.buf = a.nvim_create_buf(false, true)
-    a.nvim_buf_set_option(P.buf, 'filetype', 'bffrmgr')
+    a.nvim_set_option_value('filetype', 'bffrmgr', { buf = P.buf })
 end
 
-P.buf_add_hl = function (content)
+P.buf_add_hl = function(content)
     for i = 2, #content do
-        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffmgrKey", i-1, 2, 3 + math.floor(i/10))
-        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffmgrBufname", i-1, 4 + math.floor(i/10), string.len(content[i]))
+        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffmgrKey", i - 1, 2, 3 + math.floor(i / 10))
+        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffmgrBufname", i - 1, 4 + math.floor(i / 10),
+            string.len(content[i]))
     end
-
 end
 
 P.fill_buf = function()
@@ -54,8 +54,8 @@ P.fill_buf = function()
         for i = 2, buf_cnt do
             local b = P.buffers[i]
             local relative_name = string.gsub(a.nvim_buf_get_name(b), current_cwd, "")
-            local key = P.props.keys.sub(P.props.keys, i-1, i-1)
-            local line = "  " .. key ..  " " .. relative_name .. "  "
+            local key = P.props.keys.sub(P.props.keys, i - 1, i - 1)
+            local line = "  " .. key .. " " .. relative_name .. "  "
 
             table.insert(lines, line)
             if string.len(line) > P.buf_width then
@@ -76,25 +76,25 @@ end
 P.set_keymap = function()
     local function close_win()
         a.nvim_win_close(a.nvim_get_current_win(), true)
-        a.nvim_buf_delete(P.buf, {unload=false, force=true})
+        a.nvim_buf_delete(P.buf, { unload = false, force = true })
     end
 
     local buf_cnt = #P.buffers
     -- traverse from last to first elem, because AutoCmds just append
     for i = 2, buf_cnt do
         local b = P.buffers[i]
-        vim.keymap.set("n", P.props.keys.sub(P.props.keys, i-1, i-1), function ()
+        vim.keymap.set("n", P.props.keys.sub(P.props.keys, i - 1, i - 1), function()
             a.nvim_win_set_buf(M.last_win, b)
             close_win()
-        end, {buffer = P.buf, nowait=true})
+        end, { buffer = P.buf, nowait = true })
     end
 
-    vim.keymap.set("n", "q", function ()
+    vim.keymap.set("n", "q", function()
         close_win()
-    end, {buffer = P.buf})
-    vim.keymap.set("n", "<esc>", function ()
+    end, { buffer = P.buf })
+    vim.keymap.set("n", "<esc>", function()
         close_win()
-    end, {buffer = P.buf})
+    end, { buffer = P.buf })
 end
 
 -- used for debugging
@@ -103,27 +103,27 @@ P.notify_bufs_state = function()
     for _, buf_nr in ipairs(P.buffers) do
         notif = notif .. ", " .. buf_nr
     end
-    vim.notify({notif}, true, {})
+    vim.notify({ notif }, true, {})
 end
 
-P.filter_invalid = function ()
-    tbl_extra.filter_inplace(P.buffers, function (val, _)
+P.filter_invalid = function()
+    tbl_extra.filter_inplace(P.buffers, function(val, _)
         return a.nvim_buf_is_valid(val)
     end)
 end
 
 P.set_up_autocmds = function()
-    P.props.augroup = a.nvim_create_augroup("BuffrMgrGroup", {clear=true})
-    a.nvim_create_autocmd({"BufAdd", "BufEnter"}, {
-        callback = function ()
+    P.props.augroup = a.nvim_create_augroup("BuffrMgrGroup", { clear = true })
+    a.nvim_create_autocmd({ "BufAdd", "BufEnter" }, {
+        callback = function()
             -- filter out buffers that might have become invalid
             P.filter_invalid()
             local added_buf = tonumber(vim.fn.expand('<abuf>'))
-            if a.nvim_buf_get_option(added_buf, 'buflisted') then
-                tbl_extra.push_or_move_up(P.buffers, added_buf, P.props.max_bufs, function (buf)
+            if a.nvim_get_option_value('buflisted', { buf = added_buf }) then
+                tbl_extra.push_or_move_up(P.buffers, added_buf, P.props.max_bufs, function(buf)
                     if a.nvim_buf_is_valid(buf) then
                         if vim.fn.getbufinfo(buf)[1].changed == 1 then
-                            a.nvim_buf_call(buf, function ()
+                            a.nvim_buf_call(buf, function()
                                 vim.cmd "silent! write"
                             end)
                         end
@@ -138,7 +138,7 @@ P.set_up_autocmds = function()
         group = P.props.augroup
     })
     a.nvim_create_autocmd("BufDelete", {
-        callback = function ()
+        callback = function()
             local abuf = tonumber(vim.fn.expand('<abuf>'))
             table.remove(P.buffers, tbl_extra.find_item(P.buffers, abuf))
         end
@@ -146,13 +146,13 @@ P.set_up_autocmds = function()
     -- Session Loading sometimes creates invalid buffers, filter
     -- immediately in case this happens
     a.nvim_create_autocmd("SessionLoadPost", {
-        callback = function ()
+        callback = function()
             P.filter_invalid()
         end
     })
 end
 
-M.setup = function (opts)
+M.setup = function(opts)
     P.props.opts = opts
     P.props.max_bufs = opts.max_bufs or 7
     P.props.keys = opts.keys or "asdfghjkl"
@@ -174,7 +174,7 @@ local function open_filled_buf()
     vim.bo[P.buf]['modifiable'] = false
 end
 
-M.open = function ()
+M.open = function()
     P.create_buf()
     -- sometimes an invalid buffer still sneaks into the list
     -- thats why i check for errors first and then try to run

@@ -6,22 +6,20 @@ return {
         lazy = false,
         config = function()
             require("color").setup {
-                dark = false
+                theme = "light"
             }
         end,
     },
     {
-        dir = '~/.config/nvim/lua/statusline',
+        dir = '~/.config/nvim/lua/winstatabline',
         dependencies = {
-            'uga-rosa/utf8.nvim',
             'colors'
         },
+        lazy = false,
         name = "statusline",
-        lazy = true,
-        config = function ()
-            require("statusline").setup()
+        config = function()
+            require("winstatabline").setup()
         end,
-        event = "UIEnter"
     },
     {
         dir = '~/.config/nvim/lua/bffrmgr',
@@ -32,7 +30,7 @@ return {
             })
         end,
         keys = {
-            { "bb", function() require('bffrmgr').open() end, noremap=true }
+            { "bb", function() require('bffrmgr').open() end, noremap = true }
         }
     },
     {

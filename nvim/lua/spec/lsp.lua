@@ -169,19 +169,21 @@ return {
                 return confs
             end)()
 
+            local function do_setup()
+                dir_specific_lsps(vim.fn.getcwd(), lc, default_settings)
+                for lang, conf in pairs(configs) do
+                    lc[lang].setup(conf)
+                end
+            end
             -- if we switch cwd: reload dir specific stuff
             -- lsps need libs from projects, so if direnv isn't loaded they are practically useless
             local aug = vim.api.nvim_create_augroup("lspconf_extra", { clear = true })
             vim.api.nvim_create_autocmd("User", {
                 group = aug,
                 pattern = "DirenvLoaded",
-                callback = function(_)
-                    dir_specific_lsps(vim.fn.getcwd(), lc, default_settings)
-                    for lang, conf in pairs(configs) do
-                        lc[lang].setup(conf)
-                    end
-                end
+                callback = do_setup
             })
+            do_setup()
         end,
     },
     {

@@ -1,5 +1,9 @@
 return {
     {
+        "JoosepAlviste/palenightfall.nvim",
+        event = "VeryLazy"
+    },
+    {
         'rcarriga/nvim-notify',
         dependencies = {
             'nvim-lua/plenary.nvim',
@@ -93,7 +97,7 @@ return {
     },
     {
         "luukvbaal/statuscol.nvim",
-        event = "BufEnter",
+        event = "UIEnter",
         config = function()
             -- fold settings, only relevant with this plugin
             vim.opt.foldcolumn = "1"
@@ -125,7 +129,7 @@ return {
     {
         "lewis6991/gitsigns.nvim",
         name = "gitsigns",
-        event = "BufEnter",
+        event = "VeryLazy",
         config = function()
             local gs = require("gitsigns")
             gs.setup()
@@ -138,7 +142,7 @@ return {
     {
         'lukas-reineke/indent-blankline.nvim',
         dependencies = 'nvim-treesitter/nvim-treesitter',
-        event = "BufEnter",
+        event = "VeryLazy",
         main = "ibl",
         opts = {
             indent = {
@@ -177,10 +181,9 @@ return {
         'liangxianzhe/floating-input.nvim',
         lazy = true,
         init = function()
-            local input = require("floating-input").input
             ---@diagnostic disable-next-line: duplicate-set-field
             vim.ui.input = function(opts, confirm)
-                input(opts, confirm, { border = 'double' })
+                require("floating-input").input(opts, confirm, { border = 'double' })
             end
         end
     },
@@ -338,7 +341,7 @@ return {
                     },
                     name = {
                         use_git_status_colors = false,
-                        highlight_opened_files = true;
+                        highlight_opened_files = true,
                     },
                     git_status = {
                         symbols = {
@@ -371,7 +374,6 @@ return {
     },
     {
         'NvChad/nvim-colorizer.lua',
-        lazy = true,
         config = function()
             require 'colorizer'.setup({
                 user_default_options = {
@@ -399,6 +401,7 @@ return {
         build = function()
             require("nvim-treesitter").install.update()
         end,
+        event = "VeryLazy",
         config = function()
             require("nvim-treesitter.configs").setup {
                 sync_install = false,
@@ -435,7 +438,6 @@ return {
         dependencies = {
             'nvim-treesitter/nvim-treesitter',
         },
-        event = "VeryLazy",
         opts = {},
         keys = {
             { "<S-Left>",  '<cmd>STSSelectParentNode<cr>',      mode = "x" },
