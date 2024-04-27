@@ -15,7 +15,10 @@ return {
         dependencies = {
             'colors'
         },
-        lazy = false,
+        -- due to long startup time (no idea where it comes from)
+        -- this will be loaded on bufread, no statusline, winbar, etc
+        -- needed on Dashboard, only needed when a file is actually loaded
+        event = "BufRead",
         name = "statusline",
         config = function()
             require("winstatabline").setup()

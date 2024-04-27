@@ -5,8 +5,10 @@ using any of this, i do not know what i am doing
 
 --]]
 
-local modules = require("winstatabline.modules")
--- local utf8 = utf8 or require("utf8")
+local statusmod = require("winstatabline.modules.status")
+local tabmod = require("winstatabline.modules.tab")
+local winmod = require("winstatabline.modules.win")
+
 local concat = table.concat
 local a = vim.api
 local o = vim.opt
@@ -31,68 +33,114 @@ local M = {}
 --     return ret
 -- end
 
--- initial state
--- P.active = function(buf)
---     return {
---         modules.mode(),
---         modules.lsp_info(),
---     }
--- end
---
--- P.inactive = function(buf)
---     return {
---         modules.fileinfo(buf)
---     }
--- end
+P.create_linemeta = function(o_id)
+    return {
+        __call = function(self)
+            return concat(self._P)
+        end,
+        __newindex = function(self, k, v)
+            local p_id = self._keys[k]
+            if p_id then
+                self._P[p_id] = v
+                o[o_id] = concat(self._P)
+            end
+        end
+    }
+end
 
--- P.special_lines = {
---     toggleterm = "%#StatusLineTerminalSymbol#   %#StatusLine# term ",
---     NvimTree = "%#StatusLineFileexplorerSymbol#   %#StatusLine# files ",
---     TelescopePrompt = "%#StatusLineFileexplorerSymbol#   %#StatusLine# telescope ",
---     lazy = "%#StatusLinePackagemanagerSymbol#   %#StatusLine# lazy ",
---     dashboard = "%#StatusLineFileexplorerSymbol#   %#StatusLine# dash ",
---     bffrmgr = "%#StatusLineFileexplorerSymbol#   %#StatusLine# buffers ",
---     aerial = "%#StatusLineFileexplorerSymbol#   %#StatusLine# symbols ",
--- }
--- -- mappings
--- P.special_lines.terminal = P.special_lines.toggleterm
--- P.special_lines["neo-tree"] = P.special_lines.NvimTree
-
-P.statusline = function()
-    return concat({
-        modules.mode(),
+P.statusline = setmetatable({
+    _P = {
+        statusmod.mode(),
         "%=",
-        modules.diagnostics(),
-        modules.running_lsps(),
-        modules.git_branch(),
+        "", -- diagnostics
+        "", -- lsps
+        "", -- branch
         " "
+    },
+    _keys = {
+        mode = 1, diagnostics = 3, lsps = 4, branch = 5
+    }
+}, P.create_linemeta("statusline"))
+
+P.tabline = setmetatable({
+    _P = {
+        "%#TabLineNvimString# NeoVIM " .. tostring(vim.version()) .. " %#TabLineFill# ",
+        tabmod.tablist(), -- tabs
+        "%#TabLineFill#%=%#TabLineCloseLabel#%999X %X"
+    },
+    _keys = {
+        tabs = 2
+    }
+}, P.create_linemeta("tabline"))
+
+P.setup_statusline = function(augroup_id)
+    a.nvim_create_autocmd({ "DiagnosticChanged" }, {
+        group = augroup_id,
+        callback = function()
+            P.statusline.diagnostics = statusmod.diagnostics()
+        end
     })
+
+    a.nvim_create_autocmd({ "ModeChanged" }, {
+        group = augroup_id,
+        callback = function()
+            P.statusline.mode = statusmod.mode()
+        end
+    })
+
+    a.nvim_create_autocmd({ "BufRead" }, {
+        group = augroup_id,
+        callback = function()
+            P.statusline.branch = statusmod.git_branch()
+        end
+    })
+
+    a.nvim_create_autocmd({ "LspAttach", "LspDetach" }, {
+        group = augroup_id,
+        callback = function()
+            P.statusline.lsps = statusmod.running_lsps()
+        end
+    })
+    o.statusline = P.statusline()
+end
+
+P.setup_tabline = function(augroup_id)
+    -- filenames don't get updated as smoothly with WinEnter
+    a.nvim_create_autocmd({ "BufEnter", "TabEnter" }, {
+        group = augroup_id,
+        callback = function()
+            P.tabline.tabs = tabmod.tablist()
+        end
+    })
+    o.tabline = P.tabline()
 end
 
 P.winbar = function()
     local win = g.statusline_winid
     local buf = a.nvim_win_get_buf(win)
-
     return concat({
         "%#WinBarNC#%=%#WinBar# ",
-        modules.fileinfo(buf),
+        winmod.fileinfo(buf),
         " %#WinBarNC#%=",
     })
 end
 
 M.setup = function()
-    _G.statusline = P.statusline
-    _G.winbar = P.winbar
+    -- settings
+    o.showtabline = 2
     o.laststatus = 3
     o.cmdheight = 0
     o.showcmd = false
     o.ruler = false
     o.showmode = false
 
-    o.statusline = "%!v:lua.statusline()"
-    o.winbar = "%!v:lua.winbar()"
-
+    -- setup
     local aug = a.nvim_create_augroup("winstatabline", { clear = true })
+    P.setup_statusline(aug)
+    P.setup_tabline(aug)
+
+    _G.winbar = P.winbar
+    o.winbar = "%!v:lua.winbar()"
 end
 
 return M
