@@ -3,53 +3,53 @@ local config = require('color.config')
 local hl = vim.api.nvim_set_hl
 
 function P.dark()
-    local colors           = {}
-    colors.comment         = "#6C6F85"
-    colors.background      = "#2b2f2f"
-    colors.inactive_tabs   = "#3b3f3f"
-    colors.contrast        = "#444747"
-    colors.foreground      = "#D8DAD3"
-    colors.cursorline      = "#515757"
-    colors.cursor          = colors.foreground
+    local colors         = {}
+    colors.comment       = "#6C6F85"
+    colors.background    = "#2b2f2f"
+    colors.inactive_tabs = "#3b3f3f"
+    colors.contrast      = "#444747"
+    colors.foreground    = "#D8DAD3"
+    colors.cursorline    = "#515757"
+    colors.cursor        = colors.foreground
 
-    colors.color0          = "#222828"
-    colors.color1          = "#cf7767"
-    colors.color2          = "#7caf6e"
-    colors.color3          = "#cac76b"
-    colors.color4          = "#67a0d8"
-    colors.color5          = "#b47fc5"
-    colors.color6          = "#6cbaba"
-    colors.color7          = "#939998"
+    colors.color0        = "#222828"
+    colors.color1        = "#cf7767"
+    colors.color2        = "#7caf6e"
+    colors.color3        = "#cac76b"
+    colors.color4        = "#67a0d8"
+    colors.color5        = "#b47fc5"
+    colors.color6        = "#6cbaba"
+    colors.color7        = "#939998"
 
-    colors.color8          = "#3b4244"
-    colors.color9          = "#cf7d7d"
-    colors.color10         = "#7bc578"
-    colors.color11         = "#c8c67a"
-    colors.color12         = "#71bae2"
-    colors.color13         = "#ce99cf"
-    colors.color14         = "#77bbc2"
-    colors.color15         = "#9da3a2"
+    colors.color8        = "#3b4244"
+    colors.color9        = "#cf7d7d"
+    colors.color10       = "#7bc578"
+    colors.color11       = "#c8c67a"
+    colors.color12       = "#71bae2"
+    colors.color13       = "#ce99cf"
+    colors.color14       = "#77bbc2"
+    colors.color15       = "#9da3a2"
 
     -- map extra colors used in light theme
-    colors.color16         = colors.color8
-    colors.color17         = colors.color9
-    colors.color18         = colors.color10
-    colors.color19         = colors.color11
-    colors.color20         = colors.color12
-    colors.color21         = colors.color13
-    colors.color22         = colors.color14
-    colors.color23         = colors.color15
+    colors.color16       = colors.color8
+    colors.color17       = colors.color9
+    colors.color18       = colors.color10
+    colors.color19       = colors.color11
+    colors.color20       = colors.color12
+    colors.color21       = colors.color13
+    colors.color22       = colors.color14
+    colors.color23       = colors.color15
 
     return colors
 end
 
 function P.light()
     local colors           = {}
-    colors.background      = "#E8EAE3"
-    colors.background_dark = "#DCE0DA"
-    colors.inactive_tabs   = "#D6D9D4"
-    colors.contrast        = "#CCD0CA"
-    colors.foreground      = "#2b2f2f"
+    colors.background      = "#E8EAE5"
+    colors.background_dark = "#DCE0DC"
+    colors.inactive_tabs   = "#D6D9D6"
+    colors.contrast        = "#CCD0CC"
+    colors.foreground      = "#2B2F2F"
     colors.cursorline      = "#515757"
     colors.comment         = "#6C6F85"
     colors.cursor          = colors.foreground

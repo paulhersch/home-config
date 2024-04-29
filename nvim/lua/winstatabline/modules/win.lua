@@ -1,12 +1,15 @@
 local fn = vim.fn
+local a = vim.api
 local util = require("winstatabline.modules.util")
 
 local M = {}
 
 M.fileinfo = function(buf)
-    local fname = util.get_t_of_buf(buf)
+    local file = a.nvim_buf_get_name(buf)
+
+    local fname = util.get_trailing(file)
     local edited = fn.getbufinfo(buf)[1].changed == 1
-    local perms = fn.getfperm(fname)
+    local perms = fn.getfperm(file)
 
     return table.concat {
         "%#WinBarFileName#",

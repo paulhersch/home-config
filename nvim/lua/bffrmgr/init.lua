@@ -30,6 +30,7 @@ end
 P.create_buf = function()
     P.buf = a.nvim_create_buf(false, true)
     a.nvim_set_option_value('filetype', 'bffrmgr', { buf = P.buf })
+    a.nvim_buf_set_name(P.buf, 'buffers')
 end
 
 P.buf_add_hl = function(content)

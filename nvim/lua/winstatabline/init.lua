@@ -64,12 +64,13 @@ P.statusline = setmetatable({
 
 P.tabline = setmetatable({
     _P = {
-        "%#TabLineNvimString# NeoVIM " .. tostring(vim.version()) .. " %#TabLineFill# ",
+        -- "%#TabLineNvimString# NeoVIM " .. tostring(vim.version()) .. " %#TabLineFill# ",
+        tabmod.dirname(), -- dir
         tabmod.tablist(), -- tabs
         "%#TabLineFill#%=%#TabLineCloseLabel#%999X %X"
     },
     _keys = {
-        tabs = 2
+        dir = 1, tabs = 2
     }
 }, P.create_linemeta("tabline"))
 
@@ -105,11 +106,20 @@ P.setup_statusline = function(augroup_id)
 end
 
 P.setup_tabline = function(augroup_id)
-    -- filenames don't get updated as smoothly with WinEnter
-    a.nvim_create_autocmd({ "BufEnter", "TabEnter" }, {
+    -- TextChanged for * thingy
+    -- BufEnter for focus change, Wipeout for popups
+    -- WritePost for after write (duh), Filetype for replacement lines
+    a.nvim_create_autocmd({ "BufEnter", "BufWipeout", "BufWritePost", "TextChangedI", "TextChanged", "FileType" }, {
         group = augroup_id,
         callback = function()
             P.tabline.tabs = tabmod.tablist()
+        end
+    })
+
+    a.nvim_create_autocmd("DirChanged", {
+        group = augroup_id,
+        callback = function()
+            P.tabline.dir = tabmod.dirname()
         end
     })
     o.tabline = P.tabline()
@@ -139,8 +149,8 @@ M.setup = function()
     P.setup_statusline(aug)
     P.setup_tabline(aug)
 
-    _G.winbar = P.winbar
-    o.winbar = "%!v:lua.winbar()"
+    -- _G.winbar = P.winbar
+    -- o.winbar = "%!v:lua.winbar()"
 end
 
 return M
