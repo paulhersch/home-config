@@ -94,6 +94,9 @@ return {
                         { buffer = buf }
                     )
                 end
+                if not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }) then
+                    vim.lsp.inlay_hint.enable(true)
+                end
                 lf.on_attach(client, buf)
             end
 
@@ -121,6 +124,7 @@ return {
                     tsserver = {},
                     bashls = {},
                     texlab = {},
+                    gopls = {},
                     pylsp = {
                         settings = {
                             pylsp = {

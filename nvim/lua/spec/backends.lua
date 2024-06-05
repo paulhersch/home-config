@@ -63,4 +63,13 @@ return {
             { "ds", "<cmd>SessionManager delete_session<cr>" }
         }
     },
+    {
+        'gaborvecsei/usage-tracker.nvim',
+        event = 'VeryLazy',
+        opts = {
+            keep_eventlog_days = 90,
+            cleanup_freq_days = 14,
+            inactivity_check_freq_in_sec = 10,
+        }
+    }
 }

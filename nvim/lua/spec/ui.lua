@@ -3,6 +3,11 @@ return {
         "JoosepAlviste/palenightfall.nvim",
         event = "VeryLazy"
     },
+    -- {
+    --     "nvim-lualine/lualine.nvim",
+    --     event = "UIEnter",
+    --     opts = {}
+    -- },
     {
         'rcarriga/nvim-notify',
         dependencies = {

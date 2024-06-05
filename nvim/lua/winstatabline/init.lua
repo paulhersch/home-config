@@ -1,18 +1,16 @@
 --[[
 
 Custom statusline, personal use only. I do not recommend
-using any of this, i do not know what i am doing
+using any of this, even though i might know what i am doing
 
 --]]
 
 local statusmod = require("winstatabline.modules.status")
 local tabmod = require("winstatabline.modules.tab")
-local winmod = require("winstatabline.modules.win")
 
 local concat = table.concat
 local a = vim.api
 local o = vim.opt
-local g = vim.g
 
 local P = {}
 local M = {}
@@ -33,111 +31,197 @@ local M = {}
 --     return ret
 -- end
 
-P.create_linemeta = function(o_id)
-    return {
-        __call = function(self)
-            return concat(self._P)
-        end,
-        __newindex = function(self, k, v)
-            local p_id = self._keys[k]
-            if p_id then
-                self._P[p_id] = v
-                o[o_id] = concat(self._P)
+---@class Component
+---@field timeout? integer timeout for polling
+---@field events? string | string[] update events passed to create_autocmd if function is passed as first arg
+---@field async? boolean if the function should be wrapped in an async wrapper thing
+---@field name? string name of the component, if not set no usable notification can be generated!
+
+-- create a line
+-- if for a component, events and timeout are given only events is used
+---@param line_name string name of the line, e.g. statusline
+---@param components {[string]: Component}
+---@param clear? boolean clears autogroup
+P.line = function(line_name, components, clear)
+    -- autogroup things
+    if not P._au_group or clear then
+        P._au_group = a.nvim_create_augroup("winstatabline", { clear = true })
+    end
+
+    -- line object
+    local this = {
+        -- private data (cached strings)
+        _P = {},
+        -- timers
+        _timers = {}
+    }
+
+    for index, comp in ipairs(components) do
+        if type(comp) == "string" then
+            this._P[index] = comp
+        elseif type(comp) == "table" then
+            if not comp.events and not comp.timeout then
+                vim.notify(
+                    string.format("Component %s needs event or timeout, because it is a function",
+                        comp.name or tostring(comp[1]))
+                )
+                goto continue
+            end
+
+            -- initial string
+            this._P[index] = comp[1]()
+
+            -- connect to events or do timeout stuff (ugly)
+            if comp.events then
+                a.nvim_create_autocmd(comp.events, {
+                    callback = function()
+                        this[index] = comp[1]()
+                    end,
+                    group = P._au_group
+                })
+            elseif comp.timeout then
+                -- dont run multiple timers with same timeouts, make them all run at once at least
+                local timer = tostring(comp.timeout)
+                local wrapped = function()
+                    -- get value outside of main loop and only transfer
+                    -- set the value inside the main vim loop
+                    local val = comp[1]()
+                    vim.schedule_wrap(function()
+                        this[index] = val
+                    end)()
+                end
+                -- create timer obj if it doesn't exist, otherwise just add the wrapped
+                -- callback given in the args
+                if this._timers[timer] then
+                    this._timers[timer].uv_timer:stop()
+                    table.insert(this._timers[timer].callbacks, 1, wrapped)
+                else
+                    this._timers[timer] = {
+                        callbacks = { wrapped },
+                        uv_timer = vim.uv.new_timer()
+                    }
+                end
+                -- timer has to be restarted each time, because callback data changed and
+                -- this is uvloop we are talking about
+                this._timers[timer].uv_timer:start(0, comp.timeout, function()
+                    for _, func in ipairs(this._timers[timer].callbacks) do
+                        func()
+                    end
+                end)
             end
         end
-    }
+        ::continue::
+    end
+
+    this = setmetatable(
+        this,
+        {
+            __call = function(self)
+                o[line_name] = tostring(self)
+            end,
+            __newindex = function(self, k, v)
+                self._P[k] = v
+                self()
+            end,
+            __index = function(self, k)
+                return self._P[k]
+            end,
+            __tostring = function(self)
+                return concat(self._P)
+            end
+        }
+    )
+
+    this()
+    return this
 end
 
-P.statusline = setmetatable({
-    _P = {
-        statusmod.mode(),
-        "%=",
-        "", -- diagnostics
-        "", -- lsps
-        "", -- branch
-        " "
-    },
-    _keys = {
-        mode = 1, diagnostics = 3, lsps = 4, branch = 5
-    }
-}, P.create_linemeta("statusline"))
-
-P.tabline = setmetatable({
-    _P = {
-        -- "%#TabLineNvimString# NeoVIM " .. tostring(vim.version()) .. " %#TabLineFill# ",
-        tabmod.dirname(), -- dir
-        tabmod.tablist(), -- tabs
-        "%#TabLineFill#%=%#TabLineCloseLabel#%999X %X"
-    },
-    _keys = {
-        dir = 1, tabs = 2
-    }
-}, P.create_linemeta("tabline"))
-
-P.setup_statusline = function(augroup_id)
-    a.nvim_create_autocmd({ "DiagnosticChanged" }, {
-        group = augroup_id,
-        callback = function()
-            P.statusline.diagnostics = statusmod.diagnostics()
-        end
-    })
-
-    a.nvim_create_autocmd({ "ModeChanged" }, {
-        group = augroup_id,
-        callback = function()
-            P.statusline.mode = statusmod.mode()
-        end
-    })
-
-    a.nvim_create_autocmd({ "BufRead" }, {
-        group = augroup_id,
-        callback = function()
-            P.statusline.branch = statusmod.git_branch()
-        end
-    })
-
-    a.nvim_create_autocmd({ "LspAttach", "LspDetach" }, {
-        group = augroup_id,
-        callback = function()
-            P.statusline.lsps = statusmod.running_lsps()
-        end
-    })
-    o.statusline = P.statusline()
+P.setup_tabline = function(clear)
+    P.tabline = P.line(
+        "tabline", {
+            {
+                tabmod.dirname,
+                events = "DirChanged"
+            },
+            {
+                tabmod.tablist,
+                events = "BufEnter"
+            },
+            "%#TabLineFill#%=%#TabLineCloseLabel#%999X %X"
+        },
+        clear
+    )
 end
 
-P.setup_tabline = function(augroup_id)
-    -- TextChanged for * thingy
-    -- BufEnter for focus change, Wipeout for popups
-    -- WritePost for after write (duh), Filetype for replacement lines
-    a.nvim_create_autocmd({ "BufEnter", "BufWipeout", "BufWritePost", "TextChangedI", "TextChanged", "FileType" }, {
-        group = augroup_id,
-        callback = function()
-            P.tabline.tabs = tabmod.tablist()
-        end
-    })
+P.setup_statusline = function(clear)
+    P.statusline = P.line(
+        "statusline", {
+            {
+                statusmod.mode,
+                events = "ModeChanged"
+            },
+            {
+                statusmod.fileinfo,
+                events = { "BufEnter", "BufWinEnter", "TextChanged" }
+            },
+            "%=",
+            {
+                statusmod.diagnostics,
+                events = "DiagnosticChanged"
+            },
+            {
+                statusmod.running_lsps,
+                timeout = 10000
+            },
+            {
+                statusmod.git_branch,
+                events = { "BufEnter", "DirChanged" },
+                -- timeout = 10000
+            }
+        },
+        clear
+    )
 
-    a.nvim_create_autocmd("DirChanged", {
-        group = augroup_id,
-        callback = function()
-            P.tabline.dir = tabmod.dirname()
-        end
-    })
-    o.tabline = P.tabline()
-end
-
-P.winbar = function()
-    local win = g.statusline_winid
-    local buf = a.nvim_win_get_buf(win)
-    return concat({
-        "%#WinBarNC#%=%#WinBar# ",
-        winmod.fileinfo(buf),
-        " %#WinBarNC#%=",
-    })
+    -- P.branch_listen_setup = function()
+    --     if P.branch_change_listener then
+    --         P.branch_change_listener:fs_event_stop()
+    --     else
+    --         P.branch_change_listener = vim.uv.new_fs_event()
+    --     end
+    --     vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true }, function(ret_obj)
+    --         -- if not git dir then dont do anything
+    --         if ret_obj.code ~= 0 then
+    --             local git_cwd = ret_obj.stdout
+    --             vim.notify("detected git dir " .. git_cwd, 1, {})
+    --             -- start listening on HEAD, if anything changed reexec the git command
+    --             P.branch_change_listener:fs_event_start(git_cwd .. '/.git/HEAD', { watch_entry = true },
+    --                 function(err, _, _)
+    --                     vim.notify("HEAD changed", 1, {})
+    --                     if err then
+    --                         vim.notify(err, 1, {})
+    --                     else
+    --                         P.statusline.branch = statusmod.git_branch()
+    --                     end
+    --                 end)
+    --         end
+    --     end)
+    -- end
+    --
+    -- a.nvim_create_autocmd({ "BufEnter" }, {
+    --     group = augroup_id,
+    --     callback = function()
+    --         -- try setting branch, then do listener
+    --         P.statusline.branch = statusmod.git_branch()
+    --         -- vim.notify(P.statusline.branch)
+    --         -- if P.statusline.branch ~= "" then P.branch_listen_setup() end
+    --     end
+    -- })
+    -- -- P.statusline.branch = statusmod.git_branch()
+    -- -- if P.statusline.branch ~= "" then P.branch_listen_setup() end
 end
 
 M.setup = function()
     -- settings
-    o.showtabline = 2
     o.laststatus = 3
     o.cmdheight = 0
     o.showcmd = false
@@ -145,12 +229,8 @@ M.setup = function()
     o.showmode = false
 
     -- setup
-    local aug = a.nvim_create_augroup("winstatabline", { clear = true })
-    P.setup_statusline(aug)
-    P.setup_tabline(aug)
-
-    -- _G.winbar = P.winbar
-    -- o.winbar = "%!v:lua.winbar()"
+    P.setup_statusline(true)
+    P.setup_tabline(false)
 end
 
 return M

@@ -2,6 +2,7 @@ local fn = vim.fn
 local a = vim.api
 ---@diagnostic disable-next-line: undefined-global
 local concat = concat or table.concat
+local util = require("winstatabline.modules.util")
 
 local M = {}
 local P = {}
@@ -86,11 +87,30 @@ M.mode = function()
     local current_mode = a.nvim_get_mode().mode
     if P.modes[current_mode] ~= nil then
         local color_indicator = string.format("%%#%s#%s", P.modes[current_mode][2], "▋")
-        local text_desc = current_mode == "n" and "" or (
-            string.format("%%#StatusLineModeText# -- %s --", P.modes[current_mode][1])
-        )
-        return color_indicator .. text_desc
+        -- local text_desc = current_mode == "n" and "" or (
+        --     string.format("%%#StatusLineModeText# -- %s --", P.modes[current_mode][1])
+        -- )
+        return color_indicator -- .. text_desc
     end
+end
+
+M.fileinfo = function()
+    local fname, used_replacement = util.get_t_of_buf(0)
+    if not used_replacement then
+        local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1
+        local perms = fn.getfperm(a.nvim_buf_get_name(0))
+
+        return table.concat {
+            " %#StatusLine#",
+            fname,
+            string.format(
+                '  %%#StatusLineFileStat#%s:%s',
+                edited and '+' or '-',
+                string.sub(perms, 1, 3)
+            )
+        }
+    end
+    return " %#StatusLine#" .. fname
 end
 
 return M

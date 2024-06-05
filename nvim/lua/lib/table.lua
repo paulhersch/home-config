@@ -28,12 +28,12 @@ function M.find(tbl, func)
 end
 
 function M.find_item(tbl, item)
-    return M.find(tbl, function (val)
+    return M.find(tbl, function(val)
         return val == item
-    end)
+    end) or false
 end
 
---- insert new item on index 1 and delete if exists 
+--- insert new item on index 1 and delete if exists
 ---@param tbl table
 ---@param item any
 ---@param max_index number? Delete last item in case len > max_index
@@ -73,7 +73,7 @@ end
 function M.select(tbl, id)
     local ret = {}
     for _, itm in pairs(tbl) do
-        ret[#ret+1] = itm[id]
+        ret[#ret + 1] = itm[id]
     end
     return ret
 end

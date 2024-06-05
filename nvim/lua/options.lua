@@ -16,7 +16,6 @@ o.linebreak = true
 o.fillchars = "vert:┃,horiz:━,stl: ,stlnc: ,fold: ,foldopen:,foldclose:,foldsep: "
 o.cmdheight = 1
 o.syntax = "off"
-o.updatetime = 1000
 
 if g.neovide then
     -- w-0.1 is a hack to get full character height, somehow the font rendering

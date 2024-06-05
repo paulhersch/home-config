@@ -2,16 +2,7 @@ local a = vim.api
 local fn = vim.fn
 local util = require("winstatabline.modules.util")
 
-local P = {}
 local M = {}
-
-P.buftype_name_replacements = {
-    ['neo-tree'] = "neotree",
-    TelescopePrompt = "telescope",
-    toggleterm = "terminal",
-    aerial = "aerial",
-    terminal = "terminal"
-}
 
 M.dirname = function()
     local dir = fn.getcwd()
@@ -26,22 +17,12 @@ M.tablist = function()
     local tabs = a.nvim_list_tabpages()
     for index, tab in ipairs(tabs) do
         if a.nvim_tabpage_is_valid(tab) then
+            local selected = tab == a.nvim_get_current_tabpage()
+
             local win = a.nvim_tabpage_get_win(tab)
             local buf = a.nvim_win_get_buf(win)
+            local name, _ = util.get_t_of_buf(buf)
 
-            local filetype = fn.getbufvar(buf, "&filetype")
-            local name
-            if P.buftype_name_replacements[filetype] then
-                name = P.buftype_name_replacements[filetype]
-            else
-                local changed = ""
-                if fn.buflisted(buf) == 1 then
-                    changed = (fn.getbufinfo(buf)[1].changed == 1) and "*" or ""
-                end
-                name = changed .. (util.get_t_of_buf(buf) or "")
-            end
-
-            local selected = tab == a.nvim_get_current_tabpage()
             -- sorry to everyone who has to decipher this nightmare
             ret_str = ret_str .. string.format(
                 "%%#%s#  %%%iT%s%%T %%#%s#%%%iX %%X ",

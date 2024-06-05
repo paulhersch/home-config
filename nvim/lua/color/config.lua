@@ -166,6 +166,8 @@ M.get_config = function(colors)
 
         StatusLine = { bg = colors.inactive_tabs, fg = colors.foreground },
         StatusLineNC = { bg = "NONE", fg = "NONE" }, --see https://github.com/neovim/neovim/issues/19803
+        StatusLineFileName = { fg = colors.foreground, bg = colors.inactive_tabs },
+        StatusLineFileStat = { fg = colors.comment, bg = colors.inactive_tabs },
         StatusLineModeText = { bg = colors.inactive_tabs, fg = colors.comment },
         StatusLineModeNormal = { bg = colors.inactive_tabs, fg = colors.color18 },
         StatusLineModeInsert = { bg = colors.inactive_tabs, fg = colors.color20 },
@@ -182,10 +184,6 @@ M.get_config = function(colors)
         StatusLineDiagnosticWarn = { fg = colors.color11, bg = colors.inactive_tabs },
         StatusLineDiagnosticInfo = { fg = colors.color12, bg = colors.inactive_tabs },
         StatusLineDiagnosticHint = { fg = colors.color10, bg = colors.inactive_tabs },
-        WinBar = { bg = colors.background_dark, fg = colors.foreground },
-        WinBarNC = { bg = "NONE", fg = "NONE" },
-        WinBarFileStat = { fg = colors.comment, bg = colors.background_dark },
-        WinBarFileName = { fg = colors.color7, bg = colors.background_dark },
 
         BffmgrKey = { fg = colors.color1 },
         BffmgrBufname = { fg = colors.color4 },
