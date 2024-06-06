@@ -1,5 +1,33 @@
 local extend = vim.tbl_extend
 
+local cmp_kinds = {
+    Text = " ",
+    Method = " ",
+    Function = " ",
+    Constructor = " ",
+    Field = " ",
+    Variable = " ",
+    Class = " ",
+    Interface = " ",
+    Module = " ",
+    Property = " ",
+    Unit = " ",
+    Value = " ",
+    Enum = " ",
+    Keyword = " ",
+    Snippet = " ",
+    Color = " ",
+    File = " ",
+    Reference = " ",
+    Folder = " ",
+    EnumMember = " ",
+    Constant = " ",
+    Struct = " ",
+    Event = " ",
+    Operator = " ",
+    TypeParameter = " "
+}
+
 local cwd_confs = {
     lua = {
         base = {
@@ -102,16 +130,7 @@ return {
 
             local default_settings = {
                 on_attach = default_attach,
-                capabilities = {
-                    textDocument = {
-                        completion = {
-                            completionItem = {
-                                snippetSupport = false
-                            }
-                        }
-                    },
-                    semanticTokensProvider = nil
-                }
+                capabilities = vim.lsp.protocol.make_client_capabilities()
             }
 
             -- extend table with activated servers
@@ -246,13 +265,44 @@ return {
             require('luasnip.loaders.from_vscode').lazy_load()
         end,
     },
+    -- {
+    --     "nvimdev/epo.nvim",
+    --     dependencies = {
+    --         "L3MON4D3/LuaSnip"
+    --     },
+    --     event = "LspAttach",
+    --     opts = {
+    --         fuzzy = true,
+    --         debounce = 100,
+    --         signature = true,
+    --         signature_border = "none",
+    --         kind_format = function(k)
+    --             return cmp_kinds[k]
+    --         end
+    --     },
+    --     keys = {
+    --         {
+    --             "<Tab>",
+    --             function()
+    --                 if vim.fn.pumvisible() == 1 then
+    --                     return '<C-n>'
+    --                 elseif vim.snippet.active() then
+    --                     return '<cmd>lua vim.snippet.jump(1)<cr>'
+    --                 else
+    --                     return '<Tab>'
+    --                 end
+    --             end,
+    --             mode = { 'i' },
+    --             expr = true
+    --         }
+    --     }
+    -- },
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
             -- sources and functionality
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/cmp-path',
-            'hrsh7th/cmp-buffer',
             'hrsh7th/cmp-cmdline',
             'hrsh7th/cmp-nvim-lsp-signature-help',
             -- snippets
@@ -266,34 +316,6 @@ return {
             local cmp = require("cmp")
             local luasnip = require("luasnip")
             local cmp_autopair = require("nvim-autopairs.completion.cmp")
-
-            local cmp_kinds = {
-                Text = " ",
-                Method = " ",
-                Function = " ",
-                Constructor = " ",
-                Field = " ",
-                Variable = " ",
-                Class = " ",
-                Interface = " ",
-                Module = " ",
-                Property = " ",
-                Unit = " ",
-                Value = " ",
-                Enum = " ",
-                Keyword = " ",
-                Snippet = " ",
-                Color = " ",
-                File = " ",
-                Reference = " ",
-                Folder = " ",
-                EnumMember = " ",
-                Constant = " ",
-                Struct = " ",
-                Event = " ",
-                Operator = " ",
-                TypeParameter = " "
-            }
 
             cmp.setup.cmdline("/", {
                 mapping = cmp.mapping.preset.cmdline(),

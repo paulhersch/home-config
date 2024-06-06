@@ -301,6 +301,7 @@ M.get_config = function(colors)
         TelescopeSelection = { bg = colors.background_dark },
         -- Indent Blank Line
         IblIndent = { fg = colors.color8 },
+        IblScope = { fg = colors.contrast },
 
         --gleipnir Dashboard highlights
         DashboardHeader = { fg = colors.color7 },

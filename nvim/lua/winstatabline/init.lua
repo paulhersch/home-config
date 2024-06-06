@@ -35,12 +35,13 @@ local M = {}
 ---@field timeout? integer timeout for polling
 ---@field events? string | string[] update events passed to create_autocmd if function is passed as first arg
 ---@field async? boolean if the function should be wrapped in an async wrapper thing
+---@field use_initial? boolean if the initial value should be set with the function, defaults to true
 ---@field name? string name of the component, if not set no usable notification can be generated!
 
 -- create a line
 -- if for a component, events and timeout are given only events is used
 ---@param line_name string name of the line, e.g. statusline
----@param components {[string]: Component}
+---@param components string[]|Component[] list of components in the line
 ---@param clear? boolean clears autogroup
 P.line = function(line_name, components, clear)
     -- autogroup things
@@ -60,6 +61,11 @@ P.line = function(line_name, components, clear)
         if type(comp) == "string" then
             this._P[index] = comp
         elseif type(comp) == "table" then
+            comp = vim.tbl_extend("force", {
+                use_initial = true,
+                async = false
+            }, comp)
+
             if not comp.events and not comp.timeout then
                 vim.notify(
                     string.format("Component %s needs event or timeout, because it is a function",
@@ -69,7 +75,11 @@ P.line = function(line_name, components, clear)
             end
 
             -- initial string
-            this._P[index] = comp[1]()
+            if not comp.use_initial then
+                this._P[index] = ""
+            else
+                this._P[index] = comp[1]()
+            end
 
             -- connect to events or do timeout stuff (ugly)
             if comp.events then
@@ -162,7 +172,8 @@ P.setup_statusline = function(clear)
             },
             {
                 statusmod.fileinfo,
-                events = { "BufEnter", "BufWinEnter", "TextChanged" }
+                events = { "BufEnter", "BufWinEnter", "TextChanged" },
+                use_initial = false
             },
             "%=",
             {
@@ -171,12 +182,12 @@ P.setup_statusline = function(clear)
             },
             {
                 statusmod.running_lsps,
-                timeout = 10000
+                timeout = 5000
             },
             {
                 statusmod.git_branch,
                 events = { "BufEnter", "DirChanged" },
-                -- timeout = 10000
+                use_initial = false,
             }
         },
         clear
