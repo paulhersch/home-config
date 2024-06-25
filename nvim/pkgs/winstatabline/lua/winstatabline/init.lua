@@ -172,7 +172,7 @@ P.setup_statusline = function(clear)
             },
             {
                 statusmod.fileinfo,
-                events = { "BufEnter", "BufWinEnter", "TextChanged" },
+                events = { "BufEnter", "BufWinEnter", "TextChanged", "BufWritePre" },
                 use_initial = false
             },
             "%=",

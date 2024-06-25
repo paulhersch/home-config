@@ -24,6 +24,7 @@ M.get_config = function(colors)
         FoldColumn = { fg = colors.comment, bg = colors.background },
         LineNr = { fg = colors.contrast },
         FloatBorder = { fg = colors.background_dark, bg = colors.background_dark },
+        FloatBorderLSP = { fg = colors.comment, bg = colors.background_dark },
         Whitespace = { fg = colors.color1 },
         WinSeparator = { bg = "NONE", fg = colors.color8 },
         CursorLine = { bg = "NONE", bold = false },

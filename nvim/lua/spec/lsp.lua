@@ -28,6 +28,10 @@ local cmp_kinds = {
     TypeParameter = " "
 }
 
+local inlay_hints_by_ft = {
+    latex = false
+}
+
 local cwd_confs = {
     lua = {
         base = {
@@ -45,25 +49,29 @@ local cwd_confs = {
         },
         -- NixOS doesn't expose AWMs library path, so i have to read that one from an env var (which is not possible
         -- to do with the luarc.json -> ugly hack depending on root folder)
-        awesome = {
-            Lua = {
-                runtime = "LuaJIT",
-                diagnostics = {
-                    globals = {
-                        "root", "awesome", "tag", "screen", "client",
-                        "modkey", "altkey", "mouse", "mousegrabber",
-                    }
-                },
-                workspace = { library = { os.getenv("AWM_LIB_PATH") } }
+        awesome = function()
+            return {
+                Lua = {
+                    runtime = "LuaJIT",
+                    diagnostics = {
+                        globals = {
+                            "root", "awesome", "tag", "screen", "client",
+                            "modkey", "altkey", "mouse", "mousegrabber",
+                        }
+                    },
+                    workspace = { library = { os.getenv("AWM_LIB_PATH") } }
+                }
             }
-        },
-        nvim = {
-            Lua = {
-                runtime = { version = "LuaJIT" },
-                diagnostics = { globals = { "vim" } },
-                workspace = { library = vim.api.nvim_get_runtime_file("", true) }
+        end,
+        nvim = function()
+            return {
+                Lua = {
+                    runtime = { version = "LuaJIT" },
+                    diagnostics = { globals = { "vim" } },
+                    workspace = { library = vim.api.nvim_get_runtime_file("", true) }
+                }
             }
-        }
+        end
     }
 }
 
@@ -75,7 +83,7 @@ local function dir_specific_lsps(cwd, lc, defaults)
             settings = extend(
                 "force",
                 cwd_confs.lua.base,
-                cwd_confs.lua[cwd_toplevel] or {}
+                cwd_confs.lua[cwd_toplevel] and cwd_confs.lua[cwd_toplevel]() or {}
             )
         })
     )
@@ -83,16 +91,24 @@ end
 
 return {
     {
+        "lukas-reineke/lsp-format.nvim",
+        lazy = true,
+        opts = {}
+    },
+    {
         'neovim/nvim-lspconfig',
         dependencies = {
             'lukas-reineke/lsp-format.nvim'
         },
         event = "VeryLazy",
         config = function()
-            local lc = require('lspconfig')
-
-            local lf = require("lsp-format")
-            lf.setup {}
+            -- overwrite default window border style for popups
+            local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+            function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+                opts = opts or {}
+                opts.border = "single"
+                return orig_util_open_floating_preview(contents, syntax, opts, ...)
+            end
 
             local function default_attach(client, buf)
                 for _, bind in ipairs({
@@ -122,10 +138,14 @@ return {
                         { buffer = buf }
                     )
                 end
-                if not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }) then
-                    vim.lsp.inlay_hint.enable(true)
+
+                if inlay_hints_by_ft[vim.filetype.match({ buf = vim.api.nvim_get_current_buf() })] then
+                    vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
+                else
+                    vim.lsp.inlay_hint.enable(false, { bufnr = 0 })
                 end
-                lf.on_attach(client, buf)
+
+                require("lsp-format").on_attach(client, buf)
             end
 
             local default_settings = {
@@ -193,9 +213,9 @@ return {
             end)()
 
             local function do_setup()
-                dir_specific_lsps(vim.fn.getcwd(), lc, default_settings)
+                dir_specific_lsps(vim.fn.getcwd(), require('lspconfig'), default_settings)
                 for lang, conf in pairs(configs) do
-                    lc[lang].setup(conf)
+                    require('lspconfig')[lang].setup(conf)
                 end
             end
             -- if we switch cwd: reload dir specific stuff
@@ -214,7 +234,6 @@ return {
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "neovim/nvim-lspconfig",
-            'jmbuhr/otter.nvim',
         },
         cmd = "OtterActivate",
         init = function()
@@ -262,7 +281,9 @@ return {
             'rafamadriz/friendly-snippets',
         },
         config = function()
-            require('luasnip.loaders.from_vscode').lazy_load()
+            local vs_loader = require('luasnip.loaders.from_vscode')
+            vs_loader.lazy_load() -- load friendly snippets
+            vs_loader.lazy_load({ paths = { './snips' } })
         end,
     },
     -- {

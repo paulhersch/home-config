@@ -1,9 +1,7 @@
 local o = vim.opt
 local g = vim.g
 
--- idk why i have to set this but it seems like colors are handled differently if
--- background = 'dark' is not set
-o.background = 'dark'
+o.background = 'light'
 o.clipboard = 'unnamedplus'
 o.mouse = 'a'
 o.cul = true
@@ -16,6 +14,7 @@ o.linebreak = true
 o.fillchars = "vert:┃,horiz:━,stl: ,stlnc: ,fold: ,foldopen:,foldclose:,foldsep: "
 o.cmdheight = 1
 o.syntax = "off"
+o.title = true
 
 if g.neovide then
     -- w-0.1 is a hack to get full character height, somehow the font rendering

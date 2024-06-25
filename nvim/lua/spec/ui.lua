@@ -147,7 +147,7 @@ return {
         init = function()
             ---@diagnostic disable-next-line: duplicate-set-field
             vim.ui.input = function(opts, confirm)
-                require("floating-input").input(opts, confirm, { border = 'double' })
+                require("floating-input").input(opts, confirm, { border = 'single' })
             end
         end
     },
@@ -225,6 +225,18 @@ return {
                 }
             })
         end
+    },
+    {
+        'stevearc/oil.nvim',
+        opts = {
+            default_file_explorer = true,
+            columns = {
+                "icon",
+                "permissions",
+                "size",
+                "mtime",
+            }
+        }
     },
     {
         "nvim-neo-tree/neo-tree.nvim",
@@ -329,8 +341,7 @@ return {
                         hide_dotfiles = false,
                         hide_gitignored = false,
                         show_hidden_count = false,
-                        -- use_libuv_file_watcher = true,
-                        hijack_netrw_behaviour = "open_default"
+                        use_libuv_file_watcher = true,
                     }
                 },
             })

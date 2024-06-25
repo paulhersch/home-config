@@ -1,27 +1,26 @@
 return {
     {
-        dir = '~/.config/nvim/lua/color',
+        "colors",
+        dev = true,
         priority = 1000,
         name = "colors",
         lazy = false,
-        config = function()
-            require("color").setup {
-                theme = "light"
-            }
-        end,
+        opts = {
+            theme = "light"
+        }
     },
     {
-        dir = '~/.config/nvim/lua/winstatabline',
+        "winstatabline",
+        dev = true,
         dependencies = {
             'colors'
         },
         event = "UIEnter",
-        config = function()
-            require("winstatabline").setup()
-        end,
+        opts = {}
     },
     {
-        dir = '~/.config/nvim/lua/bffrmgr',
+        "bffrmgr",
+        dev = true,
         lazy = false,
         config = function()
             require("bffrmgr").setup({
@@ -32,13 +31,14 @@ return {
             { "bb", function() require('bffrmgr').open() end, noremap = true }
         }
     },
-    {
-        dir = '~/.config/nvim/lua/evaluator',
-        lazy = false,
-        config = function()
-            require("evaluator").setup({
-                evalkey = "<C-x><C-e>"
-            })
-        end,
-    },
+    -- {
+    --     'evaluator',
+    --     dev = true,
+    --     lazy = false,
+    --     config = function()
+    --         require("evaluator").setup({
+    --             evalkey = "<C-x><C-e>"
+    --         })
+    --     end,
+    -- },
 }

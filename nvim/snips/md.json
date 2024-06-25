@@ -1,0 +1,13 @@
+{
+    "Equation": {
+        "prefix": "mathmode",
+        "body": [
+            "\\$\\$",
+            "\\begin{align*}",
+            "$0",
+            "\\end{align*}",
+            "\\$\\$"
+        ],
+        "description": "Create align for LaTeX in MD"
+    }
+}

@@ -1,8 +1,8 @@
 local M, P = {}, {}
-local config = require('color.config')
+local config = require('colors.config')
 local hl = vim.api.nvim_set_hl
 
-function P.dark()
+function P.azul()
     local colors         = {}
     colors.comment       = "#6C6F85"
     colors.background    = "#2b2f2f"
@@ -100,17 +100,29 @@ P.mud = function()
     return colors
 end
 
+---@class Color.setupOpts
+---@field theme "light"|"mud"|"azul" the theme
+---@param opts Color.setupOpts
+-- defaults:
+-- {
+--      theme = "light"
+-- }
 function M.setup(opts)
     vim.opt.termguicolors = true
-    if opts == nil then
-        opts = {
-            theme = "light"
-        }
+
+    local defaults = {
+        theme = "light"
+    }
+
+    vim.tbl_extend("force", defaults, opts)
+
+    if not P[opts.theme] then
+        error(string.format("theme %s does not exist", opts.theme))
     end
 
-    local colors = P[opts.theme]()
-
-    for group, properties in pairs(config.get_config(colors)) do
+    for group, properties in pairs(
+        config.get_config(P[opts.theme]())
+    ) do
         hl(0, group, properties)
     end
 end

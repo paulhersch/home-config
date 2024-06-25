@@ -53,6 +53,7 @@ return {
         branch = '0.1.x',
         dependencies = {
             'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope-fzy-native.nvim'
         },
         cmd = { "Telescope" },
         config = function()
@@ -85,9 +86,9 @@ return {
                     color_devicons = true,
                     set_env = { ["COLORTERM"] = "truecolor" },
                 },
-                extensions_list = { "themes", "terms" },
             }
             t.load_extension("notify")
+            t.load_extension("fzy_native")
         end,
         keys = {
             { "gf", function() require("telescope.builtin").live_grep() end },

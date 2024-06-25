@@ -11,8 +11,37 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup("spec", {
+require("lazy").setup({
+    {
+        -- update self
+        "folke/lazy.nvim",
+        version = "11.x",
+        lazy = false
+    },
+    { import = "spec" }
+}, {
+    dev = {
+        enabled = true,
+        path = vim.fn.stdpath("config") .. "/pkgs"
+    },
+    pkg = {
+        enabled = true,
+        versions = true,
+        sources = {
+            "lazy",
+            "rockspec"
+        },
+    },
     change_detection = {
         enabled = false,
+    },
+    install = {
+        colorscheme = { "light", "habamax" }
+    },
+    performance = {
+        reset_packpath = true,
+        rtp = {
+            disabled_plugins = { "tutor", "netrwPlugin" }
+        }
     }
 })

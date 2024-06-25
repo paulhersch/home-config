@@ -32,6 +32,10 @@ return {
         }
     },
     {
+        'romgrk/fzy-lua-native',
+        build = ":!make all"
+    },
+    {
         'Shatur/neovim-session-manager',
         dependencies = {
             'nvim-lua/plenary.nvim'
