@@ -124,7 +124,8 @@ return {
             require("Comment").setup({
                 mappings = { basic = true, extra = false },
                 opleader = {
-                    line = "c"
+                    line = "c",
+                    block = "cb"
                 },
             })
         end,

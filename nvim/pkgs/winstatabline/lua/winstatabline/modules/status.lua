@@ -53,8 +53,8 @@ P.signs = {
 }
 
 M.git_branch = function()
-    local branch = fn.system("git branch --show-current 2> /dev/null | tr -d '\n'")
-    if branch == "" then return "" end
+    local success, branch = pcall(a.nvim_buf_get_var, 0, "gitsigns_head")
+    if not success then return "" end
     return string.format("%%#StatusLineGitBranch#  %s ", branch)
 end
 
@@ -95,22 +95,28 @@ M.mode = function()
 end
 
 M.fileinfo = function()
-    local fname, used_replacement = util.get_t_of_buf(0)
-    if not used_replacement then
-        local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1
-        local perms = fn.getfperm(a.nvim_buf_get_name(0))
+    local success, fname, used_replacement = pcall(util.get_t_of_buf, 0)
 
-        return table.concat {
-            " %#StatusLine#",
-            fname,
-            string.format(
-                '  %%#StatusLineFileStat#%s:%s',
-                edited and '+' or '-',
-                string.sub(perms, 1, 3)
-            )
-        }
+    -- the filename could be nil in some random cases (opening telescope immediately
+    -- after opening neovim), so we need to make sure its NOT nil, as we cant do the
+    -- stuff later as well
+    if not success or not fname then return "" end
+
+    if used_replacement then
+        return " %#StatusLine#" .. fname
     end
-    return " %#StatusLine#" .. fname
+
+    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1
+
+    return table.concat {
+        " %#StatusLine#",
+        fname,
+        string.format(
+            '  %%#StatusLineFileStat#%s:%s',
+            edited and '+' or '-',
+            string.sub(fn.getfperm(a.nvim_buf_get_name(0)), 1, 6)
+        )
+    }
 end
 
 return M

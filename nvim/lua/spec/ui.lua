@@ -4,6 +4,17 @@ return {
         event = "VeryLazy"
     },
     {
+        'sindrets/diffview.nvim',
+        lazy = false,
+        opts = {
+            view = {
+                merge_tool = {
+                    layout = "diff3_mixed"
+                }
+            }
+        }
+    },
+    {
         'rcarriga/nvim-notify',
         dependencies = {
             'nvim-lua/plenary.nvim',
@@ -98,8 +109,10 @@ return {
             gs.setup()
         end,
         keys = {
-            { "gb", function() require('gitsigns').toggle_current_line_blame() end },
-            { "gh", function() require('gitsigns').preview_hunk() end }
+            { "gb", function() require("gitsigns").toggle_current_line_blame() end },
+            { "gh", function() require("gitsigns").preview_hunk() end },
+            { "ga", function() require("gitsigns").stage_hunk() end },
+            { "gu", function() require("gitsigns").undo_stage_hunk() end }
         }
     },
     {

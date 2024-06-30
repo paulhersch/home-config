@@ -35,9 +35,10 @@ M.get_config = function(colors)
         Visual = { bg = colors.color8, fg = colors.foreground },
         VisualNOS = { bg = colors.background },
         WarningMsg = { fg = colors.color3, bg = colors.background },
-        DiffAdd = { bg = colors.background, fg = colors.color4 },
-        DiffChange = { bg = colors.background, fg = colors.color5 },
-        DiffDelete = { bg = colors.background, fg = colors.color1 },
+        DiffAdd = { bg = colors.background, fg = colors.color10 },
+        DiffChange = { bg = colors.background, fg = colors.color12 },
+        DiffDelete = { bg = colors.background, fg = colors.color9 },
+        DiffText = { bg = colors.background_dark, fg = colors.color12 },
         QuickFixLine = { bg = colors.background },
         PmenuSbar = { bg = colors.contrast },
         PmenuThumb = { bg = colors.color2 },
@@ -277,17 +278,20 @@ M.get_config = function(colors)
         NeogitDiffAddHighlight = { fg = colors.color4, bg = colors.background },
 
         -- GitGutter
-        -- GitGutterAdd = { fg = colors.color10 }, -- diff mode: Added line |diff.txt|
-        -- GitGutterChange = { fg = colors.color13 }, -- diff mode: Changed line |diff.txt|
-        -- GitGutterDelete = { fg = colors.color9 }, -- diff mode: Deleted line |diff.txt|
-        GitGutterAdd = { fg = colors.color17 },    -- diff mode: Added line |diff.txt|
-        GitGutterChange = { fg = colors.color20 }, -- diff mode: Changed line |diff.txt|
-        GitGutterDelete = { fg = colors.color16 }, -- diff mode: Deleted line |diff.txt|
+        GitGutterAdd = { bg = colors.background, fg = colors.color18 },
+        GitGutterChange = { bg = colors.background, fg = colors.color20 },
+        GitGutterDelete = { bg = colors.background, fg = colors.color17 },
 
         -- GitSigns
-        GitSignsAdd = { link = "GitGutterAdd" },       -- diff mode: Added line |diff.txt|
-        GitSignsChange = { link = "GitGutterChange" }, -- diff mode: Changed line |diff.txt|
-        GitSignsDelete = { link = "GitGutterDelete" }, -- diff mode: Deleted line |diff.txt|
+        GitSignsAdd = { link = "GitGutterAdd" },
+        GitSignsChange = { link = "GitGutterChange" },
+        GitSignsDelete = { link = "GitGutterDelete" },
+        GitSignsStagedAdd = { bg = colors.background, fg = colors.color21 },
+        GitSignsStagedChange = { link = "GitSignsStagedAdd" },
+        GitSignsStagedDelete = { link = "GitSignsStagedAdd" },
+        GitSignsAddInline = { bg = colors.background_dark, fg = colors.color10 },
+        GitSignsDeleteInline = { bg = colors.background_dark, fg = colors.color9 },
+        GitSignsChangeInline = { bg = colors.background_dark, fg = colors.color12 },
 
         -- Telescope
         TelescopeNormal = { bg = colors.inactive_tabs },

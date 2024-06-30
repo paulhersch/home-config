@@ -111,8 +111,8 @@ P.line = function(line_name, components, clear)
                         uv_timer = vim.uv.new_timer()
                     }
                 end
-                -- timer has to be restarted each time, because callback data changed and
-                -- this is uvloop we are talking about
+                -- timer has to be restarted each time, because callback data changed
+                -- and the callback isn't passed as reference but as object
                 this._timers[timer].uv_timer:start(0, comp.timeout, function()
                     for _, func in ipairs(this._timers[timer].callbacks) do
                         func()
@@ -172,7 +172,13 @@ P.setup_statusline = function(clear)
             },
             {
                 statusmod.fileinfo,
-                events = { "BufEnter", "BufWinEnter", "TextChanged", "BufWritePre" },
+                events = {
+                    "BufEnter",
+                    "BufWinEnter",
+                    "TextChangedI",
+                    "TextChanged",
+                    "BufWritePost"
+                },
                 use_initial = false
             },
             "%=",
@@ -192,43 +198,6 @@ P.setup_statusline = function(clear)
         },
         clear
     )
-
-    -- P.branch_listen_setup = function()
-    --     if P.branch_change_listener then
-    --         P.branch_change_listener:fs_event_stop()
-    --     else
-    --         P.branch_change_listener = vim.uv.new_fs_event()
-    --     end
-    --     vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true }, function(ret_obj)
-    --         -- if not git dir then dont do anything
-    --         if ret_obj.code ~= 0 then
-    --             local git_cwd = ret_obj.stdout
-    --             vim.notify("detected git dir " .. git_cwd, 1, {})
-    --             -- start listening on HEAD, if anything changed reexec the git command
-    --             P.branch_change_listener:fs_event_start(git_cwd .. '/.git/HEAD', { watch_entry = true },
-    --                 function(err, _, _)
-    --                     vim.notify("HEAD changed", 1, {})
-    --                     if err then
-    --                         vim.notify(err, 1, {})
-    --                     else
-    --                         P.statusline.branch = statusmod.git_branch()
-    --                     end
-    --                 end)
-    --         end
-    --     end)
-    -- end
-    --
-    -- a.nvim_create_autocmd({ "BufEnter" }, {
-    --     group = augroup_id,
-    --     callback = function()
-    --         -- try setting branch, then do listener
-    --         P.statusline.branch = statusmod.git_branch()
-    --         -- vim.notify(P.statusline.branch)
-    --         -- if P.statusline.branch ~= "" then P.branch_listen_setup() end
-    --     end
-    -- })
-    -- -- P.statusline.branch = statusmod.git_branch()
-    -- -- if P.statusline.branch ~= "" then P.branch_listen_setup() end
 end
 
 M.setup = function()
