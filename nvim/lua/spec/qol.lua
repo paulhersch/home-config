@@ -120,14 +120,12 @@ return {
     {
         'numToStr/Comment.nvim',
         event = "VeryLazy",
-        config = function()
-            require("Comment").setup({
-                mappings = { basic = true, extra = false },
-                opleader = {
-                    line = "c",
-                    block = "cb"
-                },
-            })
-        end,
+        opts = {
+            mappings = { basic = true, extra = false },
+            opleader = {
+                line = "<leader>c",
+                block = "<leader>cb"
+            },
+        }
     },
 }

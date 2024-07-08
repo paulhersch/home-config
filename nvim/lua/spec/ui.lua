@@ -252,6 +252,19 @@ return {
         }
     },
     {
+        "MeanderingProgrammer/markdown.nvim",
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter',
+            'nvim-tree/nvim-web-devicons'
+        },
+        event = "VeryLazy",
+        opts = {
+            start_enabled = true,
+            latex_enabled = true,
+            max_file_size = 1
+        }
+    },
+    {
         "nvim-neo-tree/neo-tree.nvim",
         lazy = true,
         branch = "v3.x",
