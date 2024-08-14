@@ -406,16 +406,40 @@ return {
         config = function()
             require("nvim-treesitter.configs").setup {
                 sync_install = false,
-                ensure_installed = "all",
+                auto_install = false,
+                ensure_installed = {
+                    "c",
+                    "lua",
+                    "c_sharp",
+                    "bash",
+                    "python",
+                    "javascript",
+                    "html",
+                    "css",
+                    "go",
+                    "rust",
+                    "latex",
+                    "bibtex"
+                },
+                ignore_install = {},
                 indent = {
-                    enable = true
+                    enable = true,
+                    disable = {
+                        "tex", -- latex treesitter highlighting is fucked up
+                    },
                 },
                 highlight = {
                     enable = true,
+                    disable = {
+                        "tex", -- latex treesitter highlighting is fucked up
+                    },
                     additional_vim_regex_highlighting = false,
                 },
                 incremental_selection = {
-                    enable = true
+                    enable = true,
+                    disable = {
+                        "tex", -- latex treesitter highlighting is fucked up
+                    },
                 }
             }
 
