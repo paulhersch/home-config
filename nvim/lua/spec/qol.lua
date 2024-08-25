@@ -43,8 +43,8 @@ return {
             }
         end,
         keys = {
-            { "tt",    "<cmd>ToggleTerm<CR>" },
-            { "<C-T>", "<cmd>ToggleTerm<CR>", mode = "t" }
+            { "tt",    "<cmd>ToggleTerm<CR>", silent = true },
+            { "<C-T>", "<cmd>ToggleTerm<CR>", mode = "t",   silent = true }
         }
     },
     {
@@ -98,25 +98,32 @@ return {
         }
     },
     {
-        'frabjous/knap',
-        lazy = true,
-        keys = {
-            { "sp", function() require("knap").toggle_autopreviewing() end }
-        },
-        config = function()
-            local settings = {
-                delay = 2000,
-                texoutputext = "pdf",
-                textopdfbufferasstdin = true,
-                textopdf = "lualatex --synctex=1 --halt-on-error --jobname \"$(basename -s .pdf %outputfile%)\"",
-                textopdfviewerlaunch =
-                "zathura --synctex-editor-command 'nvim --headless -es --cmd \"lua require('\"'\"'knaphelper'\"'\"').relayjump('\"'\"'%servername%'\"'\"','\"'\"'%{input}'\"'\"',%{line},0)\"' %outputfile%",
-                textopdfviewerrefresh = "none",
-                textopdfforwardjump = "zathura --synctex-forward=%line%:%column%:%srcfile% %outputfile%"
-            }
-            vim.g.knap_settings = settings
+        'lervag/vimtex',
+        lazy = false,
+        init = function()
+            vim.g.vimtex_view_method = "zathura"
         end
     },
+    -- {
+    --     'frabjous/knap',
+    --     lazy = true,
+    --     keys = {
+    --         { "sp", function() require("knap").toggle_autopreviewing() end }
+    --     },
+    --     config = function()
+    --         local settings = {
+    --             delay = 2000,
+    --             texoutputext = "pdf",
+    --             textopdfbufferasstdin = true,
+    --             textopdf = "lualatex --synctex=1 --halt-on-error --jobname \"$(basename -s .pdf %outputfile%)\"",
+    --             textopdfviewerlaunch =
+    --             "zathura --synctex-editor-command 'nvim --headless -es --cmd \"lua require('\"'\"'knaphelper'\"'\"').relayjump('\"'\"'%servername%'\"'\"','\"'\"'%{input}'\"'\"',%{line},0)\"' %outputfile%",
+    --             textopdfviewerrefresh = "none",
+    --             textopdfforwardjump = "zathura --synctex-forward=%line%:%column%:%srcfile% %outputfile%"
+    --         }
+    --         vim.g.knap_settings = settings
+    --     end
+    -- },
     {
         'numToStr/Comment.nvim',
         event = "VeryLazy",

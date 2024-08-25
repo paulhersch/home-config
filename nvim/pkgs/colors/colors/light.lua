@@ -1,3 +1,1 @@
-require("colors").setup {
-    theme = "light"
-}
+require("colors").set_theme("light")

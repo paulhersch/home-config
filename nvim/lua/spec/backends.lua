@@ -63,8 +63,8 @@ return {
             })
         end,
         keys = {
-            { "fs", "<cmd>SessionManager load_session<cr>" },
-            { "ds", "<cmd>SessionManager delete_session<cr>" }
+            { "fs", "<cmd>silent! SessionManager load_session<cr>" },
+            { "ds", "<cmd>silent! SessionManager delete_session<cr>" }
         }
     },
     {

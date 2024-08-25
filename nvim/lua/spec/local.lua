@@ -1,12 +1,23 @@
 return {
+    -- lazy fucks up the install of hsluv-lua so i have to resort to
+    -- using the luarocks plugin thing
+    -- {
+    --     "hsluv/hsluv-lua",
+    --     name = "hsluv",
+    --     lazy = false
+    -- },
     {
         "colors",
         dev = true,
         priority = 1000,
         name = "colors",
         lazy = false,
-        opts = {
-            theme = "light"
+        config = function()
+            vim.opt.termguicolors = true
+            require "colors".set_theme("light")
+        end,
+        keys = {
+            { "<space>C", function() require "colors".pick_theme() end }
         }
     },
     {
@@ -28,7 +39,7 @@ return {
             })
         end,
         keys = {
-            { "bb", function() require('bffrmgr').open() end, noremap = true }
+            { "bb", function() require('bffrmgr').open() end, noremap = true, silent = true }
         }
     },
     -- {

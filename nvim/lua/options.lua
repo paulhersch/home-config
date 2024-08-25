@@ -32,8 +32,23 @@ if g.neovide then
     g.neovide_confirm_quit = true
 end
 
+local diagnostic_signs = { '', '', '', '' }
 vim.diagnostic.config {
     signs = {
         text = { '', '', '', '' }
+    },
+    virtual_text = false,
+    underline = false,
+    float = {
+        header = "",
+        border = "solid",
+        scope = "cursor",
+        format = function(diagnostic)
+            return string.format("%s  %s", diagnostic_signs[diagnostic.severity], diagnostic.message)
+        end,
+        prefix = "",
+        suffix = function(diagnostic, _, _)
+            return string.format("\t(%s)", diagnostic.code), "DiagnosticCode"
+        end
     }
 }

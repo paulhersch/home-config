@@ -135,7 +135,7 @@ return {
                         bind["mode"] or "n",
                         bind[1],
                         bind[2],
-                        { buffer = buf }
+                        { buffer = buf, silent = true }
                     )
                 end
 
@@ -162,7 +162,7 @@ return {
                     ccls = {},
                     tsserver = {},
                     bashls = {},
-                    texlab = {},
+                    -- texlab = {},
                     gopls = {},
                     pylsp = {
                         settings = {
@@ -251,7 +251,7 @@ return {
                         bind["mode"] or "n",
                         bind[1],
                         bind[2],
-                        { buffer = 0 }
+                        { buffer = 0, silent = true }
                     )
                 end
             end, { desc = "Activate Otter for this buffer" })
@@ -270,7 +270,7 @@ return {
         'aznhe21/actions-preview.nvim',
         dependencies = "neovim/nvim-lspconfig",
         keys = {
-            { "<leader>ca", function() require("actions-preview").code_actions() end, mode = { "n", "v" } }
+            { "<leader>ca", function() require("actions-preview").code_actions() end, mode = { "n", "v" }, silent = true }
         }
     },
     {
@@ -286,38 +286,6 @@ return {
             vs_loader.lazy_load({ paths = { './snips' } })
         end,
     },
-    -- {
-    --     "nvimdev/epo.nvim",
-    --     dependencies = {
-    --         "L3MON4D3/LuaSnip"
-    --     },
-    --     event = "LspAttach",
-    --     opts = {
-    --         fuzzy = true,
-    --         debounce = 100,
-    --         signature = true,
-    --         signature_border = "none",
-    --         kind_format = function(k)
-    --             return cmp_kinds[k]
-    --         end
-    --     },
-    --     keys = {
-    --         {
-    --             "<Tab>",
-    --             function()
-    --                 if vim.fn.pumvisible() == 1 then
-    --                     return '<C-n>'
-    --                 elseif vim.snippet.active() then
-    --                     return '<cmd>lua vim.snippet.jump(1)<cr>'
-    --                 else
-    --                     return '<Tab>'
-    --                 end
-    --             end,
-    --             mode = { 'i' },
-    --             expr = true
-    --         }
-    --     }
-    -- },
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
@@ -325,36 +293,35 @@ return {
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-cmdline',
+            --'hrsh7th/cmp-buffer',
             'hrsh7th/cmp-nvim-lsp-signature-help',
+            'kdheepak/cmp-latex-symbols',
+            'micangl/cmp-vimtex',
             -- snippets
             'L3MON4D3/LuaSnip',
             'saadparwaiz1/cmp_luasnip',
             -- for bracket completion
             'windwp/nvim-autopairs'
         },
-        event = "LspAttach",
+        event = "VeryLazy",
         config = function()
             local cmp = require("cmp")
             local luasnip = require("luasnip")
             local cmp_autopair = require("nvim-autopairs.completion.cmp")
 
-            cmp.setup.cmdline("/", {
-                mapping = cmp.mapping.preset.cmdline(),
-                sources = {
-                    { name = 'buffer' }
-                }
-            })
-
             cmp.setup.cmdline(':', {
                 mapping = cmp.mapping.preset.cmdline(),
-                sources = cmp.config.sources({ { name = 'path' } }, {
+                sources = {
+                    {
+                        name = 'path'
+                    },
                     {
                         name = 'cmdline',
                         option = {
                             ignore_cmds = { 'Man' }
                         }
                     }
-                })
+                }
             })
 
             cmp.setup({
@@ -371,9 +338,13 @@ return {
                 },
                 formatting = {
                     fields = { "kind", "abbr", "menu" },
-                    format = function(_, vim_item)
+                    format = function(entry, vim_item)
                         if vim_item.kind ~= nil then
-                            vim_item.menu = "    (" .. vim_item.kind .. ")"
+                            if entry.source.name ~= "vimtex" then
+                                -- in case vimtex is not the source, use the pretty version
+                                -- with kind type as str
+                                vim_item.menu = "    (" .. vim_item.kind .. ")"
+                            end
                             vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
                         else
                             -- backup in case kind just doesnt exist
@@ -410,6 +381,13 @@ return {
                     { name = 'path' },
                     { name = 'luasnip' },
                     { name = 'nvim_lsp_signature_help' },
+                    {
+                        name = "latex_symbols",
+                        option = {
+                            strategy = 2,
+                        },
+                    },
+                    { name = 'vimtex', },
                 },
             })
             cmp.event:on(
@@ -425,11 +403,23 @@ return {
             'nvim-treesitter/nvim-treesitter'
         },
         config = function()
-            require('aerial').setup()
+            require('aerial').setup {
+                nav = {
+                    border = "single",
+                    win_opts = { winblend = 0 },
+                    keymaps = {
+                        ["<Left>"] = "actions.left",
+                        ["<Right>"] = "actions.right",
+                        ["q"] = "actions.close",
+                        ["<esc>"] = "actions.close"
+                    }
+                }
+            }
             require("telescope").load_extension("aerial")
         end,
         keys = {
-            { "<Space>a", function() require("telescope").extensions.aerial.aerial() end }
+            { "<Space>a", function() require("telescope").extensions.aerial.aerial() end, silent = true },
+            { "<C-a>",    function() require("aerial").nav_toggle() end,                  silent = true }
         }
     },
 }

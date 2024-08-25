@@ -1,130 +1,176 @@
-local M, P = {}, {}
-local config = require('colors.config')
-local hl = vim.api.nvim_set_hl
+-- Collection of colorschemes i use(d) or experiment with
+-- every scheme needs colors 0-23:
+-- white, red, green, yellow, blue, purple, cyan, black
+-- 0-7: fg colors
+-- 8-15: bright fg colors
+-- 16-23: pastel/bg colors (only used for backgrounds)
+-- if the theme is dark/needs to use the bg to be visible for 16-23, add the
+-- name to the list P.dark
+--
+-- also needed: 4 backgrounds (kind of legacy naming, lol)
+-- background (bg0)
+-- background_dark (bg1)
+-- inactive_tabs (bg2)
+-- contrast (bg3)
+--
+-- foreground (fg0)
+--
+-- and the special use case colors:
+-- cursor (cursor color)
+-- cursorline (fg but lighter, for line numbers)
+-- comment (exclusively for comment strings and maybe statusline components)
 
-function P.azul()
-    local colors         = {}
-    colors.comment       = "#6C6F85"
-    colors.background    = "#2b2f2f"
-    colors.inactive_tabs = "#3b3f3f"
-    colors.contrast      = "#444747"
-    colors.foreground    = "#D8DAD3"
-    colors.cursorline    = "#515757"
-    colors.cursor        = colors.foreground
+local M = {}
 
-    colors.color0        = "#222828"
-    colors.color1        = "#cf7767"
-    colors.color2        = "#7caf6e"
-    colors.color3        = "#cac76b"
-    colors.color4        = "#67a0d8"
-    colors.color5        = "#b47fc5"
-    colors.color6        = "#6cbaba"
-    colors.color7        = "#939998"
+--- @return table
+function M.list_themes()
+    local themes = {}
+    for name, _ in pairs(require("colors.themes")) do
+        table.insert(themes, name)
+    end
+    return themes
+end
 
-    colors.color8        = "#3b4244"
-    colors.color9        = "#cf7d7d"
-    colors.color10       = "#7bc578"
-    colors.color11       = "#c8c67a"
-    colors.color12       = "#71bae2"
-    colors.color13       = "#ce99cf"
-    colors.color14       = "#77bbc2"
-    colors.color15       = "#9da3a2"
-
-    -- map extra colors used in light theme
-    colors.color16       = colors.color8
-    colors.color17       = colors.color9
-    colors.color18       = colors.color10
-    colors.color19       = colors.color11
-    colors.color20       = colors.color12
-    colors.color21       = colors.color13
-    colors.color22       = colors.color14
-    colors.color23       = colors.color15
-
+--- @return table
+function M.get_colors(theme)
+    -- if dark theme bg use bg for fg with colors as bg,
+    -- otherwise fg
+    local colors = require("colors.themes")[theme]()
+    for _, t in ipairs({ "azul", "radium" }) do
+        if theme == t then
+            colors.fg_for_color_bg = colors.background
+            return colors
+        end
+    end
+    colors.fg_for_color_bg = colors.foreground
     return colors
 end
 
-function P.light()
-    local colors           = {}
-    colors.background      = "#E8EAE5"
-    colors.background_dark = "#DCE0DC"
-    colors.inactive_tabs   = "#D6D9D6"
-    colors.contrast        = "#CCD0CC"
-    colors.foreground      = "#2B2F2F"
-    colors.cursorline      = "#515757"
-    colors.comment         = "#6C6F85"
-    colors.cursor          = colors.foreground
+----
+-- Here i tried being smart and to cache stuff on the disk. As it turns out,
+-- creating the table in a function in another file is actually faster than just
+-- reading another file (Lazy measures 0.9-1.3ms on light theme without caching
+-- and 2-3.5ms with caching for every theme, using unsafe loading)
+----
+-- local defcache = {}
+-- local cache_dir = vim.fn.stdpath("data") .. "/colors-cache/"
+--
+-- ---@return string
+-- local function serialize_lua_obj(obj)
+--     local return_string = ""
+--     local obj_type = type(obj)
+--     if obj_type == "table" then
+--         return_string = return_string .. "{"
+--         for index, item in pairs(obj) do
+--             return_string = return_string .. "[\"" .. index .. "\"]=" .. serialize_lua_obj(item) .. ","
+--         end
+--         return return_string .. "}"
+--     elseif obj_type == "string" then
+--         return "\"" .. obj .. "\""
+--     elseif obj_type == "number" then
+--         return tostring(obj)
+--     elseif obj_type == "boolean" then
+--         return obj and "true" or "false"
+--     elseif obj_type == "nil" then
+--         return ""
+--     else
+--         error("can only serialize tables, strings, numbers and booleans")
+--     end
+-- end
+--
+-- -- TODO: use load_colors
 
-    -- dark
-    colors.color0          = "#6b6767"
-    colors.color1          = "#3f1a1a"
-    colors.color2          = "#2c3f1e"
-    colors.color3          = "#3a371b"
-    colors.color4          = "#072548"
-    colors.color5          = "#241f45"
-    colors.color6          = "#0c3a3a"
-    colors.color7          = "#333938"
-    -- medium
-    colors.color8          = colors.inactive_tabs
-    colors.color9          = "#6f4d4d"
-    colors.color10         = "#4b7548"
-    colors.color11         = "#88862a"
-    colors.color12         = "#316a92"
-    colors.color13         = "#9e599f"
-    colors.color14         = "#377b82"
-    colors.color15         = "#414444"
-    -- bright pastel
-    colors.color16         = colors.background_dark
-    colors.color17         = "#ECB5B5"
-    colors.color18         = "#A2D5B5"
-    colors.color19         = "#D5D5AB"
-    colors.color20         = "#ABDBE5"
-    colors.color21         = "#CBB4CB"
-    colors.color22         = "#A8D8D0"
-    colors.color23         = "#9292A2"
-    return colors
-end
+--
+-- M.load_cached_unsafe = function(theme)
+--     defcache = require("colors-cache")
+--     for group, properties in pairs(
+--         defcache[theme]
+--     ) do
+--         hl(0, group, properties)
+--     end
+-- end
+--
+-- M.load_cached_safe = function(theme)
+--     local s = pcall(M.load_cached_unsafe, theme)
+--     if not s then
+--         M.build_cache()
+--         M.load_cached_unsafe(theme)
+--     end
+-- end
 
-P.mud = function()
-    local colors           = P.light()
-    colors.background      = "#D8DAC3"
-    colors.background_dark = "#CCD0BA"
-    colors.inactive_tabs   = "#C6C9B4"
-    colors.contrast        = "#BCC0AA"
-    colors.foreground      = "#2b2f2f"
-    colors.cursorline      = "#515757"
-    colors.comment         = "#6C6F85"
+function M.set_theme(theme)
+    local success, f = pcall(require, "colors.cache." .. theme)
+    if success then
+        f()
+        return
+    end
 
-    colors.cursor          = colors.foreground
-    colors.color8          = colors.inactive_tabs
-    colors.color16         = colors.background_dark
-    return colors
+    local found = false
+    for _, t in pairs(M.list_themes()) do
+        if t == theme then
+            found = true
+            break
+        end
+    end
+
+    if not found then
+        vim.notify(string.format("theme %s does not exist", theme))
+    else
+        vim.notify(
+            string.format(
+                "theme %s not cached, you can always rebuild the theme cache with"
+                .. "\n```lua\n"
+                .. "require('colors.compiler').build_cache()\n"
+                .. "```\n"
+                .. "will rebuild the cache now, as the theme exists",
+                theme
+            )
+        )
+        require("colors.compiler").build_cache()
+        require("colors.cache." .. theme)()
+    end
+    -- local hl = vim.api.nvim_set_hl
+    -- for group, properties in pairs(
+    --     require "colors.config".config(
+    --         M.get_colors(theme)
+    --     )
+    -- ) do
+    --     hl(0, group, properties)
+    -- end
 end
 
 ---@class Color.setupOpts
----@field theme "light"|"mud"|"azul" the theme
+---@field theme "light"|"mud"|"azul"|"radium" the theme
 ---@param opts Color.setupOpts
 -- defaults:
 -- {
 --      theme = "light"
 -- }
-function M.setup(opts)
-    vim.opt.termguicolors = true
+-- you need to set the background option to either dark or light
+-- before using this function or else neovim will load its default theme
+-- after this one
 
-    local defaults = {
-        theme = "light"
-    }
+-- function M.setup(opts)
+--
+--     local defaults = {
+--         theme = "light"
+--     }
+--
+--     opts = vim.tbl_extend("keep", opts, defaults)
+--     M.set_theme(opts.theme)
+-- end
 
-    vim.tbl_extend("force", defaults, opts)
-
-    if not P[opts.theme] then
-        error(string.format("theme %s does not exist", opts.theme))
+local function on_choice(item)
+    if item then
+        M.set_theme(item)
     end
+end
 
-    for group, properties in pairs(
-        config.get_config(P[opts.theme]())
-    ) do
-        hl(0, group, properties)
-    end
+-- Pick one of the themes in here using vim.ui.select
+M.pick_theme = function()
+    local theme_names = M.list_themes()
+    table.sort(theme_names)
+    vim.ui.select(theme_names, { prompt = "Select Colorscheme" }, on_choice)
 end
 
 return M

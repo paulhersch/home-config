@@ -23,6 +23,7 @@ map("i", "<C-H>", "<C-W>", {})
 
 map("n", "<Space>n", function()
     vim.wo[0].number = not vim.wo[0].number
+    vim.wo[0].relativenumber = vim.wo[0].number
 end)
 
 map("n", "t<Right>", "<cmd>:tabnext<cr>")

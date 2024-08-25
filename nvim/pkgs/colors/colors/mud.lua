@@ -1,3 +1,1 @@
-require("colors").setup {
-    theme = "mud"
-}
+require("colors").set_theme("mud")

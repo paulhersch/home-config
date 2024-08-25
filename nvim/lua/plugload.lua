@@ -16,7 +16,14 @@ require("lazy").setup({
         -- update self
         "folke/lazy.nvim",
         version = "11.x",
+        priority = 1000,
         lazy = false
+    },
+    {
+        "camspiers/luarocks",
+        priority = 1000,
+        opts = { rocks = { "hsluv" } },
+        lazy = false,
     },
     { import = "spec" }
 }, {
@@ -35,13 +42,16 @@ require("lazy").setup({
     change_detection = {
         enabled = false,
     },
+    rocks = {
+        server = "https://luarocks.org"
+    },
     install = {
-        colorscheme = { "light", "habamax" }
+        colorscheme = { "light" }
     },
     performance = {
         reset_packpath = true,
         rtp = {
             disabled_plugins = { "tutor", "netrwPlugin" }
         }
-    }
+    },
 })

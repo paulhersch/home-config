@@ -95,12 +95,12 @@ M.mode = function()
 end
 
 M.fileinfo = function()
-    local success, fname, used_replacement = pcall(util.get_t_of_buf, 0)
+    fname, used_replacement = util.get_t_of_buf(0)
 
     -- the filename could be nil in some random cases (opening telescope immediately
     -- after opening neovim), so we need to make sure its NOT nil, as we cant do the
     -- stuff later as well
-    if not success or not fname then return "" end
+    if not fname then return "" end
 
     if used_replacement then
         return " %#StatusLine#" .. fname

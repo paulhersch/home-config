@@ -10,8 +10,10 @@ P.buftype_name_replacements = {
 P.filetype_name_replacements = {
     ['neo-tree'] = "neotree",
     aerial = "aerial",
+    ['aerial-nav'] = "aerial",
     dashboard = "dashboard",
     TelescopePrompt = "telescope",
+    alpha = "dashboard",
 }
 
 -- get the last part of a filename (like a.lua)
