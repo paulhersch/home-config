@@ -185,6 +185,7 @@ return {
 
             local function last_sessions()
                 local utils = require("session_manager.utils")
+                local session_manager = require("session_manager")
                 local sessions = utils.get_sessions()
                 local temp_max_sessions = #sessions <= max_sessions and #sessions or max_sessions
 
@@ -210,7 +211,12 @@ return {
                         val = session.dir:__tostring(),
                         on_press = start_this_session,
                         opts = {
-                            keymap = { "n", session_shortcuts:sub(i, i), start_this_session },
+                            keymap = {
+                                "n",
+                                session_shortcuts:sub(i, i),
+                                start_this_session,
+                                { nowait = true, silent = true }
+                            },
                             shortcut = string.format("[%s]  ", session_shortcuts:sub(i, i)),
                             align_shortcut = "left",
                             position = "center",
@@ -225,6 +231,27 @@ return {
                         }
                     })
                 end
+                table.insert(lines_specs, {
+                    type = "button",
+                    val = "...",
+                    on_press = session_manager.load_session,
+                    opts = {
+                        keymap = {
+                            "n",
+                            session_shortcuts:sub(max_sessions + 1, max_sessions + 1),
+                            session_manager.load_session,
+                            { nowait = true, silent = true }
+                        },
+                        shortcut = string.format("[%s]  ", session_shortcuts:sub(max_sessions + 1, max_sessions + 1)),
+                        align_shortcut = "left",
+                        position = "center",
+                        hl = "DashboardFooter",
+                        hl_shortcut = "DashboardKey",
+                        cursor = 1,
+                        width = max_line_len + 5,
+                        shrink_margin = true
+                    }
+                })
                 table.insert(lines_specs, 1, {
                     type = "text",
                     -- +4 compared to upper text for indent
