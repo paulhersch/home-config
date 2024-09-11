@@ -51,6 +51,7 @@ local function config(colors)
         WarningMsg = { fg = colors.color3 },
         ErrorMsg = { fg = colors.color1 },
         Search = { fg = colors.fg_for_color_bg, bg = colors.color18 },
+        CurSearch = { fg = colors.fg_for_color_bg, bg = colors.color20 },
         IncSearch = { fg = colors.fg_for_color_bg, bg = colors.color18 },
         Substitute = { fg = colors.color3, bg = colors.color6 },
         MoreMsg = { fg = colors.color5 },

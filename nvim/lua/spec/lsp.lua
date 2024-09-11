@@ -160,7 +160,7 @@ return {
                     rust_analyzer = {},
                     hls = {},
                     ccls = {},
-                    tsserver = {},
+                    ts_ls = {},
                     bashls = {},
                     -- texlab = {},
                     gopls = {},
@@ -286,6 +286,10 @@ return {
             vs_loader.lazy_load({ paths = { './snips' } })
         end,
     },
+    -- {
+    --     'ludovicchabant/vim-gutentags',
+    --     lazy = false
+    -- },
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
@@ -295,19 +299,18 @@ return {
             'hrsh7th/cmp-cmdline',
             --'hrsh7th/cmp-buffer',
             'hrsh7th/cmp-nvim-lsp-signature-help',
+            -- optional sources, used by ftplugins
             'kdheepak/cmp-latex-symbols',
             'micangl/cmp-vimtex',
+            'hrsh7th/cmp-emoji',
             -- snippets
             'L3MON4D3/LuaSnip',
             'saadparwaiz1/cmp_luasnip',
-            -- for bracket completion
-            'windwp/nvim-autopairs'
         },
         event = "VeryLazy",
         config = function()
             local cmp = require("cmp")
             local luasnip = require("luasnip")
-            local cmp_autopair = require("nvim-autopairs.completion.cmp")
 
             cmp.setup.cmdline(':', {
                 mapping = cmp.mapping.preset.cmdline(),
@@ -340,12 +343,21 @@ return {
                     fields = { "kind", "abbr", "menu" },
                     format = function(entry, vim_item)
                         if vim_item.kind ~= nil then
-                            if entry.source.name ~= "vimtex" then
-                                -- in case vimtex is not the source, use the pretty version
-                                -- with kind type as str
+                            if entry.source.name == "vimtex" then
+                                -- only show right side info stuff, as every entry is reported with
+                                -- kind Text anyways
+                                vim_item.kind = ""
+                                vim_item.menu = "    (" .. vim_item.kind .. ")"
+                            elseif entry.source.name == "emoji" then
+                                -- dont show anything (its just text)
+                                vim_item.kind = ""
+                                vim_item.menu = ""
+                            else
+                                -- fancy default
+                                -- glyph with highlights, entry name thing, kind name
+                                vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
                                 vim_item.menu = "    (" .. vim_item.kind .. ")"
                             end
-                            vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
                         else
                             -- backup in case kind just doesnt exist
                             vim_item.kind = " _ "
@@ -381,19 +393,8 @@ return {
                     { name = 'path' },
                     { name = 'luasnip' },
                     { name = 'nvim_lsp_signature_help' },
-                    {
-                        name = "latex_symbols",
-                        option = {
-                            strategy = 2,
-                        },
-                    },
-                    { name = 'vimtex', },
                 },
             })
-            cmp.event:on(
-                'confirm_done',
-                cmp_autopair.on_confirm_done()
-            )
         end
     },
     {

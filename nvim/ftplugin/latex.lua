@@ -1,0 +1,42 @@
+local function add_latex_sources(cmp)
+    local sources_cp = cmp.get_config().sources
+
+    table.insert(
+        sources_cp, {
+            name = "latex_symbols",
+            option = {
+                strategy = 2,
+            },
+        }
+    )
+
+    table.insert(sources_cp, { name = 'vimtex', })
+
+    cmp.setup.buffer({
+        sources = sources_cp
+    })
+end
+
+
+local success, cmp = pcall(require, "cmp")
+
+if success then
+    add_latex_sources(cmp)
+else
+    vim.notify(
+        "Couldnt load cmp setup for Latex files, if you are sure cmp is loaded use :LoadLatexCmpSources",
+        vim.log.levels.WARN
+    )
+    vim.api.nvim_create_user_command("LoadLatexCmpSources", function()
+        local success, cmp = pcall(require, "cmp")
+        if success then
+            add_latex_sources()
+            vim.api.nvim_del_user_command("LoadLatexCmpSources")
+        else
+            vim.notify(
+                "cmp.nvim is not loaded, make sure its loaded before running this command again!",
+                vim.log.levels.ERROR
+            )
+        end
+    end, { desc = "Reload cmp.nvim ftplugin setup for latex" })
+end
