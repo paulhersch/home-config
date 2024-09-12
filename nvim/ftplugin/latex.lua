@@ -27,11 +27,11 @@ else
         "Couldnt load cmp setup for Latex files, if you are sure cmp is loaded use :LoadLatexCmpSources",
         vim.log.levels.WARN
     )
-    vim.api.nvim_create_user_command("LoadLatexCmpSources", function()
+    vim.api.nvim_buf_create_user_command(0, "LoadLatexCmpSources", function()
         local success, cmp = pcall(require, "cmp")
         if success then
             add_latex_sources()
-            vim.api.nvim_del_user_command("LoadLatexCmpSources")
+            vim.api.nvim_buf_del_user_command(0, "LoadLatexCmpSources")
         else
             vim.notify(
                 "cmp.nvim is not loaded, make sure its loaded before running this command again!",

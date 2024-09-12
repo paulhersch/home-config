@@ -355,8 +355,8 @@ return {
                             else
                                 -- fancy default
                                 -- glyph with highlights, entry name thing, kind name
-                                vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
                                 vim_item.menu = "    (" .. vim_item.kind .. ")"
+                                vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
                             end
                         else
                             -- backup in case kind just doesnt exist
