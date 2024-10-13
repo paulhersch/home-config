@@ -1,4 +1,5 @@
 local extend = vim.tbl_extend
+local a = vim.api
 
 local cmp_kinds = {
     Text = " ",
@@ -89,6 +90,62 @@ local function dir_specific_lsps(cwd, lc, defaults)
     )
 end
 
+local lsp_buf_keybinds = {
+    { "ss",    vim.lsp.buf.signature_help },
+    -- highlight use and clear highlights after moving cursor
+    { "sr", function()
+        vim.lsp.buf.document_highlight()
+        vim.api.nvim_create_autocmd("CursorMoved", {
+            callback = vim.lsp.buf.clear_references,
+            once = true
+        })
+    end
+    },
+    { "D",     vim.lsp.buf.hover },
+    { "gr",    vim.lsp.buf.rename },
+    { "gq",    vim.lsp.buf.format },
+    { "gd",    function() require("telescope.builtin").lsp_definitions() end },
+    { "<C-R>", vim.lsp.buf.rename,                                           mode = "i" },
+    { "H",     vim.diagnostic.open_float },
+    { "<C-D>", vim.diagnostic.goto_next }
+}
+
+a.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        local buf = args.buf
+        local succ, res = pcall(a.nvim_buf_get_var, buf, "lsp_buf_keybinds_added")
+        if not succ or not res then
+            for _, bind in ipairs(lsp_buf_keybinds) do
+                vim.keymap.set(
+                    bind["mode"] or "n",
+                    bind[1],
+                    bind[2],
+                    { buffer = buf, silent = true }
+                )
+            end
+            a.nvim_buf_set_var(buf, "lsp_buf_keybinds_added", true)
+        end
+    end
+})
+
+a.nvim_create_autocmd("LspDetach", {
+    callback = function(args)
+        local buf = args.buf
+        -- delete keymaps for lsp if all but the client that is about to detach
+        -- is connected on the buf
+        if not (#vim.lsp.get_clients({ bufnr = buf }) >= 2) then
+            for _, bind in ipairs(lsp_buf_keybinds) do
+                vim.keymap.del(
+                    bind["mode"] or "n",
+                    bind[1],
+                    { buffer = buf, silent = true }
+                )
+            end
+            a.nvim_buf_set_var(buf, "lsp_buf_keybinds_added", false)
+        end
+    end
+})
+
 return {
     {
         "lukas-reineke/lsp-format.nvim",
@@ -111,34 +168,7 @@ return {
             end
 
             local function default_attach(client, buf)
-                for _, bind in ipairs({
-                    { "ss",    vim.lsp.buf.signature_help },
-                    -- highlight use and clear highlights after moving cursor
-                    { "sr", function()
-                        vim.lsp.buf.document_highlight()
-                        vim.api.nvim_create_autocmd("CursorMoved", {
-                            callback = vim.lsp.buf.clear_references,
-                            once = true
-                        })
-                    end
-                    },
-                    { "D",     vim.lsp.buf.hover },
-                    { "gr",    vim.lsp.buf.rename },
-                    { "gq",    vim.lsp.buf.format },
-                    { "gd",    function() require("telescope.builtin").lsp_definitions() end },
-                    { "<C-R>", vim.lsp.buf.rename,                                           mode = "i" },
-                    { "H",     vim.diagnostic.open_float },
-                    { "<C-D>", vim.diagnostic.goto_next }
-
-                }) do
-                    vim.keymap.set(
-                        bind["mode"] or "n",
-                        bind[1],
-                        bind[2],
-                        { buffer = buf, silent = true }
-                    )
-                end
-
+                -- dont attach keybinds for lsp stuff here, as we will add them when LspAttach fires
                 if inlay_hints_by_ft[vim.filetype.match({ buf = vim.api.nvim_get_current_buf() })] then
                     vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
                 else
@@ -230,40 +260,73 @@ return {
         end,
     },
     {
+        "Vigemus/iron.nvim",
+        dependencies = {
+            "jmbuhr/otter.nvim" -- using some internal fuckery to determine ft on injections
+        },
+        event = "VeryLazy",
+        config = function()
+            local iron = require "iron.core"
+            iron.setup {
+                config = {
+                    scratch_repl = true,
+                    repl_definition = {
+                        python = {
+                            command = { "python" },
+                            format = require("iron.fts.common").bracketed_paste_python
+                        }
+                    },
+                    repl_open_cmd = require('iron.view').split.vertical.botright(0.4)
+                },
+            }
+
+
+            -- https://github.com/neovim/neovim/pull/13896#issuecomment-1621702052
+            local function region_to_text(region)
+                local text = {}
+                local maxcol = vim.v.maxcol
+                for line, cols in vim.spairs(region) do
+                    local endcol = cols[2] == maxcol and -1 or cols[2]
+                    local chunk = vim.api.nvim_buf_get_text(0, line, cols[1], line, endcol, {})[1]
+                    text[#text + 1] = chunk
+                end
+                return text
+            end
+
+            local keeper = require "otter.keeper"
+            a.nvim_set_keymap("v", "<C-x><C-e>", "", {
+                desc =
+                "Send to Iron REPL and respect ft of injections at the cursor pos at time of eval (too lazy to check properly)",
+                callback = function()
+                    -- force exit to normal so marks are properly set (WHY IS NEOVIM LIKE THIS FUCK)
+                    vim.cmd([[execute "normal! \<ESC>"]])
+
+                    local lang = keeper.get_current_language_context()
+
+                    iron.send(
+                        lang,
+                        region_to_text(
+                            vim.region(0, "'<", "'>", vim.fn.visualmode(), true)
+                        )
+                    )
+                end
+            })
+        end
+    },
+    {
         "jmbuhr/otter.nvim",
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "neovim/nvim-lspconfig",
         },
-        cmd = "OtterActivate",
-        init = function()
-            vim.api.nvim_create_user_command("OtterActivate", function()
-                local otter = require("otter")
-                otter.activate()
-                for _, bind in ipairs({
-                    -- highlight use and clear highlights after moving cursor
-                    { "D",     otter.ask_hover },
-                    { "gr",    otter.ask_rename },
-                    { "gq",    otter.ask_format },
-                    { "<C-R>", otter.ask_rename, mode = "i" },
-                }) do
-                    vim.keymap.set(
-                        bind["mode"] or "n",
-                        bind[1],
-                        bind[2],
-                        { buffer = 0, silent = true }
-                    )
-                end
-            end, { desc = "Activate Otter for this buffer" })
-        end,
+        event = "VeryLazy",
         config = function()
-            require("otter").setup {}
-            require("cmp").setup(
-                table.insert(
-                    require("cmp").get_config().sources,
-                    { name = 'otter' }
-                )
-            )
+            local otter = require "otter"
+            otter.setup {}
+
+            vim.api.nvim_create_user_command("OtterActivate", function()
+                otter.activate()
+            end, { desc = "Activate Otter for this buffer" })
         end
     },
     {

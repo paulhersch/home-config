@@ -46,58 +46,6 @@ function M.get_colors(theme)
     return colors
 end
 
-----
--- Here i tried being smart and to cache stuff on the disk. As it turns out,
--- creating the table in a function in another file is actually faster than just
--- reading another file (Lazy measures 0.9-1.3ms on light theme without caching
--- and 2-3.5ms with caching for every theme, using unsafe loading)
-----
--- local defcache = {}
--- local cache_dir = vim.fn.stdpath("data") .. "/colors-cache/"
---
--- ---@return string
--- local function serialize_lua_obj(obj)
---     local return_string = ""
---     local obj_type = type(obj)
---     if obj_type == "table" then
---         return_string = return_string .. "{"
---         for index, item in pairs(obj) do
---             return_string = return_string .. "[\"" .. index .. "\"]=" .. serialize_lua_obj(item) .. ","
---         end
---         return return_string .. "}"
---     elseif obj_type == "string" then
---         return "\"" .. obj .. "\""
---     elseif obj_type == "number" then
---         return tostring(obj)
---     elseif obj_type == "boolean" then
---         return obj and "true" or "false"
---     elseif obj_type == "nil" then
---         return ""
---     else
---         error("can only serialize tables, strings, numbers and booleans")
---     end
--- end
---
--- -- TODO: use load_colors
-
---
--- M.load_cached_unsafe = function(theme)
---     defcache = require("colors-cache")
---     for group, properties in pairs(
---         defcache[theme]
---     ) do
---         hl(0, group, properties)
---     end
--- end
---
--- M.load_cached_safe = function(theme)
---     local s = pcall(M.load_cached_unsafe, theme)
---     if not s then
---         M.build_cache()
---         M.load_cached_unsafe(theme)
---     end
--- end
-
 function M.set_theme(theme)
     local success, f = pcall(require, "colors.cache." .. theme)
     if success then

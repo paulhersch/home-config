@@ -34,10 +34,9 @@ P.create_buf = function()
 end
 
 P.buf_add_hl = function(content)
-    for i = 2, #content do
-        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffmgrKey", i - 1, 2, 3 + math.floor(i / 10))
-        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffmgrBufname", i - 1, 4 + math.floor(i / 10),
-            string.len(content[i]))
+    for i, line in ipairs(content) do
+        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffrmgrKey", i - 1, 0, 2)
+        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffrmgrBufname", i - 1, 2, P.buf_width)
     end
 end
 
@@ -45,8 +44,6 @@ P.fill_buf = function()
     local lines = {}
     local current_cwd = vim.fn.getcwd() .. "/"
     P.buf_width = 80
-
-    table.insert(lines, "")
 
     if #P.buffers < 2 then
         table.insert(lines, "  Setup not run, or no/too little textbuffers opened  ")
@@ -56,16 +53,20 @@ P.fill_buf = function()
             local b = P.buffers[i]
             local relative_name = string.gsub(a.nvim_buf_get_name(b), current_cwd, "")
             local key = P.props.keys.sub(P.props.keys, i - 1, i - 1)
-            local line = "  " .. key .. " " .. relative_name .. "  "
+            local line = key .. " " .. relative_name
 
             table.insert(lines, line)
             if string.len(line) > P.buf_width then
                 P.buf_width = string.len(line)
             end
         end
+
+        -- pad all lines because vim highlighting wont do this shit otherwise
+        for i, line in pairs(lines) do
+            lines[i] = string.format("%-" .. P.buf_width .. "s", line)
+        end
     end
 
-    table.insert(lines, "")
     P.buf_height = #lines
 
     a.nvim_buf_set_lines(P.buf, 0, #lines, false, lines)
@@ -157,7 +158,7 @@ M.setup = function(opts)
     P.props.opts = opts
     P.props.max_bufs = opts.max_bufs or 7
     P.props.keys = opts.keys or "asdfghjkl"
-    P.props.ext_mark_ns = a.nvim_create_namespace("bffmgr.highlights")
+    P.props.ext_mark_ns = a.nvim_create_namespace("bffrmgr.highlights")
     P.set_up_autocmds()
 end
 
@@ -169,7 +170,8 @@ local function open_filled_buf()
         col = P.get_left_offset(),
         width = P.buf_width,
         height = P.buf_height,
-        style = "minimal"
+        style = "minimal",
+        border = "single"
     })
     P.set_keymap()
     vim.bo[P.buf]['modifiable'] = false

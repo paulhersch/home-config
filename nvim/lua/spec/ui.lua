@@ -346,7 +346,7 @@ return {
         }
     },
     {
-        "MeanderingProgrammer/markdown.nvim",
+        "MeanderingProgrammer/render-markdown.nvim",
         dependencies = {
             'nvim-treesitter/nvim-treesitter',
             'nvim-tree/nvim-web-devicons'
@@ -355,7 +355,12 @@ return {
         opts = {
             start_enabled = true,
             latex_enabled = true,
-            max_file_size = 1
+            max_file_size = 1,
+            injections = {
+                python = {
+                    enabled = true
+                }
+            }
         }
     },
     {

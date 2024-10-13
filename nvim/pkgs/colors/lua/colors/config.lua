@@ -186,8 +186,8 @@ local function config(colors)
         StatusLineDiagnosticInfo = { fg = colors.color12, bg = colors.inactive_tabs },
         StatusLineDiagnosticHint = { fg = colors.color10, bg = colors.inactive_tabs },
 
-        BffmgrKey = { fg = colors.color1 },
-        BffmgrBufname = { fg = colors.color4 },
+        BffrmgrKey = { fg = colors.color1, bg = colors.background_dark },
+        BffrmgrBufname = { fg = colors.color4, bg = colors.background_dark },
 
         NotifyERRORBorder = { fg = colors.color1 },
         NotifyWARNBorder = { fg = colors.color3 },
