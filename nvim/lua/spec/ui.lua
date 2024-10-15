@@ -353,14 +353,20 @@ return {
         },
         event = "VeryLazy",
         opts = {
-            start_enabled = true,
-            latex_enabled = true,
+            enabled = true,
+            latex = {
+                enabled = true,
+                converter = 'latex2text',
+                highlight = 'RenderMarkdownMath',
+                top_pad = 0,
+                bottom_pad = 0,
+            },
             max_file_size = 1,
-            injections = {
-                python = {
-                    enabled = true
-                }
-            }
+            -- injections = {
+            --     python = {
+            --         enabled = true
+            --     }
+            -- }
         }
     },
     {
@@ -522,28 +528,22 @@ return {
                     "css",
                     "go",
                     "rust",
-                    -- "latex",
+                    "latex",
                     "bibtex"
                 },
                 ignore_install = {},
                 indent = {
                     enable = true,
-                    disable = {
-                        "tex", -- latex treesitter highlighting is fucked up
-                    },
                 },
                 highlight = {
                     enable = true,
                     disable = {
-                        "tex", -- latex treesitter highlighting is fucked up
+                        "latex", -- latex treesitter highlighting is fucked up
                     },
                     additional_vim_regex_highlighting = false,
                 },
                 incremental_selection = {
                     enable = true,
-                    disable = {
-                        "tex", -- latex treesitter highlighting is fucked up
-                    },
                 }
             }
 

@@ -133,7 +133,8 @@ a.nvim_create_autocmd("LspDetach", {
         local buf = args.buf
         -- delete keymaps for lsp if all but the client that is about to detach
         -- is connected on the buf
-        if not (#vim.lsp.get_clients({ bufnr = buf }) >= 2) then
+        local succ, res = pcall(a.nvim_buf_get_var, buf, "lsp_buf_keybinds_added")
+        if succ and res and not (#vim.lsp.get_clients({ bufnr = buf }) >= 2) then
             for _, bind in ipairs(lsp_buf_keybinds) do
                 vim.keymap.del(
                     bind["mode"] or "n",
