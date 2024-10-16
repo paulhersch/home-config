@@ -352,22 +352,16 @@ return {
             'nvim-tree/nvim-web-devicons'
         },
         event = "VeryLazy",
-        opts = {
-            enabled = true,
-            latex = {
+        config = function()
+            require('render-markdown').setup({
                 enabled = true,
-                converter = 'latex2text',
-                highlight = 'RenderMarkdownMath',
-                top_pad = 0,
-                bottom_pad = 0,
-            },
-            max_file_size = 1,
-            -- injections = {
-            --     python = {
-            --         enabled = true
-            --     }
-            -- }
-        }
+                latex = {
+                    enabled = true,
+                    top_pad = 1,
+                },
+                max_file_size = 5,
+            })
+        end,
     },
     {
         "nvim-neo-tree/neo-tree.nvim",

@@ -1,3 +1,6 @@
+local a = vim.api
+local M = {}
+
 local success, cmp = pcall(require, "cmp")
 
 local function add_emoji_source(cmp)
@@ -69,4 +72,38 @@ vim.api.nvim_buf_create_user_command(0, "PandocExport", function(opts)
 end, {
     desc = "Export either selected range via pandoc or the whole file if called without a range",
     range = true
+})
+
+M.augroup = a.nvim_create_augroup("PandocAutoExport", { clear = false })
+
+a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
+    local buf = a.nvim_get_current_buf()
+    local succ, res = pcall(a.nvim_buf_get_var, buf, "pandoc_preview_enabled")
+    if succ and res then
+        local au_cmd = a.nvim_get_autocmds({ group = M.augroup, buffer = buf })[1]
+        a.nvim_del_autocmd(au_cmd)
+        a.nvim_buf_set_var(buf, "pandoc_preview_enabled", false)
+    else
+        local fname = a.nvim_buf_get_name(buf)
+        a.nvim_create_autocmd("BufWritePost", {
+            group = M.augroup,
+            buffer = buf,
+            callback = function()
+                vim.system({ "pandoc", "-o", string.gsub(fname, ".md", ".pdf"), fname }, {
+                    text = true,
+                    cwd = vim.fn.getcwd(),
+                }, function(obj)
+                    if obj.code == 0 then
+                        return
+                    else
+                        -- error happened, so we are going to show it to the user
+                        vim.notify("Error during pandoc export!\n" .. (obj.stderr or ""), vim.log.levels.ERROR, {})
+                    end
+                end)
+            end
+        })
+        a.nvim_buf_set_var(buf, "pandoc_preview_enabled", true)
+    end
+end, {
+    desc = "Start compiling on write for md files via pandoc to pdf conversion"
 })
