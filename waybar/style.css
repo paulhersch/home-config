@@ -1,0 +1,107 @@
+@define-color bg0 @theme_bg_color;
+@define-color bg1 mix(@theme_bg_color, @theme_fg_color, 0.08);
+@define-color bg2 mix(@theme_bg_color, @theme_fg_color, 0.16);
+
+/* fake bar drop shadow */
+window#waybar {
+    background-color: transparent;
+}
+
+window#waybar > box {
+    background-color: @bg0;
+    margin: 0 0 5px 0;
+    box-shadow: 0 -13px 10px #000;
+}
+
+/* Make tooltip bg non-transparent */
+tooltip {
+    background: @bg0;
+    border: 1px solid @bg2;
+    margin: 0.25rem;
+}
+
+/* module padding */
+.modules-left,
+.modules-center,
+.modules-right {
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+.modules-left {
+    margin-left: 1.5rem;
+}
+.modules-right {
+    margin-right: 1.5rem;
+}
+
+/* battery */
+
+#battery.warning {
+    color: @warning_color;
+}
+
+#battery.critical {
+    color: @error_color;
+}
+
+/* Workspace buttons */
+#workspaces button {
+    margin: 0 4px 0 4px;
+    padding: 0 2px 0 2px;
+    min-width: 28px;
+    font-style: italic;
+    font-size: large;
+    color: @theme_fg_color;
+}
+
+#workspaces button > * {
+    padding: 0;
+    margin: 0;
+}
+
+#workspaces button.empty {
+    color: @bg2;
+}
+
+#workspaces button.focused {
+    color: @theme_selected_bg_color
+}
+
+#workspaces button.urgent {
+    color: @error_color;
+}
+
+/* Workspace buttons for river */
+#tags button {
+    margin: 0 4px 0 4px;
+    padding: 2px;
+    color: @bg2;
+    min-width: 28px;
+    font-style: italic;
+    font-size: large;
+}
+
+#tags button > * {
+    padding: 0;
+    margin: 0;
+}
+
+#tags button.occupied {
+    color: @theme_fg_color;
+}
+
+#tags button.focused {
+    color: @theme_selected_bg_color
+}
+
+#tags button.urgent {
+    color: @error_color;
+}
+
+/* Mode colors instead of text */
+#mode.normal {
+    color: @bg0;
+}
+#mode.resize {
+    color: @theme_fg_color;
+}

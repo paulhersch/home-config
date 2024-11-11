@@ -1,0 +1,104 @@
+{
+    "layer": "top",
+    "position": "top",
+    "modules-left": [
+        // only one can exist, so we wont have overlap
+        "sway/workspaces",
+        "sway/mode",
+        "river/tags",
+        "river/mode",
+    ],
+    "modules-right": [
+        "tray",
+        "battery",
+        "clock"
+    ],
+    "spacing": 12,
+    "reload_style_on_change": true,
+    // modules
+    // TODO: Clock needs some external popup overlay
+    "clock": {
+        "format": "<span style=\"italic\">{:%a, %d.%m at %H:%M}</span>",
+        "on-click": "ags -r \"App.toggleWindow('popup--window')\""
+    },
+    "tray": {
+        "spacing": 12
+    },
+    "sway/mode": {
+        "format": " "
+    },
+    "river/mode": {
+        "format": " "
+    },
+    "battery": {
+        "tooltip": true,
+        "interval": 30,
+        "states": {
+            "warning": 25,
+            "critical": 15
+        },
+        "tooltip-format": "{capacity}%, {timeTo}",
+        "format": "{icon}",
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
+    },
+    "river/tags": {
+        "num-tags": 9,
+        "tag-labels": [
+            "०",
+            "१",
+            "२",
+            "३",
+            "४",
+            "५",
+            "६",
+            "७",
+            "८",
+            "९"
+        ],
+        "set-tags": [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            256
+        ]
+    },
+    "sway/workspaces": {
+        "all-outputs": true,
+        "disable-scroll": true,
+        "format": "{icon}",
+        "format-icons": {
+            "1": "०",
+            "2": "१",
+            "3": "२",
+            "4": "३",
+            "5": "४",
+            "6": "५",
+            "7": "६",
+            "8": "७",
+            "9": "८"
+        },
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": [],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": []
+        }
+    }
+}
