@@ -12,8 +12,8 @@ local M = {}
 local P = {
     props = {},
     buffers = {},
-    buf_width = {},
-    buf_height = {}
+    buf_width = 0,
+    buf_height = 0
 }
 
 
@@ -33,52 +33,66 @@ P.create_buf = function()
     a.nvim_buf_set_name(P.buf, 'buffers')
 end
 
-P.buf_add_hl = function(content)
-    for i, line in ipairs(content) do
-        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffrmgrKey", i - 1, 0, 2)
-        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffrmgrBufname", i - 1, 2, P.buf_width)
-    end
-end
-
 P.fill_buf = function()
+    a.nvim_buf_clear_namespace(P.buf, P.props.ext_mark_ns, 0, -1)
     local lines = {}
     local current_cwd = vim.fn.getcwd() .. "/"
-    P.buf_width = 80
+    P.buf_width = 80 -- default width
 
     if #P.buffers < 2 then
-        table.insert(lines, "  Setup not run, or no/too little textbuffers opened  ")
+        local text = "Setup not run, or no/too little textbuffers opened"
+        table.insert(
+            lines,
+            string.rep(" ", math.floor((P.buf_width - string.len(text)) / 2)) ..
+            text .. string.rep(" ", math.ceil((P.buf_width - string.len(text)) / 2))
+        )
+        a.nvim_buf_set_lines(P.buf, 0, #lines - 1, false, lines)
+        a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffrmgrBufname", 0, 0, -1)
     else
         local buf_cnt = #P.buffers
+
+        lines = {}
         for i = 2, buf_cnt do
             local b = P.buffers[i]
             local relative_name = string.gsub(a.nvim_buf_get_name(b), current_cwd, "")
-            local key = P.props.keys.sub(P.props.keys, i - 1, i - 1)
-            local line = key .. " " .. relative_name
-
-            table.insert(lines, line)
-            if string.len(line) > P.buf_width then
-                P.buf_width = string.len(line)
+            if string.len(relative_name) + 2 > P.buf_width then
+                P.buf_width = string.len(relative_name) + 2 -- spacing for key
             end
+            table.insert(lines, relative_name)
         end
 
         -- pad all lines because vim highlighting wont do this shit otherwise
+        -- string.format fails for format strings with a width > 99 characters (WTF)
         for i, line in pairs(lines) do
-            lines[i] = string.format("%-" .. P.buf_width .. "s", line)
+            lines[i] = line .. string.rep(" ", P.buf_width - #line - 2)
+        end
+
+        a.nvim_buf_set_lines(P.buf, 0, #lines - 1, false, lines)
+
+        -- highlight and key as virtual text
+        for i = 1, #lines do
+            local key = P.props.keys.sub(P.props.keys, i, i)
+            a.nvim_buf_add_highlight(P.buf, P.props.ext_mark_ns, "BffrmgrBufname", i - 1, 0, -1)
+            a.nvim_buf_set_extmark(P.buf, P.props.ext_mark_ns, i - 1, 0, {
+                end_col = 2,
+                virt_text = { { key .. " ", "BffrmgrKey" } },
+                virt_text_pos = "inline"
+            })
         end
     end
 
     P.buf_height = #lines
 
-    a.nvim_buf_set_lines(P.buf, 0, #lines, false, lines)
-    if #P.buffers > 1 then
-        P.buf_add_hl(lines)
-    end
+    -- a.nvim_buf_set_lines(P.buf, 0, #lines, false, lines)
+    -- if #P.buffers > 1 then
+    --     P.buf_add_hl(lines)
+    -- end
 end
 
 P.set_keymap = function()
     local function close_win()
-        a.nvim_win_close(a.nvim_get_current_win(), true)
-        a.nvim_buf_delete(P.buf, { unload = false, force = true })
+        a.nvim_win_close(P.buf_win, true)
+        a.nvim_buf_delete(P.buf, { force = true })
     end
 
     local buf_cnt = #P.buffers
@@ -91,6 +105,15 @@ P.set_keymap = function()
         end, { buffer = P.buf, nowait = true })
     end
 
+    vim.keymap.set("n", "<Enter>", function()
+        -- cant switch if <= 1 bufs open
+        if #P.buffers <= 1 then
+            return
+        end
+        local pos = a.nvim_win_get_cursor(P.buf_win)
+        a.nvim_win_set_buf(M.last_win, P.buffers[pos[1] + 1])
+        close_win()
+    end, { buffer = P.buf })
     vim.keymap.set("n", "q", function()
         close_win()
     end, { buffer = P.buf })
@@ -142,7 +165,10 @@ P.set_up_autocmds = function()
     a.nvim_create_autocmd("BufDelete", {
         callback = function()
             local abuf = tonumber(vim.fn.expand('<abuf>'))
-            table.remove(P.buffers, tbl_extra.find_item(P.buffers, abuf))
+            local index = tbl_extra.find_item(P.buffers, abuf)
+            if index then
+                table.remove(P.buffers, index)
+            end
         end
     })
     -- Session Loading sometimes creates invalid buffers, filter
@@ -178,17 +204,13 @@ local function open_filled_buf()
 end
 
 M.open = function()
-    P.create_buf()
-    -- sometimes an invalid buffer still sneaks into the list
-    -- thats why i check for errors first and then try to run
-    -- open again
-    local success = pcall(P.fill_buf)
-    if not success then
-        P.filter_invalid()
-        M.open()
-    else
-        open_filled_buf()
+    if not P.buf or not a.nvim_buf_is_valid(P.buf) then
+        P.create_buf()
     end
+    -- sometimes an invalid buffer still sneaks into the list
+    P.filter_invalid()
+    P.fill_buf()
+    open_filled_buf()
 end
 
 return M

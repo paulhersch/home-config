@@ -15,15 +15,22 @@ require("lazy").setup({
     {
         -- update self
         "folke/lazy.nvim",
-        version = "11.x",
+        -- version = "11.x",
         priority = 1000,
         lazy = false
     },
+    -- {
+    --     "camspiers/luarocks",
+    --     priority = 1000,
+    --     opts = { rocks = { "hsluv" } },
+    --     lazy = false,
+    -- },
+    -- simply added the build thing to hsluv, no problems
     {
-        "camspiers/luarocks",
-        priority = 1000,
-        opts = { rocks = { "hsluv" } },
-        lazy = false,
+        "hsluv/hsluv-lua",
+        lazy = true,
+        -- rocks are a pain on nix
+        build = "mkdir lua && cp *.lua lua"
     },
     { import = "spec" }
 }, {
@@ -36,17 +43,18 @@ require("lazy").setup({
         versions = true,
         sources = {
             "lazy",
-            "rockspec"
         },
     },
     change_detection = {
         enabled = false,
     },
     rocks = {
-        server = "https://luarocks.org"
+        enabled = false,
+        server = "https://luarocks.org",
+        hererocks = false
     },
     install = {
-        colorscheme = { "light" }
+        colorscheme = { "readable_light" }
     },
     performance = {
         reset_packpath = true,

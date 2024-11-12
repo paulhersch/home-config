@@ -74,7 +74,7 @@ tooltip {
 /* Workspace buttons for river */
 #tags button {
     margin: 0 4px 0 4px;
-    padding: 2px;
+    padding: 0 2px 0 2px;
     color: @bg2;
     min-width: 28px;
     font-style: italic;

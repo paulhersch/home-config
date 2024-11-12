@@ -18,7 +18,10 @@ Application:start {
     main = function()
         require "osds"
     end,
-    request_handler = function(request, res)
-        res("hi")
+    request_handler = function(req, res)
+        -- use require so that if require cache gets invalidated through update
+        -- we can call the updated funcs
+        -- this pattern will be used throughout the config
+        require("requests").handle_request(req, res)
     end
 }

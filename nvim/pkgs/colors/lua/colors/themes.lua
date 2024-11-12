@@ -43,6 +43,48 @@ colorschemes.azul = function()
     return colors
 end
 
+colorschemes.newpaper = function()
+    local colors           = {}
+
+    colors.background      = "#f1f3f2"
+    colors.background_dark = "#e9ebea"
+    colors.inactive_tabs   = "#e1e3e2"
+    colors.contrast        = "#d9dbda"
+
+    colors.foreground      = "#2b2b2b"
+    colors.cursor          = colors.foreground
+
+    colors.color0          = "#e4e4e4"
+    colors.color1          = "#af0000"
+    colors.color2          = "#008700"
+    colors.color3          = "#af5f00"
+    colors.color4          = "#27408b"
+    colors.color5          = "#8700af"
+    colors.color6          = "#005f87"
+    colors.color7          = "#2b2b2b"
+
+    colors.color8          = colors.foreground
+    colors.color9          = "#e14133"
+    colors.color10         = "#50A14F"
+    colors.color11         = "#d75f00"
+    colors.color12         = "#0072c1"
+    colors.color13         = "#e563ba"
+    colors.color14         = "#0087af"
+    colors.color15         = "#585858"
+    colors.comment         = colors.color15
+
+    colors.color16         = colors.color8
+    colors.color17         = colors.color9
+    colors.color18         = colors.color10
+    colors.color19         = colors.color11
+    colors.color20         = colors.color12
+    colors.color21         = colors.color13
+    colors.color22         = colors.color14
+    colors.color23         = colors.color15
+
+    return colors
+end
+
 colorschemes.light = function()
     local colors           = {}
     colors.background      = "#E8EAE5"
@@ -191,8 +233,6 @@ colorschemes.readable_light = function()
         [6] = 192
     }) do
         for _, i in pairs({ 0, 1, 2 }) do
-            -- Saturation fixed on 60
-            -- Lightness in steps of 20-55-90
             colors["color" .. tostring(id + 8 * i)] = hsluv.hsluv_to_hex({ hue, 60 - (10 * i), 20 + (32.5 * i) })
         end
     end

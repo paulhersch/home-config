@@ -74,35 +74,45 @@ end, {
     range = true
 })
 
-M.augroup = a.nvim_create_augroup("PandocAutoExport", { clear = false })
+a.nvim_create_augroup("PandocAutoExport", { clear = false })
+
+local function render_pandoc(fname)
+    local new_fname = string.gsub(fname, ".md", ".pdf")
+    return vim.system({ "pandoc", "-o", new_fname, fname }, {
+        text = true,
+        cwd = vim.fn.getcwd(),
+    }, function(obj)
+        if obj.code == 0 then
+            return
+        else
+            -- error happened, so we are going to show it to the user
+            vim.notify("Error during pandoc export!\n" .. (obj.stderr or ""), vim.log.levels.ERROR, {})
+        end
+    end), new_fname
+end
 
 a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
     local buf = a.nvim_get_current_buf()
     local succ, res = pcall(a.nvim_buf_get_var, buf, "pandoc_preview_enabled")
     if succ and res then
-        local au_cmd = a.nvim_get_autocmds({ group = M.augroup, buffer = buf })[1]
+        local au_cmd = a.nvim_get_autocmds({ group = a.nvim_create_augroup("PandocAutoExport", { clear = false }), buffer =
+        buf })[1]
         a.nvim_del_autocmd(au_cmd)
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", false)
     else
         local fname = a.nvim_buf_get_name(buf)
         a.nvim_create_autocmd("BufWritePost", {
-            group = M.augroup,
+            group = a.nvim_create_augroup("PandocAutoExport", { clear = false }),
             buffer = buf,
             callback = function()
-                vim.system({ "pandoc", "-o", string.gsub(fname, ".md", ".pdf"), fname }, {
-                    text = true,
-                    cwd = vim.fn.getcwd(),
-                }, function(obj)
-                    if obj.code == 0 then
-                        return
-                    else
-                        -- error happened, so we are going to show it to the user
-                        vim.notify("Error during pandoc export!\n" .. (obj.stderr or ""), vim.log.levels.ERROR, {})
-                    end
-                end)
+                render_pandoc(fname)
             end
         })
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", true)
+
+        local sys_obj, exported_fname = render_pandoc(fname)
+        sys_obj:wait()
+        vim.ui.open(exported_fname)
     end
 end, {
     desc = "Start compiling on write for md files via pandoc to pdf conversion"

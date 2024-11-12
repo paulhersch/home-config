@@ -1,0 +1,1 @@
+require "osds.notifications".setup()

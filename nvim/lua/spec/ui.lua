@@ -356,8 +356,7 @@ return {
             require('render-markdown').setup({
                 enabled = true,
                 latex = {
-                    enabled = true,
-                    top_pad = 1,
+                    enabled = false,
                 },
                 max_file_size = 5,
             })
