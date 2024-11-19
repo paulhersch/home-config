@@ -501,6 +501,7 @@ return {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
             'tree-sitter/tree-sitter',
+            "nvim-treesitter/nvim-treesitter-textobjects"
         },
         build = function()
             require("nvim-treesitter").install.update()
@@ -531,13 +532,33 @@ return {
                 highlight = {
                     enable = true,
                     disable = {
-                        "latex", -- latex treesitter highlighting is fucked up
+                        "latex", -- latex treesitter highlighting is fucked up, using vimtex rn
                     },
                     additional_vim_regex_highlighting = false,
                 },
                 incremental_selection = {
                     enable = true,
-                }
+                },
+                textobjects = {
+                    select = {
+                        enable = true,
+                        lookahead = true,
+                        keymaps = {
+                            -- see notebook setup, textobject in after/ftplugin/markdown/textobjects.scm
+                            ["<leader>s"] = "@code_cell.inner"
+                        }
+                    },
+                    move = {
+                        enable = true,
+                        set_jumps = false,
+                        goto_next_start = {
+                            ["<C-Down>"] = { query = "@code_cell.inner", desc = "next code block (md/quarto)" }
+                        },
+                        goto_previous_start = {
+                            ["<C-Up>"] = { query = "@code_cell.inner", desc = "previous code block (md/quarto)" }
+                        }
+                    }
+                },
             }
 
             vim.opt.foldexpr = "nvim_treesitter#foldexpr()"

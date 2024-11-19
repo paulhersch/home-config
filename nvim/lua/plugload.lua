@@ -20,12 +20,13 @@ require("lazy").setup({
         lazy = false
     },
     -- {
-    --     "camspiers/luarocks",
+    --     "vhyrro/luarocks.nvim",
     --     priority = 1000,
-    --     opts = { rocks = { "hsluv" } },
+    --     opts = { rocks = { "magick" } },
     --     lazy = false,
     -- },
     -- simply added the build thing to hsluv, no problems
+    -- anything that needs compiling is available in nix
     {
         "hsluv/hsluv-lua",
         lazy = true,

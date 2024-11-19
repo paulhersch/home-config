@@ -1,3 +1,5 @@
+; ;; extends
+;
 (call
   function: (attribute
     object: (identifier) @py_object

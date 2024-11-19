@@ -76,13 +76,17 @@ end, {
 
 a.nvim_create_augroup("PandocAutoExport", { clear = false })
 
-local function render_pandoc(fname)
+---@param on_exit nil|fun(fname: string) extra function that gets executed on exit if rendering was successful, gets new file name as param
+local function render_pandoc(fname, on_exit)
     local new_fname = string.gsub(fname, ".md", ".pdf")
     return vim.system({ "pandoc", "-o", new_fname, fname }, {
         text = true,
         cwd = vim.fn.getcwd(),
     }, function(obj)
         if obj.code == 0 then
+            if on_exit then
+                on_exit(new_fname)
+            end
             return
         else
             -- error happened, so we are going to show it to the user
@@ -95,8 +99,10 @@ a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
     local buf = a.nvim_get_current_buf()
     local succ, res = pcall(a.nvim_buf_get_var, buf, "pandoc_preview_enabled")
     if succ and res then
-        local au_cmd = a.nvim_get_autocmds({ group = a.nvim_create_augroup("PandocAutoExport", { clear = false }), buffer =
-        buf })[1]
+        local au_cmd = a.nvim_get_autocmds({
+            group = a.nvim_create_augroup("PandocAutoExport", { clear = false }),
+            buffer = buf
+        })[1]
         a.nvim_del_autocmd(au_cmd)
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", false)
     else
@@ -110,10 +116,10 @@ a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
         })
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", true)
 
-        local sys_obj, exported_fname = render_pandoc(fname)
-        sys_obj:wait()
-        vim.ui.open(exported_fname)
+        local sys_obj, exported_fname = render_pandoc(fname, vim.ui.open)
     end
 end, {
     desc = "Start compiling on write for md files via pandoc to pdf conversion"
 })
+
+require("quarto").activate()
