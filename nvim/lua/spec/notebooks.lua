@@ -96,25 +96,26 @@ return {
             backend = "kitty" -- as long as i dont have kitty setup, also sixel support soon?
         }
     },
-    {
-        "quarto-dev/quarto-nvim",
-        dependencies = {
-            "jmbuhr/otter.nvim",
-            "nvim-treesitter/nvim-treesitter",
-        },
-        ft = { "quarto", "markdown" },
-        opts = {
-            codeRunner = {
-                enabled = true,
-                default_method = "molten"
-            }
-        },
-        keys = {
-            { "<leader>ra",   function() require("quarto.runner").run_above() end },
-            { "<C-Return>",   function() require("quarto.runner").run_cell() end, mode = { "n" }, silent = true },
-            { "<C-S-Return>", function() require("quarto.runner").run_all() end,  mode = { "n" }, silent = true },
-        }
-    },
+    -- molten knows where the cells are themselves, dont need this plugin for that, doesnt work on md files properly for me anyways :(
+    -- {
+    --     "quarto-dev/quarto-nvim",
+    --     dependencies = {
+    --         "jmbuhr/otter.nvim",
+    --         "nvim-treesitter/nvim-treesitter",
+    --     },
+    --     ft = { "quarto", "markdown" },
+    --     opts = {
+    --         codeRunner = {
+    --             enabled = true,
+    --             default_method = "molten"
+    --         }
+    --     },
+    --     keys = {
+    --         { "<leader>ra",   function() require("quarto.runner").run_above() end },
+    --         { "<C-Return>",   function() require("quarto.runner").run_cell() end, mode = { "n" }, silent = true },
+    --         { "<C-S-Return>", function() require("quarto.runner").run_all() end,  mode = { "n" }, silent = true },
+    --     }
+    -- },
     {
         "benlubas/molten-nvim",
         build = ":UpdateRemotePlugins",

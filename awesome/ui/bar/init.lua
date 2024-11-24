@@ -1,31 +1,32 @@
-local bar	= require "ui.bar.bar"
+local bar = require "ui.bar.bar"
 
-local function current_tags_have_fullscreen (screen)
-	local tags = screen.selected_tags
+local function current_tags_have_fullscreen(screen)
+    local tags = screen.selected_tags
     if tags then
-        for _,t in ipairs(tags) do
-			local clients = t:clients()
-			if #clients > 0 then
-                for _,c in ipairs(clients) do
-					if c.fullscreen then
-						return true
-					end
-				end
-			end
-		end
-	end
+        for _, t in ipairs(tags) do
+            local clients = t:clients()
+            if #clients > 0 then
+                for _, c in ipairs(clients) do
+                    if c.fullscreen then
+                        return not c.hidden
+                    end
+                end
+            end
+        end
+    end
     return false
 end
 
 screen.connect_signal("request::desktop_decoration", function(s)
-	bar.init(s)
-    s:connect_signal("tag::history::update", function() --there are also signals for tag::property::selected or smth but i feel like this would be more fitting
-        if current_tags_have_fullscreen(s) then
-            bar.hide(s)
-        else
-            bar.show(s)
-        end
-    end)
+    bar.init(s)
+    s:connect_signal("tag::history::update",
+        function() --there are also signals for tag::property::selected or smth but i feel like this would be more fitting
+            if current_tags_have_fullscreen(s) then
+                bar.hide(s)
+            else
+                bar.show(s)
+            end
+        end)
 end)
 
 -- This stuff should cover all cases with fullscreened clients i think

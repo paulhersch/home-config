@@ -78,10 +78,22 @@ a.nvim_create_augroup("PandocAutoExport", { clear = false })
 
 ---@param on_exit nil|fun(fname: string) extra function that gets executed on exit if rendering was successful, gets new file name as param
 local function render_pandoc(fname, on_exit)
+    local file_cwd = string.match(fname, ".*/")
+    local preamble_maybe = file_cwd .. "pre.tex"
     local new_fname = string.gsub(fname, ".md", ".pdf")
-    return vim.system({ "pandoc", "-o", new_fname, fname }, {
+    local cmd = { "pandoc", "-o", new_fname, fname }
+
+    -- check if preamble in dir of file, otherwise check cwd. If none found
+    -- just run the defaults
+    if vim.fn.filereadable(preamble_maybe) then
+        table.insert(cmd, 2, "--include-in-header=" .. preamble_maybe)
+    elseif vim.fn.filereadable(vim.fn.getcwd() .. "/pre.tex") then
+        table.insert(cmd, 2, "--include-before-body=./pre.tex")
+    end
+    return vim.system(cmd, {
         text = true,
-        cwd = vim.fn.getcwd(),
+        -- md stuff is always relative to the file -> use the file dir as cwd
+        cwd = file_cwd,
     }, function(obj)
         if obj.code == 0 then
             if on_exit then
@@ -116,10 +128,10 @@ a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
         })
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", true)
 
-        local sys_obj, exported_fname = render_pandoc(fname, vim.ui.open)
+        render_pandoc(fname, vim.ui.open)
     end
 end, {
     desc = "Start compiling on write for md files via pandoc to pdf conversion"
 })
 
-require("quarto").activate()
+-- require("quarto").activate()
