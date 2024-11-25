@@ -85,9 +85,9 @@ local function render_pandoc(fname, on_exit)
 
     -- check if preamble in dir of file, otherwise check cwd. If none found
     -- just run the defaults
-    if vim.fn.filereadable(preamble_maybe) then
+    if vim.fn.filereadable(preamble_maybe) == 1 then
         table.insert(cmd, 2, "--include-in-header=" .. preamble_maybe)
-    elseif vim.fn.filereadable(vim.fn.getcwd() .. "/pre.tex") then
+    elseif vim.fn.filereadable(vim.fn.getcwd() .. "/pre.tex") == 1 then
         table.insert(cmd, 2, "--include-before-body=./pre.tex")
     end
     return vim.system(cmd, {
@@ -109,14 +109,15 @@ end
 
 a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
     local buf = a.nvim_get_current_buf()
-    local succ, res = pcall(a.nvim_buf_get_var, buf, "pandoc_preview_enabled")
-    if succ and res then
+    local succ, enabled = pcall(a.nvim_buf_get_var, buf, "pandoc_preview_enabled")
+    if succ and enabled then
         local au_cmd = a.nvim_get_autocmds({
-            group = a.nvim_create_augroup("PandocAutoExport", { clear = false }),
+            group = "PandocAutoExport",
             buffer = buf
         })[1]
-        a.nvim_del_autocmd(au_cmd)
+        a.nvim_del_autocmd(au_cmd.id)
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", false)
+        a.nvim_notify({ "Disabled Pandoc Preview" })
     else
         local fname = a.nvim_buf_get_name(buf)
         a.nvim_create_autocmd("BufWritePost", {
@@ -127,6 +128,7 @@ a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
             end
         })
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", true)
+        a.nvim_notify({ "Enabled Pandoc Preview" })
 
         render_pandoc(fname, vim.ui.open)
     end
