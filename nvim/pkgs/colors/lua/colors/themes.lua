@@ -54,14 +54,14 @@ colorschemes.newpaper = function()
     colors.foreground      = "#2b2b2b"
     colors.cursor          = colors.foreground
 
-    colors.color0          = "#e4e4e4"
+    colors.color0          = "#2b2b2b"
     colors.color1          = "#af0000"
     colors.color2          = "#008700"
     colors.color3          = "#af5f00"
     colors.color4          = "#27408b"
     colors.color5          = "#8700af"
     colors.color6          = "#005f87"
-    colors.color7          = "#2b2b2b"
+    colors.color7          = "#e4e4e4"
 
     colors.color8          = colors.foreground
     colors.color9          = "#e14133"

@@ -53,8 +53,21 @@ P.setup_statusline = function()
                 statusmod.mode,
                 events = "ModeChanged"
             },
+            -- {
+            --     statusmod.fileinfo,
+            --     events = {
+            --         "BufEnter",
+            --         "BufWipeout",
+            --         "WinNew",
+            --         "TextChangedI",
+            --         "TextChanged",
+            --         "BufWritePost"
+            --     },
+            --     use_initial = false
+            -- },
+            -- "%=",
             {
-                statusmod.fileinfo,
+                tabmod.tablist,
                 events = {
                     "BufEnter",
                     "BufWipeout",
@@ -62,8 +75,7 @@ P.setup_statusline = function()
                     "TextChangedI",
                     "TextChanged",
                     "BufWritePost"
-                },
-                use_initial = false
+                }
             },
             "%=",
             {
@@ -78,22 +90,25 @@ P.setup_statusline = function()
                 statusmod.git_branch,
                 events = { "BufEnter", "DirChanged" },
                 use_initial = false,
-            }
-        }, { hidden_ft = { "alpha" } }
+            },
+            "  "
+        }, { hidden_ft = { "alpha" }, padding = 2 }
     )
 end
 
 M.setup = function()
     -- settings
     o.laststatus = 3
-    o.cmdheight = 0
+    o.showtabline = 0
+    o.cmdheight = 1
     o.showcmd = false
     o.ruler = false
     o.showmode = false
 
+
     -- setup
     P.setup_statusline()
-    P.setup_tabline()
+    -- P.setup_tabline()
 end
 
 return M

@@ -12,7 +12,8 @@ o.termguicolors = true
 o.showmode = false
 o.linebreak = true
 o.fillchars = "vert:┃,horiz:━,stl: ,stlnc: ,fold: ,foldopen:,foldclose:,foldsep: "
-o.cmdheight = 1
+o.cmdheight = 0
+o.laststatus = 3
 o.syntax = "off"
 o.title = true
 

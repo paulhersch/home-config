@@ -8,9 +8,13 @@ local M, P = {}, {}
 ---@class LineOpts
 ---@field hidden_ft string[] filetypes, for which the line should be hidden (aucmds will still be executed!)
 ---@field hidden_bt string[] buftype, for which the line should be hidden (aucmds will still be executed!)
+---@field padding number number of padding_chars between each component, defaults to 0
+---@field padding_char string the padding char, defaults to whitespace
 local default_line_opts = {
     hidden_ft = {},
-    hidden_bt = {}
+    hidden_bt = {},
+    padding_char = " ",
+    padding = 0
 }
 
 ---@class LineComponent
@@ -44,6 +48,9 @@ M.line = function(line_name, components, opts)
 
     -- autogroup things
     this._au_group = a.nvim_create_augroup("winstatabline_" .. line_name, { clear = true })
+
+    -- precalc padding string
+    this._padding_str = "%#StatusLine#" .. string.rep(this._opts.padding_char, this._opts.padding)
 
     for index, comp in ipairs(components) do
         if type(comp) == "string" then
@@ -149,7 +156,7 @@ M.line = function(line_name, components, opts)
             end,
             ---@param self LineClass
             __tostring = function(self)
-                return concat(self._P)
+                return concat(self._P, self._padding_str)
             end
         }
     )

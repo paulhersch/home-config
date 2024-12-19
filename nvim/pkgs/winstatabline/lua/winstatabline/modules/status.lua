@@ -55,7 +55,7 @@ P.signs = {
 M.git_branch = function()
     local success, branch = pcall(a.nvim_buf_get_var, 0, "gitsigns_head")
     if not success then return "" end
-    return string.format("%%#StatusLineGitBranch#  %s ", branch)
+    return string.format("%%#StatusLineGitBranch#  %s", branch)
 end
 
 M.running_lsps = function()
@@ -67,7 +67,7 @@ M.running_lsps = function()
     for _, lsp in pairs(active_clients) do
         table.insert(lsps, lsp.name)
     end
-    return "%#StatusLineLSPServers#  " .. concat(lsps, ", ") .. "%#StatusLine# "
+    return "%#StatusLineLSPServers#  " .. concat(lsps, ", ") .. "%#StatusLine#"
 end
 
 M.diagnostics = function()
@@ -76,7 +76,7 @@ M.diagnostics = function()
         local count = P.diagnostic_count[i]
         if count > 0 then
             info_string = info_string .. string.format(
-                "%%#StatusLineDiagnostic%s#%s %d  ", level, P.signs[level], count
+                "%%#StatusLineDiagnostic%s#%s %d ", level, P.signs[level], count
             )
         end
     end
@@ -86,7 +86,7 @@ end
 M.mode = function()
     local current_mode = a.nvim_get_mode().mode
     if P.modes[current_mode] ~= nil then
-        local color_indicator = string.format("%%#%s#%s", P.modes[current_mode][2], "▋")
+        local color_indicator = string.format("%%#%s# %s ", P.modes[current_mode][2], P.modes[current_mode][1])
         -- local text_desc = current_mode == "n" and "" or (
         --     string.format("%%#StatusLineModeText# -- %s --", P.modes[current_mode][1])
         -- )
@@ -94,28 +94,35 @@ M.mode = function()
     end
 end
 
-M.fileinfo = function()
-    fname, used_replacement = util.get_t_of_buf(0)
+M.fileinfo_for_buf = function(buf)
+    local fname, used_replacement = util.get_t_of_buf(buf)
 
     -- the filename could be nil in some random cases (opening telescope immediately
     -- after opening neovim), so we need to make sure its NOT nil, as we cant do the
     -- stuff later as well
-    if not fname then return "" end
+    if not fname then return { "", "" } end
 
     if used_replacement then
-        return " %#StatusLine#" .. fname
+        return { fname, "" }
     end
 
-    local edited = fn.getbufinfo(a.nvim_get_current_buf())[1].changed == 1
+    local edited = fn.getbufinfo(buf)[1].changed == 1
 
+    return {
+        fname, string.format(
+        '%s:%s',
+        edited and '+' or '-',
+        string.sub(fn.getfperm(a.nvim_buf_get_name(buf)), 1, 6))
+    }
+end
+
+M.fileinfo = function()
+    local finfo = M.fileinfo_for_buf(a.nvim_get_current_buf())
     return table.concat {
         " %#StatusLine#",
-        fname,
-        string.format(
-            '  %%#StatusLineFileStat#%s:%s',
-            edited and '+' or '-',
-            string.sub(fn.getfperm(a.nvim_buf_get_name(0)), 1, 6)
-        )
+        finfo[1],
+        ' %%#StatusLineFileStat#',
+        finfo[2]
     }
 end
 

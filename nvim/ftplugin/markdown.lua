@@ -29,7 +29,8 @@ else
         else
             vim.notify(
                 "Couldnt add emoji Source to cmp, use :LoadMDSources to load manually, but make sure cmp is loaded first",
-                vim.log.levels.WARN
+                vim.log.levels.WARN,
+                {}
             )
         end
     end, { desc = "Reload cmp.nvim ftplugin setup for markdown" })
@@ -117,7 +118,7 @@ a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
         })[1]
         a.nvim_del_autocmd(au_cmd.id)
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", false)
-        a.nvim_notify({ "Disabled Pandoc Preview" })
+        a.nvim_notify("Disabled Pandoc Preview", vim.log.levels.INFO, {})
     else
         local fname = a.nvim_buf_get_name(buf)
         a.nvim_create_autocmd("BufWritePost", {
@@ -128,12 +129,10 @@ a.nvim_buf_create_user_command(0, "PandocPreviewToggle", function(opts)
             end
         })
         a.nvim_buf_set_var(buf, "pandoc_preview_enabled", true)
-        a.nvim_notify({ "Enabled Pandoc Preview" })
+        a.nvim_notify("Enabled Pandoc Preview", vim.log.levels.INFO, {})
 
         render_pandoc(fname, vim.ui.open)
     end
 end, {
     desc = "Start compiling on write for md files via pandoc to pdf conversion"
 })
-
--- require("quarto").activate()

@@ -1,15 +1,8 @@
 return {
-    -- lazy fucks up the install of hsluv-lua so i have to resort to
-    -- using the luarocks plugin thing
-    -- {
-    --     "hsluv/hsluv-lua",
-    --     name = "hsluv",
-    --     lazy = false
-    -- },
     {
         "colors",
         dev = true,
-        priority = 1000,
+        -- priority = 1000,
         name = "colors",
         lazy = false,
         config = function()
@@ -17,7 +10,11 @@ return {
             require "colors".set_theme("light")
         end,
         keys = {
-            { "<space>C", function() require "colors".pick_theme() end }
+            { "<space>C", function() require "colors".pick_theme() end },
+            { "<space>cr", function()
+                require "colors.compiler".build_cache()
+                vim.notify("Colorscheme cache rebuilt :)")
+            end }
         }
     },
     {
