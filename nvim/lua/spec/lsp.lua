@@ -296,7 +296,7 @@ return {
             -- optional sources, used by ftplugins
             'kdheepak/cmp-latex-symbols',
             'micangl/cmp-vimtex',
-            'hrsh7th/cmp-emoji',
+            -- 'hrsh7th/cmp-emoji',
             -- snippets
             'L3MON4D3/LuaSnip',
             'saadparwaiz1/cmp_luasnip',
@@ -340,18 +340,18 @@ return {
                             if entry.source.name == "vimtex" then
                                 -- only show right side info stuff, as every entry is reported with
                                 -- kind Text anyways
-                                vim_item.kind = ""
                                 vim_item.menu = "    (" .. vim_item.kind .. ")"
+                                vim_item.kind = ""
                             elseif entry.source.name == "emoji" then
                                 -- dont show anything (its just text)
-                                vim_item.kind = ""
                                 vim_item.menu = ""
+                                vim_item.kind = ""
                             else
                                 -- fancy default
                                 -- glyph with highlights, entry name thing, kind name
                                 vim_item.menu = "    (" .. vim_item.kind .. ")"
-                                vim_item.kind = ""
-                                -- vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
+                                -- vim_item.kind = ""
+                                vim_item.kind = " " .. (cmp_kinds[vim_item.kind] or " _ ") .. " "
                             end
                         else
                             -- backup in case kind just doesnt exist

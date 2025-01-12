@@ -66,17 +66,18 @@ P.setup_statusline = function()
             --     use_initial = false
             -- },
             -- "%=",
-            {
-                tabmod.tablist,
-                events = {
-                    "BufEnter",
-                    "BufWipeout",
-                    "WinNew",
-                    "TextChangedI",
-                    "TextChanged",
-                    "BufWritePost"
-                }
-            },
+            -- {
+            --     tabmod.tablist,
+            --     events = {
+            --         "BufEnter",
+            --         "BufWipeout",
+            --         "WinNew",
+            --         -- "TextChangedI",
+            --         "TextChanged",
+            --         "BufWritePost"
+            --     }
+            -- },
+            "%#StatusLineFileName#%t %#StatusLineFileStat#%m%r",
             "%=",
             {
                 statusmod.diagnostics,
@@ -104,7 +105,6 @@ M.setup = function()
     o.showcmd = false
     o.ruler = false
     o.showmode = false
-
 
     -- setup
     P.setup_statusline()
