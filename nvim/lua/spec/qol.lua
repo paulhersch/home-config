@@ -60,8 +60,8 @@ return {
             local t = require("telescope")
             t.setup {
                 defaults = {
-                    prompt_prefix = "   ",
-                    selection_caret = "  ",
+                    prompt_prefix = "  ",
+                    selection_caret = "> ",
                     entry_prefix = "  ",
                     initial_mode = "insert",
                     selection_strategy = "reset",
@@ -92,9 +92,10 @@ return {
         end,
         keys = {
             { "gf", function() require("telescope.builtin").live_grep() end },
-            { "ff", function() require("telescope.builtin").find_files() end },
+            { "ff", function() require("telescope.builtin").find_files({ hidden = true }) end },
             { "gs", function() require("telescope.builtin").git_status() end },
-            { "gt", function() require("telescope.builtin").lsp_references() end }
+            { "gt", function() require("telescope.builtin").lsp_referentes() end },
+            { "fr", function() require("telescope.builtin").resume() end }
         }
     },
     {

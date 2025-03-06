@@ -27,6 +27,7 @@ return {
         dependencies = {
             'nvim-lua/plenary.nvim'
         },
+        lazy = false,
         cmd = "SessionManager",
         config = function()
             local Path = require('plenary.path')
@@ -45,7 +46,7 @@ return {
                     'nofile',
                     'terminal'
                 },
-                autosave_only_in_session = false,
+                autosave_only_in_session = true,
                 max_path_length = 80,
             })
         end,

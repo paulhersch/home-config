@@ -193,6 +193,7 @@ return {
                     ccls = {},
                     ts_ls = {},
                     bashls = {},
+                    vala_ls = {},
                     -- texlab = {},
                     gopls = {},
                     pylsp = {
@@ -388,6 +389,13 @@ return {
                     { name = 'path' },
                     { name = 'luasnip' },
                     { name = 'nvim_lsp_signature_help' },
+                    {
+                        name = "latex_symbols",
+                        option = {
+                            strategy = 2,
+                        },
+                    },
+                    { name = 'vimtex', }
                 },
             })
         end
