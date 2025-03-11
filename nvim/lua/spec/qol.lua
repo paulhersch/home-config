@@ -94,7 +94,7 @@ return {
             { "gf", function() require("telescope.builtin").live_grep() end },
             { "ff", function() require("telescope.builtin").find_files({ hidden = true }) end },
             { "gs", function() require("telescope.builtin").git_status() end },
-            { "gt", function() require("telescope.builtin").lsp_referentes() end },
+            { "gt", function() require("telescope.builtin").lsp_references() end },
             { "fr", function() require("telescope.builtin").resume() end }
         }
     },
