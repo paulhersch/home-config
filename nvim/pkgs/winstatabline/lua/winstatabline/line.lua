@@ -129,7 +129,8 @@ M.line = function(line_name, components, opts)
                     local buf_ft = a.nvim_get_option_value("filetype", { buf = 0 })
                     for _, ft in pairs(self._opts.hidden_ft) do
                         if ft == buf_ft then
-                            o[line_name] = "%#StatusLineNC#"
+                            -- idk what caused this, but using StatusLineNC uses the bg of StatusLine???
+                            o[line_name] = "%#Normal#"
                             return
                         end
                     end
@@ -138,7 +139,7 @@ M.line = function(line_name, components, opts)
                     local buf_bt = a.nvim_get_option_value("buftype", { buf = 0 })
                     for _, bt in pairs(self._opts.hidden_bt) do
                         if bt == buf_bt then
-                            o[line_name] = "%#StatusLineNC#"
+                            o[line_name] = "%#Normal#"
                             return
                         end
                     end
