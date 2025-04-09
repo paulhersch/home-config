@@ -53,32 +53,21 @@ P.setup_statusline = function()
                 statusmod.mode,
                 events = "ModeChanged"
             },
-            -- {
-            --     statusmod.fileinfo,
-            --     events = {
-            --         "BufEnter",
-            --         "BufWipeout",
-            --         "WinNew",
-            --         "TextChangedI",
-            --         "TextChanged",
-            --         "BufWritePost"
-            --     },
-            --     use_initial = false
-            -- },
-            -- "%=",
-            -- {
-            --     tabmod.tablist,
-            --     events = {
-            --         "BufEnter",
-            --         "BufWipeout",
-            --         "WinNew",
-            --         -- "TextChangedI",
-            --         "TextChanged",
-            --         "BufWritePost"
-            --     }
-            -- },
-            "%#StatusLineFileName#%t %#StatusLineFileStat#%m%r",
+            {
+                tabmod.tablist,
+                events = line.default_events
+            },
+            -- "%#StatusLineFileName#%t %#StatusLineFileStat#%m%r",
             "%=",
+            -- {
+            --     vim.schedule(function()
+            --         if package.loaded["micropython_nvim"] and require("micropython_nvim").exists() then
+            --             return require("micropython_nvim").statusline()
+            --         end
+            --         return ""
+            --     end),
+            --     timeout = 1000
+            -- },
             {
                 statusmod.diagnostics,
                 events = "DiagnosticChanged"

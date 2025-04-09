@@ -23,6 +23,14 @@ return {
         build = ":!make all"
     },
     {
+        "jim-at-jibba/micropython.nvim",
+        dependencies = {
+            "akinsho/toggleterm.nvim",
+            "stevearc/dressing.nvim"
+        },
+        event = "VeryLazy"
+    },
+    {
         'Shatur/neovim-session-manager',
         dependencies = {
             'nvim-lua/plenary.nvim'

@@ -94,8 +94,8 @@ M.mode = function()
     end
 end
 
-M.fileinfo_for_buf = function(buf)
-    local fname, used_replacement = util.get_t_of_buf(buf)
+M.fileinfo_for_buf = function(buf, trim)
+    local fname, used_replacement = util.get_t_of_buf(buf, trim)
 
     -- the filename could be nil in some random cases (opening telescope immediately
     -- after opening neovim), so we need to make sure its NOT nil, as we cant do the
@@ -109,10 +109,12 @@ M.fileinfo_for_buf = function(buf)
     local edited = fn.getbufinfo(buf)[1].changed == 1
 
     return {
-        fname, string.format(
-        '%s:%s',
-        edited and '+' or '-',
-        string.sub(fn.getfperm(a.nvim_buf_get_name(buf)), 1, 6))
+        fname,
+        edited and " [+]" or ""
+        -- string.format(
+        -- '%s:%s',
+        -- edited and '+' or '-',
+        -- string.sub(fn.getfperm(a.nvim_buf_get_name(buf)), 1, 6))
     }
 end
 

@@ -17,6 +17,18 @@ local default_line_opts = {
     padding = 0
 }
 
+-- most events that should cover a lot of cases for the bar update
+-- only use if unclear, which events should be used and timeouts are
+-- not an option
+M.default_events = {
+    "BufEnter",
+    "BufWipeout",
+    "WinNew",
+    "TextChangedI",
+    "TextChanged",
+    "BufWritePost"
+}
+
 ---@class LineComponent
 ---@field timeout? integer timeout for polling
 ---@field events? string | string[] update events passed to create_autocmd if function is passed as first arg

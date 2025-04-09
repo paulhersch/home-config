@@ -27,10 +27,10 @@ M.tablist = function()
             local filetext = ""
             if selected then
                 filetext = "%#TabLineSel#" .. table.concat(
-                    statusmod.fileinfo_for_buf(buf), "  %#TabLineSelFileStat#"
+                    statusmod.fileinfo_for_buf(buf, false), "%#TabLineSelFileStat#"
                 )
             else
-                local name, _ = util.get_t_of_buf(buf)
+                local name, _ = statusmod.fileinfo_for_buf(buf, true)
                 filetext = name
             end
 
