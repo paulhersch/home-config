@@ -5,6 +5,12 @@ local statusmod = require("winstatabline.modules.status")
 
 local M = {}
 
+vim.cmd([[
+function! SwitchToTab(nr, clicks, mousekey, modifiers)
+    execute 'lua vim.api.nvim_set_current_tabpage(' . a:nr . ')'
+endfunction
+]])
+
 M.dirname = function()
     local dir = fn.getcwd()
     local home = os.getenv("HOME") or ""
@@ -14,7 +20,6 @@ M.dirname = function()
 end
 
 M.tablist = function()
-    local ret_str = ""
     local tabs = a.nvim_list_tabpages()
     local tab_thingies = {}
     for index, tab in ipairs(tabs) do
@@ -30,18 +35,17 @@ M.tablist = function()
                     statusmod.fileinfo_for_buf(buf, false), "%#TabLineSelFileStat#"
                 )
             else
-                local name, _ = statusmod.fileinfo_for_buf(buf, true)
-                filetext = name
+                filetext = table.concat(statusmod.fileinfo_for_buf(buf, true))
             end
 
             -- sorry to everyone who has to decipher this nightmare
+            -- tab mods dont work on the statusline, hack via vimscript and fake
+            -- minwidth argument
             table.insert(tab_thingies, string.format(
-                "%%#%s# %%%iT%s%%T ", -- %%#%s#%%%iX %%X ",
+                "%%#%s# %%%i@SwitchToTab@%s%%T ",
                 selected and "TabLineSel" or "TabLine",
                 index,
                 filetext
-            -- selected and "TabLineSelCloseTabLabel" or "TabLineCloseTabLabel",
-            -- index
             ))
         end
     end

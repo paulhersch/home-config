@@ -15,7 +15,6 @@ require("lazy").setup({
     {
         -- update self
         "folke/lazy.nvim",
-        -- version = "11.x",
         priority = 1000,
         lazy = false
     },
@@ -25,13 +24,20 @@ require("lazy").setup({
     --     opts = { rocks = { "magick" } },
     --     lazy = false,
     -- },
-    -- simply added the build thing to hsluv, no problems
-    -- anything that needs compiling is available in nix
+
+
+    -- [[
+    --  Luarocks dependencies/compiled stuff (rocks should work)
+    -- ]]
     {
         "hsluv/hsluv-lua",
         lazy = true,
         -- rocks are a pain on nix
-        build = "mkdir lua && cp *.lua lua"
+        -- build = "mkdir lua && cp *.lua lua"
+    },
+    {
+        "leafo/magick",
+        lazy = false
     },
     { import = "spec" }
 }, {
@@ -44,18 +50,23 @@ require("lazy").setup({
         versions = true,
         sources = {
             "lazy",
+            "rockspec",
+            "packspec"
         },
     },
     change_detection = {
-        enabled = false,
+        enabled = true,
     },
     rocks = {
-        enabled = false,
-        server = "https://luarocks.org",
-        hererocks = false
+        enabled = true,
+        -- server = "https://luarocks.org",
+        hererocks = nil
+        -- should be able to install using luarocks
+        -- python provider is installed, luajit is in neovims path, but somehow the installer
+        -- for hererocks only finds lua 5.2???
     },
     install = {
-        colorscheme = { "readable_light" }
+        colorscheme = { "light" } -- should be available (local, cached)
     },
     performance = {
         reset_packpath = true,

@@ -71,6 +71,14 @@ return {
             end, { desc = "Activate Otter for this buffer" })
         end
     },
+    -- dev version
+    {
+        "3rd/image.nvim",
+        lazy = true,
+        opts = {
+            backend = "kitty" -- as long as i dont have kitty setup, also sixel support soon?
+        }
+    },
     {
         'GCBallesteros/jupytext.nvim',
         event = "VeryLazy",
@@ -85,15 +93,6 @@ return {
             --         force_ft = "markdown", -- you can set whatever filetype you want here
             --     },
             -- }
-        }
-    },
-    {
-        "3rd/image.nvim",
-        -- dependencies = {
-        --     "vhyrro/luarocks"
-        -- },
-        opts = {
-            backend = "kitty" -- as long as i dont have kitty setup, also sixel support soon?
         }
     },
     -- molten knows where the cells are themselves, dont need this plugin for that, doesnt work on md files properly for me anyways :(

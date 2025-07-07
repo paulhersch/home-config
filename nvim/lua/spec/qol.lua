@@ -85,6 +85,38 @@ return {
                     border = {},
                     color_devicons = true,
                     set_env = { ["COLORTERM"] = "truecolor" },
+                    preview = {
+                        filetype_hook = function(filepath, _, _)
+                            local matches = vim.tbl_filter(function(ending)
+                                return filepath:match(ending)
+                            end, {
+                                "*.out"
+                            })
+                            return #matches == 0
+                        end,
+                        -- mime_hook = function(path, buf, opts)
+                        --     local is_image = function(path)
+                        --         local image_extensions = { 'png', 'jpg' } -- Supported image formats
+                        --         local split_path = vim.split(filepath:lower(), '.', { plain = true })
+                        --         local extension = split_path[#split_path]
+                        --         return vim.tbl_contains(image_extensions, extension)
+                        --     end
+                        --
+                        --     if (is_image(path)) then
+                        --         local img = require("magick").load_image(path)
+                        --         local stdout = vim.uv.new_tty(1, false)
+                        --         if not stdout then
+                        --             return
+                        --         end
+                        --
+                        --         img:set_format("sixel")
+                        --         stdout:write({
+                        --             "\x1B[s\x1B[",
+                        --             img:get_blob()
+                        --         })
+                        --     end
+                        -- end
+                    }
                 },
             }
             t.load_extension("notify")

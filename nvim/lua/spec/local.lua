@@ -21,7 +21,8 @@ return {
         "winstatabline",
         dev = true,
         dependencies = {
-            'colors'
+            'colors',
+            "uga-rosa/utf8.nvim"
         },
         event = "UIEnter",
         opts = {}
