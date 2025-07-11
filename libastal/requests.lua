@@ -1,8 +1,12 @@
 local M = {}
 local P = {}
 
-local Gio = require("lgi").require("Gio")
+local lgi = require("lgi")
+local Gio = lgi.require("Gio")
 local gfs = require("gears.filestystem")
+local windowmanagement = require("ui.windowmanagement")
+
+local App = require("astal.gtk3.app")
 
 -- need to figure out the gobject destroying and finalizing stuff first
 -- P.reload = function(respond, _)
@@ -39,6 +43,90 @@ local gfs = require("gears.filestystem")
 --     P._main()
 --     respond("reload done")
 -- end
+P.reload = function(respond, _)
+    require("ui.windowmanagement").restart()
+    require("ui.services.notifications"):clear()
+    respond("restarted with fresh state")
+end
+
+P.list = function(respond, subcmds)
+    local subcmd = #subcmds > 0 and subcmds[1] or nil
+    if not subcmd then
+        respond(
+            "missing subcommand for list. available:\n"
+            .. "  list"
+        )
+        return
+    end
+
+    if subcmd == "windows" then
+        names = {}
+        for _, window in pairs(App:get_windows()) do
+            local name = (
+                "  - "
+                .. (window.class_name or "no class")
+                .. " on "
+                .. window.monitor
+            )
+            table.insert(names, name)
+        end
+        respond(table.concat(names, "\n"))
+    else
+        respond(
+            "subcommand " .. subcmd .. " for list doesnt exist"
+        )
+    end
+end
+
+P.open = function(respond, subcmds)
+    local subcmd = #subcmds > 0 and subcmds[1] or nil
+    if not subcmd then
+        respond("available subcmds for open: window")
+    end
+
+    if subcmd == "window" then
+        if #subcmds < 3 then
+            respond(
+                "not enough args for open window, required: class name, monitor index\n"
+                .. "subcommand: " .. table.concat(subcmds, " ")
+            )
+        end
+        local window, monitor = subcmds[2], subcmds[3]
+        local succ = windowmanagement.open_win_on_monitor(tonumber(monitor), window)
+        if succ then
+            respond("opened window " .. window .. " on monitor " .. monitor)
+        else
+            respond("failed to open window " .. window .. " on monitor " .. monitor)
+        end
+    else
+        respond("subcmd " .. subcmd .. " not available.")
+    end
+end
+
+P.close = function(respond, subcmds)
+    local subcmd = #subcmds > 0 and subcmds[1] or nil
+    if not subcmd then
+        respond("available subcmds for open: window")
+    end
+
+    if subcmd == "window" then
+        if #subcmds < 3 then
+            respond(
+                "not enough args for open window, required: class name, monitor index\n"
+                .. "subcommand: " .. table.concat(subcmds, " ")
+            )
+        end
+        local window, monitor = subcmds[2], subcmds[3]
+        local succ = windowmanagement.close_win_on_monitor(tonumber(monitor), window)
+        if succ then
+            respond("opened window " .. window .. " on monitor " .. monitor)
+        else
+            respond("failed to open window " .. window .. " on monitor " .. monitor)
+        end
+    else
+        respond("subcmd " .. subcmd .. " not available.")
+    end
+end
 
 ---@class requestsInit
 ---@field toplevel string path to the toplevel folder of the libastal config
@@ -48,12 +136,12 @@ local gfs = require("gears.filestystem")
 M.init = function(args)
     P._toplevel = args.toplevel
     P._main = args.mainloop
-    print("requests reinitialised")
+    print("requests initialised")
 end
 
 M.handle_request = function(request, respond)
     local cmd = {}
-    for w in string.gmatch(request, "%a+") do
+    for w in string.gmatch(request, "%S+") do
         table.insert(cmd, w)
     end
 
@@ -61,7 +149,7 @@ M.handle_request = function(request, respond)
         local subcmd = table.remove(cmd, 1)
         P[subcmd](respond, cmd)
     else
-        print(string.format("Request command %s not available", cmd[1]))
+        respond(string.format("Request command %s not available", cmd[1]))
     end
 end
 

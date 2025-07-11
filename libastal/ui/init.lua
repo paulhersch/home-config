@@ -1,7 +1,5 @@
-require "ui.osds"
+require "ui.windowmanagement".start_manage()
 
-return {
-    unload = function()
-        require("ui.osds").unload()
-    end
-}
+require "ui.osds"
+-- require "ui.bar.popups.messages".setup()
+require "ui.bar".setup()
