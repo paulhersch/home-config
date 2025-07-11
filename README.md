@@ -4,13 +4,13 @@
 > I have stopped using awesomewm some time ago, so if you want to rip something out of there be warned, things
 > might not work
 
-> [!INFO]
+Most of my configs are built by homemanager (global nix theme) but you can find that config in my nixdots
+repo. In this repo are config files for awesomewm and neovim.
+
+> [!CAUTION]
 > If you want to use this, do so at Your own risk. Half of the stuff i built here works, don't blame me if
 > something broke Your system (unlikely but idk what y'all are doing) and don't open issues to ask for help,
 > I am not Your free tech support.
-
-Most of my configs are built by homemanager (global nix theme) but you can find that config in my nixdots
-repo. In this repo are config files for awesomewm and neovim.
 
 <details><summary>
 
@@ -23,9 +23,7 @@ The files are meant to be symlinked into `.config`, like so (assuming this was c
 ```
 ln -s ~/dotfiles/kanshi.conf ~/.config
 ```
-
 </details>
-
 <details><summary>
 
 ## Screenshots
