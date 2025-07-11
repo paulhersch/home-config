@@ -1,0 +1,3 @@
+Type=Application
+Name=AutostartScript
+Exec=~/.config/autostart/setup.sh

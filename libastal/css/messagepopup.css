@@ -1,0 +1,30 @@
+.messages {
+    background-color: @theme_bg_color;
+    border-width: 2px;
+    border-color: @bg1;
+    border-style: solid;
+}
+.messages > box {
+    background-color: @theme_bg_color;
+    min-height: 800px;
+    min-width: 500px;
+}
+
+.message-list {
+    background-color: @theme_bg_color;
+    margin: 10px;
+}
+
+.message-item {
+    border-style: solid;
+    border-width: 2px;
+    border-color: @bg2;
+    background-color: @bg1;
+    color: @theme_fg_color;
+}
+.message-item--icon {
+    min-height: 54px;
+    min-width: 54px;
+    font-size: 54px;
+    margin: 5px;
+}

@@ -1,0 +1,45 @@
+/* top panel */
+.panel--window {
+    background-color: transparent;
+}
+
+.panel--main {
+    background-color: @theme_bg_color;
+    color: @theme_fg_color;
+    margin-bottom: 0.5em;
+    box-shadow: 0 -0.5em 0.6em #000;
+}
+
+.panel--group {
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    margin: 0.5em;
+    background-color: @bg1;
+}
+
+.panel-tray--button {
+    border: none;
+    box-shadow: none;
+    background-color: @bg1;
+}
+.panel-tray--button:hover,
+.panel-tray--button:active {
+    background-color: @theme_bg_color;
+}
+
+.panel-tags--button {
+    all: unset;
+    padding: 0.2em 1em 0.2em 1em;
+}
+.panel-tags--button:hover {
+    background-color: @theme_bg_color;
+    transition: all 0.15s ease-in-out;
+}
+.panel-tags-button-focused {
+    color: @theme_selected_bg_color;
+}
+
+.panel-popup-opener--icon {
+    min-height: 12px;
+    min-width:  12px;
+    font-size:  12px;
+}

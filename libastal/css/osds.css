@@ -1,0 +1,14 @@
+.notification {
+    min-width: 500px;
+    background-color: @theme_bg_color;
+    color: @theme_fg_color;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 0 8px -5px #555555;
+}
+
+.notification--icon {
+    min-height: 64px;
+    min-width: 64px;
+    font-size: 64px;
+}
