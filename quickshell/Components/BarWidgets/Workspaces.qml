@@ -3,7 +3,14 @@ import Quickshell.I3
 import Quickshell.Widgets
 import QtQuick
 
+import "../DataProviders" as Providers
+
 ListView {
+
+    anchors {
+        verticalCenter: parent.verticalCenter
+    }
+
     Component {
         id: wsComp
         Rectangle {
@@ -18,37 +25,27 @@ ListView {
             }
 
             width: text.width + 20
-            height: text.height + 10
-            color: "#eee"
+            height: text.height + 5
+            color: focused ? "#aae" : "#fff"
 
             Text {
                 id: text
                 // actual stuff happening here
                 text: wrapper.number
-                color: active ? "blue" : "black"
+                color: focused ? "blue" : "black"
                 anchors {
                     centerIn: parent
                 }
 
                 font {
                     family: "Aporetic With Fallback"
-                    pixelSize: 15
+                    pixelSize: 14
                 }
             }
         }
     }
 
-    model: I3.workspaces.values
-    // model: ListModel {
-    //     ListElement { index: 0; active: false; focused: false }
-    //     ListElement { index: 1; active: false; focused: false }
-    //     ListElement { index: 2; active: false; focused: false }
-    //     ListElement { index: 3; active: false; focused: false }
-    //     ListElement { index: 4; active: false; focused: false }
-    //     ListElement { index: 5; active: false; focused: false }
-    //     ListElement { index: 6; active: false; focused: false }
-    //     ListElement { index: 7; active: false; focused: false }
-    //     ListElement { index: 8; active: false; focused: false }
-    // }
+    // check if i3 is alive, if not use niri module as source
+    model: (I3.socketPath != "") ? I3.workspaces.values : Providers.Niri.workspaces
     delegate: wsComp
 }

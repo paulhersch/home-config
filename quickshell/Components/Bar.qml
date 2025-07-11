@@ -10,21 +10,32 @@ Scope {
         id: bar
 
         anchors {
-            bottom: true
+            top: true
             left: true
             right: true
         }
 
-        implicitHeight: 40
+        implicitHeight: 30
 
         Widgets.Workspaces {
             height: parent.height
-            width: 200
+            width: parent.width
             orientation: Qt.Horizontal
             anchors {
                 leftMargin: 10
                 left: parent.left
                 verticalCenter: parent.verticalCenter
+            }
+        }
+
+        Widgets.Battery {
+            id: battery
+            width: parent.width
+            height: parent.height
+            orientation: Qt.Horizontal
+
+            anchors {
+                centerIn: parent
             }
         }
 
@@ -37,9 +48,14 @@ Scope {
             }
         }
 
-        Widgets.Battery {
+        Widgets.Tray {
+            id: tray
+            height: parent.height
+            // width: 500
+            // orientation: Qt.Horizontal
+
             anchors {
-                rightMargin: 10
+                rightMargin: 15
                 right: clock.left
                 verticalCenter: parent.verticalCenter
             }

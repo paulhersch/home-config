@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-waybar &
+quickshell &
 blueman-applet &
 gammastep -P -O 5400 &
 kanshi -c ~/.config/kanshi.conf &

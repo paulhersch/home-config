@@ -8,6 +8,6 @@ Text {
     text: Providers.Time.time
     font {
         family: "Aporetic With Fallback"
-        pixelSize: 15
+        pixelSize: 14
     }
 }

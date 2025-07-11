@@ -347,7 +347,7 @@ environment {
     DISPLAY ":0" // X Display from satellite
 }
 
-spawn-at-startup "waybar"
+spawn-at-startup "quickshell"
 spawn-at-startup "blueman-applet"
 spawn-at-startup "gammastep -P -O 5400"
 spawn-at-startup "~/.config/swww/reload.sh"
