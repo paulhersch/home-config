@@ -1,13 +1,15 @@
 import Quickshell
 import QtQuick
 
-import "../DataProviders" as Providers
+import "root:/Templates"
 
-Text {
-    id: clock
-    text: Providers.Time.time
-    font {
-        family: "Aporetic With Fallback"
-        pixelSize: 14
+BaseText {
+
+    SystemClock {
+        id: provider
+        precision: SystemClock.Minutes
     }
+
+    id: clock
+    text: Qt.formatDateTime(provider.date, "ddd, dd.mm u'm' HH:MM")
 }

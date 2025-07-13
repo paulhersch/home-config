@@ -8,7 +8,26 @@ import QtQml
 Singleton {
     id: root
     property var workspaces : ListModel {}
+    property var windows : ListModel {}
     property var focusedWorkspace : 0
+    property var focusedWindowIndex : 0
+
+    function focusWs(idx : int) : void {
+        if (idx < workspaces.count) {
+            Quickshell.execDetached(["sh", "-c", `niri msg action focus-workspace ${workspaces.get(i).id}`])
+        }
+    }
+
+    function focusWindow(id : int) : void {
+        console.log(`niri msg action focus-window --id=${id}`)
+        Quickshell.execDetached(["sh", "-c", `niri msg action focus-window --id=${id}`])
+    }
+
+    function listModel(model) {
+        for (let i=0; i<model.count; i++) {
+            console.log(JSON.stringify(model.get(i)));
+        }
+    }
 
     function parseUpdates(data) {
         let obj = JSON.parse(data);
@@ -39,14 +58,49 @@ Singleton {
                     workspaces.setProperty(focusedWorkspace,"focused",false)
                     workspaces.setProperty(i,"focused",true)
                     focusedWorkspace = i
-                    break;
+                    return;
+                }
+            }
+        } else if (obj["WindowsChanged"] != undefined) {
+            let list = obj["WindowsChanged"]["windows"];
+            windows.clear()
+            list.sort((a,b) => a.id < b.id)
+            list.forEach((e,k) => {
+                windows.append(e)
+                if (e["is_focused"]) {
+                    focusedWindowIndex = k
+                }
+            });
+        } else if (obj["WindowFocusChanged"] != undefined) {
+            let id = obj["WindowFocusChanged"]["id"];
+            if (id == null) return;
+            for (let i=0; i<windows.count; i++) {
+                if (id === windows.get(i).id) {
+                    windows.setProperty(focusedWindowIndex, "is_focused", false)
+                    windows.setProperty(i,"is_focused",true)
+                    focusedWindowIndex = i
+                    return;
+                }
+            }
+        } else if (obj["WindowOpenedOrChanged"] != undefined) {
+            let data = obj["WindowOpenedOrChanged"]["window"];
+            let id = data.id;
+            for (let i=0; i<windows.count; i++) {
+                if (id === windows.get(i).id) {
+                    windows.set(i, data)
+                    return;
+                }
+            }
+            windows.append(data)
+        } else if (obj["WindowClosed"] != undefined) {
+            let id = obj["WindowClosed"]["id"];
+            for (let i=0; i<windows.count; i++) {
+                if (id === windows.get(i).id) {
+                    windows.remove(i, 1);
+                    return;
                 }
             }
         }
-        // debug
-        // for (let i=0; i<workspaces.count; i++){
-        //     console.log(JSON.stringify(workspaces.get(i)));
-        // }
     }
 
     Process {

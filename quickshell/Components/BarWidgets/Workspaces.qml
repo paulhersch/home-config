@@ -2,50 +2,61 @@ import Quickshell
 import Quickshell.I3
 import Quickshell.Widgets
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import "../DataProviders" as Providers
 
-ListView {
+import "root:/Components/DataProviders" as Providers
+import "root:/"
 
-    anchors {
-        verticalCenter: parent.verticalCenter
-    }
+RowLayout {
+    height: parent.height
+    spacing: 10
 
-    Component {
-        id: wsComp
-        Rectangle {
+    // Rectangle {
+    //     width: parent.width
+    //     height: parent.height
+    //     color: "black"
+    // }
+
+    Repeater {
+        // check if i3 is alive, if not use niri module as source
+        model: (I3.socketPath != "") ? I3.workspaces.values : Providers.Niri.workspaces
+
+        delegate: Rectangle {
             id: wrapper
             // important variables
             required property bool focused
             required property bool active
             required property int number
 
-            anchors {
-                verticalCenter: parent.verticalCenter
-            }
+            Rectangle {
+                id: inner
 
-            width: text.width + 20
-            height: text.height + 5
-            color: focused ? "#aae" : "#fff"
+                width: focused ? 30 : 20
+                height: parent.height
+                color: focused ? Theme.bgBlue : Theme.bg2
+                radius: 0
 
-            Text {
-                id: text
-                // actual stuff happening here
-                text: wrapper.number
-                color: focused ? "blue" : "black"
                 anchors {
                     centerIn: parent
                 }
 
-                font {
-                    family: "Aporetic With Fallback"
-                    pixelSize: 14
+                Behavior on width {
+                    NumberAnimation {
+                        duration: 100
+                    }
+                }
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 100
+                    }
                 }
             }
+            color: Theme.bg1
+            width: 20
+            height: 15
         }
     }
-
-    // check if i3 is alive, if not use niri module as source
-    model: (I3.socketPath != "") ? I3.workspaces.values : Providers.Niri.workspaces
-    delegate: wsComp
 }
