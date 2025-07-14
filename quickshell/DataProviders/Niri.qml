@@ -12,21 +12,51 @@ Singleton {
     property var focusedWorkspace : 0
     property var focusedWindowIndex : 0
 
+    property var wsIndexById : {}
+
     function focusWs(idx : int) : void {
         if (idx < workspaces.count) {
-            Quickshell.execDetached(["sh", "-c", `niri msg action focus-workspace ${workspaces.get(i).id}`])
+            Quickshell.execDetached(["sh", "-c", `niri msg action focus-workspace ${workspaces.get(idx).id}`])
+        }
+    }
+
+    function updateWindowFocused(id: int): void {
+        for (let i=0; i<windows.count; i++) {
+            if (id === windows.get(i).id) {
+                windows.setProperty(focusedWindowIndex, "is_focused", false)
+                windows.setProperty(i,"is_focused",true)
+                focusedWindowIndex = i
+                return;
+            }
         }
     }
 
     function focusWindow(id : int) : void {
         console.log(`niri msg action focus-window --id=${id}`)
         Quickshell.execDetached(["sh", "-c", `niri msg action focus-window --id=${id}`])
+        // preemptively update the currently focused index
+        updateWindowFocused(id)
     }
 
     function listModel(model) {
         for (let i=0; i<model.count; i++) {
             console.log(JSON.stringify(model.get(i)));
         }
+    }
+
+    function sortWindows(winlist: var) {
+        winlist.sort((a,b) => ( wsIndexById[a['workspace_id']] - wsIndexById[b['workspace_id']] ))
+    }
+
+    function setWindows(winlist: var) {
+        windows.clear()
+        sortWindows(winlist)
+        winlist.forEach((e,k) => {
+            windows.append(e)
+            if (e["is_focused"]) {
+                focusedWindowIndex = k
+            }
+        });
     }
 
     function parseUpdates(data) {
@@ -48,6 +78,13 @@ Singleton {
 
                 workspaces.append(this_ws);
             })
+            // assume we have the full list of workspaces, update index list
+            wsIndexById = {};
+            for (let i=0; i < workspaces.count; i++) {
+                let e = workspaces.get(i);
+                wsIndexById[e['id']] = e['number']
+            }
+
         } else if (obj["WorkspaceActivated"] != undefined) {
             let id = obj["WorkspaceActivated"].id;
 
@@ -63,35 +100,44 @@ Singleton {
             }
         } else if (obj["WindowsChanged"] != undefined) {
             let list = obj["WindowsChanged"]["windows"];
-            windows.clear()
-            list.sort((a,b) => a.id < b.id)
-            list.forEach((e,k) => {
-                windows.append(e)
-                if (e["is_focused"]) {
-                    focusedWindowIndex = k
-                }
-            });
-        } else if (obj["WindowFocusChanged"] != undefined) {
-            let id = obj["WindowFocusChanged"]["id"];
-            if (id == null) return;
-            for (let i=0; i<windows.count; i++) {
-                if (id === windows.get(i).id) {
-                    windows.setProperty(focusedWindowIndex, "is_focused", false)
-                    windows.setProperty(i,"is_focused",true)
-                    focusedWindowIndex = i
-                    return;
-                }
-            }
+            setWindows(list);
         } else if (obj["WindowOpenedOrChanged"] != undefined) {
             let data = obj["WindowOpenedOrChanged"]["window"];
             let id = data.id;
+
             for (let i=0; i<windows.count; i++) {
                 if (id === windows.get(i).id) {
                     windows.set(i, data)
+                    // did we move the window to lower indexed workspaces?
+                    while (i > 1 && windows.get(i - 1)['workspace_id'] > windows.get(i)['workspace_id']) {
+                        windows.move(i, i-1, 1)
+                        i--;
+                        if (data.is_focused) focusedWindowIndex--;
+                    }
+
+                    while (i < windows.count - 1 && windows.get(i + 1)['workspace_id'] < windows.get(i)['workspace_id']) {
+                        windows.move(i, i+1, 1)
+                        i++;
+                        if (data.is_focused) focusedWindowIndex++;
+                    }
+                    
+                    // WARN: early return!
                     return;
                 }
             }
+            // we didnt find a window with the same id
             windows.append(data)
+            // walk backwards (copy pasted from above)
+            let i = windows.count - 1
+            while (i > 1 && windows.get(i - 1)['workspace_id'] > windows.get(i)['workspace_id']) {
+                windows.move(i, i-1, 1)
+                i--;
+            }
+            if (data.is_focused) focusedWindowIndex = i;
+        } else if (obj["WindowFocusChanged"] != undefined) {
+            let id = obj["WindowFocusChanged"]["id"];
+            if (id == null) return;
+            updateWindowFocused(id);
         } else if (obj["WindowClosed"] != undefined) {
             let id = obj["WindowClosed"]["id"];
             for (let i=0; i<windows.count; i++) {

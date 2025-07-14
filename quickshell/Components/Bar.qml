@@ -1,10 +1,12 @@
 import Quickshell
 import Quickshell.Io
+import Quickshell.I3
 import QtQuick
 import QtQuick.Controls
 
-import "root:/Components/BarWidgets" as Widgets
-import "root:/"
+import qs.Components.BarWidgets
+import qs.DataProviders
+import qs
 
 PanelWindow {
     id: bar
@@ -12,12 +14,12 @@ PanelWindow {
     focusable: true
 
     anchors {
-        bottom: true
+        top: true
         left: true
         right: true
     }
 
-    implicitHeight: 35
+    implicitHeight: 40
 
     /*
      *  Popups
@@ -31,7 +33,7 @@ PanelWindow {
      *  Widgets
      */
 
-    Widgets.Workspaces {
+    Workspaces {
         id: workspaces
         height: parent.height
         anchors {
@@ -40,18 +42,18 @@ PanelWindow {
         }
     }
 
-    Widgets.Windows {
-        id: windows
+
+    Windows {
         height: parent.height
         anchors {
             leftMargin: 20
             left: workspaces.right
+            verticalCenter: parent.verticalCenter
         }
     }
 
-    Widgets.Battery {
+    Battery {
         id: battery
-        width: parent.width
         height: parent.height
         orientation: Qt.Horizontal
 
@@ -60,7 +62,7 @@ PanelWindow {
         }
     }
 
-    Widgets.Clock {
+    Clock {
         id: clock
         anchors {
             rightMargin: 10
@@ -69,7 +71,7 @@ PanelWindow {
         }
     }
 
-    Widgets.Tray {
+    Tray {
         id: tray
         height: parent.height
         // orientation: Qt.Horizontal

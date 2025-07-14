@@ -2,7 +2,7 @@ import Quickshell.Services.SystemTray
 import QtQuick
 import QtQuick.Layouts
 
-import "root:/Templates"
+import qs.Templates
 
 RowLayout {
     spacing: 10

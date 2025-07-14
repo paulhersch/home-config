@@ -5,98 +5,132 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick
 
-import "root:/" // Theme
-import "root:/Templates"
-import "root:/Components/DataProviders"
+import qs // Theme
+import qs.Templates
+import qs.DataProviders
 
 PanelWindow {
     required property var anchorWindow
 
     id: window
     visible: false
+    color: "transparent"
 
     implicitWidth: 700
-    implicitHeight: 300
+    implicitHeight: 450
     focusable: true
 
+    margins {
+        top: 20
+    }
     anchors {
         top: true
     }
 
-    TextField {
-        id: searchbar
-        implicitWidth: window.implicitWidth
-        implicitHeight: Theme.fontLarge * 2
+    Rectangle {
+        color: "transparent"
+
         anchors {
-            top: parent.top
-        }
-        placeholderText: "search"
-        hoverEnabled: true
-
-        font {
-            family: Theme.fontFamily
-            pixelSize: Theme.fontLarge
+            fill:parent
         }
 
-        background : Rectangle {
-            color: Theme.bgBlue
-            border {
-                color: searchbar.Theme.fg1
-                width: 1
+        /*
+         *  Searchfield
+         */
+        TextField {
+            id: searchbar
+            implicitWidth: window.implicitWidth
+            implicitHeight: 45
+            anchors {
+                top: parent.top
+            }
+            placeholderText: "search"
+            hoverEnabled: true
+
+            font {
+                family: Theme.fontFamily
+                pointSize: Theme.fontLarge
+            }
+
+            background : Rectangle {
+                color: Theme.bgBlue
+                border {
+                    color: searchbar.Theme.fg1
+                    width: 1
+                }
+            }
+
+            /*
+             *  Keybinds/Actions
+             */
+            Keys.onEscapePressed: {
+                listview.reset()
+            }
+
+            Keys.onUpPressed: {
+                listview.decrementCurrentIndex()
+            }
+
+            Keys.onDownPressed: {
+                listview.incrementCurrentIndex()
+            }
+
+            onAccepted: {
+                var entry = listview.currentItem
+                LauncherData.launch(entry.modelData)
+                listview.reset()
+            }
+
+            onTextEdited: {
+                listview.model = LauncherData.query(this.text)
             }
         }
 
-        Keys.onEscapePressed: {
-            listview.reset()
+        /*
+         *  "View" of the Launcher
+         */
+        Rectangle {
+            id: viewBg
+            
+            color: "transparent"
+            height: window.height - searchbar.height
+            width: window.width - 20 // margins
+
+            anchors {
+                top: searchbar.bottom
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            ListView {
+                id: listview
+                clip: true
+                reuseItems: true
+                highlightFollowsCurrentItem: true
+
+                anchors.fill : parent
+
+                orientation: Qt.Vertical
+                verticalLayoutDirection: ListView.TopToBottom
+
+                function reset() {
+                    window.visible = false
+                    searchbar.clear()
+                    listview.model = LauncherData.entries
+                }
+
+                model: LauncherData.entries
+                delegate: LauncherItem {}
+            }
         }
 
-        Keys.onUpPressed: {
-            listview.decrementCurrentIndex()
-        }
-
-        Keys.onDownPressed: {
-            listview.incrementCurrentIndex()
-        }
-
-        onAccepted: {
-            var entry = listview.currentItem
-            LauncherData.launch(entry.modelData)
-            listview.reset()
-        }
-
-        onTextEdited: {
-            listview.model = LauncherData.query(this.text)
-        }
-    }
-
-    ListView {
-        id: listview
-        height: window.height - searchbar.height
-        width: window.width
-        clip: true
-        reuseItems: true
-        highlightFollowsCurrentItem: true
-        anchors {
-            top: searchbar.bottom
-        }
-        orientation: Qt.Vertical
-        verticalLayoutDirection: ListView.TopToBottom
-        spacing: 5
-
-        function reset() {
-            window.visible = false
-            searchbar.clear()
-            listview.model = LauncherData.entries
-        }
-
-        model: LauncherData.entries
-        delegate: LauncherItem {}
-    }
-
-    IpcHandler {
-        target: "launcher"
-        function toggle() : void {
-            window.visible = !window.visible;
+        /*
+         *  Registered cmd for niri/sway
+         */
+        IpcHandler {
+            target: "launcher"
+            function toggle() : void {
+                window.visible = !window.visible;
+            }
         }
     }
 }

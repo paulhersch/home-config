@@ -159,7 +159,7 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Alt+Return { spawn "foot"; }
-    Alt+D { spawn "fuzzel"; }
+    Alt+D { spawn "quickshell" "ipc" "call" "launcher" "toggle"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
@@ -347,7 +347,11 @@ environment {
     DISPLAY ":0" // X Display from satellite
 }
 
-spawn-at-startup "qs -d"
+debug {
+    wait-for-frame-completion-in-pipewire
+}
+
+spawn-at-startup "sleep 3; qs -d"
 spawn-at-startup "blueman-applet"
 spawn-at-startup "gammastep -P -O 5400"
 spawn-at-startup "~/.config/swww/reload.sh"

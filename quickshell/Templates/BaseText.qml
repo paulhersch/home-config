@@ -1,10 +1,10 @@
 import QtQuick
 
-import "root:/"
+import qs
 
 Text {
     font {
         family: Theme.fontFamily
-        pixelSize: Theme.fontNormal
+        pointSize: Theme.fontNormal
     }
 }

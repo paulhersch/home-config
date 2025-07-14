@@ -31,7 +31,7 @@ Singleton {
     readonly property string fgCyan     :  "#377b82"
 
     readonly property string fontFamily : "Aporetic Serif"
-    readonly property int fontNormal    : 14
-    readonly property int fontLarge     : 18
-    readonly property int fontSmall     : 11
+    readonly property int fontNormal    : 11
+    readonly property int fontLarge     : 14
+    readonly property int fontSmall     : 9
 }
