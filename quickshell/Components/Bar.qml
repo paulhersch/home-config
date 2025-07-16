@@ -77,8 +77,19 @@ PanelWindow {
         // orientation: Qt.Horizontal
 
         anchors {
-            rightMargin: 15
+            rightMargin: 30
             right: clock.left
+            verticalCenter: parent.verticalCenter
+        }
+    }
+    
+    Mpris {
+        id: mpris
+        height: parent.height
+
+        anchors {
+            right: tray.left
+            rightMargin: 30
             verticalCenter: parent.verticalCenter
         }
     }

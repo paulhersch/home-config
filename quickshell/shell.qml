@@ -1,5 +1,6 @@
 //@ pragma UseQApplication
 //@ pragma Env QT_STYLE_OVERRIDE=Fusion
+//@ pragma Env LC_TIME=de_DE.utf8
 //@ pragma IconTheme Papirus-Light
 
 // ^ funky magic variables
