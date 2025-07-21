@@ -18,11 +18,13 @@ MouseArea {
     
     width: mainPlayer != null ? 250 : 0
     height: mainPlayer != null ? parent.height : 0
+    visible: mainPlayer != null
 
     MprisItem {
         player: mainPlayer
         width: this.width
         height: this.height
         anchors.fill : parent
+        gradientColor: Theme.bg1
     }
 }

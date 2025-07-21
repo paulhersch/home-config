@@ -3,6 +3,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 import QtQuick
 
 import qs // Theme
@@ -10,8 +11,6 @@ import qs.Templates
 import qs.DataProviders
 
 PanelWindow {
-    required property var anchorWindow
-
     id: window
     visible: false
     color: "transparent"
@@ -31,15 +30,60 @@ PanelWindow {
         color: "transparent"
 
         anchors {
-            fill:parent
+            fill: parent
+            margins: 10
         }
 
+        /*
+         *  "View" of the Launcher
+         */
+        Rectangle {
+            id: viewBg
+            
+            color: "transparent"
+            height: window.height - searchbar.height
+            width: window.width - 40 // margins
+
+            anchors {
+                top: searchbar.bottom
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            ListView {
+                id: listview
+                clip: true
+                reuseItems: true
+                highlightFollowsCurrentItem: true
+
+                anchors.fill : parent
+
+                orientation: Qt.Vertical
+                verticalLayoutDirection: ListView.TopToBottom
+
+                function reset() {
+                    window.visible = false
+                    searchbar.clear()
+                    listview.model = LauncherData.entries
+                }
+
+                model: LauncherData.entries
+                delegate: LauncherItem {}
+            }
+        }
+
+        RectangularShadow {
+            anchors.fill: searchbar
+            blur: 20
+            spread: -2
+
+            color: Theme.fgBlue
+        }
         /*
          *  Searchfield
          */
         TextField {
             id: searchbar
-            implicitWidth: window.implicitWidth
+            implicitWidth: parent.width
             implicitHeight: 45
             anchors {
                 top: parent.top
@@ -87,44 +131,7 @@ PanelWindow {
         }
 
         /*
-         *  "View" of the Launcher
-         */
-        Rectangle {
-            id: viewBg
-            
-            color: "transparent"
-            height: window.height - searchbar.height
-            width: window.width - 20 // margins
-
-            anchors {
-                top: searchbar.bottom
-                horizontalCenter: parent.horizontalCenter
-            }
-
-            ListView {
-                id: listview
-                clip: true
-                reuseItems: true
-                highlightFollowsCurrentItem: true
-
-                anchors.fill : parent
-
-                orientation: Qt.Vertical
-                verticalLayoutDirection: ListView.TopToBottom
-
-                function reset() {
-                    window.visible = false
-                    searchbar.clear()
-                    listview.model = LauncherData.entries
-                }
-
-                model: LauncherData.entries
-                delegate: LauncherItem {}
-            }
-        }
-
-        /*
-         *  Registered cmd for niri/sway
+         *  Registered cmd compositor
          */
         IpcHandler {
             target: "launcher"

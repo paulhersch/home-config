@@ -12,6 +12,7 @@ import qs.Templates
 Item {
     id: root
     required property var player
+    required property var gradientColor
 
     Image {
         id: bg
@@ -31,11 +32,11 @@ Item {
 
         gradient: Gradient {
             orientation: Gradient.Horizontal
-            GradientStop { position: 0; color: "#FF" + Theme.bg1.split("#")[1] }
-            GradientStop { position: 0.1; color: "#DD" + Theme.bg1.split("#")[1] }
-            GradientStop { position: 0.5; color: "#BB" + Theme.bg1.split("#")[1] }
-            GradientStop { position: 0.9; color: "#DD" + Theme.bg1.split("#")[1] }
-            GradientStop { position: 1; color: "#FF" + Theme.bg1.split("#")[1] }
+            GradientStop { position: 0; color: "#FF" +   gradientColor.split("#")[1] }
+            GradientStop { position: 0.1; color: "#DD" + gradientColor.split("#")[1] }
+            GradientStop { position: 0.5; color: "#BB" + gradientColor.split("#")[1] }
+            GradientStop { position: 0.9; color: "#DD" + gradientColor.split("#")[1] }
+            GradientStop { position: 1; color: "#FF" +   gradientColor.split("#")[1] }
         }
     }
 
@@ -44,7 +45,7 @@ Item {
         width: root.width
         anchors.verticalCenter: parent.verticalCenter
         
-        Layout.fillWidth: false
+        Layout.fillWidth: true
 
         ColumnLayout {
             id: textsublayout
@@ -55,10 +56,13 @@ Item {
             
             BaseText {
                 // Text doesn't get truncated properly inside layouts?
-                text: player.trackTitle.length < 23 ? player.trackTitle : player.trackTitle.slice(0,20) + "..."
+                // text: player.trackTitle.length < 23 ? player.trackTitle : player.trackTitle.slice(0,20) + "..."
+                text: player.trackTitle
                 font.bold: true
+                Layout.fillWidth: true
             }
             BaseText {
+                Layout.fillWidth: true
                 text: player.trackArtist
                 font.pointSize : Theme.fontSmall
                 font.italic : true

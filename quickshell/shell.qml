@@ -11,4 +11,6 @@ import "Components" as Components
 
 Scope {
     Components.Bar {}
+    Components.Background {}
+    Components.Launcher {}
 }

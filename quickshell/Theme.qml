@@ -34,4 +34,8 @@ Singleton {
     readonly property int fontNormal    : 11
     readonly property int fontLarge     : 14
     readonly property int fontSmall     : 9
+
+    readonly property string backgroundImage: "/home/paul/Bilder/Hintergrundbilder/field.jpg"
+
+    readonly property int barHeight: 40
 }

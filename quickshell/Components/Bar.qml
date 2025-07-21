@@ -8,89 +8,102 @@ import qs.Components.BarWidgets
 import qs.DataProviders
 import qs
 
-PanelWindow {
-    id: bar
-    color: Theme.bg1 
-    focusable: true
+Variants {
+    model: Quickshell.screens
 
-    anchors {
-        top: true
-        left: true
-        right: true
-    }
+    PanelWindow {
+        required property ShellScreen modelData // screen
 
-    implicitHeight: 40
+        id: bar
+        color: Theme.bg1 
+        focusable: true
+        screen: modelData
 
-    /*
-     *  Popups
-     */
-
-    Launcher {
-        anchorWindow: bar
-    }
-
-    /*
-     *  Widgets
-     */
-
-    Workspaces {
-        id: workspaces
-        height: parent.height
         anchors {
-            leftMargin: 10
-            left: parent.left
+            top: true
+            left: true
+            right: true
         }
-    }
+
+        implicitHeight: Theme.barHeight
+
+        /*
+         *  Popups
+         */
 
 
-    Windows {
-        height: parent.height
-        anchors {
-            leftMargin: 20
-            left: workspaces.right
-            verticalCenter: parent.verticalCenter
+        /*
+         *  Widgets
+         */
+
+        Workspaces {
+            id: workspaces
+            height: parent.height
+            anchors {
+                // horizontalCenter: parent.horizontalCenter
+                leftMargin: 10
+                left: parent.left
+            }
         }
-    }
 
-    Battery {
-        id: battery
-        height: parent.height
-        orientation: Qt.Horizontal
+        NotificationPill {
+            id: notifs
+            width: 400
 
-        anchors {
-            centerIn: parent
+            anchors {
+                centerIn: parent
+            }
         }
-    }
 
-    Clock {
-        id: clock
-        anchors {
-            rightMargin: 10
-            right: parent.right
-            verticalCenter: parent.verticalCenter
+        // Windows {
+        //     height: parent.height
+        //     anchors {
+        //         leftMargin: 20
+        //         left: parent.left
+        //         verticalCenter: parent.verticalCenter
+        //     }
+        // }
+
+        Battery {
+            id: battery
+            height: parent.height
+            orientation: Qt.Horizontal
+
+            anchors {
+                centerIn: parent
+            }
         }
-    }
 
-    Tray {
-        id: tray
-        height: parent.height
-        // orientation: Qt.Horizontal
-
-        anchors {
-            rightMargin: 30
-            right: clock.left
-            verticalCenter: parent.verticalCenter
+        Clock {
+            id: clock
+            anchors {
+                rightMargin: 10
+                right: parent.right
+                verticalCenter: parent.verticalCenter
+            }
         }
-    }
-    
-    Mpris {
-        id: mpris
-        height: parent.height
 
-        anchors {
-            right: tray.left
-            rightMargin: 30
-            verticalCenter: parent.verticalCenter
+        Tray {
+            id: tray
+            height: parent.height
+            // orientation: Qt.Horizontal
+
+            anchors {
+                right: clock.left
+                rightMargin: 20
+                verticalCenter: parent.verticalCenter
+            }
+        }
+        
+        Mpris {
+            id: mpris
+            height: parent.height
+
+            anchors {
+                right: tray.left
+                rightMargin: 30
+                verticalCenter: parent.verticalCenter
+            }
         }
     }
 }

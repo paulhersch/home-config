@@ -2,6 +2,7 @@
 
 import Quickshell
 import Quickshell.I3
+import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Controls
@@ -17,14 +18,17 @@ RowLayout {
 
     Repeater {
         // check if i3 is alive, if not use niri module as source
-        model: (I3.socketPath != "") ? I3.workspaces.values : Niri.workspaces
+        model: (I3.socketPath != "") ? I3.workspaces.values : Hyprland.workspaces.values // Niri.workspaces
 
         delegate: MouseArea {
-            id: wrapper
             // important variables
-            required property bool focused
-            required property bool active
-            required property int number
+            required property var modelData
+
+            property bool focused : modelData.focused
+            property bool active : modelData.active
+            property int number : modelData.number != undefined ? modelData.number : modelData.id
+            property int id : modelData.id
+            property string name : modelData.name != undefined ? modelData.name : ""
 
             property bool is_hovered: false
 
@@ -43,7 +47,8 @@ RowLayout {
                             // if not the keyboard just works lol.
                             I3.dispatch(`workspace ${number}`);
                         } else {
-                            Niri.focusWs(number-1);
+                            // Niri.focusWs(number-1);
+                            Hyprland.dispatch(`workspace ${id}`);
                         }
                         break;
                 }
@@ -58,15 +63,22 @@ RowLayout {
                 Rectangle {
                     id: inner
 
-                    width: wrapper.focused ? 30 : 25
-                    height: wrapper.focused ? 25 : 20
-                    color: wrapper.focused ? Theme.bgBlue : Theme.bg4
+                    width: focused ? 30 : 25
+                    height: focused ? 25 : 20
+                    color: focused ? Theme.bgBlue : Theme.bg4
+                    radius: 5
 
                     anchors {
                         centerIn: parent
                     }
 
                     Behavior on width {
+                        NumberAnimation {
+                            duration: 100
+                        }
+                    }
+
+                    Behavior on height {
                         NumberAnimation {
                             duration: 100
                         }
@@ -84,8 +96,9 @@ RowLayout {
                         centerIn: parent
                     }
 
-                    text: wrapper.number
-                    color: (wrapper.focused || wrapper.is_hovered) ? Theme.fg1 : Theme.bg5
+                    // stupid way of not showing the text on niri
+                    text: (I3.socketPath != "") ? number : id
+                    color: (focused || is_hovered) ? Theme.fg1 : Theme.bg5
 
                     Behavior on color {
                         ColorAnimation {

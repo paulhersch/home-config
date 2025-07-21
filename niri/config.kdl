@@ -354,4 +354,4 @@ debug {
 spawn-at-startup "qs -d" // doesnt fucking spawn it on startup :((((
 spawn-at-startup "blueman-applet"
 spawn-at-startup "gammastep -P -O 5400"
-spawn-at-startup "~/.config/swww/reload.sh"
+// spawn-at-startup "~/.config/swww/reload.sh"
