@@ -67,10 +67,10 @@ Variants {
         Battery {
             id: battery
             height: parent.height
-            orientation: Qt.Horizontal
 
             anchors {
-                centerIn: parent
+                right: clock.left
+                rightMargin: 20
             }
         }
 
@@ -89,7 +89,7 @@ Variants {
             // orientation: Qt.Horizontal
 
             anchors {
-                right: clock.left
+                right: battery.left
                 rightMargin: 20
                 verticalCenter: parent.verticalCenter
             }

@@ -2,52 +2,76 @@ import Quickshell
 import Quickshell.Services.UPower
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
+
+import qs
 
 // lazily load any relevant laptopbattery
-ListView {
+RowLayout  {
     Component {
-        id: lazyBatt
+        id: bat
 
-        Loader { 
-            id: loader
-            sourceComponent: isLaptopBattery ? bat : Text({text:""})
-
+        MouseArea {
             required property real timeToEmpty
             required property real timeToFull
             required property bool isLaptopBattery
             required property real percentage
 
-            Component {
-                id: bat
-                Button {
+            width: 50
+            height: 18
+            hoverEnabled: true
+            id: root
 
-                    width: bar.width
-                    hoverEnabled: true
-
-                    ProgressBar {
-                        id: bar
-                        from: 0
-                        to: 1
-                        value: percentage
-                        anchors {
-                            centerIn: parent
-                        }
-                    }
-
-                    function secondsToCoolString(seconds: real): string {
-                        return `${Math.floor(seconds / 3600)}:${Math.floor((seconds / 60) % 60)}:${Math.floor(seconds % 60)}`;
-                    }
-
-                    ToolTip {
-                        delay: 1000
-                        visible: hovered
-                        text: `${secondsToCoolString(timeToEmpty)} / ${secondsToCoolString(timeToFull)}`
-                    }
+            Rectangle {
+                id: bar
+                anchors.fill:parent
+                color: "transparent"
+                radius: 5
+                border {
+                    width: 1
+                    color: Theme.fg1
                 }
+
+                Rectangle {
+                    anchors {
+                        left: parent.left
+                        verticalCenter: parent.verticalCenter
+                        margins: 2
+                    }
+                    radius: parent.radius
+                    height: parent.height - 4
+                    width: parent.width * percentage
+                    color: percentage > 0.4 ? Theme.bgGreen : (percentage < 0.2 ? Theme.bgRed : Theme.bgYellow)
+                }
+            }
+
+            Rectangle {
+                id: tip
+                anchors.left : bar.right
+                anchors.verticalCenter: bar.verticalCenter
+                height: 10
+                width: 5
+                radius: 5
+                color: Theme.fg1
+            }
+
+            function secondsToCoolString(seconds: real): string {
+                return `${Math.floor(seconds / 3600)}:${Math.floor((seconds / 60) % 60)}:${Math.floor(seconds % 60)}`;
+            }
+            
+            onEntered: { tooltip.visible = true }
+            onExited: { tooltip.visible = false }
+
+            ToolTip {
+                id: tooltip
+                delay: 1000
+                text: `${secondsToCoolString(timeToEmpty)} / ${secondsToCoolString(timeToFull)}`
             }
         }
     }
 
-    model: UPower.devices
-    delegate: lazyBatt
+    Repeater {
+        model: UPower.devices.values.filter(e => e.isLaptopBattery)
+        delegate: bat 
+    }
 }

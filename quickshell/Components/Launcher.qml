@@ -87,10 +87,12 @@ PanelWindow {
             implicitHeight: 45
             anchors {
                 top: parent.top
+                leftMargin: 10
+                rightMargin: 10
             }
             placeholderText: "search"
             hoverEnabled: true
-
+            
             font {
                 family: Theme.fontFamily
                 pointSize: Theme.fontLarge
@@ -102,6 +104,9 @@ PanelWindow {
                     color: searchbar.Theme.fg1
                     width: 1
                 }
+
+            radius: 10
+
             }
 
             /*
