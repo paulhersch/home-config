@@ -70,7 +70,7 @@ Variants {
 
             anchors {
                 right: clock.left
-                rightMargin: 20
+                // rightMargin: 20
             }
         }
 

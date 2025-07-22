@@ -17,14 +17,16 @@ RowLayout  {
             required property bool isLaptopBattery
             required property real percentage
 
-            width: 50
+            width: 65
             height: 18
             hoverEnabled: true
             id: root
 
             Rectangle {
                 id: bar
-                anchors.fill:parent
+                anchors.left: parent.left
+                width: parent.width - 15
+
                 color: "transparent"
                 radius: 5
                 border {
