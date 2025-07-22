@@ -26,6 +26,7 @@ RowLayout  {
                 id: bar
                 anchors.left: parent.left
                 width: parent.width - 15
+                height: parent.height
 
                 color: "transparent"
                 radius: 5
@@ -71,6 +72,12 @@ RowLayout  {
             }
         }
     }
+
+    anchors {
+        verticalCenter: parent.verticalCenter
+    }
+
+    height: parent.height
 
     Repeater {
         model: UPower.devices.values.filter(e => e.isLaptopBattery)
