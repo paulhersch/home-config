@@ -18,7 +18,7 @@ RowLayout {
 
     Repeater {
         // check if i3 is alive, if not use niri module as source
-        model: (I3.socketPath != "") ? I3.workspaces.values : Hyprland.workspaces.values // Niri.workspaces
+        model: (I3.socketPath != "") ? I3.workspaces.values : Niri.workspaces
 
         delegate: MouseArea {
             // important variables
@@ -26,9 +26,9 @@ RowLayout {
 
             property bool focused : modelData.focused
             property bool active : modelData.active
-            property int number : modelData.number != undefined ? modelData.number : modelData.id
-            property int id : modelData.id
-            property string name : modelData.name != undefined ? modelData.name : ""
+            property int number : modelData.number // != undefined ? modelData.number : modelData.id
+            // property int id : modelData.id
+            // property string name : modelData.name != undefined ? modelData.name : modelData.id
 
             property bool is_hovered: false
 
@@ -47,8 +47,8 @@ RowLayout {
                             // if not the keyboard just works lol.
                             I3.dispatch(`workspace ${number}`);
                         } else {
-                            // Niri.focusWs(number-1);
-                            Hyprland.dispatch(`workspace ${id}`);
+                            // Niri.focusWs(number - 1);
+                            // Hyprland.dispatch(`workspace ${id}`);
                         }
                         break;
                 }
@@ -97,7 +97,7 @@ RowLayout {
                     }
 
                     // stupid way of not showing the text on niri
-                    text: (I3.socketPath != "") ? number : id
+                    text: (I3.socketPath != "") ? number : ""
                     color: (focused || is_hovered) ? Theme.fg1 : Theme.bg5
 
                     Behavior on color {

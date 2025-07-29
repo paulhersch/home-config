@@ -77,9 +77,10 @@ RowLayout  {
         verticalCenter: parent.verticalCenter
     }
 
-    height: parent.height
+    width: rep.width
 
     Repeater {
+        id: rep
         model: UPower.devices.values.filter(e => e.isLaptopBattery)
         delegate: bat 
     }
