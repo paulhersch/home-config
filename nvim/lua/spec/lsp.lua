@@ -226,7 +226,7 @@ return {
                         settings = {
                             ltex = {
                                 language = "de-DE",
-                                enabled = { "context", "context.tex", "latex" }
+                                enabled = { "context", "context.tex", "latex", "markdown" }
                             }
                         }
                     },
