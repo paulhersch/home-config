@@ -70,7 +70,7 @@ Variants {
 
             anchors {
                 right: clock.left
-                // rightMargin: 20
+                // margin, bat item has to do that by itself
             }
         }
 
@@ -90,7 +90,7 @@ Variants {
 
             anchors {
                 right: battery.left
-                rightMargin: 20
+                rightMargin: 15
                 verticalCenter: parent.verticalCenter
             }
         }

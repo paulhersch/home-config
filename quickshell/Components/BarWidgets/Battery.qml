@@ -43,7 +43,7 @@ RowLayout  {
                     }
                     radius: parent.radius
                     height: parent.height - 4
-                    width: parent.width * percentage
+                    width: (parent.width - 4) * percentage
                     color: percentage > 0.4 ? Theme.bgGreen : (percentage < 0.2 ? Theme.bgRed : Theme.bgYellow)
                 }
             }
@@ -81,6 +81,7 @@ RowLayout  {
 
     Repeater {
         id: rep
+        width: 65 * rep.count
         model: UPower.devices.values.filter(e => e.isLaptopBattery)
         delegate: bat 
     }
