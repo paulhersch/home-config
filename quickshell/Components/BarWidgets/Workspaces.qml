@@ -26,9 +26,8 @@ RowLayout {
 
             property bool focused : modelData.focused
             property bool active : modelData.active
-            property int number : modelData.number // != undefined ? modelData.number : modelData.id
-            // property int id : modelData.id
-            // property string name : modelData.name != undefined ? modelData.name : modelData.id
+            property int number : modelData.number
+            property int id : modelData.id
 
             property bool is_hovered: false
 
@@ -97,7 +96,7 @@ RowLayout {
                     }
 
                     // stupid way of not showing the text on niri
-                    text: (I3.socketPath != "") ? number : ""
+                    text: (I3.socketPath != "") ? number : id
                     color: (focused || is_hovered) ? Theme.fg1 : Theme.bg5
 
                     Behavior on color {
