@@ -15,53 +15,138 @@ PanelWindow {
     visible: false
     color: "transparent"
 
-    implicitWidth: 700
-    implicitHeight: 450
+    // implicitWidth: 700
+    // implicitHeight: 450
     focusable: true
 
-    margins {
-        top: 20
-    }
+    WlrLayershell.layer: WlrLayer.Top
+    exclusionMode: ExclusionMode.Ignore
     anchors {
         top: true
+        bottom: true
+        left: true
+        right: true
     }
-
     Rectangle {
-        color: "transparent"
+        id: windowBG
+        color: "#44000000"
+        anchors.fill: parent
 
-        anchors {
-            fill: parent
-            margins: 10
-        }
-
-        /*
-         *  "View" of the Launcher
-         */
         Rectangle {
-            id: viewBg
-            
             color: "transparent"
-            height: window.height - searchbar.height
-            width: window.width - 40 // margins
+            id: root
+            implicitWidth: 750
+            implicitHeight: 500
 
             anchors {
-                top: searchbar.bottom
-                horizontalCenter: parent.horizontalCenter
+                centerIn: parent
             }
 
+            // added this here because PanelWindows isn't an Item
+            state: "CLOSED"
+            states: [
+                State {
+                    name: "CLOSED"
+                    PropertyChanges { target: window; visible: false }
+                },
+                State {
+                    name: "OPENED"
+                }
+            ]
+
+            transitions : [
+                Transition {
+                    from: "CLOSED"
+                    to: "OPENED"
+
+                    SequentialAnimation {
+                        PropertyAction {
+                            target: window
+                            property: "visible"
+                            value: true
+                        }
+                        ParallelAnimation {
+                            NumberAnimation {
+                                target: searchbar
+                                properties: "width"
+                                from: 0
+                                to: root.width
+                                duration: 50
+                            }
+                            NumberAnimation {
+                                target: listview
+                                properties: "opacity"
+                                from: 0
+                                to: 1
+                                duration: 100
+                            }
+                            NumberAnimation {
+                                target: listview
+                                properties: "height"
+                                from: 0
+                                to: root.height - searchbar.height
+                                duration: 100
+                            }
+                        }
+                    }
+                },
+                Transition {
+                    from: "OPENED"
+                    to: "CLOSED"
+                    SequentialAnimation {
+                        ParallelAnimation {
+                            NumberAnimation {
+                                target: searchbar
+                                properties: "width"
+                                from: root.width
+                                to: 0
+                                duration: 50
+                            }
+                            NumberAnimation {
+                                target: listview
+                                properties: "height"
+                                from: root.height - searchbar.height
+                                to: 0
+                                duration: 100
+                            }
+                            NumberAnimation {
+                                target: listview
+                                properties: "opacity"
+                                from: 1
+                                to: 0
+                                duration: 100
+                            }
+                        }
+                        PropertyAction {
+                            target: window
+                            property: "visible"
+                            value: false
+                        }
+                    }
+                }
+            ]
+
+            /*
+             *  "View" of the Launcher
+             */
             ListView {
                 id: listview
+                anchors {
+                    top: searchbar.bottom
+                    horizontalCenter: parent.horizontalCenter
+                }
+
                 clip: true
                 reuseItems: true
                 highlightFollowsCurrentItem: true
 
-                anchors.fill : parent
-
+                height: root.height - searchbar.height
+                width: root.width - 40
                 orientation: Qt.Vertical
                 verticalLayoutDirection: ListView.TopToBottom
 
                 function reset() {
-                    window.visible = false
+                    handler.toggle()
                     searchbar.clear()
                     listview.model = LauncherData.entries
                 }
@@ -69,80 +154,84 @@ PanelWindow {
                 model: LauncherData.entries
                 delegate: LauncherItem {}
             }
-        }
 
-        RectangularShadow {
-            anchors.fill: searchbar
-            blur: 20
-            spread: -2
+            RectangularShadow {
+                anchors.fill: searchbar
+                blur: 20
+                spread: -2
 
-            color: Theme.fgBlue
-        }
-        /*
-         *  Searchfield
-         */
-        TextField {
-            id: searchbar
-            implicitWidth: parent.width
-            implicitHeight: 45
-            anchors {
-                top: parent.top
-                leftMargin: 10
-                rightMargin: 10
+                color: Theme.fgBlue
             }
-            placeholderText: "search"
-            hoverEnabled: true
-            
-            font {
-                family: Theme.fontFamily
-                pointSize: Theme.fontLarge
-            }
-
-            background : Rectangle {
-                color: Theme.bgBlue
-                border {
-                    color: searchbar.Theme.fg1
-                    width: 1
+            /*
+             *  Searchfield
+             */
+            TextField {
+                id: searchbar
+                implicitHeight: 45
+                implicitWidth: parent.width
+                anchors {
+                    top: parent.top
+                    horizontalCenter: parent.horizontalCenter
                 }
 
-            radius: 10
+                placeholderText: "search"
+                hoverEnabled: true
 
+                font {
+                    family: Theme.fontFamily
+                    pointSize: Theme.fontLarge
+                }
+
+                background : Rectangle {
+                    color: Theme.bgBlue
+                    border {
+                        color: searchbar.Theme.fg1
+                        width: 1
+                    }
+
+                    radius: 10
+
+                }
+
+                /*
+                 *  Keybinds/Actions
+                 */
+                Keys.onEscapePressed: {
+                    listview.reset()
+                }
+
+                Keys.onUpPressed: {
+                    listview.decrementCurrentIndex()
+                }
+
+                Keys.onDownPressed: {
+                    listview.incrementCurrentIndex()
+                }
+
+                onAccepted: {
+                    var entry = listview.currentItem
+                    LauncherData.launch(entry.modelData)
+                    listview.reset()
+                }
+
+                onTextEdited: {
+                    listview.model = LauncherData.query(this.text)
+                }
             }
 
             /*
-             *  Keybinds/Actions
+             *  Registered cmd compositor
              */
-            Keys.onEscapePressed: {
-                listview.reset()
-            }
-
-            Keys.onUpPressed: {
-                listview.decrementCurrentIndex()
-            }
-
-            Keys.onDownPressed: {
-                listview.incrementCurrentIndex()
-            }
-
-            onAccepted: {
-                var entry = listview.currentItem
-                LauncherData.launch(entry.modelData)
-                listview.reset()
-            }
-
-            onTextEdited: {
-                listview.model = LauncherData.query(this.text)
+            IpcHandler {
+                id: handler
+                target: "launcher"
+                function toggle() : void {
+                    // window.visible = !window.visible;
+                    root.state = root.state === "CLOSED" ? "OPENED" : "CLOSED"
+                }
             }
         }
 
-        /*
-         *  Registered cmd compositor
-         */
-        IpcHandler {
-            target: "launcher"
-            function toggle() : void {
-                window.visible = !window.visible;
-            }
-        }
     }
+
 }

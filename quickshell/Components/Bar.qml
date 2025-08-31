@@ -28,11 +28,6 @@ Variants {
         implicitHeight: Theme.barHeight
 
         /*
-         *  Popups
-         */
-
-
-        /*
          *  Widgets
          */
 
@@ -55,14 +50,14 @@ Variants {
             }
         }
 
-        Windows {
-            height: parent.height
-            anchors {
-                leftMargin: 10
-                left: workspaces.right
-                verticalCenter: parent.verticalCenter
-            }
-        }
+        // Windows {
+        //     height: parent.height
+        //     anchors {
+        //         leftMargin: 10
+        //         left: workspaces.right
+        //         verticalCenter: parent.verticalCenter
+        //     }
+        // }
 
         Battery {
             id: battery
@@ -70,6 +65,7 @@ Variants {
 
             anchors {
                 right: clock.left
+                rightMargin: 10
                 // margin, bat item has to do that by itself
             }
         }

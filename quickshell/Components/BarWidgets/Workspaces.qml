@@ -18,7 +18,7 @@ RowLayout {
 
     Repeater {
         // check if i3 is alive, if not use niri module as source
-        model: (I3.socketPath != "") ? I3.workspaces.values : Niri.workspaces
+        model: (I3.socketPath != "") ? I3.workspaces.values : Hyprland.workspaces.values
 
         delegate: MouseArea {
             // important variables

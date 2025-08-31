@@ -6,12 +6,8 @@ import QtQuick.Controls
 MouseArea {
     id: root
 
-    required property string title
-    required property string tooltipTitle
-    required property string tooltipDescription
-    required property string icon
-    required property bool hasMenu
-    required property var menu
+    required property var modelData
+    required property int index
 
     width: img.width
     height: parent.height
@@ -19,7 +15,7 @@ MouseArea {
     IconImage {
         id: img
         implicitSize: 20
-        source: icon
+        source: modelData.icon
 
         anchors {
             centerIn: parent
@@ -28,17 +24,17 @@ MouseArea {
 
     QsMenuAnchor {
         id: menuAnchor
-        menu: root.menu
+        menu: modelData.menu
         anchor.window: root.QsWindow.window
-        anchor.rect.x: root.x + root.QsWindow.contentItem?.width
-        anchor.rect.y: root.y
+        anchor.rect.x: root.parent.x + (root.width + root.parent.spacing) * (index + 1)
+        anchor.rect.y: root.parent.y
         anchor.rect.height: root.height * 3
     }
 
     onClicked: event => { 
         switch (event.button) {
             case Qt.LeftButton:
-            root.hasMenu && menuAnchor.open();
+            modelData.hasMenu && menuAnchor.open();
             break;
             default:
             break;

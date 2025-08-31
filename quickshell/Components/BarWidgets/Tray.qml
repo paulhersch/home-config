@@ -26,7 +26,7 @@ import qs.Templates
         // }
 
         Repeater {
-            model: SystemTray.items.values
+            model: SystemTray.items
             delegate: TrayItem {}
         }
     }

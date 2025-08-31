@@ -22,7 +22,7 @@ Singleton {
     }
 
     function launch(entry: DesktopEntry): void {
-        if (entry['runInTerminal'] != null && entry['runInTerminal'] == true) {
+        if (entry['runInTerminal'] != undefined && entry['runInTerminal'] == true) {
             Quickshell.execDetached(["foot", "-c", entry.execString]);
         } else {
             // Quickshell.execDetached(["sh", "-c", entry.execString]);
