@@ -32,21 +32,52 @@ return {
         end
     },
     {
+        'nvzone/typr',
+        dependencies = "nvzone/volt",
+        cmd = { "Typr", "TyprStats" },
+        opts = {}
+    },
+    {
         'akinsho/toggleterm.nvim',
-        config = function()
-            require("toggleterm").setup {
-                autochdir = true,
-                direction = 'float',
-                float_opts = {
-                    border = 'single'
-                },
+        opts = {
+            autochdir = true,
+            direction = 'float',
+            float_opts = {
+                border = 'single'
+            },
+            highlights = {
+                Normal = { link = "ToggleTermNormal" },
+                NormalFloat = { link = "ToggleTermNormal" },
+                FloatBorder = { link = "FloatBorder" }
             }
-        end,
+        },
         keys = {
             { "tt",    "<cmd>ToggleTerm<CR>", silent = true },
             { "<C-T>", "<cmd>ToggleTerm<CR>", mode = "t",   silent = true }
         }
     },
+    -- {
+    --     "nvzone/floaterm",
+    --     dependencies = "nvzone/volt",
+    --     opts = {
+    --         border = false,
+    --         mappings = {
+    --             sidebar = function(buf)
+    --                 vim.keymap.set({ "n" }, "<C-Down>", function()
+    --                     require("floaterm.api").cycle_term_bufs("next")
+    --                 end, { buffer = buf })
+    --                 vim.keymap.set({ "n" }, "<C-Up>", function()
+    --                     require("floaterm.api").cycle_term_bufs("prev")
+    --                 end, { buffer = buf })
+    --             end
+    --         }
+    --     },
+    --     cmd = "FloatermToggle",
+    --     keys = {
+    --         { "tt",    "<cmd>FloatermToggle<CR>", silent = true },
+    --         { "<C-T>", "<cmd>FloatermToggle<CR>", mode = "t",   silent = true }
+    --     }
+    -- },
     {
         'nvim-telescope/telescope.nvim',
         lazy = true,

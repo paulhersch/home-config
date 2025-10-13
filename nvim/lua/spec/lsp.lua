@@ -33,63 +33,6 @@ local inlay_hints_by_ft = {
     latex = false
 }
 
-local cwd_confs = {
-    lua = {
-        base = {
-            Lua = {
-                runtime = { version = "LuaJIT" },
-                workspace = {
-                    checkThirdParty = false,
-                },
-                completion = {
-                    callSnippet = { Both = true },
-                    keywordSnippet = { Both = true }
-                },
-                telemetry = { enable = false },
-            }
-        },
-        -- NixOS doesn't expose AWMs library path, so i have to read that one from an env var (which is not possible
-        -- to do with the luarc.json -> ugly hack depending on root folder)
-        awesome = function()
-            return {
-                Lua = {
-                    runtime = "LuaJIT",
-                    diagnostics = {
-                        globals = {
-                            "root", "awesome", "tag", "screen", "client",
-                            "modkey", "altkey", "mouse", "mousegrabber",
-                        }
-                    },
-                    workspace = { library = { os.getenv("AWM_LIB_PATH") } }
-                }
-            }
-        end,
-        nvim = function()
-            return {
-                Lua = {
-                    runtime = { version = "LuaJIT" },
-                    diagnostics = { globals = { "vim" } },
-                    workspace = { library = vim.api.nvim_get_runtime_file("", true) }
-                }
-            }
-        end
-    }
-}
-
-local function dir_specific_lsps(cwd, lc, defaults)
-    local cwd_toplevel = vim.fn.substitute(cwd, '^.*/', '', '')
-    -- lua
-    lc.lua_ls.setup(
-        extend("force", defaults, {
-            settings = extend(
-                "force",
-                cwd_confs.lua.base,
-                cwd_confs.lua[cwd_toplevel] and cwd_confs.lua[cwd_toplevel]() or {}
-            )
-        })
-    )
-end
-
 local lsp_buf_keybinds = {
     { "ss",    vim.lsp.buf.signature_help },
     -- highlight use and clear highlights after moving cursor
@@ -106,7 +49,7 @@ local lsp_buf_keybinds = {
     { "gq",    vim.lsp.buf.format },
     { "gd",    function() require("telescope.builtin").lsp_definitions() end },
     { "<C-R>", vim.lsp.buf.rename,                                           mode = "i" },
-    { "H",     vim.diagnostic.open_float },
+    -- { "H",     vim.diagnostic.open_float },
     { "<C-D>", vim.diagnostic.goto_next }
 }
 
@@ -184,6 +127,79 @@ return {
                 capabilities = vim.lsp.protocol.make_client_capabilities()
             }
 
+            local cwd_confs = {
+                lua = {
+                    base = function()
+                        return {
+                            Lua = {
+                                runtime = { version = "LuaJIT" },
+                                workspace = {
+                                    checkThirdParty = false,
+                                },
+                                completion = {
+                                    callSnippet = { Both = true },
+                                    keywordSnippet = { Both = true }
+                                },
+                                telemetry = { enable = false },
+                            }
+                        }
+                    end,
+                    awesome = function()
+                        return {
+                            Lua = {
+                                runtime = "LuaJIT",
+                                diagnostics = {
+                                    globals = {
+                                        "root", "awesome", "tag", "screen", "client",
+                                        "modkey", "altkey", "mouse", "mousegrabber",
+                                    }
+                                },
+                                workspace = { library = { os.getenv("AWM_LIB_PATH") } },
+                                completion = {
+                                    callSnippet = { Both = true },
+                                    keywordSnippet = { Both = true }
+                                },
+                                telemetry = { enable = false },
+                            }
+                        }
+                    end,
+                    nvim = function()
+                        return {
+                            Lua = {
+                                runtime = { version = "LuaJIT" },
+                                diagnostics = { globals = { "vim" } },
+                                workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+                                completion = {
+                                    callSnippet = { Both = true },
+                                    keywordSnippet = { Both = true }
+                                },
+                                telemetry = { enable = false },
+                            }
+                        }
+                    end
+                }
+            }
+
+            local function dir_specific()
+                vim.lsp.enable("lua_ls", false)
+                local cwd = vim.fn.getcwd()
+                local cwd_toplevel = vim.fn.substitute(cwd, '^.*/', '', '')
+
+                vim.lsp.config["lua_ls"] = default_settings
+
+                if cwd_confs.lua[cwd_toplevel] then
+                    local copy = vim.lsp.config["lua_ls"]
+                    copy.settings = cwd_confs.lua[cwd_toplevel]()
+                    vim.lsp.config["lua_ls"] = copy
+                else
+                    local copy = vim.lsp.config["lua_ls"]
+                    copy.settings = cwd_confs.lua.base()
+                    vim.lsp.config["lua_ls"] = copy
+                end
+
+                vim.lsp.enable("lua_ls", true)
+            end
+
             -- extend table with activated servers
             local configs = (function()
                 local confs = {
@@ -220,6 +236,7 @@ return {
                             }
                         }
                     },
+                    zls = {},
                     ltex = {
                         -- annoying for notes, disabling md
                         filetypes = { "context", "tex" },
@@ -230,12 +247,6 @@ return {
                             }
                         }
                     },
-                    -- omnisharp = {
-                    --     cmd = { "OmniSharp" },
-                    --     flags = {
-                    --         debounce_text_changes = 150,
-                    --     }
-                    -- }
                 }
 
                 for lang, conf in pairs(confs) do
@@ -245,9 +256,12 @@ return {
             end)()
 
             local function do_setup()
-                dir_specific_lsps(vim.fn.getcwd(), require('lspconfig'), default_settings)
+                vim.lsp.stop_client(vim.lsp.get_clients())
+                dir_specific()
                 for lang, conf in pairs(configs) do
-                    require('lspconfig')[lang].setup(conf)
+                    vim.lsp.enable(lang, false)
+                    vim.lsp.config[lang] = conf
+                    vim.lsp.enable(lang, true)
                 end
             end
             -- if we switch cwd: reload dir specific stuff

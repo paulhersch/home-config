@@ -347,9 +347,9 @@ environment {
     DISPLAY ":0" // X Display from satellite
 }
 
-debug {
-    wait-for-frame-completion-in-pipewire
-}
+// debug {
+//     wait-for-frame-completion-in-pipewire
+// }
 
 spawn-at-startup "qs -d" // doesnt fucking spawn it on startup :((((
 spawn-at-startup "blueman-applet"

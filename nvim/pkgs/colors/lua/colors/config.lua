@@ -157,6 +157,8 @@ local function config(colors)
         ["@variable"] = { link = "Variable" },
         ["@variable.builtin"] = { link = "Special" },
 
+        ToggleTermNormal = { bg = colors.background_dark, fg = colors.foreground },
+
         TabLine = { fg = colors.comment, bg = colors.background_dark },
         TabLineDir = { fg = colors.foreground, bg = colors.background_dark },
         TabLineSel = { fg = colors.foreground, bg = colors.background },
@@ -273,15 +275,6 @@ local function config(colors)
         -- diffLine = { fg = colors.color1 },
         -- diffIndexLine = { fg = colors.color6 },
 
-        -- Neogit
-        -- NeogitBranch = { fg = colors.color6 },
-        -- NeogitRemote = { fg = colors.color6 },
-        -- NeogitHunkHeader = { bg = colors.background, fg = colors.foreground },
-        -- NeogitHunkHeaderHighlight = { bg = colors.comment, fg = colors.color7 },
-        -- NeogitDiffContextHighlight = { bg = colors.background, fg = colors.foreground },
-        -- NeogitDiffDeleteHighlight = { fg = colors.color1, bg = colors.background },
-        -- NeogitDiffAddHighlight = { fg = colors.color4, bg = colors.background },
-
         -- GitSigns
         GitSignsAdd = { bg = colors.background, fg = colors.color18 },
         GitSignsChange = { bg = colors.background, fg = colors.color20 },
@@ -393,8 +386,6 @@ local function config(colors)
         -- BufferInactiveSign = { fg = colors.background_dark, bg = colors.inactive_tabs, bold = false },
         -- BufferTabpageFill = { fg = colors.background_dark, bg = colors.background_dark },
         -- BufferOffset = { fg = colors.background, bg = colors.background },
-
-        ToggleTerm1Normal = { bg = colors.background, fg = colors.foreground },
     }
 end
 
