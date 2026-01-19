@@ -25,3 +25,6 @@
 [submodule "awesome/plugins/pprint"]
 	path = awesome/plugins/pprint
 	url = https://github.com/jagt/pprint.lua
+[submodule "nvim/pkgs/presenting.nvim"]
+	path = nvim/pkgs/presenting.nvim
+	url = https://github.com/sotte/presenting.nvim

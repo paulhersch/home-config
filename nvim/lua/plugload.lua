@@ -33,7 +33,7 @@ require("lazy").setup({
         "hsluv/hsluv-lua",
         lazy = true,
         -- rocks are a pain on nix
-        -- build = "mkdir lua && cp *.lua lua"
+        build = "mkdir lua && cp *.lua lua"
     },
     {
         "leafo/magick",

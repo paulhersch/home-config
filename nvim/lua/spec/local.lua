@@ -40,6 +40,12 @@ return {
             { "bb", function() require('bffrmgr').open() end, noremap = true, silent = true }
         }
     },
+    {
+        "presenter",
+        dev = true,
+        lazy = false,
+        opts = {}
+    }
     -- {
     --     'evaluator',
     --     dev = true,

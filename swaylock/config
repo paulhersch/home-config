@@ -1,0 +1,9 @@
+ignore-empty-password
+daemonize
+show-keyboard-layout
+indicator-caps-lock
+font=Aporetic Sans
+indicator-idle-visible
+indicator-radius=100
+indicator-thickness=5
+image=~/Bilder/Hintergrundbilder/fog-hill.jpg
