@@ -74,9 +74,17 @@ return {
     -- dev version
     {
         "3rd/image.nvim",
-        lazy = true,
+        event = "VeryLazy",
         opts = {
-            backend = "kitty" -- as long as i dont have kitty setup, also sixel support soon?
+            backend = "sixel", -- as long as i dont have kitty setup, also sixel support soon?
+            integrations = {
+                markdown = {
+                    enabled = true,
+                    floating_windows = true,
+                    only_render_image_at_cursor = true,
+                    only_render_image_at_cursor_mode = "popup"
+                }
+            }
         }
     },
     {
