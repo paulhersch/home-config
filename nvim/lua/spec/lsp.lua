@@ -48,9 +48,9 @@ local lsp_buf_keybinds = {
     { "gr",    vim.lsp.buf.rename },
     { "gq",    vim.lsp.buf.format },
     { "gd",    function() require("telescope.builtin").lsp_definitions() end },
-    { "<C-R>", vim.lsp.buf.rename,                                           mode = "i" },
+    { "<C-R>", vim.lsp.buf.rename,                                             mode = "i" },
     -- { "H",     vim.diagnostic.open_float },
-    { "<C-D>", vim.diagnostic.goto_next }
+    { "<C-D>", function() vim.diagnostic.jump { count = 1, float = false } end }
 }
 
 a.nvim_create_autocmd("LspAttach", {
@@ -413,6 +413,17 @@ return {
                 },
             })
         end
+    },
+    {
+        "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+        dependencies = {
+            "neovim/nvim-lspconfig"
+        },
+        event = "VeryLazy",
+        config = function()
+            vim.diagnostic.config({ virtual_lines = { only_current_line = true } })
+            require("lsp_lines").setup()
+        end,
     },
     {
         'stevearc/aerial.nvim',

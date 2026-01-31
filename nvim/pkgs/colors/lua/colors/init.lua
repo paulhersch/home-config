@@ -21,6 +21,9 @@
 -- comment (exclusively for comment strings and maybe statusline components)
 
 local M = {}
+local P = {
+    current_theme = nil
+}
 
 --- @return table
 function M.list_themes()
@@ -47,8 +50,11 @@ function M.get_colors(theme)
 end
 
 function M.set_theme(theme)
+    -- if P.current_theme and P.current_theme == theme then return end
+
     local success, f = pcall(require, "colors.cache." .. theme)
     if success then
+        P.current_theme = theme
         f()
         return
     end
@@ -76,6 +82,7 @@ function M.set_theme(theme)
         )
         require("colors.compiler").build_cache()
         require("colors.cache." .. theme)()
+        P.current_theme = theme
     end
     -- local hl = vim.api.nvim_set_hl
     -- for group, properties in pairs(
@@ -119,6 +126,15 @@ M.pick_theme = function()
     local theme_names = M.list_themes()
     table.sort(theme_names)
     vim.ui.select(theme_names, { prompt = "Select Colorscheme" }, on_choice)
+end
+
+M.get_current_theme_colors = function()
+    if P.current_theme ~= nil then
+        return M.get_colors(P.current_theme)
+    end
+
+    vim.notify("Couldnt fetch current theme, no theme set")
+    return nil
 end
 
 return M

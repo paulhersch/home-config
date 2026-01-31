@@ -61,12 +61,36 @@ return {
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
         event = "VeryLazy",
-        opts = {
-            signs = false,
-        },
         keys = {
             { "<Space>t", function() require("telescope").extensions["todo-comments"].todo() end, silent = true }
-        }
+        },
+        config = function()
+            local hsluv = require("hsluv")
+            local colors = require("colors")
+            local theme = colors.get_current_theme_colors()
+
+            -- stupid color mixing code if i got the theme
+            local missing_col = "error"
+            if theme then
+                local red = hsluv.hex_to_hsluv(theme.color9)
+                local yellow = hsluv.hex_to_hsluv(theme.color11)
+                missing_col = hsluv.hsluv_to_hex {
+                    (red[1] + yellow[1]) / 2,
+                    (red[2] + yellow[2]) / 2,
+                    (red[3] + yellow[3]) / 2,
+                }
+            end
+
+            require("todo-comments").setup {
+                signs = false,
+                keywords = {
+                    MISSING = {
+                        icon = " ",
+                        color = missing_col
+                    }
+                }
+            }
+        end
     },
     {
         "luukvbaal/statuscol.nvim",

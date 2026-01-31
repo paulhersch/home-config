@@ -21,7 +21,7 @@ o.guicursor = "n-v:block-inverse,i-c:ver10-Cursor-blinkwait2000-blinkon500-blink
 if g.neovide then
     -- w-0.1 is a hack to get full character height, somehow the font rendering
     -- in neovide makes the glyphs smaller otherwise
-    vim.opt.guifont = "Aporetic Sans Mono,Symbols Nerd Font:#e-subpixelantialias:h12:w-0.1"
+    vim.opt.guifont = "Aporetic Sans Mono,Symbols Nerd Font:#e-subpixelantialias:h11.5:w-0.1"
     g.neovide_padding_top = 5
     g.neovide_padding_left = 5
     g.neovide_padding_bottom = 5
