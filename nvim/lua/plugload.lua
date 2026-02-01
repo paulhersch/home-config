@@ -18,17 +18,6 @@ require("lazy").setup({
         priority = 1000,
         lazy = false
     },
-    -- {
-    --     "vhyrro/luarocks.nvim",
-    --     priority = 1000,
-    --     opts = { rocks = { "magick" } },
-    --     lazy = false,
-    -- },
-
-
-    -- [[
-    --  Luarocks dependencies/compiled stuff (rocks should work)
-    -- ]]
     {
         "hsluv/hsluv-lua",
         lazy = true,
@@ -36,6 +25,7 @@ require("lazy").setup({
         build = "mkdir lua && cp *.lua lua"
     },
     {
+        -- somehow compiles/binds by itself
         "leafo/magick",
         lazy = false
     },
@@ -64,6 +54,7 @@ require("lazy").setup({
         -- should be able to install using luarocks
         -- python provider is installed, luajit is in neovims path, but somehow the installer
         -- for hererocks only finds lua 5.2???
+        -- given up on that shit
     },
     install = {
         colorscheme = { "light" } -- should be available (local, cached)

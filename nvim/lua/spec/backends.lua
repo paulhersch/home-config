@@ -12,6 +12,7 @@ return {
         end
     },
     {
+        -- goated for browsing servers via ssh
         "miversen33/netman.nvim",
         event = "VeryLazy",
         config = function()

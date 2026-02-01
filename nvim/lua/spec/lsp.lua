@@ -103,7 +103,7 @@ return {
         },
         event = "VeryLazy",
         config = function()
-            -- overwrite default window border style for popups
+            -- overwrite default window border style for popups, looks weird as i give them another bg
             local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
             function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
                 opts = opts or {}
@@ -180,6 +180,8 @@ return {
                 }
             }
 
+            -- annoying setup so i can have different workspace vars for different workspaces
+            -- when there isn't a fixed path
             local function dir_specific()
                 vim.lsp.enable("lua_ls", false)
                 local cwd = vim.fn.getcwd()
@@ -426,6 +428,7 @@ return {
         end,
     },
     {
+        -- the most useful treesitter plugin ever!
         'stevearc/aerial.nvim',
         lazy = true,
         dependencies = {

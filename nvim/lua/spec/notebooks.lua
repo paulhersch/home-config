@@ -56,6 +56,7 @@ return {
         -- end
     },
     {
+        -- Allows code completion inside markdown cells
         "jmbuhr/otter.nvim",
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
@@ -71,12 +72,13 @@ return {
             end, { desc = "Activate Otter for this buffer" })
         end
     },
-    -- dev version
     {
+        -- dev version
+        -- images in Terminal
         "3rd/image.nvim",
         event = "VeryLazy",
         opts = {
-            backend = "sixel", -- as long as i dont have kitty setup, also sixel support soon?
+            backend = "sixel",
             integrations = {
                 markdown = {
                     enabled = true,
@@ -88,6 +90,7 @@ return {
         }
     },
     {
+        -- converts notebooks to md
         'GCBallesteros/jupytext.nvim',
         event = "VeryLazy",
         opts = {
@@ -123,7 +126,9 @@ return {
     --         { "<C-S-Return>", function() require("quarto.runner").run_all() end,  mode = { "n" }, silent = true },
     --     }
     -- },
+
     {
+        -- connects to Jupyter Kernels
         "benlubas/molten-nvim",
         build = ":UpdateRemotePlugins",
         version = "^1.0.0",

@@ -1,19 +1,16 @@
 return {
-    {
-        "JoosepAlviste/palenightfall.nvim",
-        event = "VeryLazy"
-    },
-    {
-        'sindrets/diffview.nvim',
-        event = "VeryLazy",
-        opts = {
-            view = {
-                merge_tool = {
-                    layout = "diff3_mixed"
-                }
-            }
-        }
-    },
+    -- tried using it as merge tool, but my git workflow is very terminal focused instead of inside vim
+    -- {
+    --     'sindrets/diffview.nvim',
+    --     event = "VeryLazy",
+    --     opts = {
+    --         view = {
+    --             merge_tool = {
+    --                 layout = "diff3_mixed"
+    --             }
+    --         }
+    --     }
+    -- },
     {
         'rcarriga/nvim-notify',
         dependencies = {
@@ -198,10 +195,12 @@ return {
         dependencies = {
             'Shatur/neovim-session-manager',
         },
-        -- lazy = false,
-        -- event = "UIEnter",
+        -- loading logic is in after/plugin/dash.lua, because i couldn't get proper PRNG
+        -- when the setup function was inside the config function in this spec
     },
     {
+        -- mostly for browsing network ressources, as neotrees server browser feels a little
+        -- clanky sometimes
         'stevearc/oil.nvim',
         opts = {
             default_file_explorer = true,
@@ -445,6 +444,7 @@ return {
         end
     },
     {
+        -- this is pretty useful sometimes!
         "ziontee113/syntax-tree-surfer",
         dependencies = {
             'nvim-treesitter/nvim-treesitter',

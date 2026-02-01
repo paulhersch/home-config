@@ -31,12 +31,12 @@ return {
             require("nvim-autopairs").setup {}
         end
     },
-    {
-        'nvzone/typr',
-        dependencies = "nvzone/volt",
-        cmd = { "Typr", "TyprStats" },
-        opts = {}
-    },
+    -- {
+    --     'nvzone/typr',
+    --     dependencies = "nvzone/volt",
+    --     cmd = { "Typr", "TyprStats" },
+    --     opts = {}
+    -- },
     {
         'akinsho/toggleterm.nvim',
         opts = {
@@ -56,28 +56,6 @@ return {
             { "<C-T>", "<cmd>ToggleTerm<CR>", mode = "t",   silent = true }
         }
     },
-    -- {
-    --     "nvzone/floaterm",
-    --     dependencies = "nvzone/volt",
-    --     opts = {
-    --         border = false,
-    --         mappings = {
-    --             sidebar = function(buf)
-    --                 vim.keymap.set({ "n" }, "<C-Down>", function()
-    --                     require("floaterm.api").cycle_term_bufs("next")
-    --                 end, { buffer = buf })
-    --                 vim.keymap.set({ "n" }, "<C-Up>", function()
-    --                     require("floaterm.api").cycle_term_bufs("prev")
-    --                 end, { buffer = buf })
-    --             end
-    --         }
-    --     },
-    --     cmd = "FloatermToggle",
-    --     keys = {
-    --         { "tt",    "<cmd>FloatermToggle<CR>", silent = true },
-    --         { "<C-T>", "<cmd>FloatermToggle<CR>", mode = "t",   silent = true }
-    --     }
-    -- },
     {
         'nvim-telescope/telescope.nvim',
         lazy = true,
@@ -168,26 +146,6 @@ return {
             vim.g.vimtex_view_method = "zathura"
         end
     },
-    -- {
-    --     'frabjous/knap',
-    --     lazy = true,
-    --     keys = {
-    --         { "sp", function() require("knap").toggle_autopreviewing() end }
-    --     },
-    --     config = function()
-    --         local settings = {
-    --             delay = 2000,
-    --             texoutputext = "pdf",
-    --             textopdfbufferasstdin = true,
-    --             textopdf = "lualatex --synctex=1 --halt-on-error --jobname \"$(basename -s .pdf %outputfile%)\"",
-    --             textopdfviewerlaunch =
-    --             "zathura --synctex-editor-command 'nvim --headless -es --cmd \"lua require('\"'\"'knaphelper'\"'\"').relayjump('\"'\"'%servername%'\"'\"','\"'\"'%{input}'\"'\"',%{line},0)\"' %outputfile%",
-    --             textopdfviewerrefresh = "none",
-    --             textopdfforwardjump = "zathura --synctex-forward=%line%:%column%:%srcfile% %outputfile%"
-    --         }
-    --         vim.g.knap_settings = settings
-    --     end
-    -- },
     {
         'numToStr/Comment.nvim',
         event = "VeryLazy",

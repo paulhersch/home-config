@@ -10,7 +10,7 @@ local stats = require("lazy").stats
 local utils = require("session_manager.utils")
 local session_manager = require("session_manager")
 local alpha = require("alpha")
-local this_ascii = require("asciis").choose_random()
+local this_ascii = require("lib.asciis").choose_random() -- i only look at this once, so random on init is fine
 
 local max_sessions = 4
 local session_shortcuts = "asdfghjkl"

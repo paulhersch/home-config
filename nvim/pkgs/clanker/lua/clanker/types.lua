@@ -1,0 +1,4 @@
+---@class OllamaOpts
+---@field model string model to use
+---@field host string hostname of running server
+---@field port string ollama api port on the host

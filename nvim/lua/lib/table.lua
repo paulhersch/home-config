@@ -1,5 +1,5 @@
 ---
--- weird table funcs i actually needed pretty often
+-- js-ish table funcs i actually needed pretty often in own plugins
 ---
 
 local table = table
