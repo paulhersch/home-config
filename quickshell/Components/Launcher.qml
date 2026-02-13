@@ -15,12 +15,12 @@ PanelWindow {
     visible: false
     color: "transparent"
 
-    // implicitWidth: 700
-    // implicitHeight: 450
     focusable: true
 
-    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
     exclusionMode: ExclusionMode.Ignore
+
     anchors {
         top: true
         bottom: true
@@ -220,7 +220,7 @@ PanelWindow {
             }
 
             /*
-             *  Registered cmd compositor
+             *  Registered cmd for compositor
              */
             IpcHandler {
                 id: handler
@@ -228,6 +228,9 @@ PanelWindow {
                 function toggle() : void {
                     // window.visible = !window.visible;
                     root.state = root.state === "CLOSED" ? "OPENED" : "CLOSED"
+                    if (root.state === "OPENED") {
+                        searchbar.forceActiveFocus()
+                    }
                 }
             }
         }
