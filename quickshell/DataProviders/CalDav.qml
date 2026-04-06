@@ -30,10 +30,23 @@ Singleton {
             }
 
             function sync() : void {
+                //  curl -X GET -u "<user>:<key>" "https://cloud.gemia.net/remote.php/dav/calendars/<user>/<calendar>?export&accept=jcal" 
                 // XHR.sendRequest(
                 //     "https://cloud.gemia.net/remote.php/dav/calendars/34339a20-c680-4ff5-8f83-2345d57ea39e/personal?export&accept=jcal",
                 //     function(response)
                 // )
+                /*
+                 * return (important info)
+                 *
+                 *  [
+                 *    "vcalendar",
+                 *    [
+                 *      ["vevent",[["summary",{},"text","<summary>"],["dtstart",{},"date","2026-06-25"],["dtend",{},"date","2026-06-26"],],[]]
+                 *    ]
+                 *  ]
+                 *
+                 *
+                 */
             }
         }
 
