@@ -89,7 +89,7 @@ local function render_pandoc(fname, on_exit)
     if vim.fn.filereadable(preamble_maybe) == 1 then
         table.insert(cmd, 2, "--include-in-header=" .. preamble_maybe)
     elseif vim.fn.filereadable(vim.fn.getcwd() .. "/pre.tex") == 1 then
-        table.insert(cmd, 2, "--include-before-body=./pre.tex")
+        table.insert(cmd, 2, "--include-in-header=" .. vim.fn.getcwd() .. "/pre.tex")
     end
     return vim.system(cmd, {
         text = true,
@@ -103,7 +103,8 @@ local function render_pandoc(fname, on_exit)
             return
         else
             -- error happened, so we are going to show it to the user
-            vim.notify("Error during pandoc export!\n" .. (obj.stderr or ""), vim.log.levels.ERROR, {})
+            vim.notify("Error during pandoc export!\n" .. (obj.stderr or "") .. "\nused cmd: " .. table.concat(cmd, " "),
+                vim.log.levels.ERROR, {})
         end
     end), new_fname
 end
