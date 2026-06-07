@@ -90,6 +90,17 @@ Variants {
                 verticalCenter: parent.verticalCenter
             }
         }
+        //
+        // KbdLayouts {
+        //     id: kbd
+        //     height: parent.height - 8;
+        //
+        //     anchors {
+        //         right: clock.left
+        //         rightMargin: (I3.socketPath == "") ? 15 : 0
+        //         verticalCenter: parent.verticalCenter
+        //     }
+        // }
         
         Mpris {
             id: mpris

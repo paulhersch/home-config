@@ -22,7 +22,7 @@ local P = {
 local M = {}
 
 local app_info = Gio.AppInfo
-local icon_theme = Gtk.IconTheme.get_default()
+-- local icon_theme = Gtk.IconTheme.get_default()
 
 P.main_template = {
     id = 'grid',
@@ -42,14 +42,14 @@ P.replace_with_escapes = function(text)
 end
 
 P.entry_callbacks = {}
-P.entry_callbacks.onclick = function (self, _, _, b)
+P.entry_callbacks.onclick = function(self, _, _, b)
     if b == awful.button.names.LEFT then
         local s = awful.screen.focused()
         P.data[s].widget:stop_search()
         self:launch()
     end
 end
-P.entry_callbacks.on_hover = function (self, _)
+P.entry_callbacks.on_hover = function(self, _)
     local s = awful.screen.focused()
     P.data[s].widget:__reset_highlight()
     self.bg = beautiful.bg_2
@@ -152,10 +152,10 @@ P.get_entries = function()
             widget.search_params = { string.lower(name) }
             if cmd then table.insert(widget.search_params, string.lower(cmd)) end
 
-            entries[#entries+1] = widget
+            entries[#entries + 1] = widget
         end
     end
-    table.sort(entries, function (a,b)
+    table.sort(entries, function(a, b)
         --search param 1 is always the name
         return a.search_params[1] < b.search_params[1]
     end)
@@ -175,7 +175,7 @@ M.init = function(s)
 
     local entry_grid = setmetatable({}, {
         __index = P.data[s].widget,
-        __newindex = function (_, k, v)
+        __newindex = function(_, k, v)
             P.data[s].widget[k] = v
         end
     }) -- functions cant be declared on tables with [index]
@@ -212,10 +212,10 @@ M.init = function(s)
             },
             wibox.widget.base.make_widget(),
             buttons = {
-                awful.button{
+                awful.button {
                     modifiers = {},
                     button = awful.button.names.LEFT,
-                    on_press = function ()
+                    on_press = function()
                         entry_grid:start_search(false, nil)
                     end
                 }
@@ -261,13 +261,13 @@ M.init = function(s)
     end
 
     function entry_grid:select_down()
-        self:__select_helper(function (index)
+        self:__select_helper(function(index)
             return index < P.max_entry_count
         end, 1)
     end
 
     function entry_grid:select_up()
-        self:__select_helper(function (index)
+        self:__select_helper(function(index)
             return index > 1
         end, -1)
     end
@@ -294,13 +294,13 @@ M.init = function(s)
                 end
             end
         end
-        -- some weighting on the match results (to sort matches) 
+        -- some weighting on the match results (to sort matches)
         local function calc_filter_score(entry)
             local filter_res = fzy.filter(filter, entry.search_params, false)
-                local sum = 0.0
-                for _, scoring in ipairs(filter_res) do
-                    sum = sum + scoring[3]
-                end
+            local sum = 0.0
+            for _, scoring in ipairs(filter_res) do
+                sum = sum + scoring[3]
+            end
             return sum
         end
 
@@ -310,7 +310,7 @@ M.init = function(s)
         end
 
         -- sort the filtered entries
-        table.sort(filtered, function (a, b)
+        table.sort(filtered, function(a, b)
             return a.match_score > b.match_score
         end)
 
@@ -327,7 +327,6 @@ M.init = function(s)
                 P.data[s].current_hl_index = P.max_entry_count
             end
         end
-
     end
 
     ---@param hide_after_search boolean if the launcher wibox should be hidden after running the applauncher
@@ -342,27 +341,27 @@ M.init = function(s)
             bg_cursor = beautiful.fg_normal,
             font = beautiful.font,
             hooks = {
-                {{}, "Up", function (cmd)
+                { {}, "Up", function(cmd)
                     self:select_up()
                     return cmd, true
-                end},
-                {{}, "Down", function (cmd)
+                end },
+                { {}, "Down", function(cmd)
                     self:select_down()
                     return cmd, true
-                end},
-                {{}, "Return",function ()
+                end },
+                { {}, "Return", function()
                     local sel = entry_grid:get_widgets_at(P.data[s].current_hl_index, 1, 1, 1)
                     if sel then
                         self:__reset_highlight()
                         sel[1]:launch()
                     end
-                end}
+                end }
             },
-            changed_callback = function (cmd)
+            changed_callback = function(cmd)
                 entry_grid:search_entries(cmd)
                 collectgarbage("collect")
             end,
-            done_callback = function ()
+            done_callback = function()
                 self:__reset_search()
                 --resetting only the current highlight can cause buggy behaviour here
                 --self:__reset_all_highlights()

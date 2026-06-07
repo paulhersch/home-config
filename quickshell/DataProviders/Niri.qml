@@ -12,6 +12,10 @@ Singleton {
     property var focusedWorkspace : 0
     property var focusedWindowIndex : 0
 
+    property var focusedKbdLayoutIdx : 0
+    property var focusedKbdLayout : ""
+    property var registeredKbdLayouts : Array()
+
     property var wsIndexById : {}
 
     function focusWs(idx : int) : void {
@@ -146,6 +150,21 @@ Singleton {
                     return;
                 }
             }
+        } else if (obj["KeyboardLayoutsChanged"] != undefined) {
+            registeredKbdLayouts = obj["KeyboardLayoutsChanged"]["keyboard_layouts"]["names"];
+            focusedKbdLayout = obj["KeyboardLayoutsChanged"]["keyboard_layouts"]["current_idx"];
+            focusedKbdLayout = registeredKbdLayouts[focusedKbdLayout];
+        } else if (obj["KeyboardLayoutSwitched"] != undefined) {
+            let idx = obj["KeyboardLayoutSwitched"]["idx"];
+            let registered = registeredKbdLayouts.length
+
+            if (idx >= registered) {
+                // need to update our Array of registered Layouts
+                // let new_layouts = JSON.parse()
+            }
+            
+            focusedKbdLayoutIdx = idx;
+            focusedKbdLayout = registeredKbdLayouts[idx];
         }
     }
 

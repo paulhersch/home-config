@@ -2,7 +2,7 @@
 
 import Quickshell
 import Quickshell.I3
-import Quickshell.Hyprland
+// import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Controls
@@ -18,7 +18,7 @@ RowLayout {
 
     Repeater {
         // check if i3 is alive, if not use niri module as source
-        model: (I3.socketPath != "") ? I3.workspaces.values : Hyprland.workspaces.values
+        model: (I3.socketPath != "") ? I3.workspaces.values : Niri.workspaces
 
         delegate: MouseArea {
             // important variables
@@ -46,7 +46,7 @@ RowLayout {
                             // if not the keyboard just works lol.
                             I3.dispatch(`workspace ${number}`);
                         } else {
-                            // Niri.focusWs(number - 1);
+                            Niri.focusWs(number - 1);
                             // Hyprland.dispatch(`workspace ${id}`);
                         }
                         break;
@@ -65,7 +65,7 @@ RowLayout {
                     width: focused ? 30 : 25
                     height: focused ? 25 : 20
                     color: focused ? Theme.bgBlue : Theme.bg4
-                    radius: 5
+                    // radius: 5
 
                     anchors {
                         centerIn: parent
@@ -96,7 +96,7 @@ RowLayout {
                     }
 
                     // stupid way of not showing the text on niri
-                    text: (I3.socketPath != "") ? number : id
+                    text: (I3.socketPath != "") ? number : ""
                     color: (focused || is_hovered) ? Theme.fg1 : Theme.bg5
 
                     Behavior on color {

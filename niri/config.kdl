@@ -321,6 +321,7 @@ binds {
     Alt+Shift+Equal { set-window-height "+10%"; }
 
     Ctrl+F11 { spawn "obs-cmd" "replay" "save"; }
+    Alt+0 { spawn "wlogout"; }
 
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have
@@ -347,11 +348,6 @@ environment {
     DISPLAY ":0" // X Display from satellite
 }
 
-// debug {
-//     wait-for-frame-completion-in-pipewire
-// }
-
-spawn-at-startup "qs -d" // doesnt fucking spawn it on startup :((((
+spawn-at-startup "qs" "-d" 
 spawn-at-startup "blueman-applet"
-spawn-at-startup "gammastep -P -O 5400"
-// spawn-at-startup "~/.config/swww/reload.sh"
+spawn-at-startup "exec" "swayidle" "-w" "after-resume" "swaylock"

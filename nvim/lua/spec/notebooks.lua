@@ -81,7 +81,7 @@ return {
             backend = "sixel",
             integrations = {
                 markdown = {
-                    enabled = true,
+                    enabled = false,
                     floating_windows = true,
                     only_render_image_at_cursor = true,
                     only_render_image_at_cursor_mode = "popup"

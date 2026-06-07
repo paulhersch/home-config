@@ -258,7 +258,9 @@ return {
             end)()
 
             local function do_setup()
-                vim.lsp.stop_client(vim.lsp.get_clients())
+                for _, client in pairs(vim.lsp.get_clients()) do
+                    client:stop(true)
+                end
                 dir_specific()
                 for lang, conf in pairs(configs) do
                     vim.lsp.enable(lang, false)
