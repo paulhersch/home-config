@@ -95,7 +95,7 @@ return {
                     },
                     {
                         statusmod.git_branch,
-                        events = { "BufEnter", "DirChanged" }, -- how to fire directly after loading a session?
+                        events = { "BufEnter", "DirChanged" },     -- how to fire directly after loading a session?
                         use_initial = false,
                     },
                     "  "

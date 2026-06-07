@@ -24,12 +24,12 @@ settings.set_defaults {
 }
 
 settings.load()
-awesome.connect_signal("exit", function ()
+awesome.connect_signal("exit", function()
     settings.save()
 end)
 
-require ("windowmanagement")
-require ("ui")
+require("windowmanagement")
+require("ui")
 
 -- Autostart {{{
 awful.spawn("nm-applet")
@@ -37,5 +37,4 @@ awful.spawn("blueman-applet")
 awful.spawn("xfce4-clipman")
 awful.spawn("redshift -O 5300K -P")
 -- deamon flag makes picom not send some random xlib error messages
-awful.spawn("picom --config " .. gears.filesystem.get_configuration_dir() .. "/configs/picom.conf --daemon")
 -- }}}

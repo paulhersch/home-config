@@ -212,23 +212,23 @@ return {
             }
         }
     },
-    {
-        "MeanderingProgrammer/render-markdown.nvim",
-        dependencies = {
-            'nvim-treesitter/nvim-treesitter',
-            'nvim-tree/nvim-web-devicons'
-        },
-        event = "VeryLazy",
-        config = function()
-            require('render-markdown').setup({
-                enabled = true,
-                latex = {
-                    enabled = false,
-                },
-                max_file_size = 5,
-            })
-        end,
-    },
+    -- {
+    --     "MeanderingProgrammer/render-markdown.nvim",
+    --     dependencies = {
+    --         'nvim-treesitter/nvim-treesitter',
+    --         'nvim-tree/nvim-web-devicons'
+    --     },
+    --     event = "VeryLazy",
+    --     config = function()
+    --         require('render-markdown').setup({
+    --             enabled = false, -- query issues, need to be adressed upstream
+    --             latex = {
+    --                 enabled = false,
+    --             },
+    --             max_file_size = 5,
+    --         })
+    --     end,
+    -- },
     {
         "nvim-neo-tree/neo-tree.nvim",
         lazy = true,
@@ -241,8 +241,8 @@ return {
             "miversen33/netman.nvim",
             {
                 -- fix for neotree api changes weren't merged (repo dead?)
-                "idanarye/neo-tree-zk.nvim",
-                branch = "fix-modified_buffers_changes-to-opened_buffers_changed"
+                -- "idanarye/neo-tree-zk.nvim",
+                -- branch = "fix-modified_buffers_changes-to-opened_buffers_changed"
             },
         },
         cmd = { "Neotree" },
@@ -255,7 +255,7 @@ return {
                     "netman.ui.neo-tree",
                     "filesystem",
                     "git_status",
-                    "zk"
+                    -- "zk"
                 },
                 close_if_last_window = true,
                 add_blank_line_at_top = true,
@@ -281,10 +281,10 @@ return {
                             source = "remote",
                             display_name = " "
                         },
-                        {
-                            source = "zk",
-                            display_name = " "
-                        }
+                        -- {
+                        --     source = "zk",
+                        --     display_name = " "
+                        -- }
                     },
                     -- this gives the tabline a padded look (vert split is colored by neotree via hl)
                     separator = { left = " ", right = "" },
