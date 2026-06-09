@@ -12,11 +12,11 @@ local uv = vim.uv
 local P = {
     ---@type OllamaOpts
     ollama = {
-        model = "qwen3:8b",
+        model = "qwen3:8b", -- pretty good, should work on a lot of machines
         host = "localhost",
         port = "11434"
     },
-    spinner_chars = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+    spinner_chars = { "", "", "", "", "", "" }
 }
 
 local M = {}
@@ -49,7 +49,7 @@ P.make_clanker_do = function(buf, range_start, range_end, prompt)
     local spinner_pos = 0
     local extmark_id = a.nvim_buf_set_extmark(buf, P._namespace, range_start - 1, 0,
         {
-            virt_text = { { "clanker is working on it " .. P.spinner_chars[spinner_pos + 1], "DiagnosticVirtualTextHint" } },
+            virt_text = { { " clanker is working on it " .. P.spinner_chars[spinner_pos + 1] .. " ", "DiagnosticVirtualTextHint" } },
             virt_text_pos = "eol"
         })
     ollama_api.generate_job(P.ollama, prompt, P.handle_job_stdout(buf, range_start, range_end, extmark_id))
@@ -64,7 +64,7 @@ P.make_clanker_do = function(buf, range_start, range_end, prompt)
             else
                 a.nvim_buf_set_extmark(buf, P._namespace, range_start - 1, 0, {
                     id = extmark_id,
-                    virt_text = { { "clanker is working on it " .. P.spinner_chars[spinner_pos + 1], "DiagnosticVirtualTextHint" } },
+                    virt_text = { { " clanker is working on it " .. P.spinner_chars[spinner_pos + 1] .. " ", "DiagnosticVirtualTextHint" } },
                     virt_text_pos = "eol"
                 })
                 spinner_pos = (spinner_pos + 1) % #P.spinner_chars

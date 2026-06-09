@@ -21,10 +21,12 @@ return {
         "clanker",
         dev = true,
         dependencies = {
-            "plenary.nvim"
+            "nvim-lua/plenary.nvim"
         },
         event = "VeryLazy",
-        opts = {}
+        opts = {
+            model = "qwen3-coder:30b"
+        }
     },
     {
         "winstatabline",
