@@ -212,23 +212,23 @@ return {
             }
         }
     },
-    -- {
-    --     "MeanderingProgrammer/render-markdown.nvim",
-    --     dependencies = {
-    --         'nvim-treesitter/nvim-treesitter',
-    --         'nvim-tree/nvim-web-devicons'
-    --     },
-    --     event = "VeryLazy",
-    --     config = function()
-    --         require('render-markdown').setup({
-    --             enabled = false, -- query issues, need to be adressed upstream
-    --             latex = {
-    --                 enabled = false,
-    --             },
-    --             max_file_size = 5,
-    --         })
-    --     end,
-    -- },
+    {
+        "MeanderingProgrammer/render-markdown.nvim",
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter',
+            'nvim-tree/nvim-web-devicons'
+        },
+        event = "VeryLazy",
+        config = function()
+            require('render-markdown').setup({
+                enabled = true,
+                latex = {
+                    enabled = false,
+                },
+                max_file_size = 5,
+            })
+        end,
+    },
     {
         "nvim-neo-tree/neo-tree.nvim",
         lazy = true,
@@ -368,65 +368,28 @@ return {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
             'tree-sitter/tree-sitter',
-            "nvim-treesitter/nvim-treesitter-textobjects"
+            -- "nvim-treesitter/nvim-treesitter-textobjects"
         },
+        branch = "main",
         build = function()
             require("nvim-treesitter").install.update()
         end,
         event = "VeryLazy",
         config = function()
-            require("nvim-treesitter.configs").setup {
-                sync_install = false,
-                auto_install = false,
-                ensure_installed = {
-                    "c",
-                    "lua",
-                    "c_sharp",
-                    "bash",
-                    "python",
-                    "javascript",
-                    "html",
-                    "css",
-                    "go",
-                    "rust",
-                    "latex",
-                    "bibtex"
-                },
-                ignore_install = {},
-                indent = {
-                    enable = true,
-                },
-                highlight = {
-                    enable = true,
-                    disable = {
-                        "latex", -- latex treesitter highlighting is fucked up, using vimtex rn
-                    },
-                    additional_vim_regex_highlighting = false,
-                },
-                incremental_selection = {
-                    enable = true,
-                },
-                textobjects = {
-                    select = {
-                        enable = true,
-                        lookahead = true,
-                        keymaps = {
-                            -- see notebook setup, textobject in after/ftplugin/markdown/textobjects.scm
-                            ["<leader>s"] = "@code_cell.inner"
-                        }
-                    },
-                    move = {
-                        enable = true,
-                        set_jumps = false,
-                        goto_next_start = {
-                            ["<C-Down>"] = { query = "@code_cell.inner", desc = "next code block (md/quarto)" }
-                        },
-                        goto_previous_start = {
-                            ["<C-Up>"] = { query = "@code_cell.inner", desc = "previous code block (md/quarto)" }
-                        }
-                    }
-                },
-            }
+            require("nvim-treesitter").install({
+                "c",
+                "lua",
+                "c_sharp",
+                "bash",
+                "python",
+                "javascript",
+                "html",
+                "css",
+                "go",
+                "rust",
+                "latex",
+                "bibtex"
+            }, { summary = true })
 
             vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
             vim.opt.foldmethod = "expr"
