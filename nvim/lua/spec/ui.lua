@@ -240,9 +240,12 @@ return {
             -- external sources
             "miversen33/netman.nvim",
             {
-                -- fix for neotree api changes weren't merged (repo dead?)
-                -- "idanarye/neo-tree-zk.nvim",
-                -- branch = "fix-modified_buffers_changes-to-opened_buffers_changed"
+                -- own copy of the plugin so i can fix issues myself
+                "neo-tree-zk.nvim",
+                dev = true,
+                dependencies = {
+                    'zk-org/zk-nvim'
+                }
             },
         },
         cmd = { "Neotree" },
@@ -255,11 +258,12 @@ return {
                     "netman.ui.neo-tree",
                     "filesystem",
                     "git_status",
-                    -- "zk"
+                    "zk"
                 },
                 close_if_last_window = true,
                 add_blank_line_at_top = true,
                 hide_root_node = true,
+                follow_current_file = { enabled = true },
                 enable_git_status = true,
                 enable_diagnostics = true,
                 use_popups_for_input = false,
@@ -281,10 +285,10 @@ return {
                             source = "remote",
                             display_name = " "
                         },
-                        -- {
-                        --     source = "zk",
-                        --     display_name = " "
-                        -- }
+                        {
+                            source = "zk",
+                            display_name = " "
+                        }
                     },
                     -- this gives the tabline a padded look (vert split is colored by neotree via hl)
                     separator = { left = " ", right = "" },
@@ -329,11 +333,11 @@ return {
                     },
                 },
                 filesystem = {
+                    use_libuv_file_watcher = true,
                     filtered_items = {
                         hide_dotfiles = false,
                         hide_gitignored = false,
                         show_hidden_count = false,
-                        use_libuv_file_watcher = true,
                     }
                 },
             })

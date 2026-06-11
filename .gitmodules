@@ -28,3 +28,6 @@
 [submodule "nvim/pkgs/presenting.nvim"]
 	path = nvim/pkgs/presenting.nvim
 	url = https://github.com/sotte/presenting.nvim
+[submodule "nvim/pkgs/neo-tree-zk.nvim"]
+	path = nvim/pkgs/neo-tree-zk.nvim
+	url = https://github.com/paulhersch/neo-tree-zk.nvim

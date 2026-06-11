@@ -98,9 +98,9 @@ return {
     },
     {
         'neovim/nvim-lspconfig',
-        dependencies = {
-            'lukas-reineke/lsp-format.nvim'
-        },
+        -- dependencies = {
+        --     'lukas-reineke/lsp-format.nvim'
+        -- },
         event = "VeryLazy",
         config = function()
             -- overwrite default window border style for popups, looks weird as i give them another bg
@@ -119,7 +119,7 @@ return {
                     vim.lsp.inlay_hint.enable(false, { bufnr = 0 })
                 end
 
-                require("lsp-format").on_attach(client, buf)
+                -- require("lsp-format").on_attach(client, buf)
             end
 
             local default_settings = {

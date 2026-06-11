@@ -27,6 +27,7 @@
   "magick": { "branch": "master", "commit": "6971fa700c4d392130492a3925344b51c7cc54aa" },
   "micropython.nvim": { "branch": "main", "commit": "f124d6b166bd370338481e225f7a39b7d4a56742" },
   "molten-nvim": { "branch": "main", "commit": "a286aa914d9a154bc359131aab788b5a077a5a99" },
+  "neo-tree-zk.nvim": { "branch": "fix-modified_buffers_changes-to-opened_buffers_changed", "commit": "14438c4cc91e2c4a3fad21a825c0489de73de93f" },
   "neo-tree.nvim": { "branch": "v3.x", "commit": "ebd66767191714e008ce73b769518a763ff31bdc" },
   "neovim-session-manager": { "branch": "master", "commit": "89d253a6c68af60b49570044591d5b8701866601" },
   "netman.nvim": { "branch": "main", "commit": "55ac68f236cbecaa84bacea719a453ded9c506ee" },
