@@ -329,6 +329,7 @@ binds {
 
     Ctrl+F11 { spawn "obs-cmd" "replay" "save"; }
     Alt+0 { spawn "wlogout"; }
+    Alt+F3 { spawn "nemo"; }
 
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have
@@ -357,4 +358,5 @@ binds {
 
 spawn-at-startup "qs" "-d" 
 spawn-at-startup "blueman-applet"
-spawn-at-startup "exec" "swayidle" "-w" "after-resume" "swaylock"
+// seems to not do anything uh what to do?
+// spawn-at-startup "exec" "swayidle" "-w" "after-resume" "swaylock"  
