@@ -6,6 +6,19 @@
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Input
+
+layer-rule {
+    match namespace="quickshell-background"
+    place-within-backdrop true
+}
+
+layer-rule {
+    match namespace="quickshell$"
+    background-effect {
+        blur true
+    }
+}
+
 input {
     keyboard {
         xkb {
@@ -38,6 +51,7 @@ input {
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Layout
 layout {
+    background-color "transparent"
     // Set gaps around windows in logical pixels.
     gaps 8
 
@@ -54,23 +68,17 @@ layout {
         // Proportion sets the width as a fraction of the output width, taking gaps into account.
         // For example, you can perfectly fit four windows sized "proportion 0.25" on an output.
         // The default preset widths are 1/3, 1/2 and 2/3 of the output.
-        proportion 0.33333
+        proportion 0.34
         proportion 0.5
-        proportion 0.66667
+        proportion 0.66
         proportion 1.0
         // Fixed sets the width in logical pixels exactly.
         // fixed 1920
     }
 
-    // You can also customize the heights that "switch-preset-window-height" (Mod+Shift+R) toggles between.
-    // preset-window-heights { }
-
     // You can change the default width of the new windows.
-    default-column-width { proportion 0.33333; }
+    default-column-width { proportion 0.34; }
     focus-ring {
-        // Uncomment this line to disable the focus ring.
-        // off
-
         // How many logical pixels the ring extends out from the windows.
         width 2
 
@@ -97,7 +105,6 @@ layout {
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
 // This option will also fix border/focus ring drawing behind some semitransparent windows.
 // After enabling or disabling this, you need to restart the apps for this to take effect.
-// prefer-no-csd
 
 // You can change the path where screenshots are saved.
 screenshot-path "~/Pictures/Screenshots/%Y-%m-%d %H-%M-%S.png"
@@ -344,9 +351,9 @@ binds {
     Alt+Shift+P { power-off-monitors; }
 }
 
-environment {
-    DISPLAY ":0" // X Display from satellite
-}
+// environment {
+//     DISPLAY ":0" // X Display from satellite
+// }
 
 spawn-at-startup "qs" "-d" 
 spawn-at-startup "blueman-applet"
