@@ -20,7 +20,7 @@ Singleton {
 
     function focusWs(idx : int) : void {
         if (idx < workspaces.count) {
-            Quickshell.execDetached(["sh", "-c", `niri msg action focus-workspace ${workspaces.get(idx).id}`])
+            Quickshell.execDetached(["sh", "-c", `niri msg action focus-workspace ${idx+1}`])
         }
     }
 

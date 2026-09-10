@@ -16,8 +16,8 @@ MouseArea {
     id: root
     property var mainPlayer: Mpris.players.values.length > 0 ? Mpris.players.values[0] : null
     
-    width: mainPlayer != null ? 250 : 0
-    height: mainPlayer != null ? parent.height : 0
+    height: mainPlayer != null ? 250 : 0
+    width: mainPlayer != null ? parent.width : 0
     visible: mainPlayer != null
 
     MprisItem {

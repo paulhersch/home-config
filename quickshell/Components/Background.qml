@@ -9,7 +9,7 @@ Variants {
     model: Quickshell.screens
 
     PanelWindow {
-        WlrLayershell.namespace: "qs-background"
+        WlrLayershell.namespace: "quickshell-background"
         WlrLayershell.layer: WlrLayer.Background
         WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
@@ -28,17 +28,6 @@ Variants {
             
             source: Theme.backgroundImage
             fillMode: Image.PreserveAspectCrop
-        }
-
-        /*
-         *  Fake Shadow
-         */
-        Rectangle {
-            anchors.fill: parent
-            gradient: Gradient {
-                GradientStop { position: (Theme.barHeight - 10  ) / screen.height; color: Theme.fg3 }
-                GradientStop { position: (Theme.barHeight + 7 ) / screen.height; color: "transparent" }
-            }
         }
     }
 }

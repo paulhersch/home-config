@@ -12,8 +12,7 @@ import qs.DataProviders
 import qs.Templates
 import qs
 
-RowLayout {
-    height: parent.height
+ColumnLayout {
     spacing: 10
 
     Repeater {
@@ -31,8 +30,8 @@ RowLayout {
 
             property bool is_hovered: false
 
-            height: parent.height
-            width: 30
+            width: parent.width
+            height: 30
 
             hoverEnabled: true
             onEntered: is_hovered = true
@@ -55,37 +54,24 @@ RowLayout {
 
             Rectangle {
                 id: outer
-                color: Theme.bg1
-                width: 30
-                height: parent.height
+                color: "#00000000"
+                width: parent.width
+                height: 30
 
                 Rectangle {
                     id: inner
 
-                    width: focused ? 30 : 25
-                    height: focused ? 25 : 20
-                    color: focused ? Theme.bgBlue : Theme.bg4
-                    // radius: 5
+                    width: focused ? 25 : (parent.parent.is_hovered ? 20 : 10)
+                    height: 30
+                    color: Theme.fg1
 
                     anchors {
-                        centerIn: parent
+                        left: parent.left
                     }
 
                     Behavior on width {
                         NumberAnimation {
                             duration: 100
-                        }
-                    }
-
-                    Behavior on height {
-                        NumberAnimation {
-                            duration: 100
-                        }
-                    }
-
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 300
                         }
                     }
                 }

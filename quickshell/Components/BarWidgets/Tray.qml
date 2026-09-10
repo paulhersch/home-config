@@ -12,14 +12,14 @@ import qs.Templates
 //     onExited: layout.spacing = 2
 //     width: layout.width
 
-    RowLayout {
+    ColumnLayout {
         id: layout
         spacing: 5
         uniformCellSizes: true
 
-        height: parent.height
+        width: parent.width
 
-        Layout.alignment: Qt.AlignCenter
+        Layout.alignment: Qt.AlignHCenter
 
         // Behavior on spacing {
         //     NumberAnimation { duration: 100 }

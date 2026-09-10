@@ -35,7 +35,9 @@ Singleton {
     readonly property int fontLarge     : 14
     readonly property int fontSmall     : 9
 
-    readonly property string backgroundImage: "/home/paul/Bilder/Hintergrundbilder/field.jpg"
+    readonly property string backgroundImage: "/home/paul/Bilder/Hintergrundbilder/livestreamcodex.jpg"
 
-    readonly property int barHeight: 40
+    readonly property int barWidth: 40
+
+    readonly property var locale: Qt.locale(Quickshell.env("LANG").split(".")[0])
 }

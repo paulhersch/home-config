@@ -9,8 +9,8 @@ MouseArea {
     required property var modelData
     required property int index
 
-    width: img.width
-    height: parent.height
+    width: parent.width
+    height: img.height
 
     IconImage {
         id: img
@@ -26,7 +26,7 @@ MouseArea {
         id: menuAnchor
         menu: modelData.menu
         anchor.window: root.QsWindow.window
-        anchor.rect.x: root.parent.x + (root.width + root.parent.spacing) * (index + 1)
+        anchor.rect.x: root.parent.x + root.width // + (root.width + root.parent.spacing) * (index + 1)
         anchor.rect.y: root.parent.y
         anchor.rect.height: root.height * 3
     }
