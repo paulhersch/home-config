@@ -1,5 +1,21 @@
 return {
     {
+        "surfer",
+        name = "surfer",
+        dev = true,
+        -- dependencies = {
+        --     'nvim-treesitter/nvim-treesitter',
+        -- },
+        event = "VeryLazy",
+        keys = {
+            { "<S-Left>",  function() require("surfer").select_parent() end,   mode = "v" },
+            { "<S-Right>", function() require("surfer").select_child() end,    mode = "v" },
+            { "<S-Up>",    function() require("surfer").select_prev_sib() end, mode = "v" },
+            { "<S-Down>",  function() require("surfer").select_next_sib() end, mode = "v" },
+            { "sv",        function() require("surfer").select_current() end }
+        }
+    },
+    {
         "colors",
         dev = true,
         -- priority = 1000,
@@ -97,7 +113,7 @@ return {
                     },
                     {
                         statusmod.git_branch,
-                        events = { "BufEnter", "DirChanged" },     -- how to fire directly after loading a session?
+                        events = { "BufEnter", "DirChanged" }, -- how to fire directly after loading a session?
                         use_initial = false,
                     },
                     "  "

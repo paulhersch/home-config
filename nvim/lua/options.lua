@@ -17,6 +17,7 @@ o.laststatus = 3
 o.syntax = "off"
 o.title = true
 o.guicursor = "n-v:block-inverse,i-c:ver10-Cursor-blinkwait2000-blinkon500-blinkoff500"
+o.wrap = false
 
 if g.neovide then
     -- w-0.1 is a hack to get full character height, somehow the font rendering

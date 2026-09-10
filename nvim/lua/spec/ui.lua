@@ -375,12 +375,10 @@ return {
             -- "nvim-treesitter/nvim-treesitter-textobjects"
         },
         branch = "main",
-        build = function()
-            require("nvim-treesitter").install.update()
-        end,
+        build = ":TSUpdate",
         event = "VeryLazy",
         config = function()
-            require("nvim-treesitter").install({
+            local langs = {
                 "c",
                 "lua",
                 "c_sharp",
@@ -391,11 +389,12 @@ return {
                 "css",
                 "go",
                 "rust",
-                "latex",
-                "bibtex"
-            }, { summary = true })
+                "bibtex",
+                "vim"
+            }
+            require("nvim-treesitter").install(langs, { summary = true })
 
-            vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+            vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
             vim.opt.foldmethod = "expr"
             -- should keep folds open while still having the identifiers in signcolumn
             vim.opt.foldlevel = 50
@@ -408,21 +407,13 @@ return {
                 end,
                 desc = "InsertLeave treesitter foldexpr update"
             })
+
+            vim.api.nvim_create_autocmd('FileType', {
+                pattern = langs,
+                callback = function(env)
+                    vim.treesitter.start(env.buf)
+                end
+            })
         end
     },
-    {
-        -- this is pretty useful sometimes!
-        "ziontee113/syntax-tree-surfer",
-        dependencies = {
-            'nvim-treesitter/nvim-treesitter',
-        },
-        opts = {},
-        keys = {
-            { "<S-Left>",  '<cmd>STSSelectParentNode<cr>',      mode = "x" },
-            { "<S-Right>", '<cmd>STSSelectChildNode<cr>',       mode = "x" },
-            { "<S-Up>",    '<cmd>STSSelectPrevSiblingNode<cr>', mode = "x" },
-            { "<S-Down>",  '<cmd>STSSelectNextSiblingNode<cr>', mode = "x" },
-            { "sv",        '<cmd>STSSelectCurrentNode<cr>' }
-        }
-    }
 }
