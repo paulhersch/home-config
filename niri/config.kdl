@@ -8,14 +8,14 @@
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Input
 
 layer-rule {
-    match namespace="quickshell-background"
+    match namespace="quickshell-backdrop"
     place-within-backdrop true
 }
 
 layer-rule {
     match namespace="quickshell$"
     background-effect {
-        blur true
+        // blur true
     }
 }
 
@@ -53,7 +53,7 @@ input {
 layout {
     background-color "transparent"
     // Set gaps around windows in logical pixels.
-    gaps 8
+    gaps 15
 
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
@@ -142,9 +142,23 @@ window-rule {
     block-out-from "screen-capture"
 }
 
+// default
 window-rule {
     geometry-corner-radius 0
-    clip-to-geometry false
+    clip-to-geometry true
+}
+
+window-rule {
+    match is-floating=true
+    tiled-state false
+    shadow {
+        on
+    }
+}
+
+window-rule {
+    match is-floating=false
+    tiled-state true
 }
 
 prefer-no-csd

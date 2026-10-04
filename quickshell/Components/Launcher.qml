@@ -27,19 +27,29 @@ PanelWindow {
         left: true
         right: true
     }
+
+    margins {
+        left: Theme.barWidth
+    }
+
     Rectangle {
         id: windowBG
-        color: "#44000000"
-        anchors.fill: parent
+        // color: "#44000000"
+        color: "transparent"
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
 
         Rectangle {
             color: "transparent"
             id: root
             implicitWidth: 750
-            implicitHeight: 500
+            implicitHeight: 300
 
             anchors {
-                centerIn: parent
+                horizontalCenter: parent.horizontalCenter
             }
 
             // added this here because PanelWindows isn't an Item
@@ -68,17 +78,19 @@ PanelWindow {
                         ParallelAnimation {
                             NumberAnimation {
                                 target: searchbar
-                                properties: "width"
+                                properties: "height"
                                 from: 0
-                                to: root.width
-                                duration: 50
+                                to: 45
+                                duration: 100
+                                easing: Easing.InQuad
                             }
                             NumberAnimation {
-                                target: listview
+                                target: root
                                 properties: "opacity"
                                 from: 0
                                 to: 1
-                                duration: 100
+                                duration: 50
+                                easing: Easing.InExpo
                             }
                             NumberAnimation {
                                 target: listview
@@ -97,10 +109,11 @@ PanelWindow {
                         ParallelAnimation {
                             NumberAnimation {
                                 target: searchbar
-                                properties: "width"
-                                from: root.width
+                                properties: "height"
+                                from: 45
                                 to: 0
-                                duration: 50
+                                duration: 150
+                                easing: Easing.OutQuad
                             }
                             NumberAnimation {
                                 target: listview
@@ -110,7 +123,7 @@ PanelWindow {
                                 duration: 100
                             }
                             NumberAnimation {
-                                target: listview
+                                target: root
                                 properties: "opacity"
                                 from: 1
                                 to: 0
@@ -127,14 +140,32 @@ PanelWindow {
             ]
 
             /*
+             *  Far back shadow
+             */
+            RectangularShadow {
+                anchors.fill: searchbar
+                blur: 0
+                spread: 1
+                offset {
+                    x: 12
+                    y: 12
+                }
+
+                color: Theme.fg1
+            }
+
+            /*
              *  "View" of the Launcher
              */
+
             ListView {
                 id: listview
                 anchors {
                     top: searchbar.bottom
                     horizontalCenter: parent.horizontalCenter
                 }
+                topMargin: 6
+                leftMargin: 6
 
                 clip: true
                 reuseItems: true
@@ -155,23 +186,29 @@ PanelWindow {
                 delegate: LauncherItem {}
             }
 
+            /*
+             *  Searchfield + main shadow
+             */
+            
             RectangularShadow {
                 anchors.fill: searchbar
-                blur: 20
-                spread: -2
+                blur: 0
+                spread: 1
+                offset {
+                    x: 6
+                    y: 6
+                }
 
                 color: Theme.fgBlue
             }
-            /*
-             *  Searchfield
-             */
+
             TextField {
                 id: searchbar
                 implicitHeight: 45
                 implicitWidth: parent.width
                 anchors {
                     top: parent.top
-                    horizontalCenter: parent.horizontalCenter
+                    left: parent.left
                 }
 
                 placeholderText: "search"
@@ -183,14 +220,11 @@ PanelWindow {
                 }
 
                 background : Rectangle {
-                    color: Theme.bgBlue
+                    color: Theme.bg1
                     border {
-                        color: searchbar.Theme.fg1
-                        width: 1
+                        color: searchbar.Theme.bgBlue
+                        width: 3
                     }
-
-                    radius: 10
-
                 }
 
                 /*

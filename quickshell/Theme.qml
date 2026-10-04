@@ -35,7 +35,8 @@ Singleton {
     readonly property int fontLarge     : 14
     readonly property int fontSmall     : 9
 
-    readonly property string backgroundImage: "/home/paul/Bilder/Hintergrundbilder/livestreamcodex.jpg"
+    readonly property string backdropImage: "/home/paul/Bilder/Hintergrundbilder/livestreamcodex.jpg"
+    readonly property string backgroundImage: "/home/paul/Bilder/Hintergrundbilder/torrent__aethernite.jpg"
 
     readonly property int barWidth: 40
 

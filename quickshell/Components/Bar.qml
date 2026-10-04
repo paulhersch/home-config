@@ -34,7 +34,7 @@ Variants {
             anchors.bottom: parent.bottom
             width: bar.screen.width
             
-            source: Theme.backgroundImage
+            source: Theme.backdropImage
             fillMode: Image.PreserveAspectCrop
         }
 

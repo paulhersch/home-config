@@ -11,6 +11,8 @@ import "Components" as Components
 
 Scope {
     Components.Bar {}
-    Components.Background {}
+    // Components.Background {}
+    Components.Backdrop {}
     Components.Launcher {}
+    Components.Notifications {}
 }
